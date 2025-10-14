@@ -523,7 +523,7 @@ export default function CheckoutPage() {
             <div className="bg-white rounded-xl p-6 shadow-lg">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-12 h-12 bg-[#e6f5f5] rounded-full flex items-center justify-center text-[#218B8E] font-bold">
-                  {t.checkout.testimonial1Name.split(' ').map((n: string) => n[0]).join('')}
+                  {t.checkout.testimonial1Name?.split(' ').map((n: string) => n[0]).join('') || 'AB'}
                 </div>
                 <div>
                   <h5 className="font-semibold">{t.checkout.testimonial1Name}</h5>
@@ -538,7 +538,7 @@ export default function CheckoutPage() {
             <div className="bg-white rounded-xl p-6 shadow-lg">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-12 h-12 bg-[#e6f5f5] rounded-full flex items-center justify-center text-[#218B8E] font-bold">
-                  {t.checkout.testimonial2Name.split(' ').map((n: string) => n[0]).join('')}
+                  {t.checkout.testimonial2Name?.split(' ').map((n: string) => n[0]).join('') || 'CD'}
                 </div>
                 <div>
                   <h5 className="font-semibold">{t.checkout.testimonial2Name}</h5>
@@ -553,7 +553,7 @@ export default function CheckoutPage() {
             <div className="bg-white rounded-xl p-6 shadow-lg">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-12 h-12 bg-[#e6f5f5] rounded-full flex items-center justify-center text-[#218B8E] font-bold">
-                  {t.checkout.testimonial3Name.split(' ').map((n: string) => n[0]).join('')}
+                  {t.checkout.testimonial3Name?.split(' ').map((n: string) => n[0]).join('') || 'EF'}
                 </div>
                 <div>
                   <h5 className="font-semibold">{t.checkout.testimonial3Name}</h5>
