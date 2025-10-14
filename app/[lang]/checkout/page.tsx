@@ -9,10 +9,6 @@ import { loadStripe, StripeElementsOptions } from '@stripe/stripe-js'
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import { useTranslations } from '@/hooks/useTranslations'
 
-// Forzar rendering dinámico (no estático)
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
-
 // Inicializar Stripe
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '')
 

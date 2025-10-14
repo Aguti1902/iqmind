@@ -5,10 +5,6 @@ import { useRouter } from 'next/navigation'
 import { useTranslations } from '@/hooks/useTranslations'
 import { FaCheckCircle } from 'react-icons/fa'
 
-// Forzar rendering dinámico (no estático)
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
-
 export default function AnalyzingPage() {
   const router = useRouter()
   const { t, loading, lang } = useTranslations()
