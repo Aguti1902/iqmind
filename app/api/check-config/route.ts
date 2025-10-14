@@ -55,8 +55,8 @@ export async function GET(request: NextRequest) {
       config,
       priceDetails,
       priceError,
-      warnings: [],
-      errors: [],
+      warnings: [] as string[],
+      errors: [] as string[],
     }
 
     // Agregar warnings y errors
