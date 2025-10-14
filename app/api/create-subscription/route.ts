@@ -45,6 +45,14 @@ export async function POST(request: NextRequest) {
       },
     })
 
+    // Agregar cargo de €0.50 ANTES de crear la suscripción
+    await stripe.invoiceItems.create({
+      customer: customerId,
+      amount: 50, // €0.50 en centavos
+      currency: 'eur',
+      description: 'IQ Test Result Unlock',
+    })
+
     // Crear suscripción con trial de 2 días
     const subscription = await stripe.subscriptions.create({
       customer: customerId,
@@ -62,15 +70,6 @@ export async function POST(request: NextRequest) {
         email: email || '',
       },
       trial_period_days: 2,
-    })
-
-    // Agregar cargo de €0.50 a la primera factura
-    await stripe.invoiceItems.create({
-      customer: customerId,
-      amount: 50, // €0.50 en centavos
-      currency: 'eur',
-      description: 'IQ Test Result Unlock',
-      invoice: subscription.latest_invoice as string,
     })
 
     console.log('Suscripción creada exitosamente:', subscription.id)
