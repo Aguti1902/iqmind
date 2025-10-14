@@ -26,10 +26,27 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Buscar o crear customer
+    const customers = await stripe.customers.list({
+      email,
+      limit: 1,
+    })
+
+    let customer
+    if (customers.data.length > 0) {
+      customer = customers.data[0]
+    } else {
+      customer = await stripe.customers.create({
+        email,
+        name: userName,
+      })
+    }
+
     // Crear Payment Intent para el pago de €0.50
     const paymentIntent = await stripe.paymentIntents.create({
       amount: 50, // 0.50€ en centavos
       currency: 'eur',
+      customer: customer.id,
       automatic_payment_methods: {
         enabled: true,
       },
@@ -42,6 +59,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       clientSecret: paymentIntent.client_secret,
+      customerId: customer.id,
     })
 
   } catch (error: any) {

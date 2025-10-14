@@ -55,7 +55,7 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
         return
       }
 
-      // Crear payment intent
+      // Crear payment intent (esto crea el customer también)
       const response = await fetch('/api/create-payment-intent', {
         method: 'POST',
         headers: {
@@ -68,7 +68,7 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
         }),
       })
 
-      const { clientSecret, error: apiError } = await response.json()
+      const { clientSecret, customerId, error: apiError } = await response.json()
 
       if (apiError || !clientSecret) {
         setErrorMessage(apiError || 'Error al crear el pago')
@@ -77,7 +77,7 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
       }
 
       // Confirmar el pago con Stripe
-      const { error: confirmError } = await stripe.confirmPayment({
+      const { error: confirmError, paymentIntent } = await stripe.confirmPayment({
         elements,
         clientSecret,
         confirmParams: {
@@ -96,7 +96,7 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
       localStorage.setItem('paymentCompleted', 'true')
       localStorage.setItem('userEmail', email)
       
-      // Crear suscripción con trial
+      // Crear suscripción con trial usando el customerId y paymentMethodId
       try {
         const subscriptionResponse = await fetch('/api/create-subscription', {
           method: 'POST',
@@ -106,12 +106,19 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
           body: JSON.stringify({
             email,
             userName,
-            paymentMethodId: localStorage.getItem('paymentMethodId'),
+            customerId: customerId,
+            paymentMethodId: paymentIntent?.payment_method,
           }),
         })
 
         const subscriptionData = await subscriptionResponse.json()
-        console.log('Suscripción creada:', subscriptionData)
+        
+        if (subscriptionData.error) {
+          console.error('Error al crear suscripción:', subscriptionData.error)
+        } else {
+          console.log('Suscripción creada exitosamente:', subscriptionData)
+          localStorage.setItem('subscriptionId', subscriptionData.subscriptionId)
+        }
       } catch (subError) {
         console.error('Error al crear suscripción:', subError)
       }
