@@ -531,7 +531,7 @@ export default function CheckoutPage() {
                 </div>
               </div>
               <p className="text-gray-600 text-sm">
-                "{t.checkout.testimonial1Text}"
+                {t.checkout.testimonial1Text}
               </p>
             </div>
 
@@ -546,7 +546,7 @@ export default function CheckoutPage() {
                 </div>
               </div>
               <p className="text-gray-600 text-sm">
-                "{t.checkout.testimonial2Text}"
+                {t.checkout.testimonial2Text}
               </p>
             </div>
 
@@ -561,7 +561,7 @@ export default function CheckoutPage() {
                 </div>
               </div>
               <p className="text-gray-600 text-sm">
-                "{t.checkout.testimonial3Text}"
+                {t.checkout.testimonial3Text}
               </p>
             </div>
           </div>
