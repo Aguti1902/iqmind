@@ -208,6 +208,7 @@
     "moneyBack": "Garanzia di rimborso di 14 giorni"
   },
   "result": {
+    "loadingResult": "Caricamento del tuo risultato...",
     "congratulations": "Congratulazioni",
     "analysisComplete": "La tua analisi completa è stata inviata a",
     "yourIQ": "Il Tuo Quoziente Intellettivo",

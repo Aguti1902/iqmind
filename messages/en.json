@@ -214,6 +214,7 @@
     "moneyBack": "14-day money-back guarantee"
   },
   "result": {
+    "loadingResult": "Loading your result...",
     "congratulations": "Congratulations",
     "analysisComplete": "Your complete analysis has been sent to",
     "yourIQ": "Your Intelligence Quotient",

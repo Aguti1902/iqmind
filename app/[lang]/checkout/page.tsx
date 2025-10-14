@@ -17,10 +17,19 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
   const stripe = useStripe()
   const elements = useElements()
   const router = useRouter()
-  const { t } = useTranslations()
+  const { t, loading: tLoading } = useTranslations()
   const [isProcessing, setIsProcessing] = useState(false)
   const [agreedToTerms, setAgreedToTerms] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
+
+  if (tLoading || !t) {
+    return (
+      <div className="text-center py-8">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#218B8E] mx-auto mb-4"></div>
+        <p className="text-gray-600">Cargando...</p>
+      </div>
+    )
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -30,7 +39,7 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
     }
 
     if (!agreedToTerms) {
-      setErrorMessage('Debes aceptar los términos y condiciones')
+      setErrorMessage(t.checkout.termsRequired || 'Debes aceptar los términos y condiciones')
       return
     }
 
@@ -301,10 +310,10 @@ export default function CheckoutPage() {
               <FaLock className="text-4xl text-yellow-600" />
             </div>
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              ¡Tu Resultado Está Casi Listo!
+              {t.checkout.almostReady}
             </h1>
             <p className="text-xl text-gray-600">
-              Desbloquea tu puntuación exacta de CI y análisis completo
+              {t.checkout.unlockScore}
             </p>
           </div>
 
@@ -413,13 +422,13 @@ export default function CheckoutPage() {
             <div className="lg:sticky lg:top-8 h-fit">
               <div className="bg-white rounded-2xl shadow-2xl p-8">
                 <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-                  Completa tu compra
+                  {t.checkout.title}
                 </h3>
 
                 {/* Email */}
                 <div className="mb-6">
                   <label className="block text-gray-700 font-semibold mb-2">
-                    Correo Electrónico
+                    {t.contact.email}
                   </label>
                   <div className="relative">
                     <input
@@ -442,21 +451,21 @@ export default function CheckoutPage() {
 
                 {/* Resumen */}
                 <div className="bg-gray-50 rounded-xl p-6 mb-6">
-                  <h4 className="font-bold text-gray-900 mb-4">Resumen del pedido</h4>
+                  <h4 className="font-bold text-gray-900 mb-4">{t.checkout.orderSummary}</h4>
                   <div className="space-y-3">
                     <div className="flex justify-between">
-                      <span className="text-gray-700">Resultado Test de CI</span>
+                      <span className="text-gray-700">{t.checkout.item}</span>
                       <span className="font-semibold">0,50€</span>
                     </div>
                     <div className="flex justify-between">
                       <div>
-                        <span className="text-gray-700 block">Prueba Premium 2 días</span>
-                        <span className="text-xs text-gray-500">Después 19,99€/mes</span>
+                        <span className="text-gray-700 block">{t.pricing.trialTitle}</span>
+                        <span className="text-xs text-gray-500">{t.pricing.afterTrial}</span>
                       </div>
-                      <span className="font-semibold text-green-600">GRATIS</span>
+                      <span className="font-semibold text-green-600">{t.pricing.free}</span>
                     </div>
                     <div className="border-t-2 pt-3 flex justify-between items-center">
-                      <span className="text-lg font-bold text-gray-900">Total a pagar hoy</span>
+                      <span className="text-lg font-bold text-gray-900">{t.checkout.total}</span>
                       <span className="text-3xl font-bold text-[#218B8E]">0,50€</span>
                     </div>
                   </div>
@@ -475,7 +484,7 @@ export default function CheckoutPage() {
                 ) : (
                   <div className="text-center py-8">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#218B8E] mx-auto mb-4"></div>
-                    <p className="text-gray-600">Cargando métodos de pago...</p>
+                    <p className="text-gray-600">{t.checkout.loadingPayment}</p>
                   </div>
                 )}
               </div>
@@ -483,10 +492,10 @@ export default function CheckoutPage() {
               {/* Garantía */}
               <div className="mt-6 bg-yellow-50 border-2 border-yellow-200 rounded-xl p-6 text-center">
                 <div className="text-4xl mb-2">🛡️</div>
-                <h4 className="font-bold text-yellow-900 mb-2">Garantía de Satisfacción</h4>
+                <h4 className="font-bold text-yellow-900 mb-2">{t.notices.guaranteeTitle}</h4>
                 <p className="text-sm text-yellow-800">
-                  Si no estás satisfecho, te devolvemos tu dinero.
-                  <a href={`/${lang}/reembolso`} className="underline font-semibold ml-1">Ver política</a>
+                  {t.notices.guaranteeMessage}{' '}
+                  <a href={`/${lang}/reembolso`} className="underline font-semibold ml-1">{t.notices.viewPolicy}</a>
                 </p>
               </div>
             </div>

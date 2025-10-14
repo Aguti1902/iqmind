@@ -211,7 +211,13 @@
     "payButton": "Pagar Ahora",
     "processing": "Procesando...",
     "securePayment": "Pago seguro procesado por Stripe",
-    "moneyBack": "Garantía de devolución de 14 días"
+    "moneyBack": "Garantía de devolución de 14 días",
+    "alertFillFields": "Por favor, completa todos los campos",
+    "alertError": "Error al procesar el pago: ",
+    "termsRequired": "Debes aceptar los términos y condiciones",
+    "loadingPayment": "Cargando métodos de pago...",
+    "almostReady": "¡Tu Resultado Está Casi Listo!",
+    "unlockScore": "Desbloquea tu puntuación exacta de CI y análisis completo"
   },
   "result": {
     "title": "Este es Tu Coeficiente Intelectual",
@@ -293,6 +299,7 @@
     "fileName": "Certificado_IQ"
   },
   "result": {
+    "loadingResult": "Cargando tu resultado...",
     "congratulations": "¡Felicidades",
     "analysisComplete": "Tu análisis completo ha sido enviado a",
     "yourIQ": "Tu Coeficiente Intelectual",

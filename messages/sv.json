@@ -208,6 +208,7 @@
     "moneyBack": "14-dagars pengarna-tillbaka-garanti"
   },
   "result": {
+    "loadingResult": "Laddar ditt resultat...",
     "congratulations": "Grattis",
     "analysisComplete": "Din kompletta analys har skickats till",
     "yourIQ": "Din Intelligenskvot",

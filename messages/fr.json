@@ -208,6 +208,7 @@
     "moneyBack": "Garantie de remboursement de 14 jours"
   },
   "result": {
+    "loadingResult": "Chargement de votre résultat...",
     "congratulations": "Félicitations",
     "analysisComplete": "Votre analyse complète a été envoyée à",
     "yourIQ": "Votre Quotient Intellectuel",

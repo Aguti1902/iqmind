@@ -208,6 +208,7 @@
     "moneyBack": "Garantia de devolução de 14 dias"
   },
   "result": {
+    "loadingResult": "Carregando o seu resultado...",
     "congratulations": "Parabéns",
     "analysisComplete": "A sua análise completa foi enviada para",
     "yourIQ": "O Seu Quociente de Inteligência",

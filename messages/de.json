@@ -208,6 +208,7 @@
     "moneyBack": "14-Tage Geld-zurück-Garantie"
   },
   "result": {
+    "loadingResult": "Laden Ihres Ergebnisses...",
     "congratulations": "Herzlichen Glückwunsch",
     "analysisComplete": "Ihre vollständige Analyse wurde gesendet an",
     "yourIQ": "Ihr Intelligenzquotient",
