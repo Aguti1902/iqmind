@@ -82,7 +82,6 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
 
         if (!paymentIntentId) {
           console.error('❌ No se obtuvo el PaymentIntent ID')
-          alert('⚠️ DEBUG: No se obtuvo PaymentIntent ID - La suscripción NO se creará')
           throw new Error('No se pudo obtener el ID del pago')
         }
 
@@ -111,8 +110,7 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
         
         if (subscriptionData.error) {
           console.error('❌ Error al crear suscripción:', subscriptionData.error)
-          alert(`⚠️ ERROR CREANDO SUSCRIPCIÓN:\n${subscriptionData.error}\n\nRevisa la consola del navegador para más detalles.`)
-          // No bloqueamos el flujo, pero alertamos al usuario
+          // No bloqueamos el flujo, el usuario aún puede ver sus resultados
         } else {
           console.log('✅ Suscripción creada exitosamente:', subscriptionData)
           console.log('🆔 Subscription ID:', subscriptionData.subscriptionId)
@@ -123,14 +121,11 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
           if (subscriptionData.trialEnd) {
             localStorage.setItem('trialEnd', subscriptionData.trialEnd.toString())
           }
-          
-          alert(`✅ SUSCRIPCIÓN CREADA EXITOSAMENTE!\n\nID: ${subscriptionData.subscriptionId}\nStatus: ${subscriptionData.status}\n\nRevisa Stripe Dashboard para confirmar.`)
         }
       } catch (subError: any) {
         console.error('❌ Error CRÍTICO al crear suscripción:', subError)
         console.error('❌ Error stack:', subError.stack)
         console.error('❌ Error message:', subError.message)
-        alert(`⚠️ ERROR CRÍTICO:\n${subError.message}\n\nLa suscripción NO se creó. Revisa la consola.`)
         // No bloqueamos el flujo, el usuario aún puede ver sus resultados
       }
 
