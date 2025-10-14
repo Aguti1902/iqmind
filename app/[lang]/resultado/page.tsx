@@ -242,8 +242,8 @@ export default function ResultadoPage() {
     )
   }
 
-  const category = getIQCategory(userIQ)
-  const description = getIQDescription(userIQ)
+  const category = getIQCategory(userIQ, lang)
+  const description = getIQDescription(userIQ, lang)
 
   // Datos para los gráficos
   const distributionData = t ? [
@@ -323,39 +323,39 @@ export default function ResultadoPage() {
           {/* Main IQ Score Card - Hero */}
           <div className="bg-white rounded-3xl shadow-2xl overflow-hidden mb-8 animate-fadeIn">
             {/* Gradient Header */}
-            <div className="bg-gradient-to-r from-[#218B8E] via-[#1a6f72] to-[#031C43] p-12 text-white text-center relative overflow-hidden">
+            <div className="bg-gradient-to-r from-[#218B8E] via-[#1a6f72] to-[#031C43] p-6 md:p-12 text-white text-center relative overflow-hidden">
               {/* Decorative circles */}
-              <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -mr-32 -mt-32"></div>
-              <div className="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-5 rounded-full -ml-24 -mb-24"></div>
+              <div className="absolute top-0 right-0 w-32 h-32 md:w-64 md:h-64 bg-white opacity-5 rounded-full -mr-16 md:-mr-32 -mt-16 md:-mt-32"></div>
+              <div className="absolute bottom-0 left-0 w-24 h-24 md:w-48 md:h-48 bg-white opacity-5 rounded-full -ml-12 md:-ml-24 -mb-12 md:-mb-24"></div>
               
               <div className="relative z-10">
-                <div className="inline-block p-6 bg-white/10 backdrop-blur-sm rounded-full mb-6">
-                  <FaBrain className="text-7xl" />
+                <div className="inline-block p-4 md:p-6 bg-white/10 backdrop-blur-sm rounded-full mb-4 md:mb-6">
+                  <FaBrain className="text-4xl md:text-7xl" />
               </div>
-                <h1 className="text-4xl md:text-5xl font-bold mb-6">
+                <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6">
                   {t.result.yourIQ}
               </h1>
                 
                 {/* IQ Score - Grande y prominente */}
                 <div className="relative inline-block">
-                  <div className="text-9xl md:text-[180px] font-black mb-4 leading-none">
+                  <div className="text-6xl md:text-9xl lg:text-[180px] font-black mb-3 md:mb-4 leading-none">
                     {userIQ}
                   </div>
-                  <div className="absolute -top-4 -right-4 bg-yellow-400 text-gray-900 px-4 py-2 rounded-full text-sm font-bold shadow-lg">
+                  <div className="absolute -top-2 -right-2 md:-top-4 md:-right-4 bg-yellow-400 text-gray-900 px-2 py-1 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-bold shadow-lg">
                     {t.result.topPercent} {100 - percentile}%
                   </div>
                 </div>
                 
-                <div className="text-3xl font-semibold mb-3 bg-white/20 backdrop-blur-sm inline-block px-8 py-3 rounded-full">
+                <div className="text-lg md:text-2xl lg:text-3xl font-semibold mb-2 md:mb-3 bg-white/20 backdrop-blur-sm inline-block px-4 md:px-8 py-2 md:py-3 rounded-full">
                   {category}
                 </div>
                 
-                <div className="flex items-center justify-center gap-3 text-xl mt-6">
-                  <FaTrophy className="text-yellow-300 text-2xl" />
+                <div className="flex items-center justify-center gap-2 md:gap-3 text-sm md:text-xl mt-4 md:mt-6">
+                  <FaTrophy className="text-yellow-300 text-lg md:text-2xl" />
                   <span className="font-semibold">{correctAnswers}/{questions.length} {t.result.answersCorrect} ({percentageCorrect}%)</span>
             </div>
 
-                <div className="mt-6 text-lg opacity-90">
+                <div className="mt-4 md:mt-6 text-sm md:text-lg opacity-90">
                   {t.result.percentileText} <strong>{percentile}</strong> {t.result.ofPopulation}
                 </div>
               </div>
@@ -376,16 +376,16 @@ export default function ResultadoPage() {
           </div>
 
           {/* Cognitive Categories Analysis */}
-          <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-3 text-center flex items-center justify-center gap-3">
-              <span className="text-4xl">🧠</span>
+          <div className="bg-white rounded-3xl shadow-2xl p-4 md:p-8 lg:p-12 mb-8">
+            <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-2 md:mb-3 text-center flex items-center justify-center gap-2 md:gap-3">
+              <span className="text-2xl md:text-3xl lg:text-4xl">🧠</span>
               {t.result.cognitiveTitle}
             </h2>
-            <p className="text-gray-600 text-center mb-8">
+            <p className="text-sm md:text-base text-gray-600 text-center mb-4 md:mb-8">
               {t.result.cognitiveSubtitle}
             </p>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
               {cognitiveCategories.map((cat, index) => {
                 const IconComponent = cat.icon === 'brain' ? FaBrain :
                                       cat.icon === 'eye' ? FaEye :
@@ -395,15 +395,15 @@ export default function ResultadoPage() {
                                       FaBolt;
                 
                 return (
-                  <div key={index} className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-6 border-2 border-gray-100 hover:border-[#218B8E] transition-all duration-300">
-                    <div className="flex items-center justify-between mb-4">
-                      <IconComponent className="text-4xl text-[#218B8E]" />
-                      <span className="text-3xl font-bold text-[#218B8E]">{cat.score}%</span>
+                  <div key={index} className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-4 md:p-6 border-2 border-gray-100 hover:border-[#218B8E] transition-all duration-300">
+                    <div className="flex items-center justify-between mb-3 md:mb-4">
+                      <IconComponent className="text-2xl md:text-3xl lg:text-4xl text-[#218B8E]" />
+                      <span className="text-xl md:text-2xl lg:text-3xl font-bold text-[#218B8E]">{cat.score}%</span>
                     </div>
-                    <h4 className="font-bold text-gray-900 mb-2">{cat.name}</h4>
-                    <div className="w-full bg-gray-200 rounded-full h-3">
+                    <h4 className="font-bold text-gray-900 mb-2 text-sm md:text-base">{cat.name}</h4>
+                    <div className="w-full bg-gray-200 rounded-full h-2 md:h-3">
                       <div 
-                        className="bg-gradient-to-r from-[#218B8E] to-[#1a6f72] h-3 rounded-full transition-all duration-1000"
+                        className="bg-gradient-to-r from-[#218B8E] to-[#1a6f72] h-2 md:h-3 rounded-full transition-all duration-1000"
                         style={{ width: `${cat.score}%` }}
                       ></div>
                     </div>
@@ -414,16 +414,16 @@ export default function ResultadoPage() {
           </div>
 
           {/* Charts Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8 mb-8">
               {/* Distribution Chart */}
-            <div className="bg-white rounded-3xl shadow-xl p-8">
-              <h3 className="text-2xl font-bold text-gray-900 mb-2 text-center">
+            <div className="bg-white rounded-3xl shadow-xl p-4 md:p-8">
+              <h3 className="text-lg md:text-xl lg:text-2xl font-bold text-gray-900 mb-2 text-center">
                   {t.result.distributionTitle}
                 </h3>
-              <p className="text-gray-600 text-center mb-6 text-sm">
+              <p className="text-gray-600 text-center mb-4 md:mb-6 text-xs md:text-sm">
                 {t.result.distributionSubtitle}
               </p>
-              <ResponsiveContainer width="100%" height={320}>
+              <ResponsiveContainer width="100%" height={280}>
                   <PieChart>
                     <Pie
                       data={distributionData}
@@ -461,14 +461,14 @@ export default function ResultadoPage() {
               </div>
 
               {/* Performance Chart */}
-            <div className="bg-white rounded-3xl shadow-xl p-8">
-              <h3 className="text-2xl font-bold text-gray-900 mb-2 text-center">
+            <div className="bg-white rounded-3xl shadow-xl p-4 md:p-8">
+              <h3 className="text-lg md:text-xl lg:text-2xl font-bold text-gray-900 mb-2 text-center">
                 {t.result.performanceTitle}
                 </h3>
-              <p className="text-gray-600 text-center mb-6 text-sm">
+              <p className="text-gray-600 text-center mb-4 md:mb-6 text-xs md:text-sm">
                 {t.result.performanceSubtitle}
               </p>
-              <ResponsiveContainer width="100%" height={320}>
+              <ResponsiveContainer width="100%" height={280}>
                   <BarChart data={performanceData}>
                   <XAxis dataKey="category" style={{ fontSize: '12px' }} />
                   <YAxis domain={[0, 8]} />
@@ -503,12 +503,12 @@ export default function ResultadoPage() {
 
           {/* Certificate Card */}
           <div className="bg-white rounded-3xl shadow-2xl overflow-hidden mb-8">
-            <div className="bg-gradient-to-r from-[#031C43] to-[#052547] p-8 text-white text-center">
-              <FaDownload className="text-6xl mx-auto mb-4" />
-              <h2 className="text-3xl font-bold mb-2">{t.result.certificateTitle}</h2>
-              <p className="text-lg opacity-90">{t.result.certificateSubtitle}</p>
+            <div className="bg-gradient-to-r from-[#031C43] to-[#052547] p-6 md:p-8 text-white text-center">
+              <FaDownload className="text-4xl md:text-6xl mx-auto mb-3 md:mb-4" />
+              <h2 className="text-xl md:text-2xl lg:text-3xl font-bold mb-2">{t.result.certificateTitle}</h2>
+              <p className="text-sm md:text-base lg:text-lg opacity-90">{t.result.certificateSubtitle}</p>
             </div>
-            <div className="p-8">
+            <div className="p-4 md:p-8">
               {/* Certificate Preview */}
               <div className="border-4 border-[#218B8E] rounded-xl p-8 bg-gradient-to-br from-white to-gray-50 mb-6">
                 <div className="text-center">
@@ -546,36 +546,36 @@ export default function ResultadoPage() {
             </div>
 
             {/* Share Section */}
-          <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 mb-8">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 mb-3">
+          <div className="bg-white rounded-3xl shadow-2xl p-4 md:p-8 lg:p-12 mb-8">
+            <div className="text-center mb-6 md:mb-8">
+              <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-2 md:mb-3">
                 {t.result.shareTitle}
               </h2>
-              <p className="text-gray-600 text-lg">
+              <p className="text-gray-600 text-sm md:text-base lg:text-lg">
                 {t.result.shareSubtitle}
               </p>
             </div>
             
-            <div className="flex flex-wrap justify-center gap-4">
+            <div className="flex flex-wrap justify-center gap-3 md:gap-4">
                 <button
                   onClick={shareOnFacebook}
-                className="flex items-center gap-3 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                className="flex items-center gap-2 md:gap-3 bg-blue-600 hover:bg-blue-700 text-white px-4 md:px-8 py-3 md:py-4 rounded-xl font-semibold text-sm md:text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                 >
-                <FaFacebook className="text-2xl" />
+                <FaFacebook className="text-xl md:text-2xl" />
                   Facebook
                 </button>
                 <button
                   onClick={shareOnTwitter}
-                className="flex items-center gap-3 bg-sky-500 hover:bg-sky-600 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                className="flex items-center gap-2 md:gap-3 bg-sky-500 hover:bg-sky-600 text-white px-4 md:px-8 py-3 md:py-4 rounded-xl font-semibold text-sm md:text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                 >
-                <FaTwitter className="text-2xl" />
+                <FaTwitter className="text-xl md:text-2xl" />
                   Twitter
                 </button>
                 <button
                   onClick={shareOnLinkedIn}
-                className="flex items-center gap-3 bg-blue-700 hover:bg-blue-800 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                className="flex items-center gap-2 md:gap-3 bg-blue-700 hover:bg-blue-800 text-white px-4 md:px-8 py-3 md:py-4 rounded-xl font-semibold text-sm md:text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                 >
-                <FaLinkedin className="text-2xl" />
+                <FaLinkedin className="text-xl md:text-2xl" />
                   LinkedIn
                 </button>
             </div>
@@ -583,16 +583,16 @@ export default function ResultadoPage() {
 
 
           {/* Subscription Management */}
-          <div className="bg-white rounded-3xl shadow-xl p-8 text-center">
-            <h3 className="text-2xl font-bold text-gray-900 mb-3">
+          <div className="bg-white rounded-3xl shadow-xl p-4 md:p-8 text-center">
+            <h3 className="text-lg md:text-xl lg:text-2xl font-bold text-gray-900 mb-2 md:mb-3">
               {t.result.manageSubscription}
             </h3>
-            <p className="text-gray-600 mb-6 text-lg">
+            <p className="text-gray-600 mb-4 md:mb-6 text-sm md:text-base lg:text-lg">
               {t.result.manageSubtitle}
             </p>
             <a 
               href={`/${lang}/cuenta`}
-              className="inline-block bg-[#031C43] hover:bg-[#052547] text-white px-10 py-4 rounded-xl font-bold text-lg transition-all duration-200 shadow-lg hover:shadow-xl"
+              className="inline-block bg-[#031C43] hover:bg-[#052547] text-white px-6 md:px-10 py-3 md:py-4 rounded-xl font-bold text-sm md:text-base lg:text-lg transition-all duration-200 shadow-lg hover:shadow-xl"
             >
               {t.result.goToAccount}
             </a>

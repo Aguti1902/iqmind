@@ -715,22 +715,176 @@ export function calculateIQ(correctAnswers: number): number {
   return 150
 }
 
-export function getIQCategory(iq: number): string {
-  if (iq < 70) return 'Muy bajo'
-  if (iq < 85) return 'Bajo'
-  if (iq < 100) return 'Por debajo del promedio'
-  if (iq < 115) return 'Promedio'
-  if (iq < 130) return 'Por encima del promedio'
-  if (iq < 145) return 'Superior'
-  return 'Muy superior'
+export function getIQCategory(iq: number, lang: string = 'es'): string {
+  const categories: { [key: string]: { [key: string]: string } } = {
+    es: {
+      veryLow: 'Muy bajo',
+      low: 'Bajo',
+      belowAverage: 'Por debajo del promedio',
+      average: 'Promedio',
+      aboveAverage: 'Por encima del promedio',
+      superior: 'Superior',
+      verySuperior: 'Muy superior'
+    },
+    en: {
+      veryLow: 'Very Low',
+      low: 'Low',
+      belowAverage: 'Below Average',
+      average: 'Average',
+      aboveAverage: 'Above Average',
+      superior: 'Superior',
+      verySuperior: 'Very Superior'
+    },
+    fr: {
+      veryLow: 'Très faible',
+      low: 'Faible',
+      belowAverage: 'En dessous de la moyenne',
+      average: 'Moyen',
+      aboveAverage: 'Au-dessus de la moyenne',
+      superior: 'Supérieur',
+      verySuperior: 'Très supérieur'
+    },
+    de: {
+      veryLow: 'Sehr niedrig',
+      low: 'Niedrig',
+      belowAverage: 'Unter dem Durchschnitt',
+      average: 'Durchschnittlich',
+      aboveAverage: 'Über dem Durchschnitt',
+      superior: 'Überlegen',
+      verySuperior: 'Sehr überlegen'
+    },
+    it: {
+      veryLow: 'Molto basso',
+      low: 'Basso',
+      belowAverage: 'Sotto la media',
+      average: 'Medio',
+      aboveAverage: 'Sopra la media',
+      superior: 'Superiore',
+      verySuperior: 'Molto superiore'
+    },
+    pt: {
+      veryLow: 'Muito baixo',
+      low: 'Baixo',
+      belowAverage: 'Abaixo da média',
+      average: 'Média',
+      aboveAverage: 'Acima da média',
+      superior: 'Superior',
+      verySuperior: 'Muito superior'
+    },
+    sv: {
+      veryLow: 'Mycket låg',
+      low: 'Låg',
+      belowAverage: 'Under genomsnittet',
+      average: 'Genomsnittlig',
+      aboveAverage: 'Över genomsnittet',
+      superior: 'Överlägsen',
+      verySuperior: 'Mycket överlägsen'
+    },
+    no: {
+      veryLow: 'Veldig lav',
+      low: 'Lav',
+      belowAverage: 'Under gjennomsnittet',
+      average: 'Gjennomsnittlig',
+      aboveAverage: 'Over gjennomsnittet',
+      superior: 'Overlegen',
+      verySuperior: 'Veldig overlegen'
+    }
+  }
+
+  const cat = categories[lang] || categories['es']
+  
+  if (iq < 70) return cat.veryLow
+  if (iq < 85) return cat.low
+  if (iq < 100) return cat.belowAverage
+  if (iq < 115) return cat.average
+  if (iq < 130) return cat.aboveAverage
+  if (iq < 145) return cat.superior
+  return cat.verySuperior
 }
 
-export function getIQDescription(iq: number): string {
-  if (iq < 70) return 'Tu puntuación indica dificultades significativas en el razonamiento abstracto.'
-  if (iq < 85) return 'Tu puntuación está por debajo del promedio pero con margen de mejora.'
-  if (iq < 100) return 'Tu capacidad de razonamiento está ligeramente por debajo del promedio poblacional.'
-  if (iq < 115) return 'Tienes una inteligencia dentro del rango promedio, como la mayoría de la población.'
-  if (iq < 130) return 'Tu inteligencia está por encima del promedio. Tienes excelentes capacidades de razonamiento.'
-  if (iq < 145) return 'Posees una inteligencia superior. Tu capacidad de análisis está muy por encima del promedio.'
-  return 'Tu puntuación indica un nivel de inteligencia excepcional, en el rango de genio.'
+export function getIQDescription(iq: number, lang: string = 'es'): string {
+  const descriptions: { [key: string]: { [key: string]: string } } = {
+    es: {
+      veryLow: 'Tu puntuación indica dificultades significativas en el razonamiento abstracto.',
+      low: 'Tu puntuación está por debajo del promedio pero con margen de mejora.',
+      belowAverage: 'Tu capacidad de razonamiento está ligeramente por debajo del promedio poblacional.',
+      average: 'Tienes una inteligencia dentro del rango promedio, como la mayoría de la población.',
+      aboveAverage: 'Tu inteligencia está por encima del promedio. Tienes excelentes capacidades de razonamiento.',
+      superior: 'Posees una inteligencia superior. Tu capacidad de análisis está muy por encima del promedio.',
+      verySuperior: 'Tu puntuación indica un nivel de inteligencia excepcional, en el rango de genio.'
+    },
+    en: {
+      veryLow: 'Your score indicates significant difficulties in abstract reasoning.',
+      low: 'Your score is below average but with room for improvement.',
+      belowAverage: 'Your reasoning ability is slightly below the population average.',
+      average: 'You have intelligence within the average range, like most of the population.',
+      aboveAverage: 'Your intelligence is above average. You have excellent reasoning abilities.',
+      superior: 'You possess superior intelligence. Your analytical capacity is well above average.',
+      verySuperior: 'Your score indicates an exceptional level of intelligence, in the genius range.'
+    },
+    fr: {
+      veryLow: 'Votre score indique des difficultés importantes dans le raisonnement abstrait.',
+      low: 'Votre score est en dessous de la moyenne mais avec une marge d\'amélioration.',
+      belowAverage: 'Votre capacité de raisonnement est légèrement en dessous de la moyenne de la population.',
+      average: 'Vous avez une intelligence dans la moyenne, comme la majorité de la population.',
+      aboveAverage: 'Votre intelligence est au-dessus de la moyenne. Vous avez d\'excellentes capacités de raisonnement.',
+      superior: 'Vous possédez une intelligence supérieure. Votre capacité d\'analyse est bien au-dessus de la moyenne.',
+      verySuperior: 'Votre score indique un niveau d\'intelligence exceptionnel, dans la gamme du génie.'
+    },
+    de: {
+      veryLow: 'Ihre Punktzahl deutet auf erhebliche Schwierigkeiten beim abstrakten Denken hin.',
+      low: 'Ihre Punktzahl liegt unter dem Durchschnitt, aber mit Verbesserungspotenzial.',
+      belowAverage: 'Ihre Denkfähigkeit liegt leicht unter dem Bevölkerungsdurchschnitt.',
+      average: 'Sie haben eine Intelligenz im Durchschnittsbereich, wie die meisten Menschen.',
+      aboveAverage: 'Ihre Intelligenz liegt über dem Durchschnitt. Sie haben ausgezeichnete Denkfähigkeiten.',
+      superior: 'Sie besitzen überlegene Intelligenz. Ihre analytische Fähigkeit liegt deutlich über dem Durchschnitt.',
+      verySuperior: 'Ihre Punktzahl deutet auf ein außergewöhnliches Intelligenzniveau hin, im Geniebereich.'
+    },
+    it: {
+      veryLow: 'Il tuo punteggio indica difficoltà significative nel ragionamento astratto.',
+      low: 'Il tuo punteggio è sotto la media ma con margine di miglioramento.',
+      belowAverage: 'La tua capacità di ragionamento è leggermente sotto la media della popolazione.',
+      average: 'Hai un\'intelligenza nel range medio, come la maggior parte della popolazione.',
+      aboveAverage: 'La tua intelligenza è sopra la media. Hai eccellenti capacità di ragionamento.',
+      superior: 'Possiedi un\'intelligenza superiore. La tua capacità analitica è molto sopra la media.',
+      verySuperior: 'Il tuo punteggio indica un livello di intelligenza eccezionale, nella gamma del genio.'
+    },
+    pt: {
+      veryLow: 'Sua pontuação indica dificuldades significativas no raciocínio abstrato.',
+      low: 'Sua pontuação está abaixo da média, mas com margem para melhoria.',
+      belowAverage: 'Sua capacidade de raciocínio está ligeiramente abaixo da média da população.',
+      average: 'Você tem inteligência dentro da faixa média, como a maioria da população.',
+      aboveAverage: 'Sua inteligência está acima da média. Você tem excelentes capacidades de raciocínio.',
+      superior: 'Você possui inteligência superior. Sua capacidade analítica está bem acima da média.',
+      verySuperior: 'Sua pontuação indica um nível de inteligência excepcional, na faixa de gênio.'
+    },
+    sv: {
+      veryLow: 'Ditt resultat indikerar betydande svårigheter i abstrakt resonemang.',
+      low: 'Ditt resultat är under genomsnittet men med utrymme för förbättring.',
+      belowAverage: 'Din resonemangsförmåga är något under befolkningens genomsnitt.',
+      average: 'Du har intelligens inom genomsnittsområdet, som majoriteten av befolkningen.',
+      aboveAverage: 'Din intelligens är över genomsnittet. Du har utmärkta resonemangsförmågor.',
+      superior: 'Du besitter överlägsen intelligens. Din analytiska förmåga är långt över genomsnittet.',
+      verySuperior: 'Ditt resultat indikerar en exceptionell nivå av intelligens, inom geninivån.'
+    },
+    no: {
+      veryLow: 'Din poengsum indikerer betydelige vanskeligheter i abstrakt resonnement.',
+      low: 'Din poengsum er under gjennomsnittet, men med rom for forbedring.',
+      belowAverage: 'Din resonnementsevne er litt under befolkningens gjennomsnitt.',
+      average: 'Du har intelligens innenfor gjennomsnittsområdet, som de fleste i befolkningen.',
+      aboveAverage: 'Din intelligens er over gjennomsnittet. Du har utmerkede resonnementsevner.',
+      superior: 'Du besitter overlegen intelligens. Din analytiske kapasitet er langt over gjennomsnittet.',
+      verySuperior: 'Din poengsum indikerer et eksepsjonelt nivå av intelligens, innenfor geninivået.'
+    }
+  }
+
+  const desc = descriptions[lang] || descriptions['es']
+  
+  if (iq < 70) return desc.veryLow
+  if (iq < 85) return desc.low
+  if (iq < 100) return desc.belowAverage
+  if (iq < 115) return desc.average
+  if (iq < 130) return desc.aboveAverage
+  if (iq < 145) return desc.superior
+  return desc.verySuperior
 }
