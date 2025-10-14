@@ -463,7 +463,7 @@ export default function CheckoutPage() {
                 </div>
 
                 {/* Payment Element */}
-                {userIQ && userName && (
+                {clientSecret && userIQ && userName ? (
                   <Elements stripe={stripePromise} options={elementsOptions}>
                     <CheckoutForm 
                       email={email} 
@@ -472,9 +472,7 @@ export default function CheckoutPage() {
                       lang={lang}
                     />
                   </Elements>
-                )}
-                
-                {!clientSecret && (
+                ) : (
                   <div className="text-center py-8">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#218B8E] mx-auto mb-4"></div>
                     <p className="text-gray-600">Cargando métodos de pago...</p>
