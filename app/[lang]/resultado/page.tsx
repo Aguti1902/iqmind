@@ -10,6 +10,10 @@ import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, 
 import { useTranslations } from '@/hooks/useTranslations'
 import { getTestHistory } from '@/lib/test-history'
 
+// Forzar rendering dinámico (no estático)
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default function ResultadoPage() {
   const router = useRouter()
   const { t, loading, lang } = useTranslations()
