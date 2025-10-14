@@ -28,10 +28,15 @@ export async function POST(request: NextRequest) {
 
     console.log('Creando suscripción con:', { customerId, paymentMethodId })
 
-    // Attach payment method al customer
-    await stripe.paymentMethods.attach(paymentMethodId, {
-      customer: customerId,
-    })
+    // Verificar si el payment method ya está attachado
+    const paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId)
+    
+    if (!paymentMethod.customer) {
+      // Solo attach si no está ya attachado
+      await stripe.paymentMethods.attach(paymentMethodId, {
+        customer: customerId,
+      })
+    }
 
     // Establecer como método de pago por defecto
     await stripe.customers.update(customerId, {
