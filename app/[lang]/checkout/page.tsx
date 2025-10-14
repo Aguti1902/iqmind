@@ -76,59 +76,62 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
       localStorage.setItem('paymentCompleted', 'true')
       localStorage.setItem('userEmail', email)
       
-      // Crear suscripción con trial usando el paymentMethodId
+      // Crear suscripción con trial usando el paymentIntentId
       try {
-        // El PaymentIntent no expone customer y payment_method directamente
-        // Necesitamos obtenerlos de Stripe usando el PaymentIntent ID
-        console.log('🔍 Obteniendo detalles del PaymentIntent desde Stripe...')
-        
-        const paymentIntentDetails = await stripe?.retrievePaymentIntent(paymentIntent?.id || '')
-        console.log('📋 PaymentIntent details:', paymentIntentDetails)
-        
-        // Type assertion para acceder a las propiedades
-        const details = paymentIntentDetails as any
-        const customerId = details?.paymentIntent?.customer
-        const paymentMethodId = details?.paymentIntent?.payment_method
+        const paymentIntentId = paymentIntent?.id
 
-        console.log('📦 Datos para crear suscripción:', {
-          email,
-          userName,
-          customerId,
-          paymentMethodId
-        })
-
-        if (!customerId || !paymentMethodId) {
-          console.error('❌ Faltan customerId o paymentMethodId')
-          console.error('customerId:', customerId)
-          console.error('paymentMethodId:', paymentMethodId)
-          throw new Error('No se pudo obtener el customer ID o payment method ID')
+        if (!paymentIntentId) {
+          console.error('❌ No se obtuvo el PaymentIntent ID')
+          alert('⚠️ DEBUG: No se obtuvo PaymentIntent ID - La suscripción NO se creará')
+          throw new Error('No se pudo obtener el ID del pago')
         }
 
+        console.log('📦 Creando suscripción con PaymentIntent ID:', paymentIntentId)
+        console.log('📧 Email:', email)
+        console.log('👤 User Name:', userName)
+
         const subscriptionResponse = await fetch('/api/create-subscription', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email,
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email,
             userName,
-            customerId: customerId,
-            paymentMethodId: paymentMethodId,
-        }),
-      })
+            paymentIntentId: paymentIntentId,
+          }),
+        })
+
+        console.log('📡 Status de respuesta:', subscriptionResponse.status)
+        console.log('📡 Status OK:', subscriptionResponse.ok)
 
         const subscriptionData = await subscriptionResponse.json()
         
-        console.log('📥 Respuesta de create-subscription:', subscriptionData)
+        console.log('📥 Respuesta COMPLETA de create-subscription:', JSON.stringify(subscriptionData, null, 2))
         
         if (subscriptionData.error) {
           console.error('❌ Error al crear suscripción:', subscriptionData.error)
+          alert(`⚠️ ERROR CREANDO SUSCRIPCIÓN:\n${subscriptionData.error}\n\nRevisa la consola del navegador para más detalles.`)
+          // No bloqueamos el flujo, pero alertamos al usuario
         } else {
           console.log('✅ Suscripción creada exitosamente:', subscriptionData)
+          console.log('🆔 Subscription ID:', subscriptionData.subscriptionId)
+          console.log('📅 Trial End:', subscriptionData.trialEnd)
+          console.log('📅 Current Period End:', subscriptionData.currentPeriodEnd)
+          
           localStorage.setItem('subscriptionId', subscriptionData.subscriptionId)
+          if (subscriptionData.trialEnd) {
+            localStorage.setItem('trialEnd', subscriptionData.trialEnd.toString())
+          }
+          
+          alert(`✅ SUSCRIPCIÓN CREADA EXITOSAMENTE!\n\nID: ${subscriptionData.subscriptionId}\nStatus: ${subscriptionData.status}\n\nRevisa Stripe Dashboard para confirmar.`)
         }
-      } catch (subError) {
-        console.error('❌ Error al crear suscripción:', subError)
+      } catch (subError: any) {
+        console.error('❌ Error CRÍTICO al crear suscripción:', subError)
+        console.error('❌ Error stack:', subError.stack)
+        console.error('❌ Error message:', subError.message)
+        alert(`⚠️ ERROR CRÍTICO:\n${subError.message}\n\nLa suscripción NO se creó. Revisa la consola.`)
+        // No bloqueamos el flujo, el usuario aún puede ver sus resultados
       }
 
       // Redirigir a resultados

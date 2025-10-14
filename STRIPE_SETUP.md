@@ -36,10 +36,14 @@ Esta guía te ayudará a configurar Stripe para procesar pagos en IQLevel.
    - Producción: `https://tu-dominio.com/api/webhook`
 
 4. Selecciona estos eventos:
+   - `payment_intent.succeeded`
    - `checkout.session.completed`
    - `customer.subscription.created`
+   - `customer.subscription.updated`
    - `customer.subscription.deleted`
-   - `payment_intent.succeeded`
+   - `customer.subscription.trial_will_end`
+   - `invoice.payment_succeeded`
+   - `invoice.payment_failed`
 
 5. Haz clic en "Add endpoint"
 6. Copia el **Signing secret** (comienza con `whsec_...`)
@@ -54,6 +58,9 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 STRIPE_SECRET_KEY=sk_test_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
+# STRIPE PRICE ID (IMPORTANTE - Ver sección "Configurar Suscripción")
+STRIPE_PRICE_ID=price_xxxxxxxxxxxxxxxxxxxxxxxx
+
 # ANALYTICS (opcional)
 NEXT_PUBLIC_GA_MEASUREMENT_ID=
 NEXT_PUBLIC_META_PIXEL_ID=
@@ -64,11 +71,12 @@ NEXT_PUBLIC_API_URL=http://localhost:3000/api
 
 ### Dónde Encontrar Cada Clave
 
-| Variable | Dónde Encontrarla | Formato |
-|----------|-------------------|---------|
-| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Dashboard → Developers → API keys | `pk_test_...` |
-| `STRIPE_SECRET_KEY` | Dashboard → Developers → API keys (clic en "Reveal test key") | `sk_test_...` |
-| `STRIPE_WEBHOOK_SECRET` | Dashboard → Developers → Webhooks → [Tu endpoint] → Signing secret | `whsec_...` |
+| Variable | Dónde Encontrarla | Formato | Requerido |
+|----------|-------------------|---------|-----------|
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Dashboard → Developers → API keys | `pk_test_...` | ✅ Sí |
+| `STRIPE_SECRET_KEY` | Dashboard → Developers → API keys (clic en "Reveal test key") | `sk_test_...` | ✅ Sí |
+| `STRIPE_PRICE_ID` | Dashboard → Products → [Tu producto] → Price ID | `price_...` | ✅ **SÍ** |
+| `STRIPE_WEBHOOK_SECRET` | Dashboard → Developers → Webhooks → [Tu endpoint] → Signing secret | `whsec_...` | ⚠️ Prod |
 
 ## 🧪 Probar en Modo Test
 
@@ -112,33 +120,67 @@ Para cambiar el precio:
 - 1,00€ = 100 centavos
 - 19,99€ = 1999 centavos
 
-## 📊 Configurar Suscripción (Opcional)
+## 📊 Configurar Suscripción (⚠️ REQUERIDO)
 
-Para añadir la suscripción mensual de 19,99€ con 2 días de prueba:
+**IMPORTANTE**: La suscripción es OBLIGATORIA para que el flujo de pago funcione correctamente.
+
+Cuando el usuario paga 0,50€, automáticamente se crea una suscripción de 19,99€/mes con 2 días de prueba gratis.
 
 ### Paso 1: Crear Producto en Stripe
 
-1. Dashboard → **Products** → **Add product**
-2. Nombre: "IQLevel Premium"
-3. Precio: 19,99€/mes
-4. Billing period: Monthly
-5. Guarda el producto
+1. Ve a Dashboard → **Products** → **Add product**
+2. Configura el producto:
+   - **Nombre**: "IQLevel Premium" (o el nombre que prefieras)
+   - **Descripción**: "Suscripción mensual premium"
+3. En la sección de **Pricing**:
+   - **Price**: `19.99` EUR
+   - **Billing Period**: `Recurring` → `Monthly`
+4. Clic en **Save product**
 
 ### Paso 2: Obtener Price ID
 
-1. Copia el **Price ID** (comienza con `price_...`)
+1. En la página del producto, busca la sección de **Pricing**
+2. Copia el **Price ID** que aparece junto al precio
+   - Formato: `price_xxxxxxxxxxxxxxxxxxxxx`
+3. Este ID lo necesitas para el siguiente paso
 
-### Paso 3: Actualizar el Código
+### Paso 3: Añadir a Variables de Entorno
 
-En `app/api/create-checkout-session/route.ts`, descomenta y configura:
+Añade el Price ID a tu archivo `.env.local`:
 
-```typescript
-subscription_data: {
-  trial_period_days: 2,
-},
+```env
+STRIPE_PRICE_ID=price_xxxxxxxxxxxxxxxxxxxxx
 ```
 
-Y añade el line_item de la suscripción con el Price ID.
+### Paso 4: Verificar Configuración
+
+Ejecuta el script de verificación para asegurarte de que todo está bien:
+
+```bash
+npm run verify-stripe
+```
+
+Este script verificará:
+- ✅ Todas las claves de Stripe
+- ✅ Que el `STRIPE_PRICE_ID` existe y es válido
+- ✅ Que el precio es 19,99€ mensual recurrente
+- ✅ Conexión con Stripe
+
+### Flujo Automático de Suscripción
+
+El sistema funciona así:
+
+1. **Usuario paga 0,50€** → Accede a su resultado
+2. **Automáticamente** se crea una suscripción de 19,99€/mes
+3. **Trial de 2 días GRATIS** → No se cobra nada durante el trial
+4. **Después de 2 días** → Stripe cobra automáticamente 19,99€
+5. **Usuario puede cancelar** en cualquier momento durante el trial sin cargo
+
+**Código implementado**:
+- ✅ `app/api/create-payment-intent/route.ts` - Procesa el pago de 0,50€
+- ✅ `app/api/create-subscription/route.ts` - Crea la suscripción con trial
+- ✅ `app/[lang]/checkout/page.tsx` - Flujo de frontend
+- ✅ `app/api/webhook/route.ts` - Maneja eventos de Stripe
 
 ## 🚀 Pasar a Producción
 
@@ -186,24 +228,67 @@ STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxx
 
 ## 📱 Testear el Flujo Completo
 
-1. **Sin configurar Stripe**:
-   - El sitio funcionará en modo demo
-   - Simulará el pago exitoso
-   - No se cobrará nada
+### 1. Verificar Configuración
 
-2. **Con Stripe en modo Test**:
-   ```bash
-   # 1. Configura .env.local con las claves de test
-   # 2. Reinicia el servidor
-   npm run dev
-   
-   # 3. Haz el test completo
-   # 4. En checkout, usa tarjeta de prueba: 4242 4242 4242 4242
-   ```
+```bash
+# Verifica que todo esté bien configurado
+npm run verify-stripe
+```
 
-3. **Verificar pago en Dashboard**:
-   - Dashboard → **Payments**
-   - Deberías ver el pago de prueba
+### 2. Iniciar Servidor
+
+```bash
+# Asegúrate de tener .env.local configurado
+npm run dev
+```
+
+### 3. Probar el Flujo de Pago
+
+1. Ve a http://localhost:3000/es/test
+2. Completa el test de IQ
+3. En checkout:
+   - Ingresa un email de prueba
+   - Usa tarjeta de prueba: `4242 4242 4242 4242`
+   - Fecha: Cualquier fecha futura (ej: 12/28)
+   - CVC: 123
+4. Paga 0,50€
+
+### 4. Verificar en Logs del Servidor
+
+Deberías ver algo como:
+
+```
+✅ Pago de €0.50 exitoso: pi_...
+📦 Creando suscripción con PaymentIntent ID: pi_...
+=== INICIO CREAR SUSCRIPCIÓN ===
+🔍 Recuperando PaymentIntent desde Stripe...
+✅ Customer y Payment Method obtenidos correctamente
+🚀 Creando suscripción con trial de 2 días...
+✅ Suscripción creada exitosamente: sub_...
+Estado: trialing
+Trial end: 2025-10-16T...
+```
+
+### 5. Verificar en Stripe Dashboard
+
+#### En Payments:
+- Dashboard → **Payments**
+- Deberías ver el pago de 0,50€ ✅
+
+#### En Subscriptions:
+- Dashboard → **Subscriptions**
+- Deberías ver la nueva suscripción:
+  - **Status**: `Trialing` 🎯
+  - **Trial ends**: En 2 días
+  - **Amount**: 19,99€
+  - **Interval**: Monthly
+
+#### En Customers:
+- Dashboard → **Customers**
+- Deberías ver el nuevo cliente con:
+  - Email del usuario
+  - Payment method guardado
+  - Suscripción activa
 
 ## ❓ Problemas Comunes
 
@@ -234,6 +319,21 @@ npm run dev
 **Solución**:
 1. Verifica la URL de success en `create-checkout-session/route.ts`
 2. Debe incluir tu dominio completo
+
+### Error: "Configuración de precio no encontrada"
+
+**Solución**:
+1. Falta la variable `STRIPE_PRICE_ID` en `.env.local`
+2. Ejecuta `npm run verify-stripe` para diagnosticar
+3. Sigue la sección "Configurar Suscripción" de este documento
+
+### La suscripción no se crea después del pago
+
+**Solución**:
+1. Verifica que `STRIPE_PRICE_ID` esté configurado
+2. Revisa los logs del servidor para ver errores
+3. Ejecuta `npm run verify-stripe`
+4. Verifica que el precio en Stripe esté activo
 
 ## 📚 Recursos
 
