@@ -76,8 +76,8 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
         return
       }
 
-      // Confirmar el pago con Stripe
-      const { error: confirmError, paymentIntent } = await stripe.confirmPayment({
+      // Confirmar el setup del método de pago con Stripe
+      const { error: confirmError, setupIntent } = await stripe.confirmSetup({
         elements,
         clientSecret,
         confirmParams: {
@@ -107,7 +107,7 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
             email,
             userName,
             customerId: customerId,
-            paymentMethodId: paymentIntent?.payment_method,
+            paymentMethodId: setupIntent?.payment_method,
           }),
         })
 

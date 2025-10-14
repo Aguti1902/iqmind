@@ -42,14 +42,11 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // Crear Payment Intent para el pago de €0.50
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: 50, // 0.50€ en centavos
-      currency: 'eur',
+    // Crear Setup Intent para guardar el método de pago
+    // NO creamos un Payment Intent de €0.50
+    const setupIntent = await stripe.setupIntents.create({
       customer: customer.id,
-      automatic_payment_methods: {
-        enabled: true,
-      },
+      payment_method_types: ['card'],
       metadata: {
         email,
         userIQ: userIQ || '',
@@ -58,7 +55,7 @@ export async function POST(request: NextRequest) {
     })
 
     return NextResponse.json({
-      clientSecret: paymentIntent.client_secret,
+      clientSecret: setupIntent.client_secret,
       customerId: customer.id,
     })
 
