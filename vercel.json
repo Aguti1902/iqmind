@@ -1,0 +1,9 @@
+{
+  "routes": [
+    {
+      "src": "/.well-known/apple-developer-merchantid-domain-association",
+      "dest": "/api/apple-pay-domain-association"
+    }
+  ]
+}
+
