@@ -147,7 +147,6 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
         <PaymentElement 
           options={{
             layout: 'accordion',
-            defaultCollapsed: false,
           }}
         />
             </div>
