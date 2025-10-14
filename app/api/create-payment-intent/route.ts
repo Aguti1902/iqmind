@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
       customer: customer.id,
       amount: 50, // €0.50 en centavos
       currency: 'eur',
-      payment_method_types: ['card'],
+      payment_method_types: ['card', 'link', 'paypal'],
       description: 'IQ Test Result Unlock',
       metadata: {
         email,
