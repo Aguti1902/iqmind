@@ -42,20 +42,24 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // Crear Setup Intent para guardar el método de pago
-    // NO creamos un Payment Intent de €0.50
-    const setupIntent = await stripe.setupIntents.create({
+    // Crear Payment Intent de €0.50 para cobrar inmediatamente
+    const paymentIntent = await stripe.paymentIntents.create({
       customer: customer.id,
+      amount: 50, // €0.50 en centavos
+      currency: 'eur',
       payment_method_types: ['card'],
+      description: 'IQ Test Result Unlock',
       metadata: {
         email,
         userIQ: userIQ || '',
         userName: userName || '',
       },
+      // Configurar para guardar el método de pago para uso futuro
+      setup_future_usage: 'off_session',
     })
 
     return NextResponse.json({
-      clientSecret: setupIntent.client_secret,
+      clientSecret: paymentIntent.client_secret,
       customerId: customer.id,
     })
 

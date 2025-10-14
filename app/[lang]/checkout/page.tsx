@@ -55,31 +55,9 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
         return
       }
 
-      // Crear payment intent (esto crea el customer también)
-      const response = await fetch('/api/create-payment-intent', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email,
-          userIQ,
-          userName,
-        }),
-      })
-
-      const { clientSecret, customerId, error: apiError } = await response.json()
-
-      if (apiError || !clientSecret) {
-        setErrorMessage(apiError || 'Error al crear el pago')
-        setIsProcessing(false)
-        return
-      }
-
-      // Confirmar el setup del método de pago con Stripe
-      const { error: confirmError, setupIntent } = await stripe.confirmSetup({
+      // Confirmar el pago de €0.50 con Stripe
+      const { error: confirmError, paymentIntent } = await stripe.confirmPayment({
         elements,
-        clientSecret,
         confirmParams: {
           return_url: `${window.location.origin}/${lang}/resultado`,
         },
@@ -92,11 +70,12 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
         return
       }
 
-      // Si llegamos aquí, el pago fue exitoso
+      // Si llegamos aquí, el pago de €0.50 fue exitoso
+      console.log('Pago de €0.50 exitoso:', paymentIntent?.id)
       localStorage.setItem('paymentCompleted', 'true')
       localStorage.setItem('userEmail', email)
       
-      // Crear suscripción con trial usando el customerId y paymentMethodId
+      // Crear suscripción con trial usando el paymentMethodId
       try {
         const subscriptionResponse = await fetch('/api/create-subscription', {
           method: 'POST',
@@ -106,8 +85,8 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
           body: JSON.stringify({
             email,
             userName,
-            customerId: customerId,
-            paymentMethodId: setupIntent?.payment_method,
+            customerId: paymentIntent?.customer,
+            paymentMethodId: paymentIntent?.payment_method,
           }),
         })
 

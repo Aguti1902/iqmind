@@ -45,29 +45,9 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    // PASO 1: Crear un invoice item de €0.50
-    console.log('Creando invoice item de €0.50...')
-    await stripe.invoiceItems.create({
-      customer: customerId,
-      amount: 50, // €0.50 en centavos
-      currency: 'eur',
-      description: 'IQ Test Result Unlock',
-    })
-
-    // PASO 2: Crear y cobrar el invoice inmediatamente
-    console.log('Creando y cobrando invoice...')
-    const invoice = await stripe.invoices.create({
-      customer: customerId,
-      auto_advance: true, // Finalizar automáticamente
-      collection_method: 'charge_automatically',
-    })
-
-    // Finalizar y cobrar el invoice
-    const paidInvoice = await stripe.invoices.pay(invoice.id)
-    console.log('Invoice cobrado exitosamente:', paidInvoice.id, 'Status:', paidInvoice.status)
-
-    // PASO 3: Crear suscripción con trial de 2 días
-    console.log('Creando suscripción con trial...')
+    // El pago de €0.50 ya fue procesado por el PaymentIntent
+    // Solo necesitamos crear la suscripción con trial de 2 días
+    console.log('Creando suscripción con trial de 2 días...')
     const subscription = await stripe.subscriptions.create({
       customer: customerId,
       items: [
