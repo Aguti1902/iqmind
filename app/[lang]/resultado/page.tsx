@@ -321,7 +321,7 @@ export default function ResultadoPage() {
           </div>
 
           {/* Main IQ Score Card - Hero */}
-          <div className="bg-white rounded-3xl shadow-2xl overflow-hidden mb-8 animate-fadeIn max-w-4xl mx-auto">
+          <div className="bg-white rounded-3xl shadow-2xl overflow-hidden mb-8 animate-fadeIn">
             {/* Gradient Header */}
             <div className="bg-gradient-to-r from-[#218B8E] via-[#1a6f72] to-[#031C43] p-6 md:p-12 text-white text-center relative overflow-hidden">
               {/* Decorative circles */}
