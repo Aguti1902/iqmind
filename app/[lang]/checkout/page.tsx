@@ -5,20 +5,210 @@ import { useRouter } from 'next/navigation'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import { FaLock, FaCheckCircle, FaBrain, FaCertificate, FaChartLine, FaUsers } from 'react-icons/fa'
-import { loadStripe } from '@stripe/stripe-js'
+import { loadStripe, StripeElementsOptions } from '@stripe/stripe-js'
+import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import { useTranslations } from '@/hooks/useTranslations'
 
+// Inicializar Stripe
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '')
+
+// Componente interno para el formulario de pago
+function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userName: string, userIQ: number, lang: string }) {
+  const stripe = useStripe()
+  const elements = useElements()
+  const router = useRouter()
+  const { t } = useTranslations()
+  const [isProcessing, setIsProcessing] = useState(false)
+  const [agreedToTerms, setAgreedToTerms] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (!stripe || !elements) {
+      return
+    }
+
+    if (!agreedToTerms) {
+      setErrorMessage('Debes aceptar los términos y condiciones')
+      return
+    }
+
+    setIsProcessing(true)
+    setErrorMessage('')
+
+    try {
+      // Confirmar el pago
+      const { error: submitError } = await elements.submit()
+      if (submitError) {
+        setErrorMessage(submitError.message || 'Error al enviar el formulario')
+        setIsProcessing(false)
+        return
+      }
+
+      // Crear payment intent
+      const response = await fetch('/api/create-payment-intent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          userIQ,
+          userName,
+        }),
+      })
+
+      const { clientSecret, error: apiError } = await response.json()
+
+      if (apiError || !clientSecret) {
+        setErrorMessage(apiError || 'Error al crear el pago')
+        setIsProcessing(false)
+        return
+      }
+
+      // Confirmar el pago con Stripe
+      const { error: confirmError } = await stripe.confirmPayment({
+        elements,
+        clientSecret,
+        confirmParams: {
+          return_url: `${window.location.origin}/${lang}/resultado`,
+        },
+        redirect: 'if_required',
+      })
+
+      if (confirmError) {
+        setErrorMessage(confirmError.message || 'Error al procesar el pago')
+        setIsProcessing(false)
+        return
+      }
+
+      // Si llegamos aquí, el pago fue exitoso
+      localStorage.setItem('paymentCompleted', 'true')
+      localStorage.setItem('userEmail', email)
+      
+      // Crear suscripción con trial
+      try {
+        const subscriptionResponse = await fetch('/api/create-subscription', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email,
+            userName,
+            paymentMethodId: localStorage.getItem('paymentMethodId'),
+          }),
+        })
+
+        const subscriptionData = await subscriptionResponse.json()
+        console.log('Suscripción creada:', subscriptionData)
+      } catch (subError) {
+        console.error('Error al crear suscripción:', subError)
+      }
+
+      // Redirigir a resultados
+      router.push(`/${lang}/resultado`)
+
+    } catch (error: any) {
+      console.error('Error al procesar el pago:', error)
+      setErrorMessage(error.message || 'Error al procesar el pago')
+    } finally {
+      setIsProcessing(false)
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Payment Element */}
+      <div className="border-2 border-gray-200 rounded-xl p-4 bg-gray-50">
+        <PaymentElement 
+          options={{
+            layout: 'tabs',
+          }}
+        />
+      </div>
+
+      {/* Error Message */}
+      {errorMessage && (
+        <div className="bg-red-50 border-2 border-red-200 text-red-800 px-4 py-3 rounded-lg text-sm">
+          {errorMessage}
+        </div>
+      )}
+
+      {/* Términos */}
+      <div>
+        <label className="flex items-start gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={agreedToTerms}
+            onChange={(e) => setAgreedToTerms(e.target.checked)}
+            className="mt-1 w-5 h-5 text-[#218B8E] border-gray-300 rounded focus:ring-[#218B8E]"
+          />
+          <span className="text-sm text-gray-700">
+            Acepto los <a href={`/${lang}/terminos`} target="_blank" className="text-[#218B8E] underline font-semibold">Términos y Condiciones</a>. 
+            Entiendo que se activará una prueba premium de 2 días que puedo cancelar antes de que finalice para evitar el cargo mensual de 19,99€.
+          </span>
+        </label>
+      </div>
+
+      {/* Botón de Pago */}
+      <button
+        type="submit"
+        disabled={isProcessing || !stripe || !agreedToTerms}
+        className={`w-full py-4 rounded-xl font-bold text-lg transition-all duration-200 flex items-center justify-center gap-3 ${
+          isProcessing || !stripe || !agreedToTerms
+            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            : 'bg-[#031C43] text-white hover:bg-[#052547] shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
+        }`}
+      >
+        {isProcessing ? (
+          <>
+            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+            Procesando pago...
+          </>
+        ) : (
+          <>
+            <FaLock />
+            Pagar 0,50€ de forma segura
+          </>
+        )}
+      </button>
+
+      {/* Badges de Seguridad */}
+      <div className="text-center">
+        <div className="flex items-center justify-center gap-4 text-sm text-gray-600 mb-2">
+          <div className="flex items-center gap-1">
+            <FaLock className="text-green-500" />
+            <span>SSL Seguro</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <FaCheckCircle className="text-green-500" />
+            <span>Stripe</span>
+          </div>
+        </div>
+        <p className="text-xs text-gray-500">
+          Pago 100% seguro • Política de reembolso de 14 días
+        </p>
+      </div>
+    </form>
+  )
+}
+
+// Componente principal de la página
 export default function CheckoutPage() {
   const router = useRouter()
   const { t, loading, lang } = useTranslations()
   const [email, setEmail] = useState('')
-  const [isProcessing, setIsProcessing] = useState(false)
-  const [agreedToTerms, setAgreedToTerms] = useState(false)
   const [userIQ, setUserIQ] = useState<number | null>(null)
+  const [userName, setUserName] = useState('')
+  const [clientSecret, setClientSecret] = useState<string | null>(null)
+  const [emailError, setEmailError] = useState('')
 
   useEffect(() => {
     const iq = localStorage.getItem('userIQ')
     const savedEmail = localStorage.getItem('userEmail')
+    const name = localStorage.getItem('userName')
     
     if (!iq) {
       router.push(`/${lang}/test`)
@@ -27,78 +217,45 @@ export default function CheckoutPage() {
       if (savedEmail) {
         setEmail(savedEmail)
       }
+      if (name) {
+        setUserName(name)
+      }
     }
   }, [router, lang])
 
-  const handleCheckout = async () => {
-    if (!email || !agreedToTerms) {
-      alert(t?.checkout?.alertFillFields || 'Por favor, completa todos los campos')
+  const handleEmailSubmit = async () => {
+    if (!email || !email.includes('@')) {
+      setEmailError('Por favor ingresa un email válido')
       return
     }
 
-    setIsProcessing(true)
+    setEmailError('')
 
     try {
-      // En modo desarrollo/demo, simulamos el pago exitoso
-      if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
-        console.log('Stripe no configurado. Simulando pago exitoso...')
-        
-        setTimeout(() => {
-          handlePaymentSuccess('demo_' + Date.now())
-        }, 2000)
-        return
-      }
-
-      // Integración real con Stripe
-      const stripe = await loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
-      
-      if (!stripe) {
-        throw new Error('Error al cargar Stripe')
-      }
-
-      const response = await fetch('/api/create-checkout-session', {
+      const response = await fetch('/api/create-payment-intent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           email,
-          userIQ: localStorage.getItem('userIQ'),
-          userName: localStorage.getItem('userName'),
-          lang,
+          userIQ,
+          userName,
         }),
       })
 
-      const session = await response.json()
+      const data = await response.json()
 
-      if (session.error) {
-        alert(session.error)
-        setIsProcessing(false)
+      if (data.error) {
+        setEmailError(data.error)
         return
       }
 
-      const result = await stripe.redirectToCheckout({
-        sessionId: session.id,
-      })
-
-      if (result.error) {
-        alert(result.error.message)
-        setIsProcessing(false)
-      }
-
-    } catch (error: any) {
-      console.error('Error al procesar el pago:', error)
-      alert(t?.checkout?.alertError + error.message || 'Error al procesar el pago')
-    } finally {
-      setIsProcessing(false)
+      setClientSecret(data.clientSecret)
+      localStorage.setItem('userEmail', email)
+    } catch (error) {
+      setEmailError('Error al inicializar el pago')
     }
-  }
-
-  const handlePaymentSuccess = (transactionId: string) => {
-    localStorage.setItem('paymentCompleted', 'true')
-    localStorage.setItem('userEmail', email)
-    localStorage.setItem('transactionId', transactionId)
-    router.push(`/${lang}/resultado`)
   }
 
   if (loading || !t) {
@@ -113,6 +270,22 @@ export default function CheckoutPage() {
         </div>
       </>
     )
+  }
+
+  const elementsOptions: StripeElementsOptions = {
+    clientSecret,
+    appearance: {
+      theme: 'stripe',
+      variables: {
+        colorPrimary: '#218B8E',
+        colorBackground: '#ffffff',
+        colorText: '#1f2937',
+        colorDanger: '#ef4444',
+        fontFamily: 'system-ui, sans-serif',
+        spacingUnit: '4px',
+        borderRadius: '8px',
+      },
+    },
   }
 
   return (
@@ -244,25 +417,37 @@ export default function CheckoutPage() {
                 </h3>
 
                 {/* Email */}
-                <div className="mb-6">
-                  <label className="block text-gray-700 font-semibold mb-2">
-                    Correo Electrónico
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="tu@email.com"
-                      className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#218B8E] focus:border-transparent"
-                      required
-                    />
-                    <FaLock className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                {!clientSecret && (
+                  <div className="mb-6">
+                    <label className="block text-gray-700 font-semibold mb-2">
+                      Correo Electrónico
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="tu@email.com"
+                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#218B8E] focus:border-transparent"
+                        required
+                      />
+                      <FaLock className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                    </div>
+                    {emailError && (
+                      <p className="text-red-600 text-sm mt-2">{emailError}</p>
+                    )}
+                    <p className="text-sm text-gray-500 mt-2">
+                      📧 Recibirás tu resultado completo aquí
+                    </p>
+                    <button
+                      onClick={handleEmailSubmit}
+                      disabled={!email}
+                      className="w-full mt-4 py-3 bg-[#218B8E] text-white rounded-lg font-semibold hover:bg-[#1a6f71] transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+                    >
+                      Continuar al pago
+                    </button>
                   </div>
-                  <p className="text-sm text-gray-500 mt-2">
-                    📧 Recibirás tu resultado completo aquí
-                  </p>
-                </div>
+                )}
 
                 {/* Resumen */}
                 <div className="bg-gray-50 rounded-xl p-6 mb-6">
@@ -286,70 +471,26 @@ export default function CheckoutPage() {
                   </div>
                 </div>
 
-                {/* Términos */}
-                <div className="mb-6">
-                  <label className="flex items-start gap-3 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={agreedToTerms}
-                      onChange={(e) => setAgreedToTerms(e.target.checked)}
-                      className="mt-1 w-5 h-5 text-[#218B8E] border-gray-300 rounded focus:ring-[#218B8E]"
+                {/* Payment Element */}
+                {clientSecret && userIQ && userName && (
+                  <Elements stripe={stripePromise} options={elementsOptions}>
+                    <CheckoutForm 
+                      email={email} 
+                      userName={userName} 
+                      userIQ={userIQ} 
+                      lang={lang}
                     />
-                    <span className="text-sm text-gray-700">
-                      Acepto los <a href={`/${lang}/terminos`} target="_blank" className="text-[#218B8E] underline font-semibold">Términos y Condiciones</a>. 
-                      Entiendo que se activará una prueba premium de 2 días que puedo cancelar antes de que finalice para evitar el cargo mensual de 19,99€.
-                    </span>
-                  </label>
-                </div>
-
-                {/* Botón de Pago */}
-                <button
-                  onClick={handleCheckout}
-                  disabled={isProcessing || !email || !agreedToTerms}
-                  className={`w-full py-4 rounded-xl font-bold text-lg transition-all duration-200 flex items-center justify-center gap-3 mb-4 ${
-                    isProcessing || !email || !agreedToTerms
-                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                      : 'bg-[#031C43] text-white hover:bg-[#052547] shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
-                  }`}
-                >
-                  {isProcessing ? (
-                    <>
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                      Procesando pago...
-                    </>
-                  ) : (
-                    <>
-                      <FaLock />
-                      Pagar 0,50€ de forma segura
-                    </>
-                  )}
-                </button>
-
-                {/* Badges de Seguridad */}
-                <div className="text-center">
-                  <div className="flex items-center justify-center gap-4 text-sm text-gray-600 mb-2">
-                    <div className="flex items-center gap-1">
-                      <FaLock className="text-green-500" />
-                      <span>SSL Seguro</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <FaCheckCircle className="text-green-500" />
-                      <span>Stripe</span>
-                    </div>
-                  </div>
-                  <p className="text-xs text-gray-500">
-                    Pago 100% seguro • Política de reembolso de 14 días
-                  </p>
-                </div>
+                  </Elements>
+                )}
               </div>
 
               {/* Garantía */}
               <div className="mt-6 bg-yellow-50 border-2 border-yellow-200 rounded-xl p-6 text-center">
                 <div className="text-4xl mb-2">🛡️</div>
-                <h4 className="font-bold text-yellow-900 mb-2">{t.notices.guaranteeTitle}</h4>
+                <h4 className="font-bold text-yellow-900 mb-2">Garantía de Satisfacción</h4>
                 <p className="text-sm text-yellow-800">
-                  {t.notices.guaranteeMessage} 
-                  <a href={`/${lang}/reembolso`} className="underline font-semibold ml-1">{t.notices.viewPolicy}</a>
+                  Si no estás satisfecho, te devolvemos tu dinero.
+                  <a href={`/${lang}/reembolso`} className="underline font-semibold ml-1">Ver política</a>
                 </p>
               </div>
             </div>
