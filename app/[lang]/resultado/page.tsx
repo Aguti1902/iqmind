@@ -321,41 +321,41 @@ export default function ResultadoPage() {
           </div>
 
           {/* Main IQ Score Card - Hero */}
-          <div className="bg-white rounded-3xl shadow-2xl overflow-hidden mb-8 animate-fadeIn">
+          <div className="bg-white rounded-3xl shadow-2xl overflow-hidden mb-8 animate-fadeIn max-w-4xl mx-auto">
             {/* Gradient Header */}
-            <div className="bg-gradient-to-r from-[#218B8E] via-[#1a6f72] to-[#031C43] p-6 md:p-12 text-white text-center relative overflow-hidden">
+            <div className="bg-gradient-to-r from-[#218B8E] via-[#1a6f72] to-[#031C43] p-6 md:p-8 lg:p-10 text-white text-center relative overflow-hidden">
               {/* Decorative circles */}
-              <div className="absolute top-0 right-0 w-32 h-32 md:w-64 md:h-64 bg-white opacity-5 rounded-full -mr-16 md:-mr-32 -mt-16 md:-mt-32"></div>
-              <div className="absolute bottom-0 left-0 w-24 h-24 md:w-48 md:h-48 bg-white opacity-5 rounded-full -ml-12 md:-ml-24 -mb-12 md:-mb-24"></div>
+              <div className="absolute top-0 right-0 w-32 h-32 md:w-48 md:h-48 bg-white opacity-5 rounded-full -mr-16 md:-mr-24 -mt-16 md:-mt-24"></div>
+              <div className="absolute bottom-0 left-0 w-24 h-24 md:w-36 md:h-36 bg-white opacity-5 rounded-full -ml-12 md:-ml-18 -mb-12 md:-mb-18"></div>
               
-              <div className="relative z-10">
-                <div className="inline-block p-4 md:p-6 bg-white/10 backdrop-blur-sm rounded-full mb-4 md:mb-6">
-                  <FaBrain className="text-4xl md:text-7xl" />
+              <div className="relative z-10 max-w-3xl mx-auto">
+                <div className="inline-block p-3 md:p-4 bg-white/10 backdrop-blur-sm rounded-full mb-3 md:mb-4">
+                  <FaBrain className="text-3xl md:text-5xl" />
               </div>
-                <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6">
+                <h1 className="text-xl md:text-2xl lg:text-3xl font-bold mb-3 md:mb-4">
                   {t.result.yourIQ}
               </h1>
                 
                 {/* IQ Score - Grande y prominente */}
-                <div className="relative inline-block">
-                  <div className="text-6xl md:text-9xl lg:text-[180px] font-black mb-3 md:mb-4 leading-none">
+                <div className="relative inline-block mb-3 md:mb-4">
+                  <div className="text-5xl md:text-7xl lg:text-8xl font-black leading-none">
                     {userIQ}
                   </div>
-                  <div className="absolute -top-2 -right-2 md:-top-4 md:-right-4 bg-yellow-400 text-gray-900 px-2 py-1 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-bold shadow-lg">
+                  <div className="absolute -top-1 -right-1 md:-top-2 md:-right-2 bg-yellow-400 text-gray-900 px-2 py-1 md:px-3 md:py-1.5 rounded-full text-xs font-bold shadow-lg">
                     {t.result.topPercent} {100 - percentile}%
                   </div>
                 </div>
                 
-                <div className="text-lg md:text-2xl lg:text-3xl font-semibold mb-2 md:mb-3 bg-white/20 backdrop-blur-sm inline-block px-4 md:px-8 py-2 md:py-3 rounded-full">
+                <div className="text-base md:text-lg lg:text-xl font-semibold mb-2 md:mb-3 bg-white/20 backdrop-blur-sm inline-block px-4 md:px-6 py-2 rounded-full">
                   {category}
                 </div>
                 
-                <div className="flex items-center justify-center gap-2 md:gap-3 text-sm md:text-xl mt-4 md:mt-6">
-                  <FaTrophy className="text-yellow-300 text-lg md:text-2xl" />
+                <div className="flex items-center justify-center gap-2 md:gap-3 text-sm md:text-base mt-3 md:mt-4">
+                  <FaTrophy className="text-yellow-300 text-base md:text-lg" />
                   <span className="font-semibold">{correctAnswers}/{questions.length} {t.result.answersCorrect} ({percentageCorrect}%)</span>
             </div>
 
-                <div className="mt-4 md:mt-6 text-sm md:text-lg opacity-90">
+                <div className="mt-3 md:mt-4 text-sm md:text-base opacity-90">
                   {t.result.percentileText} <strong>{percentile}</strong> {t.result.ofPopulation}
                 </div>
               </div>
