@@ -71,7 +71,7 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
       }
 
       // Si llegamos aquí, el pago de €0.50 fue exitoso
-      console.log('Pago de €0.50 exitoso:', paymentIntent?.id)
+      console.log('✅ Pago de €0.50 exitoso:', paymentIntent?.id)
       localStorage.setItem('paymentCompleted', 'true')
       localStorage.setItem('userEmail', email)
       
@@ -80,6 +80,13 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
         // Extraer customerId del paymentIntent
         const customer = (paymentIntent as any)?.customer
         const customerId = typeof customer === 'string' ? customer : customer?.id
+
+        console.log('📦 Datos para crear suscripción:', {
+          email,
+          userName,
+          customerId,
+          paymentMethodId: paymentIntent?.payment_method
+        })
 
         const subscriptionResponse = await fetch('/api/create-subscription', {
         method: 'POST',
@@ -96,14 +103,16 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
 
         const subscriptionData = await subscriptionResponse.json()
         
+        console.log('📥 Respuesta de create-subscription:', subscriptionData)
+        
         if (subscriptionData.error) {
-          console.error('Error al crear suscripción:', subscriptionData.error)
+          console.error('❌ Error al crear suscripción:', subscriptionData.error)
         } else {
-          console.log('Suscripción creada exitosamente:', subscriptionData)
+          console.log('✅ Suscripción creada exitosamente:', subscriptionData)
           localStorage.setItem('subscriptionId', subscriptionData.subscriptionId)
         }
       } catch (subError) {
-        console.error('Error al crear suscripción:', subError)
+        console.error('❌ Error al crear suscripción:', subError)
       }
 
       // Redirigir a resultados
