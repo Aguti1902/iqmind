@@ -47,10 +47,9 @@ export async function POST(request: NextRequest) {
       customer: customer.id,
       amount: 50, // €0.50 en centavos
       currency: 'eur',
-      // Usar automatic_payment_methods para habilitar todos los métodos disponibles
+      // Habilitar métodos automáticos para Apple Pay y Google Pay
       automatic_payment_methods: {
         enabled: true,
-        allow_redirects: 'never', // Evita métodos que requieren redirección (como Link)
       },
       description: 'IQ Test Result Unlock',
       metadata: {
