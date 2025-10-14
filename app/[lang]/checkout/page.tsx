@@ -273,7 +273,7 @@ export default function CheckoutPage() {
   }
 
   const elementsOptions: StripeElementsOptions = {
-    clientSecret,
+    clientSecret: clientSecret || undefined,
     appearance: {
       theme: 'stripe',
       variables: {

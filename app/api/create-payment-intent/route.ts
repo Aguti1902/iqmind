@@ -40,19 +40,8 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    // Crear Setup Intent para la suscripción futura
-    const setupIntent = await stripe.setupIntents.create({
-      payment_method_types: ['card'],
-      customer_email: email,
-      metadata: {
-        userIQ: userIQ || '',
-        userName: userName || '',
-      },
-    })
-
     return NextResponse.json({
       clientSecret: paymentIntent.client_secret,
-      setupClientSecret: setupIntent.client_secret,
     })
 
   } catch (error: any) {
