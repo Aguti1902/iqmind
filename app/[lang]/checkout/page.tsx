@@ -337,7 +337,7 @@ export default function CheckoutPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             
             {/* Columna Izquierda - Información */}
-            <div className="space-y-6">
+            <div className="space-y-6 order-2 lg:order-1">
               
               {/* Precio Destacado */}
               <div className="bg-white rounded-2xl shadow-xl p-8 border-4 border-[#218B8E]">
@@ -436,7 +436,7 @@ export default function CheckoutPage() {
             </div>
 
             {/* Columna Derecha - Formulario */}
-            <div className="lg:sticky lg:top-8 h-fit">
+            <div className="lg:sticky lg:top-8 h-fit order-1 lg:order-2">
               <div className="bg-white rounded-2xl shadow-2xl p-8">
                 <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">
                   {t.checkout.title}
