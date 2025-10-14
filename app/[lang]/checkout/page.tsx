@@ -26,7 +26,7 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
     return (
       <div className="text-center py-8">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#218B8E] mx-auto mb-4"></div>
-        <p className="text-gray-600">Cargando...</p>
+        <p className="text-gray-600">{t?.checkout?.loading || 'Loading...'}</p>
       </div>
     )
   }
@@ -172,8 +172,8 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
             className="mt-1 w-5 h-5 text-[#218B8E] border-gray-300 rounded focus:ring-[#218B8E]"
                 />
                 <span className="text-sm text-gray-700">
-            Acepto los <a href={`/${lang}/terminos`} target="_blank" className="text-[#218B8E] underline font-semibold">Términos y Condiciones</a>. 
-            Entiendo que se activará una prueba premium de 2 días que puedo cancelar antes de que finalice para evitar el cargo mensual de 19,99€.
+            {t.checkout.acceptTerms} <a href={`/${lang}/terminos`} target="_blank" className="text-[#218B8E] underline font-semibold">{t.checkout.termsAndConditions}</a>. 
+            {t.checkout.trialNote}
                 </span>
               </label>
             </div>
@@ -196,7 +196,7 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
               ) : (
                 <>
                   <FaLock />
-                  Pagar 0,50€ de forma segura
+                  {t.checkout.paySecure}
                 </>
               )}
             </button>
@@ -206,15 +206,15 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
         <div className="flex items-center justify-center gap-4 text-sm text-gray-600 mb-2">
           <div className="flex items-center gap-1">
                 <FaLock className="text-green-500" />
-            <span>SSL Seguro</span>
+            <span>{t.checkout.sslSecure}</span>
           </div>
           <div className="flex items-center gap-1">
             <FaCheckCircle className="text-green-500" />
-            <span>Stripe</span>
+            <span>{t.checkout.stripeSecure}</span>
           </div>
         </div>
         <p className="text-xs text-gray-500">
-          Pago 100% seguro • Política de reembolso de 14 días
+          {t.checkout.secureNote}
         </p>
       </div>
     </form>
@@ -291,7 +291,7 @@ export default function CheckoutPage() {
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
             <div className="w-16 h-16 border-4 border-[#218B8E] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-gray-600">Cargando...</p>
+            <p className="text-gray-600">{t.checkout.loading}</p>
           </div>
         </div>
       </>
@@ -343,30 +343,30 @@ export default function CheckoutPage() {
               <div className="bg-white rounded-2xl shadow-xl p-8 border-4 border-[#218B8E]">
                 <div className="text-center mb-6">
                   <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                    Desbloquea tu resultado completo
+                    {t.checkout.unlockComplete}
                   </h3>
                   <div className="flex items-baseline justify-center gap-2 mb-4">
-                    <span className="text-gray-500 line-through text-2xl">19,99€</span>
-                    <span className="text-6xl font-bold text-[#218B8E]">0,50€</span>
+                    <span className="text-gray-500 line-through text-2xl">{t.checkout.originalPrice}</span>
+                    <span className="text-6xl font-bold text-[#218B8E]">{t.checkout.currentPrice}</span>
                   </div>
                   <div className="inline-block bg-green-100 text-green-800 px-4 py-2 rounded-full font-semibold mb-4">
-                    ⚡ ¡Ahorra 97% hoy!
+                    {t.checkout.save97}
                   </div>
                 </div>
 
                 <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 mb-6">
                   <h4 className="font-bold text-blue-900 mb-3 flex items-center gap-2">
                     <FaCheckCircle className="text-blue-600" />
-                    Incluye Prueba Premium de 2 Días
+                    {t.checkout.premiumTrialTitle}
                   </h4>
                   <p className="text-blue-800 text-sm mb-2">
-                    • Acceso completo a tu análisis de CI<br/>
-                    • Comparativas con población general<br/>
-                    • Certificado oficial descargable<br/>
-                    • Prueba 2 días gratis, después <strong>19,99€/mes</strong>
+                    {t.checkout.premiumFeature1}<br/>
+                    {t.checkout.premiumFeature2}<br/>
+                    {t.checkout.premiumFeature3}<br/>
+                    {t.checkout.premiumFeature4} <strong>{t.checkout.premiumFeature4Price}</strong>
                   </p>
                   <p className="text-xs text-blue-700 mt-3">
-                    ℹ️ Puedes cancelar en cualquier momento antes de que finalice el periodo de prueba
+                    {t.checkout.cancelAnytimeNote}
                   </p>
                 </div>
               </div>
@@ -374,7 +374,7 @@ export default function CheckoutPage() {
               {/* Qué Obtendrás */}
               <div className="bg-white rounded-2xl shadow-xl p-6">
                 <h3 className="text-xl font-bold text-gray-900 mb-4">
-                  Por solo 0,50€ obtendrás:
+                  {t.checkout.whatYouGetTitle}
                 </h3>
                 <div className="space-y-4">
                   <div className="flex items-start gap-3">
@@ -382,8 +382,8 @@ export default function CheckoutPage() {
                       <FaBrain className="text-white" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-gray-900">Tu puntuación exacta de CI</h4>
-                      <p className="text-sm text-gray-600">Análisis detallado personalizado</p>
+                      <h4 className="font-semibold text-gray-900">{t.checkout.feature1Title}</h4>
+                      <p className="text-sm text-gray-600">{t.checkout.feature1Desc}</p>
                     </div>
                   </div>
 
@@ -392,8 +392,8 @@ export default function CheckoutPage() {
                       <FaChartLine className="text-white" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-gray-900">Gráficos comparativos</h4>
-                      <p className="text-sm text-gray-600">Compárate con la población general</p>
+                      <h4 className="font-semibold text-gray-900">{t.checkout.feature2Title}</h4>
+                      <p className="text-sm text-gray-600">{t.checkout.feature2Desc}</p>
                     </div>
                   </div>
 
@@ -402,8 +402,8 @@ export default function CheckoutPage() {
                       <FaCertificate className="text-white" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-gray-900">Certificado oficial</h4>
-                      <p className="text-sm text-gray-600">Descargable y compartible</p>
+                      <h4 className="font-semibold text-gray-900">{t.checkout.feature3Title}</h4>
+                      <p className="text-sm text-gray-600">{t.checkout.feature3Desc}</p>
                     </div>
                   </div>
 
@@ -412,8 +412,8 @@ export default function CheckoutPage() {
                       <FaUsers className="text-white" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-gray-900">Acceso a 2 días de prueba premium</h4>
-                      <p className="text-sm text-gray-600">Cancela cuando quieras</p>
+                      <h4 className="font-semibold text-gray-900">{t.checkout.feature4Title}</h4>
+                      <p className="text-sm text-gray-600">{t.checkout.feature4Desc}</p>
                     </div>
                   </div>
                 </div>
@@ -423,14 +423,14 @@ export default function CheckoutPage() {
               <div className="bg-green-50 rounded-xl p-6 border-2 border-green-200">
                 <div className="flex items-center gap-3 mb-4">
                   <FaCheckCircle className="text-green-600 text-2xl" />
-                  <h4 className="font-bold text-green-900">¿Por qué confiar en nosotros?</h4>
+                  <h4 className="font-bold text-green-900">{t.checkout.trustTitle}</h4>
                 </div>
                 <ul className="text-sm text-green-800 space-y-2">
-                  <li>✓ Test validado científicamente</li>
-                  <li>✓ Más de 100,000 usuarios satisfechos</li>
-                  <li>✓ Pago 100% seguro con Stripe</li>
-                  <li>✓ Certificado SSL y encriptación</li>
-                  <li>✓ Política de reembolso de 14 días</li>
+                  <li>{t.checkout.trustPoint1}</li>
+                  <li>{t.checkout.trustPoint2}</li>
+                  <li>{t.checkout.trustPoint3}</li>
+                  <li>{t.checkout.trustPoint4}</li>
+                  <li>{t.checkout.trustPoint5}</li>
                 </ul>
               </div>
             </div>
@@ -462,7 +462,7 @@ export default function CheckoutPage() {
                     <p className="text-red-600 text-sm mt-2">{emailError}</p>
                   )}
                   <p className="text-sm text-gray-500 mt-2">
-                    📧 Recibirás tu resultado completo aquí
+                    {t.checkout.emailHelper}
                   </p>
                 </div>
 
@@ -476,10 +476,10 @@ export default function CheckoutPage() {
                     </div>
                     <div className="flex justify-between">
                       <div>
-                        <span className="text-gray-700 block">{t.pricing.trialTitle}</span>
-                        <span className="text-xs text-gray-500">{t.pricing.afterTrial}</span>
+                        <span className="text-gray-700 block">{t.checkout.trialTitle}</span>
+                        <span className="text-xs text-gray-500">{t.checkout.afterTrial}</span>
                       </div>
-                      <span className="font-semibold text-green-600">{t.pricing.free}</span>
+                      <span className="font-semibold text-green-600">{t.checkout.free}</span>
                     </div>
                     <div className="border-t-2 pt-3 flex justify-between items-center">
                       <span className="text-lg font-bold text-gray-900">{t.checkout.total}</span>
@@ -523,45 +523,45 @@ export default function CheckoutPage() {
             <div className="bg-white rounded-xl p-6 shadow-lg">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-12 h-12 bg-[#e6f5f5] rounded-full flex items-center justify-center text-[#218B8E] font-bold">
-                  MG
+                  {t.checkout.testimonial1Name.split(' ').map(n => n[0]).join('')}
                 </div>
                 <div>
-                  <h5 className="font-semibold">María García</h5>
+                  <h5 className="font-semibold">{t.checkout.testimonial1Name}</h5>
                   <div className="text-yellow-400">★★★★★</div>
                 </div>
               </div>
               <p className="text-gray-600 text-sm">
-                "Increíble precisión. El análisis superó mis expectativas."
+                "{t.checkout.testimonial1Text}"
               </p>
             </div>
 
             <div className="bg-white rounded-xl p-6 shadow-lg">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-12 h-12 bg-[#e6f5f5] rounded-full flex items-center justify-center text-[#218B8E] font-bold">
-                  JL
+                  {t.checkout.testimonial2Name.split(' ').map(n => n[0]).join('')}
                 </div>
                 <div>
-                  <h5 className="font-semibold">Juan López</h5>
+                  <h5 className="font-semibold">{t.checkout.testimonial2Name}</h5>
                   <div className="text-yellow-400">★★★★★</div>
                 </div>
               </div>
               <p className="text-gray-600 text-sm">
-                "Proceso rápido y resultados muy detallados. Lo recomiendo."
+                "{t.checkout.testimonial2Text}"
               </p>
             </div>
 
             <div className="bg-white rounded-xl p-6 shadow-lg">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-12 h-12 bg-[#e6f5f5] rounded-full flex items-center justify-center text-[#218B8E] font-bold">
-                  AP
+                  {t.checkout.testimonial3Name.split(' ').map(n => n[0]).join('')}
                 </div>
                 <div>
-                  <h5 className="font-semibold">Ana Pérez</h5>
+                  <h5 className="font-semibold">{t.checkout.testimonial3Name}</h5>
                   <div className="text-yellow-400">★★★★★</div>
                 </div>
               </div>
               <p className="text-gray-600 text-sm">
-                "Vale totalmente la pena. Certificado profesional."
+                "{t.checkout.testimonial3Text}"
               </p>
             </div>
           </div>
