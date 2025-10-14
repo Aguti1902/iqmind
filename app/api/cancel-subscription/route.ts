@@ -44,14 +44,18 @@ export async function POST(request: NextRequest) {
     const customer = customers.data[0]
     console.log('Customer encontrado:', customer.id)
 
-    // Buscar las suscripciones activas del customer
+    // Buscar las suscripciones activas o en trial del customer
     const subscriptions = await stripe.subscriptions.list({
       customer: customer.id,
-      status: 'active',
       limit: 10,
     })
 
-    if (subscriptions.data.length === 0) {
+    // Filtrar solo suscripciones activas o en trial
+    const activeSubscriptions = subscriptions.data.filter(
+      sub => sub.status === 'active' || sub.status === 'trialing'
+    )
+
+    if (activeSubscriptions.length === 0) {
       return NextResponse.json(
         { error: 'No se encontró ninguna suscripción activa' },
         { status: 404 }
@@ -59,7 +63,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Cancelar la suscripción más reciente
-    const activeSubscription = subscriptions.data[0]
+    const activeSubscription = activeSubscriptions[0]
     console.log('Cancelando suscripción:', activeSubscription.id)
 
     // Cancelar al final del periodo de facturación
