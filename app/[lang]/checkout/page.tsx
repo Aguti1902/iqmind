@@ -146,11 +146,8 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
       <div className="border-2 border-gray-200 rounded-xl p-4 bg-gray-50">
         <PaymentElement 
           options={{
-            layout: 'tabs',
-            wallets: {
-              applePay: 'auto',
-              googlePay: 'auto',
-            },
+            layout: 'accordion',
+            defaultCollapsed: false,
           }}
         />
             </div>
@@ -312,6 +309,7 @@ export default function CheckoutPage() {
         borderRadius: '8px',
       },
     },
+    loader: 'always',
   }
 
   return (
