@@ -77,10 +77,9 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
       
       // Crear suscripción con trial usando el paymentMethodId
       try {
-        // Extraer customerId (puede ser string o objeto Customer)
-        const customerId = typeof paymentIntent?.customer === 'string' 
-          ? paymentIntent.customer 
-          : paymentIntent?.customer?.id
+        // Extraer customerId del paymentIntent
+        const customer = (paymentIntent as any)?.customer
+        const customerId = typeof customer === 'string' ? customer : customer?.id
 
         const subscriptionResponse = await fetch('/api/create-subscription', {
           method: 'POST',
