@@ -590,21 +590,6 @@ export default function ResultadoPage() {
           </div>
 
 
-          {/* Subscription Management */}
-          <div className="bg-white rounded-3xl shadow-xl p-4 md:p-8 text-center">
-            <h3 className="text-lg md:text-xl lg:text-2xl font-bold text-gray-900 mb-2 md:mb-3">
-              {t.result.manageSubscription}
-            </h3>
-            <p className="text-gray-600 mb-4 md:mb-6 text-sm md:text-base lg:text-lg">
-              {t.result.manageSubtitle}
-            </p>
-            <a 
-              href={`/${lang}/cuenta`}
-              className="inline-block bg-[#031C43] hover:bg-[#052547] text-white px-6 md:px-10 py-3 md:py-4 rounded-xl font-bold text-sm md:text-base lg:text-lg transition-all duration-200 shadow-lg hover:shadow-xl"
-            >
-              {t.result.goToAccount}
-            </a>
-          </div>
         </div>
       </div>
 
