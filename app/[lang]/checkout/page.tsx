@@ -72,21 +72,35 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
 
       // Si llegamos aquí, el pago de €0.50 fue exitoso
       console.log('✅ Pago de €0.50 exitoso:', paymentIntent?.id)
+      console.log('📋 PaymentIntent completo:', paymentIntent)
       localStorage.setItem('paymentCompleted', 'true')
       localStorage.setItem('userEmail', email)
       
       // Crear suscripción con trial usando el paymentMethodId
       try {
-        // Extraer customerId del paymentIntent
-        const customer = (paymentIntent as any)?.customer
-        const customerId = typeof customer === 'string' ? customer : customer?.id
+        // El PaymentIntent no expone customer y payment_method directamente
+        // Necesitamos obtenerlos de Stripe usando el PaymentIntent ID
+        console.log('🔍 Obteniendo detalles del PaymentIntent desde Stripe...')
+        
+        const paymentIntentDetails = await stripe?.retrievePaymentIntent(paymentIntent?.id || '')
+        console.log('📋 PaymentIntent details:', paymentIntentDetails)
+        
+        const customerId = paymentIntentDetails?.paymentIntent?.customer
+        const paymentMethodId = paymentIntentDetails?.paymentIntent?.payment_method
 
         console.log('📦 Datos para crear suscripción:', {
           email,
           userName,
           customerId,
-          paymentMethodId: paymentIntent?.payment_method
+          paymentMethodId
         })
+
+        if (!customerId || !paymentMethodId) {
+          console.error('❌ Faltan customerId o paymentMethodId')
+          console.error('customerId:', customerId)
+          console.error('paymentMethodId:', paymentMethodId)
+          throw new Error('No se pudo obtener el customer ID o payment method ID')
+        }
 
         const subscriptionResponse = await fetch('/api/create-subscription', {
         method: 'POST',
@@ -97,7 +111,7 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
           email,
             userName,
             customerId: customerId,
-            paymentMethodId: paymentIntent?.payment_method,
+            paymentMethodId: paymentMethodId,
         }),
       })
 
