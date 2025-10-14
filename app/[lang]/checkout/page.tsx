@@ -148,7 +148,7 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
           options={{
             layout: 'tabs',
             wallets: {
-              applePay: 'auto',
+              applePay: 'always',
               googlePay: 'auto',
             },
           }}
