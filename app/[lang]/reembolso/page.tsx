@@ -138,16 +138,16 @@ export default function ReembolsoPage() {
                   <li className="flex items-start gap-3">
                     <span className="text-blue-600">✓</span>
                     <span>You can <strong>cancel anytime</strong> without additional charges</span>
-                  </li>
+                </li>
                   <li className="flex items-start gap-3">
                     <span className="text-blue-600">✓</span>
                     <span>If you cancel within 48 hours, <strong>no further charges</strong></span>
-                  </li>
+                </li>
                   <li className="flex items-start gap-3">
                     <span className="text-blue-600">✓</span>
                     <span>Access to unlimited tests and advanced analytics</span>
-                  </li>
-                </ul>
+                </li>
+              </ul>
               </div>
 
               <h3 className="text-xl font-semibold text-gray-900 mb-3">3.2 Trial Period Refunds</h3>
@@ -195,7 +195,7 @@ export default function ReembolsoPage() {
                       <strong>No refund</strong> after 48 hours or if you have actively used premium features
                     </div>
                   </li>
-                </ul>
+              </ul>
               </div>
 
               <h3 className="text-xl font-semibold text-gray-900 mb-3">4.3 How to Cancel</h3>
@@ -358,9 +358,9 @@ export default function ReembolsoPage() {
                 </div>
               </div>
               <div className="mt-4 pt-4 border-t border-blue-200">
-                <p className="text-sm text-gray-700">
+              <p className="text-sm text-gray-700">
                   <strong>💡 Pro Tip:</strong> Cancel during the 2-day trial to avoid any monthly charges!
-                </p>
+              </p>
               </div>
             </div>
           </div>
