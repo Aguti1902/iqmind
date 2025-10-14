@@ -127,59 +127,59 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
             layout: 'tabs',
           }}
         />
-      </div>
+            </div>
 
       {/* Error Message */}
       {errorMessage && (
         <div className="bg-red-50 border-2 border-red-200 text-red-800 px-4 py-3 rounded-lg text-sm">
           {errorMessage}
-        </div>
+                </div>
       )}
 
       {/* Términos */}
       <div>
-        <label className="flex items-start gap-3 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={agreedToTerms}
-            onChange={(e) => setAgreedToTerms(e.target.checked)}
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={agreedToTerms}
+                  onChange={(e) => setAgreedToTerms(e.target.checked)}
             className="mt-1 w-5 h-5 text-[#218B8E] border-gray-300 rounded focus:ring-[#218B8E]"
-          />
-          <span className="text-sm text-gray-700">
+                />
+                <span className="text-sm text-gray-700">
             Acepto los <a href={`/${lang}/terminos`} target="_blank" className="text-[#218B8E] underline font-semibold">Términos y Condiciones</a>. 
             Entiendo que se activará una prueba premium de 2 días que puedo cancelar antes de que finalice para evitar el cargo mensual de 19,99€.
-          </span>
-        </label>
-      </div>
+                </span>
+              </label>
+            </div>
 
       {/* Botón de Pago */}
-      <button
+            <button
         type="submit"
         disabled={isProcessing || !stripe || !agreedToTerms}
         className={`w-full py-4 rounded-xl font-bold text-lg transition-all duration-200 flex items-center justify-center gap-3 ${
           isProcessing || !stripe || !agreedToTerms
-            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
             : 'bg-[#031C43] text-white hover:bg-[#052547] shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
-        }`}
-      >
-        {isProcessing ? (
-          <>
-            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+              }`}
+            >
+              {isProcessing ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
             Procesando pago...
-          </>
-        ) : (
-          <>
-            <FaLock />
-            Pagar 0,50€ de forma segura
-          </>
-        )}
-      </button>
+                </>
+              ) : (
+                <>
+                  <FaLock />
+                  Pagar 0,50€ de forma segura
+                </>
+              )}
+            </button>
 
       {/* Badges de Seguridad */}
       <div className="text-center">
         <div className="flex items-center justify-center gap-4 text-sm text-gray-600 mb-2">
           <div className="flex items-center gap-1">
-            <FaLock className="text-green-500" />
+                <FaLock className="text-green-500" />
             <span>SSL Seguro</span>
           </div>
           <div className="flex items-center gap-1">
@@ -223,40 +223,40 @@ export default function CheckoutPage() {
     }
   }, [router, lang])
 
-  const handleEmailSubmit = async () => {
-    if (!email || !email.includes('@')) {
-      setEmailError('Por favor ingresa un email válido')
-      return
-    }
+  // Cargar payment intent automáticamente cuando se carga la página
+  useEffect(() => {
+    const loadPaymentIntent = async () => {
+      if (!email || !userIQ) return
 
-    setEmailError('')
+      try {
+        const response = await fetch('/api/create-payment-intent', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email,
+            userIQ,
+            userName,
+          }),
+        })
 
-    try {
-      const response = await fetch('/api/create-payment-intent', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email,
-          userIQ,
-          userName,
-        }),
-      })
+        const data = await response.json()
 
-      const data = await response.json()
+        if (data.error) {
+          setEmailError(data.error)
+          return
+        }
 
-      if (data.error) {
-        setEmailError(data.error)
-        return
+        setClientSecret(data.clientSecret)
+        localStorage.setItem('userEmail', email)
+      } catch (error) {
+        setEmailError('Error al inicializar el pago')
       }
-
-      setClientSecret(data.clientSecret)
-      localStorage.setItem('userEmail', email)
-    } catch (error) {
-      setEmailError('Error al inicializar el pago')
     }
-  }
+
+    loadPaymentIntent()
+  }, [email, userIQ, userName])
 
   if (loading || !t) {
     return (
@@ -417,37 +417,28 @@ export default function CheckoutPage() {
                 </h3>
 
                 {/* Email */}
-                {!clientSecret && (
-                  <div className="mb-6">
-                    <label className="block text-gray-700 font-semibold mb-2">
-                      Correo Electrónico
-                    </label>
-                    <div className="relative">
-                      <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="tu@email.com"
-                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#218B8E] focus:border-transparent"
-                        required
-                      />
-                      <FaLock className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                    </div>
-                    {emailError && (
-                      <p className="text-red-600 text-sm mt-2">{emailError}</p>
-                    )}
-                    <p className="text-sm text-gray-500 mt-2">
-                      📧 Recibirás tu resultado completo aquí
-                    </p>
-                    <button
-                      onClick={handleEmailSubmit}
-                      disabled={!email}
-                      className="w-full mt-4 py-3 bg-[#218B8E] text-white rounded-lg font-semibold hover:bg-[#1a6f71] transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
-                    >
-                      Continuar al pago
-                    </button>
+                <div className="mb-6">
+                  <label className="block text-gray-700 font-semibold mb-2">
+                    Correo Electrónico
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="tu@email.com"
+                      className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#218B8E] focus:border-transparent"
+                      required
+                    />
+                    <FaLock className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
                   </div>
-                )}
+                  {emailError && (
+                    <p className="text-red-600 text-sm mt-2">{emailError}</p>
+                  )}
+                  <p className="text-sm text-gray-500 mt-2">
+                    📧 Recibirás tu resultado completo aquí
+                  </p>
+                </div>
 
                 {/* Resumen */}
                 <div className="bg-gray-50 rounded-xl p-6 mb-6">
@@ -472,7 +463,7 @@ export default function CheckoutPage() {
                 </div>
 
                 {/* Payment Element */}
-                {clientSecret && userIQ && userName && (
+                {userIQ && userName && (
                   <Elements stripe={stripePromise} options={elementsOptions}>
                     <CheckoutForm 
                       email={email} 
@@ -481,6 +472,13 @@ export default function CheckoutPage() {
                       lang={lang}
                     />
                   </Elements>
+                )}
+                
+                {!clientSecret && (
+                  <div className="text-center py-8">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#218B8E] mx-auto mb-4"></div>
+                    <p className="text-gray-600">Cargando métodos de pago...</p>
+                  </div>
                 )}
               </div>
 
