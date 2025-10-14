@@ -74,6 +74,12 @@ export default function Header() {
             >
               {t.nav.help}
             </Link>
+            
+            {/* Selector de Idiomas en Móvil */}
+            <div className="pt-2 pb-2 border-t border-gray-200">
+              <LanguageSelector />
+            </div>
+            
             <Link
               href={`/${lang}/test`}
               className="block bg-[#031C43] hover:bg-[#052547] text-white font-semibold py-3 px-8 rounded-lg transition-all duration-200 text-center"
