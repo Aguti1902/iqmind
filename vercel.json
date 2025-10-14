@@ -1,8 +1,8 @@
 {
-  "routes": [
+  "rewrites": [
     {
-      "src": "/.well-known/apple-developer-merchantid-domain-association",
-      "dest": "/api/apple-pay-domain-association"
+      "source": "/.well-known/apple-developer-merchantid-domain-association",
+      "destination": "/api/apple-pay-domain-association"
     }
   ]
 }
