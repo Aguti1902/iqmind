@@ -85,8 +85,10 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
         const paymentIntentDetails = await stripe?.retrievePaymentIntent(paymentIntent?.id || '')
         console.log('📋 PaymentIntent details:', paymentIntentDetails)
         
-        const customerId = paymentIntentDetails?.paymentIntent?.customer
-        const paymentMethodId = paymentIntentDetails?.paymentIntent?.payment_method
+        // Type assertion para acceder a las propiedades
+        const details = paymentIntentDetails as any
+        const customerId = details?.paymentIntent?.customer
+        const paymentMethodId = details?.paymentIntent?.payment_method
 
         console.log('📦 Datos para crear suscripción:', {
           email,
