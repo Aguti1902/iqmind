@@ -147,10 +147,6 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
         <PaymentElement 
           options={{
             layout: 'tabs',
-            wallets: {
-              applePay: 'always',
-              googlePay: 'auto',
-            },
           }}
         />
             </div>
