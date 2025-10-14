@@ -82,17 +82,17 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
         const customerId = typeof customer === 'string' ? customer : customer?.id
 
         const subscriptionResponse = await fetch('/api/create-subscription', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email,
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
             userName,
             customerId: customerId,
             paymentMethodId: paymentIntent?.payment_method,
-          }),
-        })
+        }),
+      })
 
         const subscriptionData = await subscriptionResponse.json()
         
