@@ -16,16 +16,49 @@ export default function CancelarSuscripcionPage() {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [error, setError] = useState('')
+  const [endDate, setEndDate] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
+    setError('')
 
-    // Simulamos el envío (aquí integrarías con tu backend/API)
-    await new Promise(resolve => setTimeout(resolve, 2000))
+    try {
+      // Llamar a la API para cancelar la suscripción en Stripe
+      const response = await fetch('/api/cancel-subscription', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          fullName: formData.fullName,
+        }),
+      })
 
-    setIsSubmitting(false)
-    setIsSubmitted(true)
+      const data = await response.json()
+
+      if (!response.ok) {
+        setError(data.error || 'Error al cancelar la suscripción')
+        setIsSubmitting(false)
+        return
+      }
+
+      // Guardar la fecha de finalización
+      setEndDate(data.endDate)
+      setIsSubmitted(true)
+      setIsSubmitting(false)
+
+      // Limpiar localStorage
+      localStorage.removeItem('paymentCompleted')
+      localStorage.removeItem('subscriptionId')
+
+    } catch (error) {
+      console.error('Error al cancelar suscripción:', error)
+      setError('Error al procesar la solicitud. Por favor, intenta de nuevo.')
+      setIsSubmitting(false)
+    }
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -70,9 +103,14 @@ export default function CancelarSuscripcionPage() {
               </p>
 
               <div className="bg-blue-50 border-l-4 border-blue-500 p-6 mb-8 text-left">
-                <p className="text-gray-700">
+                <p className="text-gray-700 mb-2">
                   <strong>{t.cancel.successInfo}</strong>
                 </p>
+                {endDate && (
+                  <p className="text-gray-700">
+                    <strong>Fecha de finalización de tu suscripción:</strong> {endDate}
+                  </p>
+                )}
               </div>
 
               <a
@@ -122,6 +160,14 @@ export default function CancelarSuscripcionPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Error Message */}
+              {error && (
+                <div className="bg-red-50 border-l-4 border-red-500 p-4 text-red-700">
+                  <p className="font-semibold">Error</p>
+                  <p>{error}</p>
+                </div>
+              )}
+
               {/* Nombre Completo */}
               <div>
                 <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-2">
@@ -221,4 +267,5 @@ export default function CancelarSuscripcionPage() {
     </>
   )
 }
+
 
