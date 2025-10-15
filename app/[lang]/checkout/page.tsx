@@ -89,6 +89,25 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
         console.log('📧 Email:', email)
         console.log('👤 User Name:', userName)
 
+        // Obtener datos del test desde localStorage
+        const testResultsStr = localStorage.getItem('testResults')
+        let testData = {}
+        
+        if (testResultsStr) {
+          try {
+            const testResults = JSON.parse(testResultsStr)
+            testData = {
+              answers: testResults.answers || [],
+              timeElapsed: testResults.timeElapsed || 0,
+              correctAnswers: testResults.correctAnswers || 0,
+              categoryScores: testResults.categoryScores || {}
+            }
+            console.log('📊 Datos del test obtenidos:', testData)
+          } catch (error) {
+            console.error('❌ Error parseando testResults:', error)
+          }
+        }
+
         const subscriptionResponse = await fetch('/api/create-subscription', {
           method: 'POST',
           headers: {
@@ -98,6 +117,7 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
             email,
             userName,
             paymentIntentId: paymentIntentId,
+            testData: testData,
           }),
         })
 

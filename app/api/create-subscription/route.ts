@@ -10,10 +10,10 @@ const stripe = process.env.STRIPE_SECRET_KEY
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { email, userName, paymentIntentId } = body
+    const { email, userName, paymentIntentId, testData } = body
 
     console.log('=== INICIO CREAR SUSCRIPCIÓN ===')
-    console.log('Body recibido:', { email, userName, paymentIntentId })
+    console.log('Body recibido:', { email, userName, paymentIntentId, testData })
 
     if (!paymentIntentId) {
       console.error('❌ Falta paymentIntentId')
@@ -126,6 +126,11 @@ export async function POST(request: NextRequest) {
         userName: userName || '',
         email: email || '',
         initialPaymentIntentId: paymentIntentId,
+        userIQ: paymentIntent.metadata.userIQ || '',
+        testAnswers: testData?.answers ? JSON.stringify(testData.answers) : '',
+        testTimeElapsed: testData?.timeElapsed?.toString() || '',
+        testCorrectAnswers: testData?.correctAnswers?.toString() || '',
+        testCategoryScores: testData?.categoryScores ? JSON.stringify(testData.categoryScores) : '',
       },
       trial_period_days: 2,
       // Configurar para que cobre automáticamente después del trial
