@@ -46,6 +46,11 @@ async function sendEmailToUser(type: string, data: any) {
           // Guardar resultado del test en el historial del usuario
           try {
             // Obtener datos del test desde los metadata de la suscripción
+            if (!stripe) {
+              console.error('❌ Stripe no configurado para obtener suscripción')
+              throw new Error('Stripe no configurado')
+            }
+            
             const subscription = await stripe.subscriptions.list({
               customer: paymentIntent.customer as string,
               limit: 1
