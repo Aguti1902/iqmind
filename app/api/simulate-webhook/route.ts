@@ -57,13 +57,13 @@ export async function POST(request: NextRequest) {
         timeElapsed: testResult.timeElapsed,
         completedAt: testResult.completedAt
       },
-      user: {
+      user: updatedUser ? {
         id: updatedUser.id,
         email: updatedUser.email,
         userName: updatedUser.userName,
         iq: updatedUser.iq,
         testResultsCount: updatedTestResults.length
-      }
+      } : null
     })
 
   } catch (error: any) {
