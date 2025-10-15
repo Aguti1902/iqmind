@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useParams } from 'next/navigation'
 import { useTranslations } from '@/hooks/useTranslations'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
@@ -17,6 +17,8 @@ export default function LoginPage() {
   const [forgotPasswordMessage, setForgotPasswordMessage] = useState('')
   
   const router = useRouter()
+  const params = useParams()
+  const lang = params.lang as string || 'es'
   const { t } = useTranslations()
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -39,7 +41,7 @@ export default function LoginPage() {
         localStorage.setItem('user_data', JSON.stringify(data.user))
         
         // Redirigir al dashboard
-        router.push('/dashboard')
+        router.push(`/${lang}/dashboard`)
       } else {
         setError(data.error || 'Error al iniciar sesión')
       }

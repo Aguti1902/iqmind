@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useParams } from 'next/navigation'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 
@@ -29,6 +29,8 @@ export default function DashboardPage() {
   const [passwordLoading, setPasswordLoading] = useState(false)
   
   const router = useRouter()
+  const params = useParams()
+  const lang = params.lang as string || 'es'
 
   useEffect(() => {
     // Verificar autenticación
@@ -36,7 +38,7 @@ export default function DashboardPage() {
     const userData = localStorage.getItem('user_data')
 
     if (!token || !userData) {
-      router.push('/login')
+      router.push(`/${lang}/login`)
       return
     }
 
@@ -45,16 +47,16 @@ export default function DashboardPage() {
       setUser(parsedUser)
     } catch (error) {
       console.error('Error parsing user data:', error)
-      router.push('/login')
+      router.push(`/${lang}/login`)
     } finally {
       setLoading(false)
     }
-  }, [router])
+  }, [router, lang])
 
   const handleLogout = () => {
     localStorage.removeItem('auth_token')
     localStorage.removeItem('user_data')
-    router.push('/login')
+    router.push(`/${lang}/login`)
   }
 
   const handleChangePassword = async (e: React.FormEvent) => {
@@ -357,13 +359,22 @@ export default function DashboardPage() {
                   ⚡ Acciones Rápidas
                 </h3>
                 <div className="space-y-3">
-                  <button className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                  <button 
+                    onClick={() => router.push(`/${lang}/resultado`)}
+                    className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  >
                     Ver Resultado Completo
                   </button>
-                  <button className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+                  <button 
+                    onClick={() => router.push(`/${lang}/cancelar-suscripcion`)}
+                    className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                  >
                     Gestionar Suscripción
                   </button>
-                  <button className="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
+                  <button 
+                    onClick={() => router.push(`/${lang}/contacto`)}
+                    className="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+                  >
                     Contactar Soporte
                   </button>
                 </div>
@@ -376,3 +387,4 @@ export default function DashboardPage() {
     </>
   )
 }
+
