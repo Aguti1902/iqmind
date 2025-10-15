@@ -28,11 +28,8 @@ export default function TestHeader({
       <div className="container mx-auto max-w-7xl px-4">
         <div className="flex items-center justify-between py-3">
           {/* Logo */}
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-[#218B8E] to-[#031C43] rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">IQ</span>
-            </div>
-            <span className="text-xl font-bold text-gray-900">IQmind</span>
+          <div className="flex items-center">
+            <img src="/images/LOGO2.svg" alt="IQmind" className="h-8 w-auto" />
           </div>
           
           {/* Timer */}

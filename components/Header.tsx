@@ -16,12 +16,9 @@ export default function Header() {
     <header className="bg-white shadow-sm sticky top-0 z-50">
       <nav className="container-custom py-4">
         <div className="flex justify-between items-center">
-          {/* Logo IQmind - Solo texto */}
+          {/* Logo IQmind */}
           <Link href={`/${lang}`} className="flex items-center">
-            <span className="text-2xl font-bold">
-              <span className="text-[#031C43]">IQ</span>
-              <span className="text-[#218B8E]">mind</span>
-            </span>
+            <img src="/images/LOGO2.svg" alt="IQmind" className="h-8 w-auto" />
           </Link>
 
           {/* Desktop Menu */}

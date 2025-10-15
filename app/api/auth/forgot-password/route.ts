@@ -56,9 +56,7 @@ export async function POST(request: NextRequest) {
                   <!-- Header -->
                   <tr>
                     <td style="background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); padding: 40px 30px; text-align: center;">
-                      <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">
-                        🧠 IQmind
-                      </h1>
+                      <img src="https://www.iqmind.io/images/LOGO2BLANCO.svg" alt="IQmind" style="height: 40px; width: auto; margin: 0 auto; display: block;" />
                     </td>
                   </tr>
                   

@@ -15,10 +15,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Logo y descripción */}
           <div className="col-span-1 md:col-span-2">
-            <h3 className="text-2xl font-bold text-white mb-4">
-              <span className="text-white">IQ</span>
-              <span className="text-[#218B8E]">mind</span>
-            </h3>
+            <img src="/images/LOGO2BLANCO.svg" alt="IQmind" className="h-8 w-auto mb-4" />
             <p className="text-gray-400 mb-4">
               {t.footer.description}
             </p>

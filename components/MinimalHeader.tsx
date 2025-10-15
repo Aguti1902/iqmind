@@ -18,9 +18,8 @@ export default function MinimalHeader({ email }: MinimalHeaderProps) {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <Link href={`/${lang}`} className="flex items-center gap-2 text-gray-900 hover:text-primary-600 transition">
-              <FaBrain className="text-2xl text-primary-600" />
-              <span className="text-xl font-bold">myIQ</span>
+            <Link href={`/${lang}`} className="flex items-center">
+              <img src="/images/LOGO2.svg" alt="IQmind" className="h-8 w-auto" />
             </Link>
           </div>
 

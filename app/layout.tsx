@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description: 'Descubre tu nivel de inteligencia en minutos con nuestro test científico de CI. Resultados precisos y personalizados.',
   keywords: 'test IQ, test inteligencia, CI, coeficiente intelectual, test online, IQmind',
   icons: {
-    icon: '/images/Favicon.png',
+    icon: '/images/FAVICON2.png',
   }
 }
 
@@ -23,7 +23,7 @@ export default function RootLayout({
     <html lang="es">
       <head>
         <Analytics />
-        <link rel="icon" href="/images/Favicon.png" type="image/png" />
+        <link rel="icon" href="/images/FAVICON2.png" type="image/png" />
       </head>
       <body className={inter.className}>
         {children}
