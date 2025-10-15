@@ -4,6 +4,7 @@ export const dynamic = 'force-dynamic'
 import { sendEmail, emailTemplates } from '@/lib/email-service'
 import { createOrUpdateUser } from '@/lib/auth'
 import { db } from '@/lib/database-postgres'
+import { getEmailTranslation } from '@/lib/email-translations'
 
 const stripe = process.env.STRIPE_SECRET_KEY
   ? new Stripe(process.env.STRIPE_SECRET_KEY, {
@@ -49,19 +50,18 @@ async function sendEmailToUser(type: string, data: any) {
           
           // Enviar email con credenciales de acceso
           const lang = data.lang || 'es'
+          const t = (key: any) => getEmailTranslation(lang, key)
           const loginUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://iqmind.io'}/${lang}/cuenta`
           emailData = {
             to: data.email,
-            subject: lang === 'es' 
-              ? '¡Bienvenido a IQmind! - Acceso a tu Dashboard'
-              : 'Welcome to IQmind! - Access to your Dashboard',
+            subject: t('welcomeSubject'),
             html: `
               <!DOCTYPE html>
               <html>
               <head>
                 <meta charset="utf-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>${lang === 'es' ? 'Bienvenido a IQmind' : 'Welcome to IQmind'}</title>
+                <title>${t('welcome')} IQmind</title>
               </head>
               <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f5;">
                 <table role="presentation" style="width: 100%; border-collapse: collapse;">
@@ -79,55 +79,47 @@ async function sendEmailToUser(type: string, data: any) {
                         <tr>
                           <td style="padding: 40px 30px; text-align: center;">
                             <h2 style="color: #031C43; margin: 0 0 20px 0; font-size: 28px; font-weight: 600;">
-                              ${lang === 'es' ? '¡Bienvenido a IQmind!' : 'Welcome to IQmind!'}
+                              ${t('welcome')} IQmind!
                             </h2>
                             
                             <p style="color: #4a5568; font-size: 16px; line-height: 1.6; margin: 0 0 30px 0;">
-                              ${lang === 'es' ? 'Hola' : 'Hello'} ${data.userName || (lang === 'es' ? 'Usuario' : 'User')},
+                              ${t('hello')} ${data.userName || t('user')},
                             </p>
                             
                             <p style="color: #4a5568; font-size: 16px; line-height: 1.6; margin: 0 0 30px 0;">
-                              ${lang === 'es' 
-                                ? '¡Felicidades! Tu pago ha sido procesado exitosamente y tu cuenta ha sido creada.'
-                                : 'Congratulations! Your payment has been processed successfully and your account has been created.'}
+                              ${t('congratulations')}
                             </p>
                             
                             <div style="background-color: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin: 30px 0; text-align: left;">
                               <h3 style="color: #031C43; margin: 0 0 15px 0; font-size: 18px; font-weight: 600;">
-                                🎯 ${lang === 'es' ? 'Tu Resultado de CI' : 'Your IQ Result'}: ${data.iq}
+                                🎯 ${t('yourIQResult')}: ${data.iq}
                               </h3>
                               <p style="color: #4a5568; font-size: 14px; margin: 0; line-height: 1.6;">
-                                ${lang === 'es'
-                                  ? 'Has completado exitosamente el test de coeficiente intelectual.'
-                                  : 'You have successfully completed the IQ test.'}
+                                ${t('completedTest')}
                               </p>
                             </div>
                             
                             <div style="background-color: #fff5f5; border: 1px solid #fed7d7; border-radius: 8px; padding: 20px; margin: 30px 0; text-align: left;">
                               <h3 style="color: #c53030; margin: 0 0 15px 0; font-size: 18px; font-weight: 600;">
-                                🔑 ${lang === 'es' ? 'Credenciales de Acceso' : 'Login Credentials'}
+                                🔑 ${t('loginCredentials')}
                               </h3>
                               <p style="color: #4a5568; font-size: 14px; margin: 0 0 10px 0; line-height: 1.6;">
                                 <strong>Email:</strong> ${data.email}
                               </p>
                               <p style="color: #4a5568; font-size: 14px; margin: 0; line-height: 1.6;">
-                                <strong>${lang === 'es' ? 'Contraseña' : 'Password'}:</strong> ${password}
+                                <strong>${t('password')}:</strong> ${password}
                               </p>
                               <p style="color: #e53e3e; font-size: 12px; margin: 10px 0 0 0; line-height: 1.6;">
-                                ⚠️ ${lang === 'es'
-                                  ? 'Por seguridad, cambia tu contraseña después del primer acceso.'
-                                  : 'For security, change your password after first login.'}
+                                ⚠️ ${t('securityWarning')}
                               </p>
                             </div>
                             
                             <a href="${loginUrl}" style="display: inline-block; background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 16px; margin: 20px 0;">
-                              ${lang === 'es' ? 'Acceder a mi Dashboard' : 'Access my Dashboard'}
+                              ${t('accessDashboard')}
                             </a>
                             
                             <p style="color: #718096; font-size: 14px; margin: 30px 0 0 0; line-height: 1.6;">
-                              ${lang === 'es'
-                                ? 'Desde tu dashboard podrás ver tu resultado completo, gestionar tu suscripción y acceder a contenido exclusivo.'
-                                : 'From your dashboard you can view your complete result, manage your subscription and access exclusive content.'}
+                              ${t('dashboardInfo')}
                             </p>
                           </td>
                         </tr>
@@ -136,7 +128,7 @@ async function sendEmailToUser(type: string, data: any) {
                         <tr>
                           <td style="background-color: #f7fafc; padding: 30px; text-align: center; border-top: 1px solid #e2e8f0;">
                             <p style="color: #718096; font-size: 12px; margin: 0 0 10px 0;">
-                              © ${new Date().getFullYear()} IQmind. ${lang === 'es' ? 'Todos los derechos reservados.' : 'All rights reserved.'}
+                              © ${new Date().getFullYear()} IQmind. ${t('allRightsReserved')}
                             </p>
                             <p style="color: #718096; font-size: 12px; margin: 0;">
                               support@iqmind.io
