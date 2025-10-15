@@ -8,6 +8,7 @@ import { FaUser, FaEnvelope, FaCrown, FaCalendar, FaBrain, FaTrophy, FaChartLine
 import { useTranslations } from '@/hooks/useTranslations'
 import { getTestHistory, getTestStatistics, getEvolutionData } from '@/lib/test-history'
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import SubscriptionModal from '@/components/SubscriptionModal'
 
 export default function CuentaPage() {
   const router = useRouter()
@@ -36,6 +37,10 @@ export default function CuentaPage() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [passwordMessage, setPasswordMessage] = useState('')
   const [passwordLoading, setPasswordLoading] = useState(false)
+  const [showSubscriptionModal, setShowSubscriptionModal] = useState(false)
+  const [subscriptionLoading, setSubscriptionLoading] = useState(false)
+  const [subscriptionSuccess, setSubscriptionSuccess] = useState(false)
+  const [subscriptionError, setSubscriptionError] = useState('')
 
   useEffect(() => {
     // Verificar autenticación primero con el nuevo sistema
@@ -149,13 +154,54 @@ export default function CuentaPage() {
   }
 
   const handleCancelSubscription = () => {
-    if (!t) return
-    
-    const confirmCancel = window.confirm(t.account.cancelConfirm)
+    setShowSubscriptionModal(true)
+    setSubscriptionSuccess(false)
+    setSubscriptionError('')
+  }
 
-    if (confirmCancel) {
-      alert(t.account.cancelInstructions)
+  const handleConfirmCancel = async () => {
+    setSubscriptionLoading(true)
+    setSubscriptionError('')
+
+    try {
+      const token = localStorage.getItem('auth_token')
+      
+      // Para el usuario de prueba, usar un ID de suscripción ficticio
+      // En producción, esto vendría de los datos del usuario
+      const subscriptionId = 'sub_test_123' // Esto debería venir de userData.subscriptionId
+      
+      const response = await fetch('/api/cancel-subscription', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ subscriptionId }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        setSubscriptionSuccess(true)
+        // Actualizar el estado de la suscripción en el frontend
+        setUserData(prev => ({
+          ...prev,
+          hasSubscription: false
+        }))
+      } else {
+        setSubscriptionError(data.error || 'Error al cancelar la suscripción')
+      }
+    } catch (error) {
+      setSubscriptionError('Error de conexión. Inténtalo de nuevo.')
+    } finally {
+      setSubscriptionLoading(false)
     }
+  }
+
+  const handleCloseModal = () => {
+    setShowSubscriptionModal(false)
+    setSubscriptionSuccess(false)
+    setSubscriptionError('')
   }
 
   const handleViewResult = (testId?: string) => {
@@ -712,6 +758,16 @@ export default function CuentaPage() {
           </div>
         </div>
       </div>
+
+      {/* Subscription Modal */}
+      <SubscriptionModal
+        isOpen={showSubscriptionModal}
+        onClose={handleCloseModal}
+        onConfirm={handleConfirmCancel}
+        loading={subscriptionLoading}
+        success={subscriptionSuccess}
+        error={subscriptionError}
+      />
 
       <Footer />
     </>
