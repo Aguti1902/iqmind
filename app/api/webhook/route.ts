@@ -111,14 +111,29 @@ export async function POST(request: NextRequest) {
           current_period_end: subscriptionCreated.current_period_end,
         })
         
+        // Obtener email del customer
+        let customerEmail = subscriptionCreated.metadata?.email
+        if (!customerEmail && typeof subscriptionCreated.customer === 'string') {
+          try {
+            const customer = await stripe.customers.retrieve(subscriptionCreated.customer)
+            if (customer && !customer.deleted) {
+              customerEmail = customer.email || undefined
+            }
+          } catch (error) {
+            console.error('Error obteniendo customer:', error)
+          }
+        } else if (!customerEmail && typeof subscriptionCreated.customer === 'object') {
+          customerEmail = subscriptionCreated.customer.email
+        }
+        
         // Enviar email de bienvenida al trial
-        if (subscriptionCreated.customer_email || subscriptionCreated.metadata?.email) {
+        if (customerEmail) {
           const trialEndDate = subscriptionCreated.trial_end 
             ? new Date(subscriptionCreated.trial_end * 1000).toLocaleDateString('es-ES')
             : new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toLocaleDateString('es-ES')
           
           await sendEmail('trialStarted', {
-            email: subscriptionCreated.customer_email || subscriptionCreated.metadata?.email,
+            email: customerEmail,
             userName: subscriptionCreated.metadata?.userName || 'Usuario',
             trialEndDate,
             lang: subscriptionCreated.metadata?.lang || 'es'
@@ -148,14 +163,29 @@ export async function POST(request: NextRequest) {
           status: subscriptionDeleted.status,
         })
         
+        // Obtener email del customer
+        let deletedCustomerEmail = subscriptionDeleted.metadata?.email
+        if (!deletedCustomerEmail && typeof subscriptionDeleted.customer === 'string') {
+          try {
+            const customer = await stripe.customers.retrieve(subscriptionDeleted.customer)
+            if (customer && !customer.deleted) {
+              deletedCustomerEmail = customer.email || undefined
+            }
+          } catch (error) {
+            console.error('Error obteniendo customer:', error)
+          }
+        } else if (!deletedCustomerEmail && typeof subscriptionDeleted.customer === 'object') {
+          deletedCustomerEmail = subscriptionDeleted.customer.email
+        }
+        
         // Enviar email de confirmación de cancelación
-        if (subscriptionDeleted.customer_email || subscriptionDeleted.metadata?.email) {
+        if (deletedCustomerEmail) {
           const accessUntil = subscriptionDeleted.current_period_end
             ? new Date(subscriptionDeleted.current_period_end * 1000).toLocaleDateString('es-ES')
             : new Date().toLocaleDateString('es-ES')
           
           await sendEmail('subscriptionCancelled', {
-            email: subscriptionDeleted.customer_email || subscriptionDeleted.metadata?.email,
+            email: deletedCustomerEmail,
             userName: subscriptionDeleted.metadata?.userName || 'Usuario',
             accessUntil,
             lang: subscriptionDeleted.metadata?.lang || 'es'
@@ -172,10 +202,25 @@ export async function POST(request: NextRequest) {
           trial_end: subscriptionTrialEnding.trial_end,
         })
         
+        // Obtener email del customer
+        let trialEndingEmail = subscriptionTrialEnding.metadata?.email
+        if (!trialEndingEmail && typeof subscriptionTrialEnding.customer === 'string') {
+          try {
+            const customer = await stripe.customers.retrieve(subscriptionTrialEnding.customer)
+            if (customer && !customer.deleted) {
+              trialEndingEmail = customer.email || undefined
+            }
+          } catch (error) {
+            console.error('Error obteniendo customer:', error)
+          }
+        } else if (!trialEndingEmail && typeof subscriptionTrialEnding.customer === 'object') {
+          trialEndingEmail = subscriptionTrialEnding.customer.email
+        }
+        
         // Enviar email de recordatorio al usuario
-        if (subscriptionTrialEnding.customer_email || subscriptionTrialEnding.metadata?.email) {
+        if (trialEndingEmail) {
           await sendEmail('trialEndingTomorrow', {
-            email: subscriptionTrialEnding.customer_email || subscriptionTrialEnding.metadata?.email,
+            email: trialEndingEmail,
             userName: subscriptionTrialEnding.metadata?.userName || 'Usuario',
             lang: subscriptionTrialEnding.metadata?.lang || 'es'
           })
