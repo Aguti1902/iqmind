@@ -38,15 +38,6 @@ export interface PasswordReset {
   createdAt: string
 }
 
-export interface PasswordReset {
-  id: string
-  email: string
-  token: string
-  expiresAt: string
-  used: boolean
-  createdAt: string
-}
-
 export const db = {
   // ============================================
   // USUARIOS
