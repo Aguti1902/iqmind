@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/database-postgres'
-import { sendEmailToUser } from '@/lib/email-service'
+import { sendEmail, emailTemplates } from '@/lib/email-service'
 
 export const dynamic = 'force-dynamic'
 
@@ -30,14 +30,26 @@ export async function POST(request: NextRequest) {
 
     console.log('📧 Reenviando email de bienvenida a:', email)
 
-    // Enviar email de bienvenida con credenciales
-    await sendEmailToUser('dashboardCredentials', {
-      email: user.email,
-      userName: user.userName,
-      password: tempPassword,
-      loginUrl: 'https://www.iqmind.io/es/login',
-      lang: 'es'
-    })
+    // Preparar datos del email
+    const lang = 'es' // Puedes cambiar según necesites
+    const emailData = {
+      to: user.email,
+      subject: emailTemplates.dashboardCredentials.subject[lang],
+      html: emailTemplates.dashboardCredentials.html(
+        user.userName,
+        user.email,
+        tempPassword,
+        'https://www.iqmind.io/es/login',
+        lang
+      )
+    }
+
+    // Enviar email
+    const result = await sendEmail(emailData)
+
+    if (!result.success) {
+      throw new Error(result.error || 'Error al enviar email')
+    }
 
     console.log('✅ Email reenviado exitosamente')
 
