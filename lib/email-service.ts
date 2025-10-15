@@ -145,110 +145,7 @@ export const emailTemplates = {
     `
   }),
 
-  // 2. Test completado - Resultado estimado (ELIMINADO - ahora es el de bienvenida)
-  // testCompleted: (email: string, userName: string, estimatedIQ: number, lang: string) => ({
-
-  // 2. Test completado - Resultado estimado
-  testCompleted: (email: string, userName: string, estimatedIQ: number, lang: string) => ({
-    to: email,
-    subject: lang === 'es'
-      ? `¡Test completado! Tu CI estimado: ${estimatedIQ} 🎯`
-      : `Test completed! Your estimated IQ: ${estimatedIQ} 🎯`,
-    html: `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>${lang === 'es' ? 'Test Completado' : 'Test Completed'}</title>
-      </head>
-      <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f5;">
-        <table role="presentation" style="width: 100%; border-collapse: collapse;">
-          <tr>
-            <td align="center" style="padding: 40px 20px;">
-              <table role="presentation" style="max-width: 600px; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                <!-- Header -->
-                <tr>
-                  <td style="background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); padding: 40px 30px; text-align: center;">
-                    <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">
-                      🎯 ${lang === 'es' ? '¡Test Completado!' : 'Test Completed!'}
-                    </h1>
-                  </td>
-                </tr>
-                
-                <!-- Content -->
-                <tr>
-                  <td style="padding: 40px 30px; text-align: center;">
-                    <h2 style="color: #031C43; margin: 0 0 20px 0; font-size: 28px; font-weight: 600;">
-                      ${lang === 'es' ? '¡Enhorabuena' : 'Congratulations'}, ${userName}!
-                    </h2>
-                    
-                    <p style="color: #4a5568; font-size: 18px; line-height: 1.6; margin: 0 0 30px 0;">
-                      ${lang === 'es'
-                        ? 'Has completado el test de coeficiente intelectual.'
-                        : 'You have completed the IQ test.'}
-                    </p>
-                    
-                    <!-- IQ Score -->
-                    <div style="background: linear-gradient(135deg, #218B8E 0%, #031C43 100%); border-radius: 16px; padding: 30px; margin: 30px 0; color: #ffffff;">
-                      <p style="margin: 0 0 10px 0; font-size: 14px; opacity: 0.9;">
-                        ${lang === 'es' ? 'Tu CI estimado es:' : 'Your estimated IQ is:'}
-                      </p>
-                      <p style="margin: 0; font-size: 72px; font-weight: 700; line-height: 1;">
-                        ${estimatedIQ}
-                      </p>
-                    </div>
-                    
-                    <p style="color: #4a5568; font-size: 16px; line-height: 1.6; margin: 30px 0 20px 0;">
-                      ${lang === 'es'
-                        ? 'Este es un resultado estimado basado en las respuestas correctas. Para ver tu resultado EXACTO, análisis detallado y gráficos comparativos, completa el pago de 0,50€.'
-                        : 'This is an estimated result based on correct answers. To see your EXACT result, detailed analysis and comparative charts, complete the payment of €0.50.'}
-                    </p>
-                    
-                    <div style="background-color: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 20px; margin: 30px 0;">
-                      <p style="color: #856404; font-size: 16px; margin: 0 0 10px 0; font-weight: 600;">
-                        ${lang === 'es' ? '💰 Oferta Especial' : '💰 Special Offer'}
-                      </p>
-                      <p style="color: #856404; font-size: 14px; margin: 0; line-height: 1.6;">
-                        ${lang === 'es'
-                          ? 'Paga solo 0,50€ para desbloquear tu resultado completo + 2 días de prueba premium gratis. Después 19,99€/mes (cancelas cuando quieras).'
-                          : 'Pay only €0.50 to unlock your complete result + 2 days free premium trial. Then €19.99/month (cancel anytime).'}
-                      </p>
-                    </div>
-                    
-                    <a href="https://iqmind.io/${lang}/checkout" style="display: inline-block; background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 16px; margin: 20px 0;">
-                      ${lang === 'es' ? 'Ver Resultado Completo' : 'View Complete Result'}
-                    </a>
-                    
-                    <p style="color: #718096; font-size: 14px; margin: 30px 0 0 0; line-height: 1.6;">
-                      ${lang === 'es'
-                        ? '¿Tienes preguntas? Responde a este email o visita nuestra página de ayuda.'
-                        : 'Have questions? Reply to this email or visit our help page.'}
-                    </p>
-                  </td>
-                </tr>
-                
-                <!-- Footer -->
-                <tr>
-                  <td style="background-color: #f7fafc; padding: 30px; text-align: center; border-top: 1px solid #e2e8f0;">
-                    <p style="color: #718096; font-size: 12px; margin: 0 0 10px 0;">
-                      © ${new Date().getFullYear()} IQmind. ${lang === 'es' ? 'Todos los derechos reservados.' : 'All rights reserved.'}
-                    </p>
-                    <p style="color: #718096; font-size: 12px; margin: 0;">
-                      support@iqmind.io
-                    </p>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-        </table>
-      </body>
-      </html>
-    `
-  }),
-
-  // 3. Checkout abandonado
+  // 2. Checkout abandonado - Recordatorio
   checkoutAbandoned: (email: string, userName: string, lang: string) => ({
     to: email,
     subject: lang === 'es'
@@ -347,7 +244,7 @@ export const emailTemplates = {
     `
   }),
 
-  // 4. Pago exitoso
+  // 3. Pago exitoso
   paymentSuccess: (email: string, userName: string, iq: number, lang: string) => ({
     to: email,
     subject: lang === 'es'
@@ -449,7 +346,7 @@ export const emailTemplates = {
     `
   }),
 
-  // 5. Trial iniciado
+  // 4. Trial iniciado
   trialStarted: (email: string, userName: string, trialEndDate: string, lang: string) => ({
     to: email,
     subject: lang === 'es'
@@ -551,7 +448,7 @@ export const emailTemplates = {
     `
   }),
 
-  // 6. Trial termina mañana
+  // 5. Trial termina mañana
   trialEndingTomorrow: (email: string, userName: string, lang: string) => ({
     to: email,
     subject: lang === 'es'
@@ -655,7 +552,7 @@ export const emailTemplates = {
     `
   }),
 
-  // 7. Suscripción activada
+  // 6. Suscripción activada
   subscriptionActivated: (email: string, userName: string, lang: string) => ({
     to: email,
     subject: lang === 'es'
@@ -751,7 +648,7 @@ export const emailTemplates = {
     `
   }),
 
-  // 8. Pago mensual exitoso
+  // 7. Pago mensual exitoso
   monthlyPaymentSuccess: (email: string, userName: string, amount: number, lang: string) => ({
     to: email,
     subject: lang === 'es'
@@ -844,7 +741,7 @@ export const emailTemplates = {
     `
   }),
 
-  // 9. Pago fallido
+  // 8. Pago fallido
   paymentFailed: (email: string, userName: string, attempt: number, lang: string) => ({
     to: email,
     subject: lang === 'es'
@@ -949,7 +846,7 @@ export const emailTemplates = {
     `
   }),
 
-  // 10. Cancelación de suscripción
+  // 9. Cancelación de suscripción
   subscriptionCancelled: (email: string, userName: string, accessUntil: string, lang: string) => ({
     to: email,
     subject: lang === 'es'
