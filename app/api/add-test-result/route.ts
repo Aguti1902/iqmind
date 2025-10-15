@@ -55,12 +55,16 @@ export async function POST(request: NextRequest) {
       updatedAt: new Date().toISOString()
     })
 
-    console.log(`✅ Usuario actualizado:`, {
-      id: updatedUser.id,
-      email: updatedUser.email,
-      iq: updatedUser.iq,
-      testResultsCount: updatedTestResults.length
-    })
+    if (updatedUser) {
+      console.log(`✅ Usuario actualizado:`, {
+        id: updatedUser.id,
+        email: updatedUser.email,
+        iq: updatedUser.iq,
+        testResultsCount: updatedTestResults.length
+      })
+    } else {
+      console.error('❌ Error: updatedUser es null')
+    }
 
     return NextResponse.json({
       success: true,
