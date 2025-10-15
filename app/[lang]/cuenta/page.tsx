@@ -198,9 +198,19 @@ export default function CuentaPage() {
     try {
       const token = localStorage.getItem('auth_token')
       
+      console.log('🔐 Token de autenticación:', token ? 'Presente' : 'NO PRESENTE')
+      
+      if (!token) {
+        setSubscriptionError('No estás autenticado. Por favor, inicia sesión de nuevo.')
+        setSubscriptionLoading(false)
+        return
+      }
+      
       // Para el usuario de prueba, usar un ID de suscripción ficticio
       // En producción, esto vendría de los datos del usuario
       const subscriptionId = 'sub_test_123' // Esto debería venir de userData.subscriptionId
+      
+      console.log('📤 Enviando solicitud de cancelación:', { subscriptionId })
       
       const response = await fetch('/api/cancel-subscription', {
         method: 'POST',
