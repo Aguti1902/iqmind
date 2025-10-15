@@ -1,35 +1,39 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { requireAuth } from '@/lib/auth'
 import { db } from '@/lib/database'
+import { verifyAuthToken } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
   try {
-    const authHeader = request.headers.get('authorization')
-    const token = authHeader?.replace('Bearer ', '')
-    
-    const authData = requireAuth(token)
-    
-    if (!authData) {
+    const token = request.headers.get('Authorization')?.split(' ')[1]
+    if (!token) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+    }
+
+    const decodedToken = verifyAuthToken(token)
+    if (!decodedToken || !decodedToken.userId) {
+      return NextResponse.json({ error: 'Token inválido o expirado' }, { status: 401 })
     }
 
     const body = await request.json()
     const { 
       iq, 
       correctAnswers, 
+      totalQuestions, 
       timeElapsed, 
       answers, 
       categoryScores 
     } = body
 
-    if (!iq || correctAnswers === undefined || !timeElapsed || !answers) {
+    if (!iq || !correctAnswers || !totalQuestions || !timeElapsed || !answers) {
       return NextResponse.json({ 
-        error: 'Datos del test requeridos: iq, correctAnswers, timeElapsed, answers' 
+        error: 'Datos del test requeridos' 
       }, { status: 400 })
     }
 
+    console.log('💾 Guardando resultado de test para usuario:', decodedToken.userId)
+
     // Obtener usuario
-    const user = await db.getUserById(authData.userId)
+    const user = await db.getUserById(decodedToken.userId)
     if (!user) {
       return NextResponse.json({ error: 'Usuario no encontrado' }, { status: 404 })
     }
@@ -38,34 +42,30 @@ export async function POST(request: NextRequest) {
     const testResult = {
       id: `test_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       userId: user.id,
-      iq,
-      correctAnswers,
-      timeElapsed,
-      answers,
+      iq: parseInt(iq),
+      correctAnswers: parseInt(correctAnswers),
+      timeElapsed: parseInt(timeElapsed),
+      answers: answers,
       categoryScores: categoryScores || {},
       completedAt: new Date().toISOString(),
       createdAt: new Date().toISOString()
     }
 
-    // Guardar en la base de datos del usuario
+    // Agregar resultado al usuario
+    const updatedTestResults = [...(user.testResults || []), testResult]
+    
+    // Actualizar usuario con el nuevo resultado
     const updatedUser = await db.updateUser(user.id, {
-      iq, // Actualizar IQ más reciente
-      testResults: [...(user.testResults || []), testResult]
+      testResults: updatedTestResults,
+      iq: testResult.iq, // Actualizar IQ más reciente
+      updatedAt: new Date().toISOString()
     })
 
-    if (!updatedUser) {
-      return NextResponse.json({ error: 'Error guardando resultado' }, { status: 500 })
-    }
+    console.log(`✅ Resultado guardado: IQ ${testResult.iq}, ${testResult.correctAnswers}/${totalQuestions} correctas`)
 
-    console.log(`✅ Resultado de test guardado para usuario ${user.email}:`, {
-      iq,
-      correctAnswers,
-      timeElapsed
-    })
-
-    return NextResponse.json({ 
-      success: true, 
-      message: 'Resultado guardado correctamente',
+    return NextResponse.json({
+      success: true,
+      message: 'Resultado del test guardado exitosamente',
       testResult: {
         id: testResult.id,
         iq: testResult.iq,
@@ -77,6 +77,9 @@ export async function POST(request: NextRequest) {
 
   } catch (error: any) {
     console.error('❌ Error guardando resultado de test:', error)
-    return NextResponse.json({ error: error.message || 'Error interno del servidor' }, { status: 500 })
+    return NextResponse.json({ 
+      error: error.message || 'Error interno del servidor',
+      stack: error.stack
+    }, { status: 500 })
   }
 }

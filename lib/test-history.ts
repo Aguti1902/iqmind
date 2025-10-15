@@ -47,7 +47,47 @@ export function saveTestResult(result: Omit<TestResult, 'id' | 'date'>): TestRes
   localStorage.setItem('userIQ', result.iq.toString())
   localStorage.setItem('correctAnswers', result.correctAnswers.toString())
   
+  // Si el usuario está autenticado, guardar también en el backend
+  const token = localStorage.getItem('auth_token')
+  if (token) {
+    saveTestResultToBackend(newTest, token).catch(error => {
+      console.error('❌ Error guardando resultado en backend:', error)
+    })
+  }
+  
   return newTest
+}
+
+/**
+ * Guardar resultado del test en el backend
+ */
+async function saveTestResultToBackend(testResult: TestResult, token: string) {
+  try {
+    const response = await fetch('/api/save-test-result', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        iq: testResult.iq,
+        correctAnswers: testResult.correctAnswers,
+        totalQuestions: testResult.totalQuestions || 20,
+        timeElapsed: testResult.timeElapsed,
+        answers: testResult.answers,
+        categoryScores: testResult.categoryScores
+      })
+    })
+
+    if (response.ok) {
+      console.log('✅ Resultado guardado en backend')
+    } else {
+      const error = await response.json()
+      console.error('❌ Error guardando en backend:', error)
+    }
+  } catch (error) {
+    console.error('❌ Error de conexión guardando en backend:', error)
+  }
 }
 
 /**

@@ -1,20 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { requireAuth } from '@/lib/auth'
 import { db } from '@/lib/database'
+import { verifyAuthToken } from '@/lib/auth'
 
 export async function GET(request: NextRequest) {
   try {
-    const authHeader = request.headers.get('authorization')
-    const token = authHeader?.replace('Bearer ', '')
-    
-    const authData = requireAuth(token)
-    
-    if (!authData) {
+    const token = request.headers.get('Authorization')?.split(' ')[1]
+    if (!token) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
     }
 
+    const decodedToken = verifyAuthToken(token)
+    if (!decodedToken || !decodedToken.userId) {
+      return NextResponse.json({ error: 'Token inválido o expirado' }, { status: 401 })
+    }
+
+    console.log('📊 Obteniendo estadísticas para usuario:', decodedToken.userId)
+
     // Obtener usuario
-    const user = await db.getUserById(authData.userId)
+    const user = await db.getUserById(decodedToken.userId)
     if (!user) {
       return NextResponse.json({ error: 'Usuario no encontrado' }, { status: 404 })
     }
@@ -37,36 +40,42 @@ export async function GET(request: NextRequest) {
         ? Math.round(testResults.reduce((sum, test) => sum + test.correctAnswers, 0) / testResults.length)
         : 0,
       improvement: testResults.length > 1 
-        ? testResults[testResults.length - 1].iq - testResults[0].iq
+        ? testResults[0].iq - testResults[testResults.length - 1].iq
         : 0,
-      lastTestDate: testResults.length > 0 
-        ? testResults[testResults.length - 1].completedAt
-        : null
+      lastTestDate: testResults.length > 0 ? testResults[0].completedAt : null
     }
 
-    // Datos de evolución para gráficos
+    // Calcular datos de evolución
     const evolutionData = testResults.map((test, index) => ({
       date: new Date(test.completedAt).toLocaleDateString('es-ES'),
       iq: test.iq,
       correctAnswers: test.correctAnswers,
-      testNumber: index + 1
-    }))
+      testNumber: testResults.length - index
+    })).reverse()
+
+    console.log(`✅ Estadísticas calculadas: ${stats.totalTests} tests, IQ promedio: ${stats.averageIQ}`)
 
     return NextResponse.json({
       success: true,
       stats,
+      evolutionData,
       testResults: testResults.map(test => ({
         id: test.id,
         iq: test.iq,
         correctAnswers: test.correctAnswers,
         timeElapsed: test.timeElapsed,
-        completedAt: test.completedAt
-      })),
-      evolutionData
+        answers: test.answers,
+        categoryScores: test.categoryScores,
+        completedAt: test.completedAt,
+        createdAt: test.createdAt
+      }))
     })
 
   } catch (error: any) {
     console.error('❌ Error obteniendo estadísticas:', error)
-    return NextResponse.json({ error: error.message || 'Error interno del servidor' }, { status: 500 })
+    return NextResponse.json({ 
+      error: error.message || 'Error interno del servidor',
+      stack: error.stack
+    }, { status: 500 })
   }
 }
