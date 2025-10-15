@@ -253,12 +253,12 @@ export default function Home() {
                     MG
                   </div>
                   <div className="ml-4">
-                    <h4 className="font-semibold">{t.test.testimonial1Name}</h4>
+                    <h4 className="font-semibold">{t.checkout.testimonial1Name}</h4>
                     <div className="text-yellow-400">★★★★★</div>
                   </div>
                 </div>
                 <p className="text-gray-600">
-                  "{t.test.testimonial1Text}"
+                  "{t.checkout.testimonial1Text}"
                 </p>
               </div>
 
@@ -268,12 +268,12 @@ export default function Home() {
                     JL
                   </div>
                   <div className="ml-4">
-                    <h4 className="font-semibold">{t.test.testimonial2Name}</h4>
+                    <h4 className="font-semibold">{t.checkout.testimonial2Name}</h4>
                     <div className="text-yellow-400">★★★★★</div>
                   </div>
                 </div>
                 <p className="text-gray-600">
-                  "{t.test.testimonial2Text}"
+                  "{t.checkout.testimonial2Text}"
                 </p>
               </div>
 
@@ -283,12 +283,12 @@ export default function Home() {
                     AP
                   </div>
                   <div className="ml-4">
-                    <h4 className="font-semibold">{t.test.testimonial3Name}</h4>
+                    <h4 className="font-semibold">{t.checkout.testimonial3Name}</h4>
                     <div className="text-yellow-400">★★★★★</div>
                   </div>
                 </div>
                 <p className="text-gray-600">
-                  "{t.test.testimonial3Text}"
+                  "{t.checkout.testimonial3Text}"
                 </p>
               </div>
             </div>
