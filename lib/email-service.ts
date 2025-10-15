@@ -158,7 +158,7 @@ export const emailTemplates = {
                 <!-- Header -->
                 <tr>
                   <td style="background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); padding: 40px 30px; text-align: center;">
-                    <img src="https://www.iqmind.io/images/LOGO2BLANCO.svg" alt="IQmind" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
+                    <img src="https://www.iqmind.io/images/LOGO2BLANCO.png" alt="IQmind" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
                     <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">
                       🎁 ${lang === 'es' ? '¡Tu Resultado te Espera!' : 'Your Result Awaits!'}
                     </h1>
@@ -258,7 +258,7 @@ export const emailTemplates = {
                 <!-- Header -->
                 <tr>
                   <td style="background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); padding: 40px 30px; text-align: center;">
-                    <img src="https://www.iqmind.io/images/LOGO2BLANCO.svg" alt="IQmind" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
+                    <img src="https://www.iqmind.io/images/LOGO2BLANCO.png" alt="IQmind" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
                     <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">
                       🎉 ${lang === 'es' ? '¡Pago Confirmado!' : 'Payment Confirmed!'}
                     </h1>
@@ -361,7 +361,7 @@ export const emailTemplates = {
                 <!-- Header -->
                 <tr>
                   <td style="background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); padding: 40px 30px; text-align: center;">
-                    <img src="https://www.iqmind.io/images/LOGO2BLANCO.svg" alt="IQmind" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
+                    <img src="https://www.iqmind.io/images/LOGO2BLANCO.png" alt="IQmind" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
                     <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">
                       🚀 ${lang === 'es' ? '¡Premium Activado!' : 'Premium Activated!'}
                     </h1>
@@ -464,7 +464,7 @@ export const emailTemplates = {
                 <!-- Header -->
                 <tr>
                   <td style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); padding: 40px 30px; text-align: center;">
-                    <img src="https://www.iqmind.io/images/LOGO2BLANCO.svg" alt="IQmind" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
+                    <img src="https://www.iqmind.io/images/LOGO2BLANCO.png" alt="IQmind" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
                     <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">
                       ⏰ ${lang === 'es' ? 'Trial Termina Mañana' : 'Trial Ends Tomorrow'}
                     </h1>
@@ -566,7 +566,7 @@ export const emailTemplates = {
                 <!-- Header -->
                 <tr>
                   <td style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 40px 30px; text-align: center;">
-                    <img src="https://www.iqmind.io/images/LOGO2BLANCO.svg" alt="IQmind" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
+                    <img src="https://www.iqmind.io/images/LOGO2BLANCO.png" alt="IQmind" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
                     <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">
                       ✅ ${lang === 'es' ? '¡Suscripción Activada!' : 'Subscription Activated!'}
                     </h1>
@@ -663,7 +663,7 @@ export const emailTemplates = {
                 <!-- Header -->
                 <tr>
                   <td style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 40px 30px; text-align: center;">
-                    <img src="https://www.iqmind.io/images/LOGO2BLANCO.svg" alt="IQmind" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
+                    <img src="https://www.iqmind.io/images/LOGO2BLANCO.png" alt="IQmind" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
                     <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">
                       ✅ ${lang === 'es' ? 'Pago Recibido' : 'Payment Received'}
                     </h1>
@@ -757,7 +757,7 @@ export const emailTemplates = {
                 <!-- Header -->
                 <tr>
                   <td style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); padding: 40px 30px; text-align: center;">
-                    <img src="https://www.iqmind.io/images/LOGO2BLANCO.svg" alt="IQmind" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
+                    <img src="https://www.iqmind.io/images/LOGO2BLANCO.png" alt="IQmind" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
                     <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">
                       ⚠️ ${lang === 'es' ? 'Problema con el Pago' : 'Payment Issue'}
                     </h1>
@@ -863,7 +863,7 @@ export const emailTemplates = {
                 <!-- Header -->
                 <tr>
                   <td style="background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); padding: 40px 30px; text-align: center;">
-                    <img src="https://www.iqmind.io/images/LOGO2BLANCO.svg" alt="IQmind" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
+                    <img src="https://www.iqmind.io/images/LOGO2BLANCO.png" alt="IQmind" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
                     <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">
                       ✅ ${lang === 'es' ? 'Suscripción Cancelada' : 'Subscription Cancelled'}
                     </h1>
