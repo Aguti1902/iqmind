@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { sendEmailToUser } from '@/lib/webhook-helper'
 
 // Función helper para enviar emails (copiada del webhook)
 async function sendEmailToUser(type: string, data: any) {
