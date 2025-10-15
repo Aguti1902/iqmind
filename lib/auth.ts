@@ -68,9 +68,13 @@ export async function createOrUpdateUser(userData: {
   const existingUser = await db.getUserByEmail(userData.email)
   
   if (existingUser) {
-    // Actualizar usuario existente
+    // Actualizar usuario existente - generar nueva contraseña
+    const password = generateRandomPassword()
+    const hashedPassword = await hashPassword(password)
+    
     const updatedUser = await db.updateUser(existingUser.id, {
       ...userData,
+      password: hashedPassword,
       lastLogin: new Date().toISOString(),
     })
     
@@ -78,7 +82,7 @@ export async function createOrUpdateUser(userData: {
       throw new Error('Error actualizando usuario')
     }
     
-    return { user: updatedUser, password: 'existing' }
+    return { user: updatedUser, password }
   } else {
     // Crear nuevo usuario
     const password = generateRandomPassword()
@@ -96,15 +100,21 @@ export async function createOrUpdateUser(userData: {
 
 // Autenticar usuario
 export async function authenticateUser(email: string, password: string): Promise<{ user: User; token: string } | null> {
+  console.log('🔍 Buscando usuario:', email)
   const user = await db.getUserByEmail(email)
   
   if (!user) {
+    console.log('❌ Usuario no encontrado:', email)
     return null
   }
   
+  console.log('👤 Usuario encontrado:', { email: user.email, hasPassword: !!user.password })
+  
   const isValidPassword = await verifyPassword(password, user.password)
+  console.log('🔐 Verificación de contraseña:', isValidPassword)
   
   if (!isValidPassword) {
+    console.log('❌ Contraseña inválida para:', email)
     return null
   }
   
