@@ -155,6 +155,52 @@ export const db = {
     return passwordReset
   },
 
+  // TEST RESULTS
+  createTestResult: async (testResult: Omit<TestResult, 'createdAt'>): Promise<TestResult> => {
+    const user = users.find(u => u.id === testResult.userId)
+    if (!user) throw new Error('User not found')
+    
+    const newTestResult: TestResult = {
+      ...testResult,
+      createdAt: new Date().toISOString(),
+    }
+    
+    user.testResults = user.testResults || []
+    user.testResults.push(newTestResult)
+    
+    return newTestResult
+  },
+
+  getTestResultsByUserId: async (userId: string): Promise<TestResult[]> => {
+    const user = users.find(u => u.id === userId)
+    return user?.testResults || []
+  },
+
+  // PASSWORD RESETS
+  createPasswordResetToken: async (email: string, token: string, expiresAt: string): Promise<void> => {
+    const passwordReset: PasswordReset = {
+      id: `reset_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      email,
+      token,
+      expiresAt,
+      used: false,
+      createdAt: new Date().toISOString(),
+    }
+    passwordResets.push(passwordReset)
+  },
+
+  findPasswordResetToken: async (token: string): Promise<PasswordReset | null> => {
+    return passwordResets.find(reset => reset.token === token && !reset.used) || null
+  },
+
+  invalidatePasswordResetToken: async (token: string): Promise<void> => {
+    const resetIndex = passwordResets.findIndex(reset => reset.token === token)
+    if (resetIndex !== -1) {
+      passwordResets[resetIndex].used = true
+    }
+  },
+
+  // LEGACY - mantener compatibilidad
   getPasswordResetByToken: async (token: string): Promise<PasswordReset | null> => {
     return passwordResets.find(reset => reset.token === token && !reset.used) || null
   },
@@ -166,7 +212,6 @@ export const db = {
     }
   },
 
-  // Limpiar resets expirados
   cleanExpiredResets: async (): Promise<void> => {
     const now = new Date().toISOString()
     for (let i = passwordResets.length - 1; i >= 0; i--) {

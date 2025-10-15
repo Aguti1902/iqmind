@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Marcar el token como usado
-    await db.markPasswordResetAsUsed(token)
+    await db.invalidatePasswordResetToken(token)
 
     return NextResponse.json({
       success: true,
