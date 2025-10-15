@@ -59,6 +59,11 @@ export default function Footer() {
                   {t.footer.contact}
                 </Link>
               </li>
+              <li>
+                <Link href={`/${lang}/login`} className="hover:text-primary-400 transition">
+                  {t.footer.login || 'Iniciar Sesión'}
+                </Link>
+              </li>
             </ul>
           </div>
 
