@@ -1,18 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { sql } from '@vercel/postgres'
+import { createClient } from '@vercel/postgres'
 
 export const dynamic = 'force-dynamic'
 
 export async function GET(request: NextRequest) {
+  const client = createClient()
+  await client.connect()
+  
   try {
     console.log('🚀 Iniciando migración de base de datos...')
 
     // 1. Agregar extensión UUID
-    await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`
+    await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`
     console.log('✅ Extensión UUID creada')
 
     // 2. Agregar columnas faltantes a la tabla users
-    await sql`
+    await client.sql`
       ALTER TABLE users 
         ADD COLUMN IF NOT EXISTS password VARCHAR(255),
         ADD COLUMN IF NOT EXISTS username VARCHAR(255),
@@ -25,7 +28,7 @@ export async function GET(request: NextRequest) {
 
     // 3. Renombrar columna 'name' a 'username' si existe
     try {
-      await sql`
+      await client.sql`
         DO $$ 
         BEGIN
           IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='users' AND column_name='name') 
@@ -41,7 +44,7 @@ export async function GET(request: NextRequest) {
 
     // 4. Renombrar columnas de suscripción
     try {
-      await sql`
+      await client.sql`
         DO $$ 
         BEGIN
           IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='users' AND column_name='trial_end') THEN
@@ -59,7 +62,7 @@ export async function GET(request: NextRequest) {
     }
 
     // 5. Actualizar tabla test_results
-    await sql`
+    await client.sql`
       ALTER TABLE test_results
         ADD COLUMN IF NOT EXISTS time_elapsed INTEGER DEFAULT 0,
         ADD COLUMN IF NOT EXISTS category_scores JSONB,
@@ -69,7 +72,7 @@ export async function GET(request: NextRequest) {
 
     // 6. Renombrar columnas en test_results
     try {
-      await sql`
+      await client.sql`
         DO $$ 
         BEGIN
           IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='test_results' AND column_name='iq_score') THEN
@@ -87,7 +90,7 @@ export async function GET(request: NextRequest) {
     }
 
     // 7. Crear tabla password_resets
-    await sql`
+    await client.sql`
       CREATE TABLE IF NOT EXISTS password_resets (
         id SERIAL PRIMARY KEY,
         email VARCHAR(255) NOT NULL,
@@ -100,12 +103,12 @@ export async function GET(request: NextRequest) {
     console.log('✅ Tabla password_resets creada')
 
     // 8. Crear índices
-    await sql`CREATE INDEX IF NOT EXISTS idx_password_resets_token ON password_resets(token)`
-    await sql`CREATE INDEX IF NOT EXISTS idx_password_resets_email ON password_resets(email)`
+    await client.sql`CREATE INDEX IF NOT EXISTS idx_password_resets_token ON password_resets(token)`
+    await client.sql`CREATE INDEX IF NOT EXISTS idx_password_resets_email ON password_resets(email)`
     console.log('✅ Índices creados')
 
     // 9. Verificar estructura final
-    const verification = await sql`
+    const verification = await client.sql`
       SELECT 
         table_name, 
         column_name, 
@@ -121,6 +124,8 @@ export async function GET(request: NextRequest) {
     `
 
     console.log('✅ Migración completada exitosamente')
+    
+    await client.end()
 
     return NextResponse.json({
       success: true,
@@ -136,6 +141,7 @@ export async function GET(request: NextRequest) {
 
   } catch (error: any) {
     console.error('❌ Error en migración:', error)
+    await client.end()
     return NextResponse.json({
       success: false,
       error: error.message,
