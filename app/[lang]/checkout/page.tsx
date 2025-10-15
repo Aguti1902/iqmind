@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import MinimalHeader from '@/components/MinimalHeader'
 import Footer from '@/components/Footer'
 import { FaLock, FaCheckCircle, FaBrain, FaCertificate, FaChartLine, FaUsers } from 'react-icons/fa'
-import { loadStripe, StripeElementsOptions } from '@stripe/stripe-js'
+import { loadStripe, StripeElementsOptions, StripeElementLocale } from '@stripe/stripe-js'
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import { useTranslations } from '@/hooks/useTranslations'
 
@@ -321,7 +321,7 @@ export default function CheckoutPage() {
   }
 
   // Mapear idiomas a los locales de Stripe
-  const stripeLocaleMap: Record<string, string> = {
+  const stripeLocaleMap: Record<string, StripeElementLocale> = {
     'es': 'es',
     'en': 'en',
     'fr': 'fr',
@@ -334,7 +334,7 @@ export default function CheckoutPage() {
 
   const elementsOptions: StripeElementsOptions = {
     clientSecret: clientSecret || undefined,
-    locale: stripeLocaleMap[lang] || 'en',
+    locale: (stripeLocaleMap[lang] || 'en') as StripeElementLocale,
     appearance: {
       theme: 'stripe',
       variables: {
