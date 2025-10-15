@@ -7,6 +7,31 @@ const stripe = process.env.STRIPE_SECRET_KEY
     })
   : null
 
+// Función helper para enviar emails
+async function sendEmail(type: string, data: any) {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'https://iqmind.io'}/api/send-email`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type,
+        email: data.email,
+        userName: data.userName || 'Usuario',
+        lang: data.lang || 'es',
+        ...data
+      })
+    })
+    
+    if (!response.ok) {
+      console.error(`❌ Error enviando email ${type}:`, await response.text())
+    } else {
+      console.log(`✅ Email ${type} enviado a ${data.email}`)
+    }
+  } catch (error) {
+    console.error(`❌ Error enviando email ${type}:`, error)
+  }
+}
+
 // Endpoint para webhooks de Stripe
 export async function POST(request: NextRequest) {
   if (!stripe) {
@@ -54,11 +79,15 @@ export async function POST(request: NextRequest) {
           email: paymentIntent.metadata.email,
         })
         
-        // Aquí podrías guardar en la base de datos:
-        // - Email del usuario
-        // - Resultado del test
-        // - Fecha de compra
-        // - Transaction ID
+        // Enviar email de confirmación de pago
+        if (paymentIntent.metadata.email && paymentIntent.metadata.userIQ) {
+          await sendEmail('paymentSuccess', {
+            email: paymentIntent.metadata.email,
+            userName: paymentIntent.metadata.userName || 'Usuario',
+            iq: parseInt(paymentIntent.metadata.userIQ),
+            lang: paymentIntent.metadata.lang || 'es'
+          })
+        }
         
         break
 
@@ -82,10 +111,19 @@ export async function POST(request: NextRequest) {
           current_period_end: subscriptionCreated.current_period_end,
         })
         
-        // Aquí actualizarías el estado del usuario en tu base de datos
-        // - Marcar como suscriptor premium
-        // - Guardar fecha de inicio del trial
-        // - Guardar fecha de renovación
+        // Enviar email de bienvenida al trial
+        if (subscriptionCreated.customer_email || subscriptionCreated.metadata?.email) {
+          const trialEndDate = subscriptionCreated.trial_end 
+            ? new Date(subscriptionCreated.trial_end * 1000).toLocaleDateString('es-ES')
+            : new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toLocaleDateString('es-ES')
+          
+          await sendEmail('trialStarted', {
+            email: subscriptionCreated.customer_email || subscriptionCreated.metadata?.email,
+            userName: subscriptionCreated.metadata?.userName || 'Usuario',
+            trialEndDate,
+            lang: subscriptionCreated.metadata?.lang || 'es'
+          })
+        }
         
         break
 
@@ -110,9 +148,19 @@ export async function POST(request: NextRequest) {
           status: subscriptionDeleted.status,
         })
         
-        // Actualizar estado de suscripción en la base de datos
-        // - Marcar como no-suscriptor
-        // - Remover acceso premium
+        // Enviar email de confirmación de cancelación
+        if (subscriptionDeleted.customer_email || subscriptionDeleted.metadata?.email) {
+          const accessUntil = subscriptionDeleted.current_period_end
+            ? new Date(subscriptionDeleted.current_period_end * 1000).toLocaleDateString('es-ES')
+            : new Date().toLocaleDateString('es-ES')
+          
+          await sendEmail('subscriptionCancelled', {
+            email: subscriptionDeleted.customer_email || subscriptionDeleted.metadata?.email,
+            userName: subscriptionDeleted.metadata?.userName || 'Usuario',
+            accessUntil,
+            lang: subscriptionDeleted.metadata?.lang || 'es'
+          })
+        }
         
         break
 
@@ -125,8 +173,13 @@ export async function POST(request: NextRequest) {
         })
         
         // Enviar email de recordatorio al usuario
-        // - Recordar que el trial termina pronto
-        // - Informar del próximo cobro
+        if (subscriptionTrialEnding.customer_email || subscriptionTrialEnding.metadata?.email) {
+          await sendEmail('trialEndingTomorrow', {
+            email: subscriptionTrialEnding.customer_email || subscriptionTrialEnding.metadata?.email,
+            userName: subscriptionTrialEnding.metadata?.userName || 'Usuario',
+            lang: subscriptionTrialEnding.metadata?.lang || 'es'
+          })
+        }
         
         break
 
@@ -139,7 +192,27 @@ export async function POST(request: NextRequest) {
           amount: invoice.amount_paid,
         })
         
-        // Confirmar pago de suscripción en la base de datos
+        // Enviar email de confirmación de pago mensual
+        if (invoice.customer_email) {
+          const amount = (invoice.amount_paid / 100).toFixed(2)
+          
+          // Solo enviar email si es un pago de suscripción (no el pago inicial)
+          if (invoice.subscription && invoice.billing_reason === 'subscription_cycle') {
+            await sendEmail('monthlyPaymentSuccess', {
+              email: invoice.customer_email,
+              userName: invoice.metadata?.userName || 'Usuario',
+              amount: parseFloat(amount),
+              lang: invoice.metadata?.lang || 'es'
+            })
+          } else if (invoice.subscription && invoice.billing_reason === 'subscription_create') {
+            // Primer pago de suscripción - enviar email de activación
+            await sendEmail('subscriptionActivated', {
+              email: invoice.customer_email,
+              userName: invoice.metadata?.userName || 'Usuario',
+              lang: invoice.metadata?.lang || 'es'
+            })
+          }
+        }
         
         break
 
@@ -153,8 +226,16 @@ export async function POST(request: NextRequest) {
         })
         
         // Notificar al usuario del pago fallido
-        // - Enviar email
-        // - Actualizar estado en la base de datos
+        if (failedInvoice.customer_email) {
+          const attempt = failedInvoice.attempt_count || 1
+          
+          await sendEmail('paymentFailed', {
+            email: failedInvoice.customer_email,
+            userName: failedInvoice.metadata?.userName || 'Usuario',
+            attempt,
+            lang: failedInvoice.metadata?.lang || 'es'
+          })
+        }
         
         break
 
