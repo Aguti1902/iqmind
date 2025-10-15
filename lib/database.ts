@@ -1,4 +1,16 @@
 // Esquema de base de datos para usuarios
+export interface TestResult {
+  id: string
+  userId: string
+  iq: number
+  correctAnswers: number
+  timeElapsed: number
+  answers: (number | null)[]
+  categoryScores: Record<string, number>
+  completedAt: string
+  createdAt: string
+}
+
 export interface User {
   id: string
   email: string
@@ -9,6 +21,7 @@ export interface User {
   subscriptionId?: string
   trialEndDate?: string
   accessUntil?: string
+  testResults?: TestResult[]
   createdAt: string
   updatedAt: string
   lastLogin?: string

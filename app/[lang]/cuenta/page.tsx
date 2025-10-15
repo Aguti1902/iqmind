@@ -43,63 +43,95 @@ export default function CuentaPage() {
   const [subscriptionError, setSubscriptionError] = useState('')
 
   useEffect(() => {
-    // Verificar autenticación primero con el nuevo sistema
-    const token = localStorage.getItem('auth_token')
-    const userData_new = localStorage.getItem('user_data')
+    const loadUserData = async () => {
+      // Verificar autenticación primero con el nuevo sistema
+      const token = localStorage.getItem('auth_token')
+      const userData_new = localStorage.getItem('user_data')
 
-    // Si hay token del sistema de login, usar ese
-    if (token && userData_new) {
-      try {
-        const parsedUser = JSON.parse(userData_new)
-        
-        // Cargar historial y estadísticas
-        const history = getTestHistory()
-        const statistics = getTestStatistics()
-        const evolution = getEvolutionData()
+      // Si hay token del sistema de login, usar ese
+      if (token && userData_new) {
+        try {
+          const parsedUser = JSON.parse(userData_new)
+          
+          // Cargar estadísticas del backend
+          try {
+            const response = await fetch('/api/user-stats', {
+              headers: {
+                'Authorization': `Bearer ${token}`
+              }
+            })
 
-        setUserData({
-          email: parsedUser.email,
-          userName: parsedUser.userName,
-          hasSubscription: true
-        })
+            if (response.ok) {
+              const data = await response.json()
+              
+              setUserData({
+                email: parsedUser.email,
+                userName: parsedUser.userName,
+                hasSubscription: parsedUser.subscriptionStatus === 'active' || parsedUser.subscriptionStatus === 'trial'
+              })
 
-        setStats(statistics)
-        setEvolutionData(evolution)
-        setTestHistory(history.tests)
+              setStats(data.stats)
+              setEvolutionData(data.evolutionData)
+              setTestHistory(data.testResults)
 
-        setIsLoading(false)
-        return
-      } catch (error) {
-        console.error('Error parsing user data:', error)
+              setIsLoading(false)
+              return
+            }
+          } catch (error) {
+            console.error('Error cargando estadísticas del backend:', error)
+          }
+
+          // Fallback a localStorage si falla el backend
+          const history = getTestHistory()
+          const statistics = getTestStatistics()
+          const evolution = getEvolutionData()
+
+          setUserData({
+            email: parsedUser.email,
+            userName: parsedUser.userName,
+            hasSubscription: true
+          })
+
+          setStats(statistics)
+          setEvolutionData(evolution)
+          setTestHistory(history.tests)
+
+          setIsLoading(false)
+          return
+        } catch (error) {
+          console.error('Error parsing user data:', error)
+        }
       }
+
+      // Fallback al sistema antiguo
+      const email = localStorage.getItem('userEmail')
+      const paymentCompleted = localStorage.getItem('paymentCompleted')
+
+      if (!email || !paymentCompleted) {
+        // Si no hay ningún tipo de autenticación, redirigir al login
+        router.push(`/${lang}/login`)
+        return
+      }
+
+      // Cargar historial y estadísticas (sistema antiguo)
+      const history = getTestHistory()
+      const statistics = getTestStatistics()
+      const evolution = getEvolutionData()
+
+      setUserData({
+        email: history.email || email,
+        userName: history.userName,
+        hasSubscription: true
+      })
+
+      setStats(statistics)
+      setEvolutionData(evolution)
+      setTestHistory(history.tests)
+
+      setIsLoading(false)
     }
 
-    // Fallback al sistema antiguo
-    const email = localStorage.getItem('userEmail')
-    const paymentCompleted = localStorage.getItem('paymentCompleted')
-
-    if (!email || !paymentCompleted) {
-      // Si no hay ningún tipo de autenticación, redirigir al login
-      router.push(`/${lang}/login`)
-      return
-    }
-
-    // Cargar historial y estadísticas (sistema antiguo)
-    const history = getTestHistory()
-    const statistics = getTestStatistics()
-    const evolution = getEvolutionData()
-
-    setUserData({
-      email: history.email || email,
-      userName: history.userName,
-      hasSubscription: true
-    })
-
-    setStats(statistics)
-    setEvolutionData(evolution)
-    setTestHistory(history.tests)
-
-    setIsLoading(false)
+    loadUserData()
   }, [router, lang])
 
   const handleChangePassword = async (e: React.FormEvent) => {

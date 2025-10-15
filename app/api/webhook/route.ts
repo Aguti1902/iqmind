@@ -290,19 +290,8 @@ export async function POST(request: NextRequest) {
           customerEmail = subscriptionCreated.customer.email
         }
         
-        // Enviar email de bienvenida al trial
-        if (customerEmail) {
-          const trialEndDate = subscriptionCreated.trial_end 
-            ? new Date(subscriptionCreated.trial_end * 1000).toLocaleDateString('es-ES')
-            : new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toLocaleDateString('es-ES')
-          
-          await sendEmailToUser('trialStarted', {
-            email: customerEmail,
-            userName: subscriptionCreated.metadata?.userName || 'Usuario',
-            trialEndDate,
-            lang: subscriptionCreated.metadata?.lang || 'es'
-          })
-        }
+        // No enviar email de bienvenida al trial aquí
+        // El email principal con credenciales se envía en payment_intent.succeeded
         
         break
 
@@ -358,39 +347,9 @@ export async function POST(request: NextRequest) {
         
         break
 
-      case 'customer.subscription.trial_will_end':
-        const subscriptionTrialEnding = event.data.object as Stripe.Subscription
-        console.log('⚠️ Trial próximo a terminar:', {
-          id: subscriptionTrialEnding.id,
-          customer: subscriptionTrialEnding.customer,
-          trial_end: subscriptionTrialEnding.trial_end,
-        })
-        
-        // Obtener email del customer
-        let trialEndingEmail: string | undefined = subscriptionTrialEnding.metadata?.email
-        if (!trialEndingEmail && typeof subscriptionTrialEnding.customer === 'string') {
-          try {
-            const customer = await stripe.customers.retrieve(subscriptionTrialEnding.customer)
-            if (customer && !customer.deleted && customer.email) {
-              trialEndingEmail = customer.email
-            }
-          } catch (error) {
-            console.error('Error obteniendo customer:', error)
-          }
-        } else if (!trialEndingEmail && typeof subscriptionTrialEnding.customer === 'object' && !subscriptionTrialEnding.customer.deleted && subscriptionTrialEnding.customer.email) {
-          trialEndingEmail = subscriptionTrialEnding.customer.email
-        }
-        
-        // Enviar email de recordatorio al usuario
-        if (trialEndingEmail) {
-          await sendEmailToUser('trialEndingTomorrow', {
-            email: trialEndingEmail,
-            userName: subscriptionTrialEnding.metadata?.userName || 'Usuario',
-            lang: subscriptionTrialEnding.metadata?.lang || 'es'
-          })
-        }
-        
-        break
+      // Eliminado: customer.subscription.trial_will_end
+      // Este webhook se dispara inmediatamente después de crear la suscripción
+      // En su lugar, usaremos un sistema programado para enviar el email 1 día antes
 
       case 'invoice.payment_succeeded':
         const invoice = event.data.object as Stripe.Invoice

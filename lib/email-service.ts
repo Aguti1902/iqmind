@@ -516,11 +516,8 @@ export const emailTemplates = {
                     </p>
                     
                     <div style="text-align: center; margin: 30px 0;">
-                      <a href="https://iqmind.io/${lang}/cuenta" style="display: inline-block; background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 18px; margin: 0 10px 10px 0;">
+                      <a href="https://iqmind.io/${lang}/cuenta" style="display: inline-block; background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 18px; margin: 0;">
                         ${lang === 'es' ? 'Gestionar Suscripción' : 'Manage Subscription'}
-                      </a>
-                      <a href="https://iqmind.io/${lang}/cancelar-suscripcion" style="display: inline-block; background-color: #e2e8f0; color: #2d3748; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 18px; margin: 0 0 10px 0;">
-                        ${lang === 'es' ? 'Cancelar Trial' : 'Cancel Trial'}
                       </a>
                     </div>
                     

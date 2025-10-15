@@ -87,7 +87,7 @@ export default function TestPage() {
     }, 300)
   }
 
-  const handleFinishTest = () => {
+  const handleFinishTest = async () => {
     // Calcular respuestas correctas
     let correctCount = 0
     answers.forEach((answer, index) => {
@@ -116,6 +116,35 @@ export default function TestPage() {
       userName
     }
     localStorage.setItem('testResults', JSON.stringify(testResults))
+
+    // Si el usuario está autenticado, guardar en el backend
+    const token = localStorage.getItem('auth_token')
+    if (token) {
+      try {
+        const response = await fetch('/api/save-test-result', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            iq,
+            correctAnswers: correctCount,
+            timeElapsed,
+            answers,
+            categoryScores
+          })
+        })
+
+        if (response.ok) {
+          console.log('✅ Resultado de test guardado en backend')
+        } else {
+          console.error('❌ Error guardando resultado en backend')
+        }
+      } catch (error) {
+        console.error('❌ Error guardando resultado en backend:', error)
+      }
+    }
     
     // Redirigir a análisis
     router.push(`/${lang}/analizando`)
