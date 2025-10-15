@@ -25,24 +25,16 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Generar nueva contraseña temporal (la misma que se usó antes)
-    const tempPassword = 'VYQKbPJ3cc!9' // La que se generó en los logs
-
     console.log('📧 Reenviando email de bienvenida a:', email)
 
-    // Preparar datos del email
-    const lang = 'es' // Puedes cambiar según necesites
-    const emailData = {
-      to: user.email,
-      subject: emailTemplates.dashboardCredentials.subject[lang],
-      html: emailTemplates.dashboardCredentials.html(
-        user.userName,
-        user.email,
-        tempPassword,
-        'https://www.iqmind.io/es/login',
-        lang
-      )
-    }
+    // Usar el template paymentSuccess que ya existe
+    const lang = 'es'
+    const emailData = emailTemplates.paymentSuccess(
+      user.email,
+      user.userName,
+      user.iq || 0,
+      lang
+    )
 
     // Enviar email
     const result = await sendEmail(emailData)
@@ -56,8 +48,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: 'Email de bienvenida enviado',
-      email: user.email,
-      password: tempPassword
+      email: user.email
     })
 
   } catch (error: any) {
