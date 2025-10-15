@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const passwordReset = await db.getPasswordResetByToken(token)
+    const passwordReset = await db.findPasswordResetToken(token)
 
     if (!passwordReset) {
       return NextResponse.json(

@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Verificar el token
-    const passwordReset = await db.getPasswordResetByToken(token)
+    const passwordReset = await db.findPasswordResetToken(token)
 
     if (!passwordReset) {
       return NextResponse.json(
