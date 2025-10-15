@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+export const dynamic = 'force-dynamic'
 // Array para almacenar logs (en producción usarías una base de datos)
 let webhookLogs: any[] = []
 

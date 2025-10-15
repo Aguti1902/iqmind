@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+export const dynamic = 'force-dynamic'
 // Función helper para enviar emails (copiada del webhook)
 async function sendEmailToUser(type: string, data: any) {
   try {
