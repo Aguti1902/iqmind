@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
+export const dynamic = 'force-dynamic'
 import { verifyToken } from '@/lib/auth'
 
 const stripe = process.env.STRIPE_SECRET_KEY

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/database-postgres'
+export const dynamic = 'force-dynamic'
 import { hashPassword } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {

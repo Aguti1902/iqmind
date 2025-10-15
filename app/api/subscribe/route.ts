@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+export const dynamic = 'force-dynamic'
 // Endpoint para manejar eventos de webhook de Paddle
 export async function POST(request: NextRequest) {
   try {

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { generatePasswordResetToken } from '@/lib/auth'
+export const dynamic = 'force-dynamic'
 import { db } from '@/lib/database-postgres'
 import { sendEmail, emailTemplates } from '@/lib/email-service'
 

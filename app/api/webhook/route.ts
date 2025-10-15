@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
+export const dynamic = 'force-dynamic'
 import { sendEmail, emailTemplates } from '@/lib/email-service'
 import { createOrUpdateUser } from '@/lib/auth'
 import { db } from '@/lib/database-postgres'

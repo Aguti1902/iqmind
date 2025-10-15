@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+export const dynamic = 'force-dynamic'
 // Este sería un endpoint para guardar resultados en una base de datos
 // Por ahora, lo dejamos como simulación
 
