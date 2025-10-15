@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24 horas
 
     // Guardar token en la base de datos
-    await db.createPasswordReset(email, token, expiresAt)
+    await db.createPasswordResetToken(email, token, expiresAt)
 
     // Enviar email de recuperación
     const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://iqmind.io'}/reset-password?token=${token}`
