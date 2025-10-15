@@ -388,7 +388,39 @@ export async function POST(request: NextRequest) {
           cancel_at_period_end: subscriptionUpdated.cancel_at_period_end,
         })
         
-        // Actualizar el estado de la suscripción en tu base de datos
+        // Si la suscripción se marcó para cancelar al final del periodo
+        if (subscriptionUpdated.cancel_at_period_end) {
+          console.log('📧 Suscripción marcada para cancelar - enviando email de confirmación')
+          
+          // Obtener email del customer
+          let updatedCustomerEmail: string | undefined = subscriptionUpdated.metadata?.email
+          if (!updatedCustomerEmail && typeof subscriptionUpdated.customer === 'string') {
+            try {
+              const customer = await stripe.customers.retrieve(subscriptionUpdated.customer)
+              if (customer && !customer.deleted && customer.email) {
+                updatedCustomerEmail = customer.email
+              }
+            } catch (error) {
+              console.error('Error obteniendo customer:', error)
+            }
+          } else if (!updatedCustomerEmail && typeof subscriptionUpdated.customer === 'object' && !subscriptionUpdated.customer.deleted && subscriptionUpdated.customer.email) {
+            updatedCustomerEmail = subscriptionUpdated.customer.email
+          }
+          
+          // Enviar email de confirmación de cancelación programada
+          if (updatedCustomerEmail) {
+            const accessUntil = subscriptionUpdated.current_period_end
+              ? new Date(subscriptionUpdated.current_period_end * 1000).toLocaleDateString('es-ES')
+              : new Date().toLocaleDateString('es-ES')
+            
+            await sendEmailToUser('subscriptionCancelled', {
+              email: updatedCustomerEmail,
+              userName: subscriptionUpdated.metadata?.userName || 'Usuario',
+              accessUntil,
+              lang: subscriptionUpdated.metadata?.lang || 'es'
+            })
+          }
+        }
         
         break
 
