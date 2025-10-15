@@ -26,6 +26,12 @@ async function sendEmailToUser(type: string, data: any) {
         
         // Crear o actualizar usuario y generar contraseña
         try {
+          console.log('🔄 Creando/actualizando usuario:', {
+            email: data.email,
+            userName: data.userName,
+            iq: data.iq
+          })
+          
           const { user, password } = await createOrUpdateUser({
             email: data.email,
             userName: data.userName || 'Usuario',
@@ -35,6 +41,8 @@ async function sendEmailToUser(type: string, data: any) {
           })
           
           console.log(`👤 Usuario creado/actualizado: ${user.email}`)
+          console.log(`🔑 Contraseña generada: ${password}`)
+          console.log(`📧 Enviando email a: ${data.email}`)
           
           // Enviar email con credenciales de acceso
           const loginUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://iqmind.io'}/login`
@@ -184,6 +192,7 @@ async function sendEmailToUser(type: string, data: any) {
     }
 
     // Enviar email
+    console.log(`📤 Enviando email ${type} a ${data.email}`)
     const result = await sendEmail(emailData)
     
     if (result.success) {
