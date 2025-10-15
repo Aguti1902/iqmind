@@ -241,6 +241,22 @@ export async function POST(request: NextRequest) {
 
     console.log('📨 Webhook recibido:', event.type, 'ID:', event.id)
 
+    // Registrar webhook en logs
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'https://iqmind.io'}/api/webhook-logs`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          eventType: event.type,
+          eventId: event.id,
+          timestamp: new Date().toISOString(),
+          data: event.data.object
+        })
+      })
+    } catch (logError) {
+      console.error('❌ Error registrando webhook:', logError)
+    }
+
     // Manejar diferentes tipos de eventos
     switch (event.type) {
       case 'payment_intent.succeeded':
