@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
+import { sendEmail, emailTemplates } from '@/lib/email-service'
 
 const stripe = process.env.STRIPE_SECRET_KEY
   ? new Stripe(process.env.STRIPE_SECRET_KEY, {
@@ -8,24 +9,74 @@ const stripe = process.env.STRIPE_SECRET_KEY
   : null
 
 // Función helper para enviar emails
-async function sendEmail(type: string, data: any) {
+async function sendEmailToUser(type: string, data: any) {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'https://iqmind.io'}/api/send-email`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        type,
-        email: data.email,
-        userName: data.userName || 'Usuario',
-        lang: data.lang || 'es',
-        ...data
-      })
-    })
+    console.log(`📧 Intentando enviar email ${type} a ${data.email}`)
     
-    if (!response.ok) {
-      console.error(`❌ Error enviando email ${type}:`, await response.text())
+    // Determinar qué template usar
+    let emailData: any
+
+    switch (type) {
+      case 'paymentSuccess':
+        if (!data.iq) {
+          console.error('❌ iq requerido para paymentSuccess')
+          return
+        }
+        emailData = emailTemplates.paymentSuccess(data.email, data.userName || 'Usuario', data.iq, data.lang || 'es')
+        break
+
+      case 'trialStarted':
+        if (!data.trialEndDate) {
+          console.error('❌ trialEndDate requerido para trialStarted')
+          return
+        }
+        emailData = emailTemplates.trialStarted(data.email, data.userName || 'Usuario', data.trialEndDate, data.lang || 'es')
+        break
+
+      case 'trialEndingTomorrow':
+        emailData = emailTemplates.trialEndingTomorrow(data.email, data.userName || 'Usuario', data.lang || 'es')
+        break
+
+      case 'subscriptionActivated':
+        emailData = emailTemplates.subscriptionActivated(data.email, data.userName || 'Usuario', data.lang || 'es')
+        break
+
+      case 'monthlyPaymentSuccess':
+        if (!data.amount) {
+          console.error('❌ amount requerido para monthlyPaymentSuccess')
+          return
+        }
+        emailData = emailTemplates.monthlyPaymentSuccess(data.email, data.userName || 'Usuario', data.amount, data.lang || 'es')
+        break
+
+      case 'paymentFailed':
+        if (!data.attempt) {
+          console.error('❌ attempt requerido para paymentFailed')
+          return
+        }
+        emailData = emailTemplates.paymentFailed(data.email, data.userName || 'Usuario', data.attempt, data.lang || 'es')
+        break
+
+      case 'subscriptionCancelled':
+        if (!data.accessUntil) {
+          console.error('❌ accessUntil requerido para subscriptionCancelled')
+          return
+        }
+        emailData = emailTemplates.subscriptionCancelled(data.email, data.userName || 'Usuario', data.accessUntil, data.lang || 'es')
+        break
+
+      default:
+        console.error(`❌ Tipo de email no válido: ${type}`)
+        return
+    }
+
+    // Enviar email
+    const result = await sendEmail(emailData)
+    
+    if (result.success) {
+      console.log(`✅ Email ${type} enviado correctamente a ${data.email}`)
     } else {
-      console.log(`✅ Email ${type} enviado a ${data.email}`)
+      console.error(`❌ Error enviando email ${type}:`, result.error)
     }
   } catch (error) {
     console.error(`❌ Error enviando email ${type}:`, error)
@@ -81,7 +132,7 @@ export async function POST(request: NextRequest) {
         
         // Enviar email de confirmación de pago
         if (paymentIntent.metadata.email && paymentIntent.metadata.userIQ) {
-          await sendEmail('paymentSuccess', {
+          await sendEmailToUser('paymentSuccess', {
             email: paymentIntent.metadata.email,
             userName: paymentIntent.metadata.userName || 'Usuario',
             iq: parseInt(paymentIntent.metadata.userIQ),
@@ -132,7 +183,7 @@ export async function POST(request: NextRequest) {
             ? new Date(subscriptionCreated.trial_end * 1000).toLocaleDateString('es-ES')
             : new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toLocaleDateString('es-ES')
           
-          await sendEmail('trialStarted', {
+          await sendEmailToUser('trialStarted', {
             email: customerEmail,
             userName: subscriptionCreated.metadata?.userName || 'Usuario',
             trialEndDate,
@@ -184,7 +235,7 @@ export async function POST(request: NextRequest) {
             ? new Date(subscriptionDeleted.current_period_end * 1000).toLocaleDateString('es-ES')
             : new Date().toLocaleDateString('es-ES')
           
-          await sendEmail('subscriptionCancelled', {
+          await sendEmailToUser('subscriptionCancelled', {
             email: deletedCustomerEmail,
             userName: subscriptionDeleted.metadata?.userName || 'Usuario',
             accessUntil,
@@ -219,7 +270,7 @@ export async function POST(request: NextRequest) {
         
         // Enviar email de recordatorio al usuario
         if (trialEndingEmail) {
-          await sendEmail('trialEndingTomorrow', {
+          await sendEmailToUser('trialEndingTomorrow', {
             email: trialEndingEmail,
             userName: subscriptionTrialEnding.metadata?.userName || 'Usuario',
             lang: subscriptionTrialEnding.metadata?.lang || 'es'
@@ -243,7 +294,7 @@ export async function POST(request: NextRequest) {
           
           // Solo enviar email si es un pago de suscripción (no el pago inicial)
           if (invoice.subscription && invoice.billing_reason === 'subscription_cycle') {
-            await sendEmail('monthlyPaymentSuccess', {
+            await sendEmailToUser('monthlyPaymentSuccess', {
               email: invoice.customer_email,
               userName: invoice.metadata?.userName || 'Usuario',
               amount: parseFloat(amount),
@@ -251,7 +302,7 @@ export async function POST(request: NextRequest) {
             })
           } else if (invoice.subscription && invoice.billing_reason === 'subscription_create') {
             // Primer pago de suscripción - enviar email de activación
-            await sendEmail('subscriptionActivated', {
+            await sendEmailToUser('subscriptionActivated', {
               email: invoice.customer_email,
               userName: invoice.metadata?.userName || 'Usuario',
               lang: invoice.metadata?.lang || 'es'
@@ -274,7 +325,7 @@ export async function POST(request: NextRequest) {
         if (failedInvoice.customer_email) {
           const attempt = failedInvoice.attempt_count || 1
           
-          await sendEmail('paymentFailed', {
+          await sendEmailToUser('paymentFailed', {
             email: failedInvoice.customer_email,
             userName: failedInvoice.metadata?.userName || 'Usuario',
             attempt,
