@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { db, resetPassword, hashPassword } from '@/lib/auth'
+import { resetPassword } from '@/lib/auth'
+import { db } from '@/lib/database'
 
 export async function POST(request: NextRequest) {
   try {

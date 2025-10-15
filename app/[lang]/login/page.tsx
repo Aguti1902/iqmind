@@ -17,7 +17,7 @@ export default function LoginPage() {
   const [forgotPasswordMessage, setForgotPasswordMessage] = useState('')
   
   const router = useRouter()
-  const t = useTranslations()
+  const { t } = useTranslations()
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()

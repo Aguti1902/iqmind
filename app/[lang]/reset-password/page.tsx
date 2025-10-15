@@ -16,7 +16,7 @@ export default function ResetPasswordPage() {
   
   const router = useRouter()
   const searchParams = useSearchParams()
-  const t = useTranslations()
+  const { t } = useTranslations()
 
   useEffect(() => {
     const tokenParam = searchParams.get('token')
