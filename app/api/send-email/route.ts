@@ -17,10 +17,6 @@ export async function POST(request: NextRequest) {
     let emailData: any
 
     switch (type) {
-      case 'welcome':
-        emailData = emailTemplates.welcome(email, lang || 'es')
-        break
-
       case 'testCompleted':
         if (!data.estimatedIQ) {
           return NextResponse.json(
