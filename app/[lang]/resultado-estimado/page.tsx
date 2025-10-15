@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Header from '@/components/Header'
+import MinimalHeader from '@/components/MinimalHeader'
 import { visualQuestions as questions, calculateIQ } from '@/lib/visual-questions'
 import { FaLock, FaChartLine, FaCertificate, FaShare, FaCheckCircle } from 'react-icons/fa'
 import { useTranslations } from '@/hooks/useTranslations'
@@ -79,7 +79,7 @@ export default function ResultadoEstimadoPage() {
   if (isLoading || loading || !t) {
     return (
       <>
-        <Header />
+        <MinimalHeader />
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary-600 mx-auto mb-4"></div>
@@ -92,7 +92,7 @@ export default function ResultadoEstimadoPage() {
 
   return (
     <>
-      <Header />
+      <MinimalHeader />
       
       <div className="min-h-screen bg-gradient-to-br from-primary-50 to-white py-12">
         <div className="container-custom max-w-4xl">
