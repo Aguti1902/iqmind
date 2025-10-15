@@ -6,7 +6,14 @@ export async function initDatabase() {
     throw new Error('No se encontró POSTGRES_URL o DATABASE_URL')
   }
   
-  const client = createClient({ connectionString })
+  const finalConnectionString = connectionString.includes('?') 
+    ? `${connectionString}&sslmode=require` 
+    : `${connectionString}?sslmode=require`
+  
+  const client = createClient({ 
+    connectionString: finalConnectionString,
+    ssl: { rejectUnauthorized: false }
+  })
   await client.connect()
   
   try {

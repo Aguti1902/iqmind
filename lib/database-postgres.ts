@@ -8,7 +8,15 @@ function getPool() {
     if (!connectionString) {
       throw new Error('No se encontró POSTGRES_URL o DATABASE_URL en las variables de entorno')
     }
-    pool = createPool({ connectionString })
+    
+    const finalConnectionString = connectionString.includes('?') 
+      ? `${connectionString}&sslmode=require` 
+      : `${connectionString}?sslmode=require`
+    
+    pool = createPool({ 
+      connectionString: finalConnectionString,
+      ssl: { rejectUnauthorized: false }
+    })
   }
   return pool
 }

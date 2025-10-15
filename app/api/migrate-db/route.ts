@@ -13,7 +13,15 @@ export async function GET(request: NextRequest) {
     }, { status: 500 })
   }
   
-  const client = createClient({ connectionString })
+  // Agregar sslmode=require si no está presente
+  const finalConnectionString = connectionString.includes('?') 
+    ? `${connectionString}&sslmode=require` 
+    : `${connectionString}?sslmode=require`
+  
+  const client = createClient({ 
+    connectionString: finalConnectionString,
+    ssl: { rejectUnauthorized: false } // Deshabilitar verificación SSL estricta
+  })
   await client.connect()
   
   try {
