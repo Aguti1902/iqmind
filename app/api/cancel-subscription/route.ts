@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
-import { requireAuth } from '@/lib/auth'
+import { verifyToken } from '@/lib/auth'
 
 const stripe = process.env.STRIPE_SECRET_KEY
   ? new Stripe(process.env.STRIPE_SECRET_KEY, {
@@ -20,11 +20,18 @@ export async function POST(request: NextRequest) {
     const authHeader = request.headers.get('authorization')
     const token = authHeader?.replace('Bearer ', '')
     
-    const authData = requireAuth(token)
-    
-    if (!authData) {
+    if (!token) {
       return NextResponse.json(
-        { error: 'No autorizado' },
+        { error: 'No autorizado - Token requerido' },
+        { status: 401 }
+      )
+    }
+    
+    const authData = verifyToken(token)
+    
+    if (!authData || !authData.userId) {
+      return NextResponse.json(
+        { error: 'No autorizado - Token inválido' },
         { status: 401 }
       )
     }
