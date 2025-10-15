@@ -71,7 +71,7 @@ async function sendEmailToUser(type: string, data: any) {
                         <!-- Header -->
                         <tr>
                           <td style="background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); padding: 40px 30px; text-align: center;">
-                            <img src="https://www.iqmind.io/images/LOGO2BLANCO.svg" alt="IQmind" style="height: 40px; width: auto; margin: 0 auto; display: block;" />
+                            <img src="https://www.iqmind.io/images/LOGO.png" alt="IQmind" style="height: 40px; width: auto; margin: 0 auto; display: block;" />
                           </td>
                         </tr>
                         
