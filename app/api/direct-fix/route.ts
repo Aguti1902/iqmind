@@ -61,12 +61,16 @@ export async function POST(request: NextRequest) {
       updatedAt: new Date().toISOString()
     })
 
-    console.log('✅ Usuario actualizado:', {
-      id: updatedUser.id,
-      email: updatedUser.email,
-      iq: updatedUser.iq,
-      testResultsCount: updatedUser.testResults?.length || 0
-    })
+    if (updatedUser) {
+      console.log('✅ Usuario actualizado:', {
+        id: updatedUser.id,
+        email: updatedUser.email,
+        iq: updatedUser.iq,
+        testResultsCount: updatedUser.testResults?.length || 0
+      })
+    } else {
+      console.error('❌ Error: updatedUser es null')
+    }
 
     // Verificar que se guardó correctamente
     const verifyUser = await db.getUserByEmail(email)
