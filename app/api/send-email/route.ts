@@ -1,0 +1,126 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { sendEmail, emailTemplates } from '@/lib/email-service'
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const { type, email, userName, lang, ...data } = body
+
+    if (!type || !email) {
+      return NextResponse.json(
+        { error: 'Tipo y email requeridos' },
+        { status: 400 }
+      )
+    }
+
+    // Determinar qué template usar
+    let emailData: any
+
+    switch (type) {
+      case 'welcome':
+        emailData = emailTemplates.welcome(email, lang || 'es')
+        break
+
+      case 'testCompleted':
+        if (!data.estimatedIQ) {
+          return NextResponse.json(
+            { error: 'estimatedIQ requerido' },
+            { status: 400 }
+          )
+        }
+        emailData = emailTemplates.testCompleted(email, userName || 'Usuario', data.estimatedIQ, lang || 'es')
+        break
+
+      case 'checkoutAbandoned':
+        emailData = emailTemplates.checkoutAbandoned(email, userName || 'Usuario', lang || 'es')
+        break
+
+      case 'paymentSuccess':
+        if (!data.iq) {
+          return NextResponse.json(
+            { error: 'iq requerido' },
+            { status: 400 }
+          )
+        }
+        emailData = emailTemplates.paymentSuccess(email, userName || 'Usuario', data.iq, lang || 'es')
+        break
+
+      case 'trialStarted':
+        if (!data.trialEndDate) {
+          return NextResponse.json(
+            { error: 'trialEndDate requerido' },
+            { status: 400 }
+          )
+        }
+        emailData = emailTemplates.trialStarted(email, userName || 'Usuario', data.trialEndDate, lang || 'es')
+        break
+
+      case 'trialEndingTomorrow':
+        emailData = emailTemplates.trialEndingTomorrow(email, userName || 'Usuario', lang || 'es')
+        break
+
+      case 'subscriptionActivated':
+        emailData = emailTemplates.subscriptionActivated(email, userName || 'Usuario', lang || 'es')
+        break
+
+      case 'monthlyPaymentSuccess':
+        if (!data.amount) {
+          return NextResponse.json(
+            { error: 'amount requerido' },
+            { status: 400 }
+          )
+        }
+        emailData = emailTemplates.monthlyPaymentSuccess(email, userName || 'Usuario', data.amount, lang || 'es')
+        break
+
+      case 'paymentFailed':
+        if (!data.attempt) {
+          return NextResponse.json(
+            { error: 'attempt requerido' },
+            { status: 400 }
+          )
+        }
+        emailData = emailTemplates.paymentFailed(email, userName || 'Usuario', data.attempt, lang || 'es')
+        break
+
+      case 'subscriptionCancelled':
+        if (!data.accessUntil) {
+          return NextResponse.json(
+            { error: 'accessUntil requerido' },
+            { status: 400 }
+          )
+        }
+        emailData = emailTemplates.subscriptionCancelled(email, userName || 'Usuario', data.accessUntil, lang || 'es')
+        break
+
+      default:
+        return NextResponse.json(
+          { error: 'Tipo de email no válido' },
+          { status: 400 }
+        )
+    }
+
+    // Enviar email
+    const result = await sendEmail(emailData)
+
+    if (result.success) {
+      return NextResponse.json({
+        success: true,
+        message: 'Email enviado correctamente',
+      })
+    } else {
+      return NextResponse.json(
+        { error: result.error || 'Error enviando email' },
+        { status: 500 }
+      )
+    }
+
+  } catch (error: any) {
+    console.error('Error en send-email:', error)
+    return NextResponse.json(
+      { error: error.message || 'Error interno del servidor' },
+      { status: 500 }
+    )
+  }
+}
+
