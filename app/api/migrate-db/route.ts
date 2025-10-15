@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@vercel/postgres'
+import { Client } from 'pg'
 
 export const dynamic = 'force-dynamic'
 
@@ -13,14 +13,9 @@ export async function GET(request: NextRequest) {
     }, { status: 500 })
   }
   
-  // Agregar sslmode=require si no está presente
-  const finalConnectionString = connectionString.includes('?') 
-    ? `${connectionString}&sslmode=require` 
-    : `${connectionString}?sslmode=require`
-  
-  const client = createClient({ 
-    connectionString: finalConnectionString,
-    ssl: { rejectUnauthorized: false } // Deshabilitar verificación SSL estricta
+  const client = new Client({ 
+    connectionString,
+    ssl: { rejectUnauthorized: false }
   })
   await client.connect()
   
@@ -28,11 +23,11 @@ export async function GET(request: NextRequest) {
     console.log('🚀 Iniciando migración de base de datos...')
 
     // 1. Agregar extensión UUID
-    await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`
+    await client.query(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`)
     console.log('✅ Extensión UUID creada')
 
     // 2. Agregar columnas faltantes a la tabla users
-    await client.sql`
+    await client.query(`
       ALTER TABLE users 
         ADD COLUMN IF NOT EXISTS password VARCHAR(255),
         ADD COLUMN IF NOT EXISTS username VARCHAR(255),
@@ -40,12 +35,12 @@ export async function GET(request: NextRequest) {
         ADD COLUMN IF NOT EXISTS trial_end_date TIMESTAMP WITH TIME ZONE,
         ADD COLUMN IF NOT EXISTS access_until TIMESTAMP WITH TIME ZONE,
         ADD COLUMN IF NOT EXISTS last_login TIMESTAMP WITH TIME ZONE
-    `
+    `)
     console.log('✅ Columnas agregadas a users')
 
     // 3. Renombrar columna 'name' a 'username' si existe
     try {
-      await client.sql`
+      await client.query(`
         DO $$ 
         BEGIN
           IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='users' AND column_name='name') 
@@ -53,7 +48,7 @@ export async function GET(request: NextRequest) {
             ALTER TABLE users RENAME COLUMN name TO username;
           END IF;
         END $$;
-      `
+      `)
       console.log('✅ Columna name → username')
     } catch (e) {
       console.log('⚠️  Columna name ya renombrada o no existe')
@@ -61,7 +56,7 @@ export async function GET(request: NextRequest) {
 
     // 4. Renombrar columnas de suscripción
     try {
-      await client.sql`
+      await client.query(`
         DO $$ 
         BEGIN
           IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='users' AND column_name='trial_end') THEN
@@ -72,24 +67,24 @@ export async function GET(request: NextRequest) {
             ALTER TABLE users RENAME COLUMN subscription_end TO access_until;
           END IF;
         END $$;
-      `
+      `)
       console.log('✅ Columnas de suscripción renombradas')
     } catch (e) {
       console.log('⚠️  Columnas de suscripción ya renombradas')
     }
 
     // 5. Actualizar tabla test_results
-    await client.sql`
+    await client.query(`
       ALTER TABLE test_results
         ADD COLUMN IF NOT EXISTS time_elapsed INTEGER DEFAULT 0,
         ADD COLUMN IF NOT EXISTS category_scores JSONB,
         ADD COLUMN IF NOT EXISTS completed_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-    `
+    `)
     console.log('✅ Columnas agregadas a test_results')
 
     // 6. Renombrar columnas en test_results
     try {
-      await client.sql`
+      await client.query(`
         DO $$ 
         BEGIN
           IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='test_results' AND column_name='iq_score') THEN
@@ -100,14 +95,14 @@ export async function GET(request: NextRequest) {
             ALTER TABLE test_results RENAME COLUMN test_date TO completed_at;
           END IF;
         END $$;
-      `
+      `)
       console.log('✅ Columnas de test_results renombradas')
     } catch (e) {
       console.log('⚠️  Columnas de test_results ya renombradas')
     }
 
     // 7. Crear tabla password_resets
-    await client.sql`
+    await client.query(`
       CREATE TABLE IF NOT EXISTS password_resets (
         id SERIAL PRIMARY KEY,
         email VARCHAR(255) NOT NULL,
@@ -116,16 +111,16 @@ export async function GET(request: NextRequest) {
         used BOOLEAN DEFAULT FALSE,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       )
-    `
+    `)
     console.log('✅ Tabla password_resets creada')
 
     // 8. Crear índices
-    await client.sql`CREATE INDEX IF NOT EXISTS idx_password_resets_token ON password_resets(token)`
-    await client.sql`CREATE INDEX IF NOT EXISTS idx_password_resets_email ON password_resets(email)`
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_password_resets_token ON password_resets(token)`)
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_password_resets_email ON password_resets(email)`)
     console.log('✅ Índices creados')
 
     // 9. Verificar estructura final
-    const verification = await client.sql`
+    const verification = await client.query(`
       SELECT 
         table_name, 
         column_name, 
@@ -138,7 +133,7 @@ export async function GET(request: NextRequest) {
       ORDER BY 
         table_name, 
         ordinal_position
-    `
+    `)
 
     console.log('✅ Migración completada exitosamente')
     
