@@ -29,7 +29,7 @@ export default function TestHeader({
         <div className="flex items-center justify-between py-3">
           {/* Logo */}
           <div className="flex items-center">
-            <img src="/images/LOGO2.svg" alt="IQmind" className="h-8 w-auto" />
+            <img src="/images/LOGO2.svg" alt="IQmind" className="h-10 md:h-12 w-auto" />
           </div>
           
           {/* Timer */}
