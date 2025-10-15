@@ -122,7 +122,7 @@ export async function POST(request: NextRequest) {
           } catch (error) {
             console.error('Error obteniendo customer:', error)
           }
-        } else if (!customerEmail && typeof subscriptionCreated.customer === 'object') {
+        } else if (!customerEmail && typeof subscriptionCreated.customer === 'object' && !subscriptionCreated.customer.deleted) {
           customerEmail = subscriptionCreated.customer.email
         }
         
@@ -174,7 +174,7 @@ export async function POST(request: NextRequest) {
           } catch (error) {
             console.error('Error obteniendo customer:', error)
           }
-        } else if (!deletedCustomerEmail && typeof subscriptionDeleted.customer === 'object') {
+        } else if (!deletedCustomerEmail && typeof subscriptionDeleted.customer === 'object' && !subscriptionDeleted.customer.deleted) {
           deletedCustomerEmail = subscriptionDeleted.customer.email
         }
         
@@ -213,7 +213,7 @@ export async function POST(request: NextRequest) {
           } catch (error) {
             console.error('Error obteniendo customer:', error)
           }
-        } else if (!trialEndingEmail && typeof subscriptionTrialEnding.customer === 'object') {
+        } else if (!trialEndingEmail && typeof subscriptionTrialEnding.customer === 'object' && !subscriptionTrialEnding.customer.deleted) {
           trialEndingEmail = subscriptionTrialEnding.customer.email
         }
         
