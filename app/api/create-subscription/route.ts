@@ -11,10 +11,10 @@ const stripe = process.env.STRIPE_SECRET_KEY
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { email, userName, paymentIntentId, testData } = body
+    const { email, userName, paymentIntentId, testData, lang } = body
 
     console.log('=== INICIO CREAR SUSCRIPCIÓN ===')
-    console.log('Body recibido:', { email, userName, paymentIntentId, testData })
+    console.log('Body recibido:', { email, userName, paymentIntentId, testData, lang })
 
     if (!paymentIntentId) {
       console.error('❌ Falta paymentIntentId')
@@ -126,6 +126,7 @@ export async function POST(request: NextRequest) {
       metadata: {
         userName: userName || '',
         email: email || '',
+        lang: lang || paymentIntent.metadata.lang || 'es',
         initialPaymentIntentId: paymentIntentId,
         userIQ: paymentIntent.metadata.userIQ || '',
         testAnswers: testData?.answers ? JSON.stringify(testData.answers) : '',

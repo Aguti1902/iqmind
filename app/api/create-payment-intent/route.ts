@@ -11,7 +11,7 @@ const stripe = process.env.STRIPE_SECRET_KEY
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { email, userIQ, userName } = body
+    const { email, userIQ, userName, lang } = body
 
     if (!email) {
       return NextResponse.json(
@@ -57,6 +57,7 @@ export async function POST(request: NextRequest) {
         email,
         userIQ: userIQ || '',
         userName: userName || '',
+        lang: lang || 'es',
       },
       // Configurar para guardar el método de pago para uso futuro
       setup_future_usage: 'off_session',

@@ -118,6 +118,7 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
             userName,
             paymentIntentId: paymentIntentId,
             testData: testData,
+            lang: lang,
           }),
         })
 
@@ -284,6 +285,7 @@ export default function CheckoutPage() {
             email,
             userIQ,
             userName,
+            lang,
           }),
         })
 
