@@ -199,26 +199,29 @@ export default function CuentaPage() {
       const token = localStorage.getItem('auth_token')
       
       console.log('🔐 Token de autenticación:', token ? 'Presente' : 'NO PRESENTE')
+      console.log('📧 Email del usuario:', userData.email)
       
-      if (!token) {
-        setSubscriptionError('No estás autenticado. Por favor, inicia sesión de nuevo.')
-        setSubscriptionLoading(false)
-        return
+      // Preparar headers y body
+      const headers: any = { 
+        'Content-Type': 'application/json'
       }
       
-      // Para el usuario de prueba, usar un ID de suscripción ficticio
-      // En producción, esto vendría de los datos del usuario
-      const subscriptionId = 'sub_test_123' // Esto debería venir de userData.subscriptionId
+      // Si hay token, añadirlo a los headers
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`
+      }
       
-      console.log('📤 Enviando solicitud de cancelación:', { subscriptionId })
+      // Preparar body - enviar email siempre como fallback
+      const requestBody: any = {
+        email: userData.email
+      }
+      
+      console.log('📤 Enviando solicitud de cancelación con email:', requestBody.email)
       
       const response = await fetch('/api/cancel-subscription', {
         method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ subscriptionId }),
+        headers,
+        body: JSON.stringify(requestBody),
       })
 
       const data = await response.json()
@@ -234,6 +237,7 @@ export default function CuentaPage() {
         setSubscriptionError(data.error || 'Error al cancelar la suscripción')
       }
     } catch (error) {
+      console.error('Error cancelando suscripción:', error)
       setSubscriptionError('Error de conexión. Inténtalo de nuevo.')
     } finally {
       setSubscriptionLoading(false)

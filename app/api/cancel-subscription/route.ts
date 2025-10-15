@@ -18,48 +18,89 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    const body = await request.json()
+    const { subscriptionId, email } = body
+
+    // Verificar autenticación por token O por email
     const authHeader = request.headers.get('authorization')
     const token = authHeader?.replace('Bearer ', '')
     
-    if (!token) {
-      return NextResponse.json(
-        { error: 'No autorizado - Token requerido' },
-        { status: 401 }
-      )
-    }
-    
-    const authData = verifyToken(token)
-    
-    if (!authData || !authData.userId) {
-      return NextResponse.json(
-        { error: 'No autorizado - Token inválido' },
-        { status: 401 }
-      )
+    let userId: string | null = null
+    let userEmail: string | null = email || null
+
+    // Intento 1: Verificar con token si está presente
+    if (token) {
+      const authData = verifyToken(token)
+      if (authData && authData.userId) {
+        userId = authData.userId
+        userEmail = authData.email || userEmail
+      }
     }
 
-    const body = await request.json()
-    const { subscriptionId } = body
-
-    if (!subscriptionId) {
+    // Si no hay subscriptionId, intentar buscar por email
+    if (!subscriptionId && !userEmail) {
       return NextResponse.json(
-        { error: 'ID de suscripción requerido' },
+        { error: 'Se requiere subscriptionId o email' },
         { status: 400 }
       )
     }
 
-    // Cancelar la suscripción en Stripe
-    const subscription = await stripe.subscriptions.update(subscriptionId, {
-      cancel_at_period_end: true,
-      metadata: {
-        cancelled_by: 'user',
-        cancelled_at: new Date().toISOString(),
-        user_id: authData.userId
+    let subscription: any
+
+    // Si tenemos subscriptionId, usarlo directamente
+    if (subscriptionId) {
+      subscription = await stripe.subscriptions.update(subscriptionId, {
+        cancel_at_period_end: true,
+        metadata: {
+          cancelled_by: 'user',
+          cancelled_at: new Date().toISOString(),
+          user_id: userId || 'unknown',
+          user_email: userEmail || 'unknown'
+        }
+      })
+    } else if (userEmail) {
+      // Buscar el cliente por email
+      const customers = await stripe.customers.list({
+        email: userEmail,
+        limit: 1
+      })
+
+      if (customers.data.length === 0) {
+        return NextResponse.json(
+          { error: 'No se encontró ninguna suscripción para este email' },
+          { status: 404 }
+        )
       }
-    })
+
+      // Buscar suscripciones activas del cliente
+      const subscriptions = await stripe.subscriptions.list({
+        customer: customers.data[0].id,
+        status: 'active',
+        limit: 1
+      })
+
+      if (subscriptions.data.length === 0) {
+        return NextResponse.json(
+          { error: 'No tienes ninguna suscripción activa' },
+          { status: 404 }
+        )
+      }
+
+      // Cancelar la primera suscripción activa
+      subscription = await stripe.subscriptions.update(subscriptions.data[0].id, {
+        cancel_at_period_end: true,
+        metadata: {
+          cancelled_by: 'user',
+          cancelled_at: new Date().toISOString(),
+          user_email: userEmail
+        }
+      })
+    }
 
     console.log('✅ Suscripción cancelada:', {
       subscriptionId: subscription.id,
-      userId: authData.userId,
+      userId: userId,
+      userEmail: userEmail,
       cancelAtPeriodEnd: subscription.cancel_at_period_end,
       currentPeriodEnd: subscription.current_period_end
     })
