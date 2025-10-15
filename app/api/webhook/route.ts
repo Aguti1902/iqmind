@@ -112,12 +112,12 @@ export async function POST(request: NextRequest) {
         })
         
         // Obtener email del customer
-        let customerEmail = subscriptionCreated.metadata?.email
+        let customerEmail: string | undefined = subscriptionCreated.metadata?.email
         if (!customerEmail && typeof subscriptionCreated.customer === 'string') {
           try {
             const customer = await stripe.customers.retrieve(subscriptionCreated.customer)
-            if (customer && !customer.deleted) {
-              customerEmail = customer.email || undefined
+            if (customer && !customer.deleted && customer.email) {
+              customerEmail = customer.email
             }
           } catch (error) {
             console.error('Error obteniendo customer:', error)
@@ -164,12 +164,12 @@ export async function POST(request: NextRequest) {
         })
         
         // Obtener email del customer
-        let deletedCustomerEmail = subscriptionDeleted.metadata?.email
+        let deletedCustomerEmail: string | undefined = subscriptionDeleted.metadata?.email
         if (!deletedCustomerEmail && typeof subscriptionDeleted.customer === 'string') {
           try {
             const customer = await stripe.customers.retrieve(subscriptionDeleted.customer)
-            if (customer && !customer.deleted) {
-              deletedCustomerEmail = customer.email || undefined
+            if (customer && !customer.deleted && customer.email) {
+              deletedCustomerEmail = customer.email
             }
           } catch (error) {
             console.error('Error obteniendo customer:', error)
@@ -203,12 +203,12 @@ export async function POST(request: NextRequest) {
         })
         
         // Obtener email del customer
-        let trialEndingEmail = subscriptionTrialEnding.metadata?.email
+        let trialEndingEmail: string | undefined = subscriptionTrialEnding.metadata?.email
         if (!trialEndingEmail && typeof subscriptionTrialEnding.customer === 'string') {
           try {
             const customer = await stripe.customers.retrieve(subscriptionTrialEnding.customer)
-            if (customer && !customer.deleted) {
-              trialEndingEmail = customer.email || undefined
+            if (customer && !customer.deleted && customer.email) {
+              trialEndingEmail = customer.email
             }
           } catch (error) {
             console.error('Error obteniendo customer:', error)
