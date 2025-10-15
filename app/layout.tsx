@@ -6,7 +6,7 @@ import { Analytics } from '@/components/Analytics'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'IQmind - Test de Inteligencia Online | Descubre tu CI',
+   title: 'IQmind - Test de Inteligencia Online | Descubre tu CI',
   description: 'Descubre tu nivel de inteligencia en minutos con nuestro test científico de CI. Resultados precisos y personalizados.',
   keywords: 'test IQ, test inteligencia, CI, coeficiente intelectual, test online, IQmind',
   icons: {

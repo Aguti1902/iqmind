@@ -45,19 +45,19 @@ export async function sendEmail(options: EmailOptions) {
 
 // Templates de emails
 export const emailTemplates = {
-  // 1. Bienvenida al iniciar test
-  welcome: (email: string, lang: string) => ({
+  // 1. Test Completado - Bienvenida + Resultado Estimado
+  testCompleted: (email: string, userName: string, estimatedIQ: number, lang: string) => ({
     to: email,
-    subject: lang === 'es' 
-      ? '¡Bienvenido a IQmind! 🧠' 
-      : 'Welcome to IQmind! 🧠',
+    subject: lang === 'es'
+      ? `¡Bienvenido a IQmind! Tu CI estimado: ${estimatedIQ} 🎯`
+      : `Welcome to IQmind! Your estimated IQ: ${estimatedIQ} 🎯`,
     html: `
       <!DOCTYPE html>
       <html>
       <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>${lang === 'es' ? 'Bienvenido' : 'Welcome'}</title>
+        <title>${lang === 'es' ? 'Test Completado' : 'Test Completed'}</title>
       </head>
       <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f5;">
         <table role="presentation" style="width: 100%; border-collapse: collapse;">
@@ -75,43 +75,52 @@ export const emailTemplates = {
                 
                 <!-- Content -->
                 <tr>
-                  <td style="padding: 40px 30px;">
-                    <h2 style="color: #031C43; margin: 0 0 20px 0; font-size: 24px; font-weight: 600;">
-                      ${lang === 'es' 
-                        ? '¡Bienvenido a IQmind!' 
-                        : 'Welcome to IQmind!'}
+                  <td style="padding: 40px 30px; text-align: center;">
+                    <h2 style="color: #031C43; margin: 0 0 20px 0; font-size: 28px; font-weight: 600;">
+                      ${lang === 'es' ? '¡Bienvenido' : 'Welcome'}, ${userName}!
                     </h2>
                     
-                    <p style="color: #4a5568; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+                    <p style="color: #4a5568; font-size: 18px; line-height: 1.6; margin: 0 0 30px 0;">
                       ${lang === 'es'
-                        ? 'Estamos encantados de tenerte aquí. Has iniciado tu test de coeficiente intelectual y estamos aquí para ayudarte a descubrir tu verdadero potencial.'
-                        : 'We are delighted to have you here. You have started your IQ test and we are here to help you discover your true potential.'}
+                        ? 'Estamos encantados de tenerte aquí. Has completado el test de coeficiente intelectual.'
+                        : 'We are delighted to have you here. You have completed the IQ test.'}
                     </p>
                     
-                    <p style="color: #4a5568; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
-                      ${lang === 'es'
-                        ? 'Completa las 20 preguntas con calma. Tienes 20 minutos, pero tómate el tiempo que necesites para pensar cada respuesta.'
-                        : 'Complete the 20 questions calmly. You have 20 minutes, but take the time you need to think about each answer.'}
-                    </p>
-                    
-                    <div style="background-color: #e6f5f5; border-left: 4px solid #218B8E; padding: 15px; margin: 30px 0; border-radius: 4px;">
-                      <p style="color: #218B8E; font-size: 14px; margin: 0; font-weight: 600;">
-                        ${lang === 'es'
-                          ? '💡 Tip: Lee cada pregunta con atención y no te apresures.'
-                          : '💡 Tip: Read each question carefully and don\'t rush.'}
+                    <!-- IQ Score -->
+                    <div style="background: linear-gradient(135deg, #218B8E 0%, #031C43 100%); border-radius: 16px; padding: 30px; margin: 30px 0; color: #ffffff;">
+                      <p style="margin: 0 0 10px 0; font-size: 14px; opacity: 0.9;">
+                        ${lang === 'es' ? 'Tu CI estimado es:' : 'Your estimated IQ is:'}
+                      </p>
+                      <p style="margin: 0; font-size: 72px; font-weight: 700; line-height: 1;">
+                        ${estimatedIQ}
                       </p>
                     </div>
                     
-                    <p style="color: #4a5568; font-size: 14px; line-height: 1.6; margin: 30px 0 0 0;">
+                    <p style="color: #4a5568; font-size: 16px; line-height: 1.6; margin: 30px 0 20px 0;">
                       ${lang === 'es'
-                        ? '¿Tienes alguna pregunta? Responde a este email y te ayudaremos encantados.'
-                        : 'Do you have any questions? Reply to this email and we will be happy to help you.'}
+                        ? 'Este es un resultado estimado basado en las respuestas correctas. Para ver tu resultado EXACTO, análisis detallado y gráficos comparativos, completa el pago de 0,50€.'
+                        : 'This is an estimated result based on correct answers. To see your EXACT result, detailed analysis and comparative charts, complete the payment of €0.50.'}
                     </p>
                     
-                    <p style="color: #4a5568; font-size: 14px; line-height: 1.6; margin: 20px 0 0 0;">
+                    <div style="background-color: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 20px; margin: 30px 0;">
+                      <p style="color: #856404; font-size: 16px; margin: 0 0 10px 0; font-weight: 600;">
+                        ${lang === 'es' ? '💰 Oferta Especial' : '💰 Special Offer'}
+                      </p>
+                      <p style="color: #856404; font-size: 14px; margin: 0; line-height: 1.6;">
+                        ${lang === 'es'
+                          ? 'Paga solo 0,50€ para desbloquear tu resultado completo + 2 días de prueba premium gratis. Después 19,99€/mes (cancelas cuando quieras).'
+                          : 'Pay only €0.50 to unlock your complete result + 2 days free premium trial. Then €19.99/month (cancel anytime).'}
+                      </p>
+                    </div>
+                    
+                    <a href="https://iqmind.io/${lang}/checkout" style="display: inline-block; background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 16px; margin: 20px 0;">
+                      ${lang === 'es' ? 'Ver Resultado Completo' : 'View Complete Result'}
+                    </a>
+                    
+                    <p style="color: #718096; font-size: 14px; margin: 30px 0 0 0; line-height: 1.6;">
                       ${lang === 'es'
-                        ? '¡Mucha suerte! 🍀'
-                        : 'Good luck! 🍀'}
+                        ? '¿Tienes preguntas? Responde a este email o visita nuestra página de ayuda.'
+                        : 'Have questions? Reply to this email or visit our help page.'}
                     </p>
                   </td>
                 </tr>
@@ -135,6 +144,9 @@ export const emailTemplates = {
       </html>
     `
   }),
+
+  // 2. Test completado - Resultado estimado (ELIMINADO - ahora es el de bienvenida)
+  // testCompleted: (email: string, userName: string, estimatedIQ: number, lang: string) => ({
 
   // 2. Test completado - Resultado estimado
   testCompleted: (email: string, userName: string, estimatedIQ: number, lang: string) => ({
