@@ -134,7 +134,7 @@ export const emailTemplates = {
       </body>
       </html>
     `
-  }),
+  }},
 
   // 2. Checkout abandonado - Recordatorio
   checkoutAbandoned: (email: string, userName: string, lang: string) => ({
