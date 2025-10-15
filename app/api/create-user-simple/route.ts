@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { db } from '@/lib/database'
+import { db } from '@/lib/database-postgres'
 import { hashPassword } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {

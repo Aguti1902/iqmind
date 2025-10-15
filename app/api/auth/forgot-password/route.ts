@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { generatePasswordResetToken } from '@/lib/auth'
-import { db } from '@/lib/database'
+import { db } from '@/lib/database-postgres'
 import { sendEmail, emailTemplates } from '@/lib/email-service'
 
 export async function POST(request: NextRequest) {

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { sendEmail, emailTemplates } from '@/lib/email-service'
 import { createOrUpdateUser } from '@/lib/auth'
-import { db } from '@/lib/database'
+import { db } from '@/lib/database-postgres'
 
 const stripe = process.env.STRIPE_SECRET_KEY
   ? new Stripe(process.env.STRIPE_SECRET_KEY, {
@@ -346,6 +346,7 @@ export async function POST(request: NextRequest) {
             // Buscar usuario por email
             const user = await db.getUserByEmail(customerEmail)
             if (user && userIQ > 0) {
+              // Crear el resultado del test en la tabla test_results
               const testResult = {
                 id: `test_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
                 userId: user.id,
@@ -355,17 +356,14 @@ export async function POST(request: NextRequest) {
                 answers: testAnswers,
                 categoryScores: testCategoryScores,
                 completedAt: new Date().toISOString(),
-                createdAt: new Date().toISOString()
               }
 
-              // Agregar resultado al usuario
-              const updatedTestResults = [...(user.testResults || []), testResult]
+              // Guardar en la base de datos
+              await db.createTestResult(testResult)
               
-              // Actualizar usuario con el resultado del test
+              // Actualizar IQ del usuario
               await db.updateUser(user.id, {
-                testResults: updatedTestResults,
-                iq: userIQ, // Actualizar IQ más reciente
-                updatedAt: new Date().toISOString()
+                iq: userIQ,
               })
 
               console.log(`✅ Resultado del test guardado: IQ ${userIQ}, ${testCorrectAnswers} correctas`)

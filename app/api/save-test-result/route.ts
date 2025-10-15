@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { db } from '@/lib/database'
+import { db } from '@/lib/database-postgres'
 import { verifyToken } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
@@ -51,14 +51,12 @@ export async function POST(request: NextRequest) {
       createdAt: new Date().toISOString()
     }
 
-    // Agregar resultado al usuario
-    const updatedTestResults = [...(user.testResults || []), testResult]
+    // Guardar resultado en la base de datos
+    await db.createTestResult(testResult)
     
-    // Actualizar usuario con el nuevo resultado
-    const updatedUser = await db.updateUser(user.id, {
-      testResults: updatedTestResults,
-      iq: testResult.iq, // Actualizar IQ más reciente
-      updatedAt: new Date().toISOString()
+    // Actualizar IQ del usuario
+    await db.updateUser(user.id, {
+      iq: testResult.iq,
     })
 
     console.log(`✅ Resultado guardado: IQ ${testResult.iq}, ${testResult.correctAnswers}/${totalQuestions} correctas`)

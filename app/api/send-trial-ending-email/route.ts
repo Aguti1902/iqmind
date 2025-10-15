@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { sendEmail, emailTemplates } from '@/lib/email-service'
-import { db } from '@/lib/database'
+import { db } from '@/lib/database-postgres'
 
 export async function POST(request: NextRequest) {
   try {

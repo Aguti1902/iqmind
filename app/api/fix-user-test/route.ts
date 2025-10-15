@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { db } from '@/lib/database'
+import { db } from '@/lib/database-postgres'
 
 export async function POST(request: NextRequest) {
   try {
@@ -48,15 +48,13 @@ export async function POST(request: NextRequest) {
     const currentTestResults = user.testResults || []
     console.log('📊 Test results actuales:', currentTestResults.length)
     
-    // Agregar nuevo resultado
-    const updatedTestResults = [...currentTestResults, testResult]
-    console.log('📊 Test results actualizados:', updatedTestResults.length)
+    // Guardar resultado en la base de datos
+    await db.createTestResult(testResult)
+    console.log('📊 Test result creado')
     
-    // Actualizar usuario
+    // Actualizar IQ del usuario
     const updatedUser = await db.updateUser(user.id, {
-      testResults: updatedTestResults,
       iq: testResult.iq,
-      updatedAt: new Date().toISOString()
     })
 
     if (updatedUser) {

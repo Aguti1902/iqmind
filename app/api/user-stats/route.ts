@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { db } from '@/lib/database'
+import { db } from '@/lib/database-postgres'
 import { verifyToken } from '@/lib/auth'
 
 export async function GET(request: NextRequest) {
