@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { sendEmail, emailTemplates } from '@/lib/email-service'
 import { createOrUpdateUser } from '@/lib/auth'
+import { db } from '@/lib/database'
 
 const stripe = process.env.STRIPE_SECRET_KEY
   ? new Stripe(process.env.STRIPE_SECRET_KEY, {
