@@ -40,8 +40,8 @@ export default function LoginPage() {
         localStorage.setItem('auth_token', data.token)
         localStorage.setItem('user_data', JSON.stringify(data.user))
         
-        // Redirigir al dashboard
-        router.push(`/${lang}/dashboard`)
+        // Redirigir a cuenta/dashboard
+        router.push(`/${lang}/cuenta`)
       } else {
         setError(data.error || 'Error al iniciar sesión')
       }

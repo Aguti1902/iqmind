@@ -30,6 +30,12 @@ export default function CuentaPage() {
   const [evolutionData, setEvolutionData] = useState<any[]>([])
   const [testHistory, setTestHistory] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [showChangePassword, setShowChangePassword] = useState(false)
+  const [currentPassword, setCurrentPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [passwordMessage, setPasswordMessage] = useState('')
+  const [passwordLoading, setPasswordLoading] = useState(false)
 
   useEffect(() => {
     const email = localStorage.getItem('userEmail')
@@ -57,6 +63,57 @@ export default function CuentaPage() {
 
     setIsLoading(false)
   }, [router, lang])
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (newPassword !== confirmPassword) {
+      setPasswordMessage('Las contraseñas no coinciden')
+      return
+    }
+
+    if (newPassword.length < 8) {
+      setPasswordMessage('La contraseña debe tener al menos 8 caracteres')
+      return
+    }
+
+    setPasswordLoading(true)
+    setPasswordMessage('')
+
+    try {
+      const token = localStorage.getItem('auth_token')
+      const response = await fetch('/api/auth/change-password', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ 
+          currentPassword, 
+          newPassword 
+        }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        setPasswordMessage('✅ Contraseña cambiada exitosamente')
+        setCurrentPassword('')
+        setNewPassword('')
+        setConfirmPassword('')
+        setTimeout(() => {
+          setShowChangePassword(false)
+          setPasswordMessage('')
+        }, 2000)
+      } else {
+        setPasswordMessage(data.error || 'Error al cambiar la contraseña')
+      }
+    } catch (error) {
+      setPasswordMessage('Error de conexión. Inténtalo de nuevo.')
+    } finally {
+      setPasswordLoading(false)
+    }
+  }
 
   const handleCancelSubscription = () => {
     if (!t) return
@@ -341,6 +398,102 @@ export default function CuentaPage() {
                   >
                     {t.account.manageSubscription}
                   </button>
+              </div>
+
+              {/* Change Password Card */}
+              <div className="bg-white rounded-xl shadow-md p-6 mt-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                    <span className="text-2xl">🔒</span>
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-900">Seguridad</h3>
+                </div>
+                
+                {!showChangePassword ? (
+                  <button
+                    onClick={() => setShowChangePassword(true)}
+                    className="w-full bg-primary-600 hover:bg-primary-700 text-white py-2 px-4 rounded-lg font-semibold transition"
+                  >
+                    Cambiar Contraseña
+                  </button>
+                ) : (
+                  <form onSubmit={handleChangePassword} className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Contraseña actual
+                      </label>
+                      <input
+                        type="password"
+                        value={currentPassword}
+                        onChange={(e) => setCurrentPassword(e.target.value)}
+                        required
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Nueva contraseña
+                      </label>
+                      <input
+                        type="password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        required
+                        minLength={8}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">Mínimo 8 caracteres</p>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Confirmar contraseña
+                      </label>
+                      <input
+                        type="password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        required
+                        minLength={8}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      />
+                    </div>
+
+                    {passwordMessage && (
+                      <div className={`text-sm p-3 rounded-lg ${
+                        passwordMessage.includes('✅') 
+                          ? 'bg-green-50 text-green-700 border border-green-200' 
+                          : 'bg-red-50 text-red-700 border border-red-200'
+                      }`}>
+                        {passwordMessage}
+                      </div>
+                    )}
+
+                    <div className="flex gap-2">
+                      <button
+                        type="submit"
+                        disabled={passwordLoading}
+                        className="flex-1 bg-primary-600 text-white py-2 px-4 rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 font-semibold transition"
+                      >
+                        {passwordLoading ? 'Cambiando...' : 'Cambiar'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowChangePassword(false)
+                          setCurrentPassword('')
+                          setNewPassword('')
+                          setConfirmPassword('')
+                          setPasswordMessage('')
+                        }}
+                        className="flex-1 bg-gray-200 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 font-semibold transition"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  </form>
+                )}
               </div>
             </div>
 
