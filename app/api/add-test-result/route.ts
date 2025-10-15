@@ -75,13 +75,13 @@ export async function POST(request: NextRequest) {
         correctAnswers: testResult.correctAnswers,
         timeElapsed: testResult.timeElapsed
       },
-      user: {
+      user: updatedUser ? {
         id: updatedUser.id,
         email: updatedUser.email,
         userName: updatedUser.userName,
         iq: updatedUser.iq,
         testResultsCount: updatedTestResults.length
-      }
+      } : null
     })
 
   } catch (error: any) {
