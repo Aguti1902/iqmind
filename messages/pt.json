@@ -421,5 +421,26 @@
   },
   "legal": {
     "noticeTranslation": "Este documento legal está disponível principalmente em espanhol. Para consultas em outros idiomas, contacte support@iqmind.io"
+  },
+  "login": {
+    "title": "Entrar",
+    "subtitle": "Aceda ao seu painel pessoal",
+    "email": "Email",
+    "emailPlaceholder": "seu@email.pt",
+    "password": "Senha",
+    "passwordPlaceholder": "Sua senha",
+    "loginButton": "Entrar",
+    "loggingIn": "Entrando...",
+    "forgotPassword": "Esqueceu a senha?",
+    "forgotEmailLabel": "Email",
+    "sendReset": "Enviar link",
+    "sending": "Enviando...",
+    "cancel": "Cancelar",
+    "noAccount": "Não tem uma conta?",
+    "contactSupport": "Contacte o suporte",
+    "errorLogin": "Erro ao entrar",
+    "errorConnection": "Erro de conexão. Tente novamente.",
+    "resetSent": "Um link de redefinição foi enviado para o seu email.",
+    "resetError": "Erro ao enviar email de redefinição."
   }
 }

@@ -421,5 +421,26 @@
   },
   "legal": {
     "noticeTranslation": "Dieses rechtliche Dokument ist hauptsächlich auf Spanisch verfügbar. Für Anfragen in anderen Sprachen kontaktieren Sie bitte support@iqmind.io"
+  },
+  "login": {
+    "title": "Anmelden",
+    "subtitle": "Zugriff auf Ihr persönliches Dashboard",
+    "email": "E-Mail",
+    "emailPlaceholder": "ihre@email.de",
+    "password": "Passwort",
+    "passwordPlaceholder": "Ihr Passwort",
+    "loginButton": "Anmelden",
+    "loggingIn": "Anmeldung läuft...",
+    "forgotPassword": "Passwort vergessen?",
+    "forgotEmailLabel": "E-Mail",
+    "sendReset": "Link senden",
+    "sending": "Wird gesendet...",
+    "cancel": "Abbrechen",
+    "noAccount": "Noch kein Konto?",
+    "contactSupport": "Support kontaktieren",
+    "errorLogin": "Anmeldefehler",
+    "errorConnection": "Verbindungsfehler. Bitte versuchen Sie es erneut.",
+    "resetSent": "Ein Zurücksetzungslink wurde an Ihre E-Mail gesendet.",
+    "resetError": "Fehler beim Senden der Zurücksetzungs-E-Mail."
   }
 }

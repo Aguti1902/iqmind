@@ -421,5 +421,26 @@
   },
   "legal": {
     "noticeTranslation": "Dette juridiske dokumentet er primært tilgjengelig på spansk. For henvendelser på andre språk, kontakt support@iqmind.io"
+  },
+  "login": {
+    "title": "Logg Inn",
+    "subtitle": "Få tilgang til ditt personlige dashbord",
+    "email": "E-post",
+    "emailPlaceholder": "din@email.no",
+    "password": "Passord",
+    "passwordPlaceholder": "Ditt passord",
+    "loginButton": "Logg Inn",
+    "loggingIn": "Logger inn...",
+    "forgotPassword": "Har du glemt passordet ditt?",
+    "forgotEmailLabel": "E-post",
+    "sendReset": "Send lenke",
+    "sending": "Sender...",
+    "cancel": "Avbryt",
+    "noAccount": "Har du ikke en konto?",
+    "contactSupport": "Kontakt support",
+    "errorLogin": "Feil ved pålogging",
+    "errorConnection": "Tilkoblingsfeil. Prøv igjen.",
+    "resetSent": "En gjenopprettingslenke er sendt til e-posten din.",
+    "resetError": "Feil ved sending av gjenopprettingsmail."
   }
 }

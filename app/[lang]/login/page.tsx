@@ -47,10 +47,10 @@ export default function LoginPage() {
         // Redirigir a cuenta/dashboard
         router.push(`/${lang}/cuenta`)
       } else {
-        setError(data.error || 'Error al iniciar sesión')
+        setError(data.error || t.login?.errorLogin || 'Error al iniciar sesión')
       }
     } catch (error) {
-      setError('Error de conexión. Inténtalo de nuevo.')
+      setError(t.login?.errorConnection || 'Error de conexión. Inténtalo de nuevo.')
     } finally {
       setLoading(false)
     }
@@ -65,20 +65,20 @@ export default function LoginPage() {
       const response = await fetch('/api/auth/forgot-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: forgotPasswordEmail }),
+        body: JSON.stringify({ email: forgotPasswordEmail, lang }),
       })
 
       const data = await response.json()
 
       if (response.ok) {
-        setForgotPasswordMessage('Se ha enviado un enlace de recuperación a tu email.')
+        setForgotPasswordMessage(t.login?.resetSent || 'Se ha enviado un enlace de recuperación a tu email.')
         setShowForgotPassword(false)
         setForgotPasswordEmail('')
       } else {
-        setForgotPasswordMessage(data.error || 'Error al enviar el email de recuperación.')
+        setForgotPasswordMessage(data.error || t.login?.resetError || 'Error al enviar el email de recuperación.')
       }
     } catch (error) {
-      setForgotPasswordMessage('Error de conexión. Inténtalo de nuevo.')
+      setForgotPasswordMessage(t.login?.errorConnection || 'Error de conexión. Inténtalo de nuevo.')
     } finally {
       setForgotPasswordLoading(false)
     }

@@ -486,6 +486,10 @@
     "sending": "Enviando...",
     "cancel": "Cancelar",
     "noAccount": "¿No tienes cuenta?",
-    "contactSupport": "Contacta con soporte"
+    "contactSupport": "Contacta con soporte",
+    "errorLogin": "Error al iniciar sesión",
+    "errorConnection": "Error de conexión. Inténtalo de nuevo.",
+    "resetSent": "Se ha enviado un enlace de recuperación a tu email.",
+    "resetError": "Error al enviar el email de recuperación."
   }
 }
