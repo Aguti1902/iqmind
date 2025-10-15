@@ -1,6 +1,6 @@
-import { createPool, VercelPool } from '@vercel/postgres'
+import { Pool } from 'pg'
 
-let pool: VercelPool | null = null
+let pool: Pool | null = null
 
 function getPool() {
   if (!pool) {
@@ -9,13 +9,12 @@ function getPool() {
       throw new Error('No se encontró POSTGRES_URL o DATABASE_URL en las variables de entorno')
     }
     
-    const finalConnectionString = connectionString.includes('?') 
-      ? `${connectionString}&sslmode=require` 
-      : `${connectionString}?sslmode=require`
-    
-    pool = createPool({ 
-      connectionString: finalConnectionString,
-      ssl: { rejectUnauthorized: false }
+    pool = new Pool({
+      connectionString,
+      ssl: { rejectUnauthorized: false },
+      max: 10,
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 2000,
     })
   }
   return pool
@@ -68,18 +67,26 @@ export const db = {
     const id = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
     const now = new Date().toISOString()
     
-    const result = await getPool().sql`
-      INSERT INTO users (
+    const result = await getPool().query(
+      `INSERT INTO users (
         id, email, password, user_name, iq, subscription_status,
         subscription_id, trial_end_date, access_until, created_at, updated_at
-      ) VALUES (
-        ${id}, ${userData.email}, ${userData.password}, ${userData.userName},
-        ${userData.iq || 0}, ${userData.subscriptionStatus}, 
-        ${userData.subscriptionId || null}, ${userData.trialEndDate || null},
-        ${userData.accessUntil || null}, ${now}, ${now}
-      )
-      RETURNING *
-    `
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+      RETURNING *`,
+      [
+        id, 
+        userData.email, 
+        userData.password, 
+        userData.userName,
+        userData.iq || 0, 
+        userData.subscriptionStatus, 
+        userData.subscriptionId || null, 
+        userData.trialEndDate || null,
+        userData.accessUntil || null, 
+        now, 
+        now
+      ]
+    )
     
     const user = result.rows[0]
     return {
@@ -100,20 +107,20 @@ export const db = {
 
   getUserByEmail: async (email: string): Promise<User | null> => {
     try {
-      const result = await getPool().sql`
-        SELECT * FROM users WHERE email = ${email} LIMIT 1
-      `
+      const result = await getPool().query(
+        'SELECT * FROM users WHERE email = $1 LIMIT 1',
+        [email]
+      )
       
       if (result.rows.length === 0) return null
       
       const user = result.rows[0]
       
       // Obtener test results del usuario
-      const testResultsQuery = await getPool().sql`
-        SELECT * FROM test_results 
-        WHERE user_id = ${user.id}
-        ORDER BY completed_at DESC
-      `
+      const testResultsQuery = await getPool().query(
+        'SELECT * FROM test_results WHERE user_id = $1 ORDER BY completed_at DESC',
+        [user.id]
+      )
       
       const testResults = testResultsQuery.rows.map(row => ({
         id: row.id,
@@ -150,20 +157,20 @@ export const db = {
 
   getUserById: async (id: string): Promise<User | null> => {
     try {
-      const result = await getPool().sql`
-        SELECT * FROM users WHERE id = ${id} LIMIT 1
-      `
+      const result = await getPool().query(
+        'SELECT * FROM users WHERE id = $1 LIMIT 1',
+        [id]
+      )
       
       if (result.rows.length === 0) return null
       
       const user = result.rows[0]
       
       // Obtener test results del usuario
-      const testResultsQuery = await getPool().sql`
-        SELECT * FROM test_results 
-        WHERE user_id = ${user.id}
-        ORDER BY completed_at DESC
-      `
+      const testResultsQuery = await getPool().query(
+        'SELECT * FROM test_results WHERE user_id = $1 ORDER BY completed_at DESC',
+        [user.id]
+      )
       
       const testResults = testResultsQuery.rows.map(row => ({
         id: row.id,
@@ -261,11 +268,10 @@ export const db = {
       const user = result.rows[0]
       
       // Obtener test results del usuario
-      const testResultsQuery = await getPool().sql`
-        SELECT * FROM test_results 
-        WHERE user_id = ${user.id}
-        ORDER BY completed_at DESC
-      `
+      const testResultsQuery = await getPool().query(
+        'SELECT * FROM test_results WHERE user_id = $1 ORDER BY completed_at DESC',
+        [user.id]
+      )
       
       const testResults = testResultsQuery.rows.map(row => ({
         id: row.id,
@@ -307,18 +313,24 @@ export const db = {
   createTestResult: async (testResult: Omit<TestResult, 'createdAt'>): Promise<TestResult> => {
     const now = new Date().toISOString()
     
-    const result = await getPool().sql`
-      INSERT INTO test_results (
+    const result = await getPool().query(
+      `INSERT INTO test_results (
         id, user_id, iq, correct_answers, time_elapsed,
         answers, category_scores, completed_at, created_at
-      ) VALUES (
-        ${testResult.id}, ${testResult.userId}, ${testResult.iq},
-        ${testResult.correctAnswers}, ${testResult.timeElapsed},
-        ${JSON.stringify(testResult.answers)}, ${JSON.stringify(testResult.categoryScores)},
-        ${testResult.completedAt}, ${now}
-      )
-      RETURNING *
-    `
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+      RETURNING *`,
+      [
+        testResult.id, 
+        testResult.userId, 
+        testResult.iq,
+        testResult.correctAnswers, 
+        testResult.timeElapsed,
+        JSON.stringify(testResult.answers), 
+        JSON.stringify(testResult.categoryScores),
+        testResult.completedAt, 
+        now
+      ]
+    )
     
     const row = result.rows[0]
     return {
@@ -335,11 +347,10 @@ export const db = {
   },
 
   getTestResultsByUserId: async (userId: string): Promise<TestResult[]> => {
-    const result = await getPool().sql`
-      SELECT * FROM test_results 
-      WHERE user_id = ${userId}
-      ORDER BY completed_at DESC
-    `
+    const result = await getPool().query(
+      'SELECT * FROM test_results WHERE user_id = $1 ORDER BY completed_at DESC',
+      [userId]
+    )
     
     return result.rows.map(row => ({
       id: row.id,
@@ -362,20 +373,17 @@ export const db = {
     const id = `reset_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
     const now = new Date().toISOString()
     
-    await getPool().sql`
-      INSERT INTO password_resets (id, email, token, expires_at, used, created_at)
-      VALUES (${id}, ${email}, ${token}, ${expiresAt}, FALSE, ${now})
-    `
+    await getPool().query(
+      'INSERT INTO password_resets (id, email, token, expires_at, used, created_at) VALUES ($1, $2, $3, $4, $5, $6)',
+      [id, email, token, expiresAt, false, now]
+    )
   },
 
   findPasswordResetToken: async (token: string): Promise<PasswordReset | null> => {
-    const result = await getPool().sql`
-      SELECT * FROM password_resets 
-      WHERE token = ${token} 
-        AND used = FALSE 
-        AND expires_at > NOW()
-      LIMIT 1
-    `
+    const result = await getPool().query(
+      'SELECT * FROM password_resets WHERE token = $1 AND used = FALSE AND expires_at > NOW() LIMIT 1',
+      [token]
+    )
     
     if (result.rows.length === 0) return null
     
@@ -391,11 +399,9 @@ export const db = {
   },
 
   invalidatePasswordResetToken: async (token: string): Promise<void> => {
-    await getPool().sql`
-      UPDATE password_resets 
-      SET used = TRUE 
-      WHERE token = ${token}
-    `
+    await getPool().query(
+      'UPDATE password_resets SET used = TRUE WHERE token = $1',
+      [token]
+    )
   }
 }
-
