@@ -43,62 +43,6 @@ async function sendEmailToUser(type: string, data: any) {
           console.log(`👤 Usuario creado/actualizado: ${user.email}`)
           console.log(`🔑 Contraseña generada: ${password}`)
           
-          // Guardar resultado del test en el historial del usuario
-          try {
-            // Obtener datos del test desde los metadata de la suscripción
-            if (!stripe) {
-              console.error('❌ Stripe no configurado para obtener suscripción')
-              throw new Error('Stripe no configurado')
-            }
-            
-            const subscription = await stripe.subscriptions.list({
-              customer: paymentIntent.customer as string,
-              limit: 1
-            })
-            
-            let testAnswers = []
-            let testTimeElapsed = 0
-            let testCorrectAnswers = 0
-            let testCategoryScores = {}
-            
-            if (subscription.data.length > 0) {
-              const subMetadata = subscription.data[0].metadata
-              try {
-                testAnswers = subMetadata.testAnswers ? JSON.parse(subMetadata.testAnswers) : []
-                testTimeElapsed = parseInt(subMetadata.testTimeElapsed || '0')
-                testCorrectAnswers = parseInt(subMetadata.testCorrectAnswers || '0')
-                testCategoryScores = subMetadata.testCategoryScores ? JSON.parse(subMetadata.testCategoryScores) : {}
-              } catch (parseError) {
-                console.error('❌ Error parseando datos del test:', parseError)
-              }
-            }
-
-            const testResult = {
-              id: `test_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-              userId: user.id,
-              iq: data.iq,
-              correctAnswers: testCorrectAnswers || data.correctAnswers || 0,
-              timeElapsed: testTimeElapsed || data.timeElapsed || 0,
-              answers: testAnswers.length > 0 ? testAnswers : (data.answers || []),
-              categoryScores: Object.keys(testCategoryScores).length > 0 ? testCategoryScores : (data.categoryScores || {}),
-              completedAt: new Date().toISOString(),
-              createdAt: new Date().toISOString()
-            }
-
-            // Agregar resultado al usuario
-            const updatedTestResults = [...(user.testResults || []), testResult]
-            
-            // Actualizar usuario con el resultado del test
-            await db.updateUser(user.id, {
-              testResults: updatedTestResults,
-              updatedAt: new Date().toISOString()
-            })
-
-            console.log(`✅ Resultado del test guardado: IQ ${data.iq}`)
-          } catch (testError) {
-            console.error('❌ Error guardando resultado del test:', testError)
-          }
-          
           console.log(`📧 Enviando email a: ${data.email}`)
           
           // Enviar email con credenciales de acceso
@@ -374,6 +318,63 @@ export async function POST(request: NextRequest) {
         
         // No enviar email de bienvenida al trial aquí
         // El email principal con credenciales se envía en payment_intent.succeeded
+        
+        // Guardar resultado del test en el historial del usuario
+        if (customerEmail) {
+          try {
+            console.log('💾 Guardando resultado del test para:', customerEmail)
+            
+            // Obtener datos del test desde los metadata de la suscripción
+            let testAnswers = []
+            let testTimeElapsed = 0
+            let testCorrectAnswers = 0
+            let testCategoryScores = {}
+            let userIQ = 0
+            
+            const subMetadata = subscriptionCreated.metadata
+            try {
+              testAnswers = subMetadata.testAnswers ? JSON.parse(subMetadata.testAnswers) : []
+              testTimeElapsed = parseInt(subMetadata.testTimeElapsed || '0')
+              testCorrectAnswers = parseInt(subMetadata.testCorrectAnswers || '0')
+              testCategoryScores = subMetadata.testCategoryScores ? JSON.parse(subMetadata.testCategoryScores) : {}
+              userIQ = parseInt(subMetadata.userIQ || '0')
+            } catch (parseError) {
+              console.error('❌ Error parseando datos del test:', parseError)
+            }
+
+            // Buscar usuario por email
+            const user = await db.getUserByEmail(customerEmail)
+            if (user && userIQ > 0) {
+              const testResult = {
+                id: `test_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                userId: user.id,
+                iq: userIQ,
+                correctAnswers: testCorrectAnswers,
+                timeElapsed: testTimeElapsed,
+                answers: testAnswers,
+                categoryScores: testCategoryScores,
+                completedAt: new Date().toISOString(),
+                createdAt: new Date().toISOString()
+              }
+
+              // Agregar resultado al usuario
+              const updatedTestResults = [...(user.testResults || []), testResult]
+              
+              // Actualizar usuario con el resultado del test
+              await db.updateUser(user.id, {
+                testResults: updatedTestResults,
+                iq: userIQ, // Actualizar IQ más reciente
+                updatedAt: new Date().toISOString()
+              })
+
+              console.log(`✅ Resultado del test guardado: IQ ${userIQ}, ${testCorrectAnswers} correctas`)
+            } else {
+              console.log('⚠️ Usuario no encontrado o IQ no válido:', { customerEmail, userIQ })
+            }
+          } catch (testError) {
+            console.error('❌ Error guardando resultado del test:', testError)
+          }
+        }
         
         break
 
