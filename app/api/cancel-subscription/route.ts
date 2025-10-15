@@ -72,22 +72,26 @@ export async function POST(request: NextRequest) {
         )
       }
 
-      // Buscar suscripciones activas del cliente
+      // Buscar suscripciones activas o en trial del cliente
       const subscriptions = await stripe.subscriptions.list({
         customer: customers.data[0].id,
-        status: 'active',
-        limit: 1
+        limit: 10 // Buscar hasta 10 suscripciones
       })
 
-      if (subscriptions.data.length === 0) {
+      // Filtrar solo las que están activas o en trial
+      const activeSubscriptions = subscriptions.data.filter(sub => 
+        sub.status === 'active' || sub.status === 'trialing'
+      )
+
+      if (activeSubscriptions.length === 0) {
         return NextResponse.json(
-          { error: 'No tienes ninguna suscripción activa' },
+          { error: 'No tienes ninguna suscripción activa o en trial' },
           { status: 404 }
         )
       }
 
-      // Cancelar la primera suscripción activa
-      subscription = await stripe.subscriptions.update(subscriptions.data[0].id, {
+      // Cancelar la primera suscripción activa o en trial
+      subscription = await stripe.subscriptions.update(activeSubscriptions[0].id, {
         cancel_at_period_end: true,
         metadata: {
           cancelled_by: 'user',
