@@ -228,30 +228,30 @@ export default function TestPage() {
         t={t}
       />
       
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-6 px-4">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-2 lg:py-6 px-4">
         <div className="container mx-auto max-w-7xl">
           {/* Barra de progreso */}
-          <div className="w-full bg-gray-200 rounded-full h-3 mb-8">
+          <div className="w-full bg-gray-200 rounded-full h-2 lg:h-3 mb-3 lg:mb-8">
             <div 
-              className="bg-[#218B8E] h-3 rounded-full transition-all duration-500"
+              className="bg-[#218B8E] h-2 lg:h-3 rounded-full transition-all duration-500"
               style={{ width: `${progress}%` }}
             />
           </div>
 
           {/* Contenido principal - Layout lado a lado */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-6 items-stretch h-[calc(100vh-140px)] lg:h-auto">
             {/* Panel izquierdo - Matriz 3x3 */}
-            <div className="bg-white rounded-3xl shadow-xl p-4 lg:p-6 flex flex-col">
-              <h3 className="text-base font-semibold text-gray-900 mb-3 text-center">
+            <div className="bg-white rounded-2xl lg:rounded-3xl shadow-lg lg:shadow-xl p-3 lg:p-6 flex flex-col">
+              <h3 className="text-sm lg:text-base font-semibold text-gray-900 mb-2 lg:mb-3 text-center">
                 {t.test.completeSequence}
               </h3>
               
-              <div className="grid grid-cols-3 gap-2 w-full max-w-[340px] mx-auto p-2">
+              <div className="grid grid-cols-3 gap-1.5 lg:gap-2 w-full max-w-[280px] lg:max-w-[340px] mx-auto p-1 lg:p-2 flex-1">
                 {question.matrix.flat().map((cell, index) => (
                   <VisualCell 
                     key={index} 
                     cell={cell} 
-                    size={100}
+                    size={80}
                     isHighlighted={cell.type === 'empty'}
                   />
                 ))}
@@ -259,19 +259,19 @@ export default function TestPage() {
             </div>
 
             {/* Panel derecho - Opciones A-F */}
-            <div className="bg-white rounded-3xl shadow-xl p-4 lg:p-6 border-4 border-[#218B8E] flex flex-col">
-              <h3 className="text-base font-semibold text-gray-900 mb-3 text-center">
+            <div className="bg-white rounded-2xl lg:rounded-3xl shadow-lg lg:shadow-xl p-3 lg:p-6 border-2 lg:border-4 border-[#218B8E] flex flex-col">
+              <h3 className="text-sm lg:text-base font-semibold text-gray-900 mb-2 lg:mb-3 text-center">
                 {t.test.chooseAnswer}
               </h3>
               
-              <div className="grid grid-cols-3 gap-2 w-full max-w-[340px] mx-auto p-2">
+              <div className="grid grid-cols-3 gap-1.5 lg:gap-2 w-full max-w-[280px] lg:max-w-[340px] mx-auto p-1 lg:p-2 flex-1">
                 {question.options.map((option, index) => (
-                  <div key={index} className="flex flex-col items-center gap-1.5">
-                    <div className="w-8 h-8 bg-[#031C43] text-white rounded-full flex items-center justify-center text-sm font-bold">
+                  <div key={index} className="flex flex-col items-center gap-1 lg:gap-1.5">
+                    <div className="w-6 h-6 lg:w-8 lg:h-8 bg-[#031C43] text-white rounded-full flex items-center justify-center text-xs lg:text-sm font-bold">
                       {optionLetters[index]}
                     </div>
                     <div 
-                      className="w-full aspect-square"
+                      className="w-full aspect-square cursor-pointer hover:opacity-80 transition-opacity"
                       onClick={() => handleOptionSelect(index)}
                     >
                       <VisualCell cell={option} isOption={true} />
@@ -283,32 +283,32 @@ export default function TestPage() {
           </div>
 
           {/* Footer de navegación */}
-          <div className="flex justify-center items-center mt-6 gap-4">
+          <div className="flex justify-center items-center mt-3 lg:mt-6 gap-2 lg:gap-4">
             <button
               onClick={handlePrevious}
               disabled={currentQuestion === 0}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-sm transition-all ${
+              className={`flex items-center gap-1.5 lg:gap-2 px-3 lg:px-5 py-2 lg:py-2.5 rounded-full font-semibold text-xs lg:text-sm transition-all ${
                 currentQuestion === 0 
                   ? 'bg-gray-200 text-gray-400 cursor-not-allowed' 
                   : 'bg-[#031C43] text-white hover:bg-[#052547]'
               }`}
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-3.5 h-3.5 lg:w-4 lg:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
-              {t.test.previous}
+              <span className="hidden sm:inline">{t.test.previous}</span>
             </button>
 
-            <div className="px-6 py-2.5 bg-[#218B8E] text-white rounded-full font-bold text-base">
+            <div className="px-3 lg:px-6 py-2 lg:py-2.5 bg-[#218B8E] text-white rounded-full font-bold text-sm lg:text-base">
               {currentQuestion + 1}/{visualQuestions.length}
             </div>
 
             <button
               onClick={handleNext}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-sm transition-all bg-[#031C43] text-white hover:bg-[#052547]"
+              className="flex items-center gap-1.5 lg:gap-2 px-3 lg:px-5 py-2 lg:py-2.5 rounded-full font-semibold text-xs lg:text-sm transition-all bg-[#031C43] text-white hover:bg-[#052547]"
             >
-              {currentQuestion === visualQuestions.length - 1 ? t.test.finish : t.test.next}
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <span className="hidden sm:inline">{currentQuestion === visualQuestions.length - 1 ? t.test.finish : t.test.next}</span>
+              <svg className="w-3.5 h-3.5 lg:w-4 lg:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </button>
