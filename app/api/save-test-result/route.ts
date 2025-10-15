@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/database'
-import { verifyAuthToken } from '@/lib/auth'
+import { verifyToken } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
   try {
@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
     }
 
-    const decodedToken = verifyAuthToken(token)
+    const decodedToken = verifyToken(token)
     if (!decodedToken || !decodedToken.userId) {
       return NextResponse.json({ error: 'Token inválido o expirado' }, { status: 401 })
     }
