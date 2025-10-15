@@ -38,15 +38,48 @@ export default function CuentaPage() {
   const [passwordLoading, setPasswordLoading] = useState(false)
 
   useEffect(() => {
+    // Verificar autenticación primero con el nuevo sistema
+    const token = localStorage.getItem('auth_token')
+    const userData_new = localStorage.getItem('user_data')
+
+    // Si hay token del sistema de login, usar ese
+    if (token && userData_new) {
+      try {
+        const parsedUser = JSON.parse(userData_new)
+        
+        // Cargar historial y estadísticas
+        const history = getTestHistory()
+        const statistics = getTestStatistics()
+        const evolution = getEvolutionData()
+
+        setUserData({
+          email: parsedUser.email,
+          userName: parsedUser.userName,
+          hasSubscription: true
+        })
+
+        setStats(statistics)
+        setEvolutionData(evolution)
+        setTestHistory(history.tests)
+
+        setIsLoading(false)
+        return
+      } catch (error) {
+        console.error('Error parsing user data:', error)
+      }
+    }
+
+    // Fallback al sistema antiguo
     const email = localStorage.getItem('userEmail')
     const paymentCompleted = localStorage.getItem('paymentCompleted')
 
     if (!email || !paymentCompleted) {
-      router.push(`/${lang}`)
+      // Si no hay ningún tipo de autenticación, redirigir al login
+      router.push(`/${lang}/login`)
       return
     }
 
-    // Cargar historial y estadísticas
+    // Cargar historial y estadísticas (sistema antiguo)
     const history = getTestHistory()
     const statistics = getTestStatistics()
     const evolution = getEvolutionData()
@@ -54,7 +87,7 @@ export default function CuentaPage() {
     setUserData({
       email: history.email || email,
       userName: history.userName,
-      hasSubscription: true // En producción, esto vendría de tu backend
+      hasSubscription: true
     })
 
     setStats(statistics)
