@@ -6,9 +6,11 @@ import { sendEmail, emailTemplates } from '@/lib/email-service'
 import { getEmailTranslation } from '@/lib/email-translations'
 
 export async function POST(request: NextRequest) {
+  let lang = 'es' // Default language
   try {
     const body = await request.json()
     const { email } = body
+    lang = body.lang || 'es' // Update language from body
 
     if (!email) {
       return NextResponse.json(
@@ -34,9 +36,6 @@ export async function POST(request: NextRequest) {
 
     // Guardar token en la base de datos
     await db.createPasswordResetToken(email, token, expiresAt)
-
-    // Detectar idioma del usuario (por defecto español)
-    const lang = body.lang || 'es'
     
     // Enviar email de recuperación
     const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://iqmind.io'}/${lang}/reset-password?token=${token}`
@@ -145,7 +144,6 @@ export async function POST(request: NextRequest) {
       sv: 'Internt serverfel',
       no: 'Intern serverfeil',
     }
-    const lang = body?.lang || 'es'
     return NextResponse.json(
       { error: errorMessage[lang as keyof typeof errorMessage] || errorMessage.en },
       { status: 500 }
