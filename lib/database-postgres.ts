@@ -1,4 +1,6 @@
-import { sql } from '@vercel/postgres'
+import { createPool } from '@vercel/postgres'
+
+const pool = createPool()
 
 // Interfaces para TypeScript
 export interface TestResult {
@@ -47,7 +49,7 @@ export const db = {
     const id = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
     const now = new Date().toISOString()
     
-    const result = await sql`
+    const result = await pool.sql`
       INSERT INTO users (
         id, email, password, user_name, iq, subscription_status,
         subscription_id, trial_end_date, access_until, created_at, updated_at
@@ -79,7 +81,7 @@ export const db = {
 
   getUserByEmail: async (email: string): Promise<User | null> => {
     try {
-      const result = await sql`
+      const result = await pool.sql`
         SELECT * FROM users WHERE email = ${email} LIMIT 1
       `
       
@@ -88,7 +90,7 @@ export const db = {
       const user = result.rows[0]
       
       // Obtener test results del usuario
-      const testResultsQuery = await sql`
+      const testResultsQuery = await pool.sql`
         SELECT * FROM test_results 
         WHERE user_id = ${user.id}
         ORDER BY completed_at DESC
@@ -129,7 +131,7 @@ export const db = {
 
   getUserById: async (id: string): Promise<User | null> => {
     try {
-      const result = await sql`
+      const result = await pool.sql`
         SELECT * FROM users WHERE id = ${id} LIMIT 1
       `
       
@@ -138,7 +140,7 @@ export const db = {
       const user = result.rows[0]
       
       // Obtener test results del usuario
-      const testResultsQuery = await sql`
+      const testResultsQuery = await pool.sql`
         SELECT * FROM test_results 
         WHERE user_id = ${user.id}
         ORDER BY completed_at DESC
@@ -233,14 +235,14 @@ export const db = {
         RETURNING *
       `
       
-      const result = await sql.query(query, values)
+      const result = await pool.query(query, values)
       
       if (result.rows.length === 0) return null
       
       const user = result.rows[0]
       
       // Obtener test results del usuario
-      const testResultsQuery = await sql`
+      const testResultsQuery = await pool.sql`
         SELECT * FROM test_results 
         WHERE user_id = ${user.id}
         ORDER BY completed_at DESC
@@ -286,7 +288,7 @@ export const db = {
   createTestResult: async (testResult: Omit<TestResult, 'createdAt'>): Promise<TestResult> => {
     const now = new Date().toISOString()
     
-    const result = await sql`
+    const result = await pool.sql`
       INSERT INTO test_results (
         id, user_id, iq, correct_answers, time_elapsed,
         answers, category_scores, completed_at, created_at
@@ -314,7 +316,7 @@ export const db = {
   },
 
   getTestResultsByUserId: async (userId: string): Promise<TestResult[]> => {
-    const result = await sql`
+    const result = await pool.sql`
       SELECT * FROM test_results 
       WHERE user_id = ${userId}
       ORDER BY completed_at DESC
@@ -341,14 +343,14 @@ export const db = {
     const id = `reset_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
     const now = new Date().toISOString()
     
-    await sql`
+    await pool.sql`
       INSERT INTO password_resets (id, email, token, expires_at, used, created_at)
       VALUES (${id}, ${email}, ${token}, ${expiresAt}, FALSE, ${now})
     `
   },
 
   findPasswordResetToken: async (token: string): Promise<PasswordReset | null> => {
-    const result = await sql`
+    const result = await pool.sql`
       SELECT * FROM password_resets 
       WHERE token = ${token} 
         AND used = FALSE 
@@ -370,7 +372,7 @@ export const db = {
   },
 
   invalidatePasswordResetToken: async (token: string): Promise<void> => {
-    await sql`
+    await pool.sql`
       UPDATE password_resets 
       SET used = TRUE 
       WHERE token = ${token}

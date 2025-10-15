@@ -1,11 +1,14 @@
-import { sql } from '@vercel/postgres'
+import { createClient } from '@vercel/postgres'
 
 export async function initDatabase() {
+  const client = createClient()
+  await client.connect()
+  
   try {
     console.log('🔧 Inicializando base de datos...')
     
     // Crear tabla users
-    await sql`
+    await client.sql`
       CREATE TABLE IF NOT EXISTS users (
         id VARCHAR(255) PRIMARY KEY,
         email VARCHAR(255) UNIQUE NOT NULL,
@@ -24,7 +27,7 @@ export async function initDatabase() {
     console.log('✅ Tabla users creada')
     
     // Crear tabla test_results
-    await sql`
+    await client.sql`
       CREATE TABLE IF NOT EXISTS test_results (
         id VARCHAR(255) PRIMARY KEY,
         user_id VARCHAR(255) NOT NULL,
@@ -41,7 +44,7 @@ export async function initDatabase() {
     console.log('✅ Tabla test_results creada')
     
     // Crear tabla password_resets
-    await sql`
+    await client.sql`
       CREATE TABLE IF NOT EXISTS password_resets (
         id VARCHAR(255) PRIMARY KEY,
         email VARCHAR(255) NOT NULL,
@@ -54,17 +57,19 @@ export async function initDatabase() {
     console.log('✅ Tabla password_resets creada')
     
     // Crear índices
-    await sql`CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)`
-    await sql`CREATE INDEX IF NOT EXISTS idx_test_results_user_id ON test_results(user_id)`
-    await sql`CREATE INDEX IF NOT EXISTS idx_test_results_completed_at ON test_results(completed_at)`
-    await sql`CREATE INDEX IF NOT EXISTS idx_password_resets_token ON password_resets(token)`
-    await sql`CREATE INDEX IF NOT EXISTS idx_password_resets_email ON password_resets(email)`
+    await client.sql`CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)`
+    await client.sql`CREATE INDEX IF NOT EXISTS idx_test_results_user_id ON test_results(user_id)`
+    await client.sql`CREATE INDEX IF NOT EXISTS idx_test_results_completed_at ON test_results(completed_at)`
+    await client.sql`CREATE INDEX IF NOT EXISTS idx_password_resets_token ON password_resets(token)`
+    await client.sql`CREATE INDEX IF NOT EXISTS idx_password_resets_email ON password_resets(email)`
     console.log('✅ Índices creados')
     
     console.log('✅ Base de datos inicializada correctamente')
+    await client.end()
     return { success: true }
   } catch (error) {
     console.error('❌ Error inicializando base de datos:', error)
+    await client.end()
     return { success: false, error }
   }
 }
