@@ -141,7 +141,13 @@
     "confirmFinishTitle": "Tem certeza de que deseja finalizar o teste?",
     "confirmFinishMessage": "Lembre-se de que uma vez finalizado você não poderá alterar nenhuma de suas respostas.",
     "goBack": "Voltar",
-    "getResults": "OBTER MEUS RESULTADOS"
+    "getResults": "OBTER MEUS RESULTADOS",
+    "instructionsTitle": "ℹ️ Instruções:",
+    "instruction1": "O teste consiste em <strong>20 perguntas visuais</strong>",
+    "instruction2": "Você tem <strong>20 minutos</strong> para completá-lo",
+    "instruction3": "Você pode navegar entre as perguntas usando os botões <strong>Anterior/Próximo</strong>",
+    "instruction4": "Escolha a opção que melhor completa o padrão",
+    "instruction5": "Tome seu tempo e pense bem em cada resposta"
   },
   "analyzing": {
     "title": "A avaliação do seu teste está em curso",

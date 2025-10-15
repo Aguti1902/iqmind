@@ -13,6 +13,7 @@
     "startTest": "Comenzar Test",
     "cancelPlan": "Cancelar Plan",
     "contact": "Contacto",
+    "login": "Iniciar Sesión",
     "legal": "Legal",
     "terms": "Términos y Condiciones",
     "privacy": "Política de Privacidad",
@@ -469,5 +470,22 @@
     "viewPolicy": "Ver política",
     "cancelNoticeTitle": "Información importante:",
     "cancelNoticeMessage": "Tu acceso premium seguirá activo hasta el final de tu periodo de facturación actual. No se realizarán más cobros después de esa fecha."
+  },
+  "login": {
+    "title": "Iniciar Sesión",
+    "subtitle": "Accede a tu dashboard personal",
+    "email": "Email",
+    "emailPlaceholder": "tu@email.com",
+    "password": "Contraseña",
+    "passwordPlaceholder": "Tu contraseña",
+    "loginButton": "Iniciar Sesión",
+    "loggingIn": "Iniciando sesión...",
+    "forgotPassword": "¿Has olvidado tu contraseña?",
+    "forgotEmailLabel": "Email",
+    "sendReset": "Enviar enlace",
+    "sending": "Enviando...",
+    "cancel": "Cancelar",
+    "noAccount": "¿No tienes cuenta?",
+    "contactSupport": "Contacta con soporte"
   }
 }

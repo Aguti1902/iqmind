@@ -253,13 +253,12 @@ export default function Home() {
                     MG
                   </div>
                   <div className="ml-4">
-                    <h4 className="font-semibold">María García</h4>
+                    <h4 className="font-semibold">{t.test.testimonial1Name}</h4>
                     <div className="text-yellow-400">★★★★★</div>
                   </div>
                 </div>
                 <p className="text-gray-600">
-                  "Increíble lo preciso que es el test. Los resultados me ayudaron 
-                  a entender mejor mis capacidades. Muy recomendable."
+                  "{t.test.testimonial1Text}"
                 </p>
               </div>
 
@@ -269,13 +268,12 @@ export default function Home() {
                     JL
                   </div>
                   <div className="ml-4">
-                    <h4 className="font-semibold">Juan López</h4>
+                    <h4 className="font-semibold">{t.test.testimonial2Name}</h4>
                     <div className="text-yellow-400">★★★★★</div>
                   </div>
                 </div>
                 <p className="text-gray-600">
-                  "El proceso fue muy rápido y sencillo. El informe detallado 
-                  superó mis expectativas. Vale totalmente la pena."
+                  "{t.test.testimonial2Text}"
                 </p>
               </div>
 
@@ -285,13 +283,12 @@ export default function Home() {
                     AP
                   </div>
                   <div className="ml-4">
-                    <h4 className="font-semibold">Ana Pérez</h4>
+                    <h4 className="font-semibold">{t.test.testimonial3Name}</h4>
                     <div className="text-yellow-400">★★★★★</div>
                   </div>
                 </div>
                 <p className="text-gray-600">
-                  "Siempre tuve curiosidad por saber mi CI. Este test me dio 
-                  respuestas claras y profesionales. Lo recomiendo 100%."
+                  "{t.test.testimonial3Text}"
                 </p>
               </div>
             </div>

@@ -141,7 +141,13 @@
     "confirmFinishTitle": "Sei sicuro di voler terminare il test?",
     "confirmFinishMessage": "Ricorda che una volta terminato non potrai cambiare nessuna delle tue risposte.",
     "goBack": "Indietro",
-    "getResults": "OTTIENI I MIEI RISULTATI"
+    "getResults": "OTTIENI I MIEI RISULTATI",
+    "instructionsTitle": "ℹ️ Istruzioni:",
+    "instruction1": "Il test consiste di <strong>20 domande visive</strong>",
+    "instruction2": "Hai <strong>20 minuti</strong> per completarlo",
+    "instruction3": "Puoi navigare tra le domande usando i pulsanti <strong>Precedente/Successivo</strong>",
+    "instruction4": "Scegli l'opzione che completa meglio il modello",
+    "instruction5": "Prenditi il tuo tempo e pensa bene a ogni risposta"
   },
   "analyzing": {
     "title": "La valutazione del tuo test è in corso",

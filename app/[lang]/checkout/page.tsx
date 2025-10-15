@@ -320,8 +320,21 @@ export default function CheckoutPage() {
     )
   }
 
+  // Mapear idiomas a los locales de Stripe
+  const stripeLocaleMap: Record<string, string> = {
+    'es': 'es',
+    'en': 'en',
+    'fr': 'fr',
+    'de': 'de',
+    'it': 'it',
+    'pt': 'pt',
+    'sv': 'sv',
+    'no': 'nb', // Noruego Bokmål
+  }
+
   const elementsOptions: StripeElementsOptions = {
     clientSecret: clientSecret || undefined,
+    locale: stripeLocaleMap[lang] || 'en',
     appearance: {
       theme: 'stripe',
       variables: {

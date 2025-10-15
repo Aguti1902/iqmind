@@ -141,7 +141,13 @@
     "confirmFinishTitle": "Är du säker på att du vill avsluta testet?",
     "confirmFinishMessage": "Kom ihåg att du inte kan ändra dina svar när du är klar.",
     "goBack": "Gå Tillbaka",
-    "getResults": "FÅ MINA RESULTAT"
+    "getResults": "FÅ MINA RESULTAT",
+    "instructionsTitle": "ℹ️ Instruktioner:",
+    "instruction1": "Testet består av <strong>20 visuella frågor</strong>",
+    "instruction2": "Du har <strong>20 minuter</strong> på dig att slutföra det",
+    "instruction3": "Du kan navigera mellan frågor med knapparna <strong>Föregående/Nästa</strong>",
+    "instruction4": "Välj det alternativ som bäst kompletterar mönstret",
+    "instruction5": "Ta din tid och tänk noga igenom varje svar"
   },
   "analyzing": {
     "title": "Utvärderingen av ditt test pågår",

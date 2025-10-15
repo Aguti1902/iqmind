@@ -141,7 +141,13 @@
     "confirmFinishTitle": "Er du sikker på at du vil fullføre testen?",
     "confirmFinishMessage": "Husk at når du er ferdig kan du ikke endre noen av svarene dine.",
     "goBack": "Gå Tilbake",
-    "getResults": "FÅ MINE RESULTATER"
+    "getResults": "FÅ MINE RESULTATER",
+    "instructionsTitle": "ℹ️ Instruksjoner:",
+    "instruction1": "Testen består av <strong>20 visuelle spørsmål</strong>",
+    "instruction2": "Du har <strong>20 minutter</strong> til å fullføre den",
+    "instruction3": "Du kan navigere mellom spørsmål ved hjelp av knappene <strong>Forrige/Neste</strong>",
+    "instruction4": "Velg alternativet som best fullfører mønsteret",
+    "instruction5": "Ta deg tid og tenk nøye gjennom hvert svar"
   },
   "analyzing": {
     "title": "Evalueringen av testen din pågår",

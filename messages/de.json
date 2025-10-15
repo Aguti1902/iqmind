@@ -141,7 +141,13 @@
     "confirmFinishTitle": "Sind Sie sicher, dass Sie den Test beenden möchten?",
     "confirmFinishMessage": "Denken Sie daran, dass Sie Ihre Antworten nach Abschluss nicht mehr ändern können.",
     "goBack": "Zurück",
-    "getResults": "MEINE ERGEBNISSE ERHALTEN"
+    "getResults": "MEINE ERGEBNISSE ERHALTEN",
+    "instructionsTitle": "ℹ️ Anweisungen:",
+    "instruction1": "Der Test besteht aus <strong>20 visuellen Fragen</strong>",
+    "instruction2": "Sie haben <strong>20 Minuten</strong> Zeit, um ihn zu absolvieren",
+    "instruction3": "Sie können zwischen den Fragen mit den Schaltflächen <strong>Zurück/Weiter</strong> navigieren",
+    "instruction4": "Wählen Sie die Option, die das Muster am besten vervollständigt",
+    "instruction5": "Nehmen Sie sich Zeit und überlegen Sie jede Antwort gut"
   },
   "analyzing": {
     "title": "Die Auswertung Ihres Tests läuft",
