@@ -4,7 +4,11 @@ let pool: VercelPool | null = null
 
 function getPool() {
   if (!pool) {
-    pool = createPool()
+    const connectionString = process.env.POSTGRES_URL || process.env.DATABASE_URL
+    if (!connectionString) {
+      throw new Error('No se encontró POSTGRES_URL o DATABASE_URL en las variables de entorno')
+    }
+    pool = createPool({ connectionString })
   }
   return pool
 }

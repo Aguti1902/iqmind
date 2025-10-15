@@ -1,7 +1,12 @@
 import { createClient } from '@vercel/postgres'
 
 export async function initDatabase() {
-  const client = createClient()
+  const connectionString = process.env.POSTGRES_URL || process.env.DATABASE_URL
+  if (!connectionString) {
+    throw new Error('No se encontró POSTGRES_URL o DATABASE_URL')
+  }
+  
+  const client = createClient({ connectionString })
   await client.connect()
   
   try {

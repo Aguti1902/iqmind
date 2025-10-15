@@ -4,7 +4,16 @@ import { createClient } from '@vercel/postgres'
 export const dynamic = 'force-dynamic'
 
 export async function GET(request: NextRequest) {
-  const client = createClient()
+  const connectionString = process.env.POSTGRES_URL || process.env.DATABASE_URL
+  if (!connectionString) {
+    return NextResponse.json({
+      success: false,
+      error: 'No se encontró POSTGRES_URL o DATABASE_URL en las variables de entorno',
+      hint: 'Configura POSTGRES_URL en Vercel con la URL de Railway'
+    }, { status: 500 })
+  }
+  
+  const client = createClient({ connectionString })
   await client.connect()
   
   try {
