@@ -27,6 +27,9 @@ export interface PasswordReset {
 const users: User[] = []
 const passwordResets: PasswordReset[] = []
 
+// Usuario de prueba predefinido (se creará automáticamente)
+let testUserCreated = false
+
 export const db = {
   // Usuarios
   createUser: async (userData: Omit<User, 'id' | 'createdAt' | 'updatedAt'>): Promise<User> => {
@@ -41,6 +44,25 @@ export const db = {
   },
 
   getUserByEmail: async (email: string): Promise<User | null> => {
+    // Si es el usuario de prueba y aún no se ha creado, crearlo
+    if (email === 'test@iqmind.io' && !testUserCreated) {
+      const bcrypt = require('bcryptjs')
+      const hashedPassword = await bcrypt.hash('Test1234!', 12)
+      const testUser: User = {
+        id: 'test-user-001',
+        email: 'test@iqmind.io',
+        password: hashedPassword,
+        userName: 'Usuario Test',
+        iq: 125,
+        subscriptionStatus: 'active',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      }
+      users.push(testUser)
+      testUserCreated = true
+      console.log('✅ Usuario de prueba creado automáticamente')
+    }
+    
     return users.find(user => user.email === email) || null
   },
 
