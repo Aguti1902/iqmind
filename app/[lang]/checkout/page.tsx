@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Header from '@/components/Header'
+import MinimalHeader from '@/components/MinimalHeader'
 import Footer from '@/components/Footer'
 import { FaLock, FaCheckCircle, FaBrain, FaCertificate, FaChartLine, FaUsers } from 'react-icons/fa'
 import { loadStripe, StripeElementsOptions } from '@stripe/stripe-js'
@@ -287,7 +287,7 @@ export default function CheckoutPage() {
   if (loading || !t) {
     return (
       <>
-        <Header />
+        <MinimalHeader email={email} />
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
             <div className="w-16 h-16 border-4 border-[#218B8E] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
@@ -316,7 +316,7 @@ export default function CheckoutPage() {
 
   return (
     <>
-      <Header />
+      <MinimalHeader email={email} />
       
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-12 px-4">
         <div className="container mx-auto max-w-6xl">

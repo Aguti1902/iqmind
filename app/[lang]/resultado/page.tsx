@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Header from '@/components/Header'
-import Footer from '@/components/Footer'
+import MinimalHeader from '@/components/MinimalHeader'
 import { getIQCategory, getIQDescription, visualQuestions as questions } from '@/lib/visual-questions'
 import { FaFacebook, FaTwitter, FaLinkedin, FaDownload, FaTrophy, FaBrain, FaLightbulb, FaEye, FaSearch, FaBolt, FaChartBar, FaMemory } from 'react-icons/fa'
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from 'recharts'
@@ -231,7 +230,7 @@ export default function ResultadoPage() {
   if (isLoading || loading || !t) {
     return (
       <>
-        <Header />
+        <MinimalHeader email={userEmail} />
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary-600 mx-auto mb-4"></div>
@@ -305,7 +304,7 @@ export default function ResultadoPage() {
 
   return (
     <>
-      <Header />
+      <MinimalHeader email={userEmail} />
       
       <div className="min-h-screen bg-gradient-to-br from-primary-50 to-white py-12">
         <div className="container-custom max-w-7xl">
@@ -592,8 +591,6 @@ export default function ResultadoPage() {
 
         </div>
       </div>
-
-      <Footer />
     </>
   )
 }
