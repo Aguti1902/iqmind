@@ -43,6 +43,52 @@ const passwordResets: PasswordReset[] = []
 // Usuario de prueba predefinido (se creará automáticamente)
 let testUserCreated = false
 
+// Agregar resultado de test para agutierrezgomez00@gmail.com
+const testResultForAlejandro = {
+  id: `test_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+  userId: 'user_1760529528247_37qumxd6j',
+  iq: 125,
+  correctAnswers: 15,
+  timeElapsed: 1200,
+  answers: Array(20).fill(1),
+  categoryScores: {
+    logicalReasoning: 80,
+    visualPerception: 75,
+    patternRecognition: 85,
+    abstractThinking: 70,
+    workingMemory: 90,
+    processingSpeed: 65
+  },
+  completedAt: new Date().toISOString(),
+  createdAt: new Date().toISOString()
+}
+
+// Función para agregar el resultado de test a Alejandro
+function addTestResultToAlejandro() {
+  const alejandroIndex = users.findIndex(user => user.email === 'agutierrezgomez00@gmail.com')
+  if (alejandroIndex !== -1) {
+    const alejandro = users[alejandroIndex]
+    const currentTestResults = alejandro.testResults || []
+    const updatedTestResults = [...currentTestResults, testResultForAlejandro]
+    
+    users[alejandroIndex] = {
+      ...alejandro,
+      testResults: updatedTestResults,
+      iq: 125, // Actualizar IQ
+      updatedAt: new Date().toISOString()
+    }
+    
+    console.log('✅ Resultado de test agregado a Alejandro:', {
+      iq: 125,
+      correctAnswers: 15,
+      testResultsCount: updatedTestResults.length
+    })
+  }
+}
+
+// Ejecutar al cargar el módulo
+addTestResultToAlejandro()
+
 export const db = {
   // Usuarios
   createUser: async (userData: Omit<User, 'id' | 'createdAt' | 'updatedAt'>): Promise<User> => {
