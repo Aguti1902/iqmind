@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Test Trial 1 Minuto - IQMind</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+        }
+        
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+        
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            color: #856404;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .result.success {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            color: #155724;
+        }
+        
+        .result.error {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            color: #721c24;
+        }
+        
+        .result h3 {
+            margin-bottom: 15px;
+        }
+        
+        .result pre {
+            background: rgba(0, 0, 0, 0.05);
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        
+        .countdown {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            background: #e7f3ff;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .countdown h2 {
+            color: #0066cc;
+            font-size: 48px;
+            margin: 10px 0;
+        }
+        
+        .instructions {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .instructions ol {
+            margin-left: 20px;
+        }
+        
+        .instructions li {
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+            display: none;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test Trial 1 Minuto</h1>
+        <p style="color: #666; margin-bottom: 20px;">Prueba el flujo de cobro después del trial</p>
+        
+        <div class="warning">
+            <strong>⚠️ IMPORTANTE:</strong> Este endpoint solo funciona en <strong>MODO TEST</strong> de Stripe. 
+            El trial durará solo 1 minuto y luego intentará cobrar 9.99€.
+        </div>
+        
+        <div class="instructions">
+            <h3 style="margin-bottom: 15px;">📋 Instrucciones:</h3>
+            <ol>
+                <li>Rellena el formulario con datos de prueba</li>
+                <li>Click en "Crear Suscripción de Prueba"</li>
+                <li>Espera 1 minuto ⏰</li>
+                <li>Verifica en Stripe Dashboard los eventos del webhook</li>
+                <li>Revisa los logs de Vercel</li>
+            </ol>
+        </div>
+        
+        <form id="testForm">
+            <div class="form-group">
+                <label for="email">📧 Email de prueba:</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    value="test-trial-1min@ejemplo.com"
+                    required
+                >
+            </div>
+            
+            <div class="form-group">
+                <label for="userName">👤 Nombre:</label>
+                <input 
+                    type="text" 
+                    id="userName" 
+                    name="userName" 
+                    value="Usuario Test Trial 1min"
+                    required
+                >
+            </div>
+            
+            <div class="form-group">
+                <label for="lang">🌍 Idioma:</label>
+                <select id="lang" name="lang">
+                    <option value="es">Español</option>
+                    <option value="en">English</option>
+                    <option value="fr">Français</option>
+                    <option value="de">Deutsch</option>
+                    <option value="it">Italiano</option>
+                    <option value="pt">Português</option>
+                    <option value="sv">Svenska</option>
+                    <option value="no">Norsk</option>
+                    <option value="uk">Українська</option>
+                </select>
+            </div>
+            
+            <button type="submit" id="submitBtn">
+                🚀 Crear Suscripción de Prueba (Trial 1 Min)
+            </button>
+        </form>
+        
+        <div class="spinner" id="spinner"></div>
+        
+        <div class="countdown" id="countdown">
+            <p>⏰ Tiempo restante hasta el cobro:</p>
+            <h2 id="timer">00:60</h2>
+            <p style="margin-top: 10px; color: #666;">El webhook debería ejecutarse cuando llegue a 00:00</p>
+        </div>
+        
+        <div class="result" id="result"></div>
+    </div>
+    
+    <script>
+        const form = document.getElementById('testForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const spinner = document.getElementById('spinner');
+        const result = document.getElementById('result');
+        const countdown = document.getElementById('countdown');
+        const timer = document.getElementById('timer');
+        
+        let countdownInterval;
+        
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                email: document.getElementById('email').value,
+                userName: document.getElementById('userName').value,
+                lang: document.getElementById('lang').value,
+            };
+            
+            submitBtn.disabled = true;
+            spinner.style.display = 'block';
+            result.style.display = 'none';
+            countdown.style.display = 'none';
+            
+            try {
+                const response = await fetch('https://iqmind.mobi/api/test-trial-subscription', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData),
+                });
+                
+                const data = await response.json();
+                
+                spinner.style.display = 'none';
+                result.style.display = 'block';
+                
+                if (response.ok && data.success) {
+                    result.className = 'result success';
+                    
+                    let html = `
+                        <h3>✅ ¡Suscripción de Prueba Creada!</h3>
+                        <p><strong>Subscription ID:</strong> ${data.subscription.id}</p>
+                        <p><strong>Customer ID:</strong> ${data.subscription.customer}</p>
+                        <p><strong>Status:</strong> ${data.subscription.status}</p>
+                        <p><strong>Trial Start:</strong> ${data.subscription.trial_start}</p>
+                        <p><strong>Trial End:</strong> ${data.subscription.trial_end}</p>
+                        <p><strong>Next Charge:</strong> ${data.subscription.next_charge_date}</p>
+                        <p><strong>Amount:</strong> ${data.subscription.amount}</p>
+                        
+                        <h4 style="margin-top: 20px;">📍 Enlaces útiles:</h4>
+                        <ul>
+                            <li><a href="${data.monitoring.stripe_dashboard}" target="_blank">Ver Suscripción en Stripe</a></li>
+                            <li><a href="${data.monitoring.stripe_webhooks}" target="_blank">Ver Webhooks en Stripe</a></li>
+                            <li><a href="https://iqmind.mobi${data.monitoring.verify_endpoint}" target="_blank">Verificar Configuración</a></li>
+                        </ul>
+                        
+                        <h4 style="margin-top: 20px;">🎯 Qué hacer ahora:</h4>
+                        <ol style="margin-left: 20px;">
+                            <li>Espera 1 minuto</li>
+                            <li>Ve a <a href="${data.monitoring.stripe_webhooks}" target="_blank">Stripe Webhooks</a></li>
+                            <li>Busca los eventos: invoice.created, invoice.payment_succeeded</li>
+                            <li>Verifica los logs de Vercel</li>
+                            <li>Comprueba si el email se envió</li>
+                        </ol>
+                        
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                    
+                    result.innerHTML = html;
+                    
+                    // Iniciar countdown
+                    startCountdown(60);
+                    
+                } else {
+                    result.className = 'result error';
+                    result.innerHTML = `
+                        <h3>❌ Error</h3>
+                        <p>${data.error || 'Error desconocido'}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+                
+                submitBtn.disabled = false;
+                
+            } catch (error) {
+                spinner.style.display = 'none';
+                result.style.display = 'block';
+                result.className = 'result error';
+                result.innerHTML = `
+                    <h3>❌ Error de Red</h3>
+                    <p>${error.message}</p>
+                `;
+                submitBtn.disabled = false;
+            }
+        });
+        
+        function startCountdown(seconds) {
+            countdown.style.display = 'block';
+            let remaining = seconds;
+            
+            countdownInterval = setInterval(() => {
+                remaining--;
+                
+                const mins = Math.floor(remaining / 60);
+                const secs = remaining % 60;
+                timer.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+                
+                if (remaining <= 0) {
+                    clearInterval(countdownInterval);
+                    timer.textContent = '🎉 ¡AHORA!';
+                    timer.style.color = '#28a745';
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
+
