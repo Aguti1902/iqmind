@@ -25,7 +25,7 @@ export default function RootLayout({
         <Analytics />
         <link rel="icon" href="/images/FAVICON2.png" type="image/png" />
         
-        {/* Google Ads Tag (gtag.js) */}
+        {/* Google Ads Tag (gtag.js) - Cuenta 1 */}
         <script
           async
           src="https://www.googletagmanager.com/gtag/js?id=AW-17655739355"
@@ -37,6 +37,22 @@ export default function RootLayout({
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
               gtag('config', 'AW-17655739355');
+            `,
+          }}
+        />
+        
+        {/* Google Ads Tag (gtag.js) - Cuenta 2 */}
+        <script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=AW-17232820139"
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'AW-17232820139');
             `,
           }}
         />
