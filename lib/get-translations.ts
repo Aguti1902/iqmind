@@ -7,6 +7,7 @@ import it from '@/messages/it.json'
 import pt from '@/messages/pt.json'
 import sv from '@/messages/sv.json'
 import no from '@/messages/no.json'
+import uk from '@/messages/uk.json'
 
 const translations: Record<string, any> = {
   es,
@@ -16,7 +17,8 @@ const translations: Record<string, any> = {
   it,
   pt,
   sv,
-  no
+  no,
+  uk
 }
 
 export async function getTranslations(lang: string) {
