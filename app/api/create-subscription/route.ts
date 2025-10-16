@@ -119,6 +119,7 @@ export async function POST(request: NextRequest) {
           price: process.env.STRIPE_PRICE_ID,
         },
       ],
+      default_payment_method: paymentMethodId,
       payment_settings: {
         payment_method_types: ['card'],
         save_default_payment_method: 'on_subscription',
@@ -135,8 +136,6 @@ export async function POST(request: NextRequest) {
         testCategoryScores: testData?.categoryScores ? JSON.stringify(testData.categoryScores) : '',
       },
       trial_period_days: 2,
-      // Configurar para que cobre automáticamente después del trial
-      payment_behavior: 'default_incomplete',
     })
 
     console.log('✅ Suscripción creada exitosamente:', subscription.id)
