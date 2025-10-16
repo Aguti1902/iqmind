@@ -531,7 +531,7 @@ export default function CuentaPage() {
                   <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
                     <span className="text-2xl">🔒</span>
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900">Seguridad</h3>
+                  <h3 className="text-lg font-bold text-gray-900">{t.account.security}</h3>
                 </div>
                 
                 {!showChangePassword ? (
@@ -539,13 +539,13 @@ export default function CuentaPage() {
                     onClick={() => setShowChangePassword(true)}
                     className="w-full bg-primary-600 hover:bg-primary-700 text-white py-2 px-4 rounded-lg font-semibold transition"
                   >
-                    Cambiar Contraseña
+                    {t.account.changePassword}
                   </button>
                 ) : (
                   <form onSubmit={handleChangePassword} className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Contraseña actual
+                        {t.account.currentPassword}
                       </label>
                       <input
                         type="password"
@@ -558,7 +558,7 @@ export default function CuentaPage() {
                     
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Nueva contraseña
+                        {t.account.newPassword}
                       </label>
                       <input
                         type="password"
@@ -568,12 +568,12 @@ export default function CuentaPage() {
                         minLength={8}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                       />
-                      <p className="text-xs text-gray-500 mt-1">Mínimo 8 caracteres</p>
+                      <p className="text-xs text-gray-500 mt-1">{t.account.minCharacters}</p>
                     </div>
                     
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Confirmar contraseña
+                        {t.account.confirmPassword}
                       </label>
                       <input
                         type="password"
@@ -601,7 +601,7 @@ export default function CuentaPage() {
                         disabled={passwordLoading}
                         className="flex-1 bg-primary-600 text-white py-2 px-4 rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 font-semibold transition"
                       >
-                        {passwordLoading ? 'Cambiando...' : 'Cambiar'}
+                        {passwordLoading ? `${t.account.savePassword}...` : t.account.savePassword}
                       </button>
                       <button
                         type="button"
@@ -614,7 +614,7 @@ export default function CuentaPage() {
                         }}
                         className="flex-1 bg-gray-200 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 font-semibold transition"
                       >
-                        Cancelar
+                        {t.account.cancelChange}
                       </button>
                     </div>
                   </form>

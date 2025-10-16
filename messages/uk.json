@@ -385,7 +385,19 @@
     "practiceKey": "Регулярна практика — це ключ. Проходьте тести періодично та спостерігайте за своїм прогресом.",
     "startNow": "Почати зараз",
     "premium": "Преміум",
-    "lastTest": "Останній тест"
+    "lastTest": "Останній тест",
+    "security": "Безпека",
+    "changePassword": "Змінити пароль",
+    "currentPassword": "Поточний пароль",
+    "newPassword": "Новий пароль",
+    "confirmPassword": "Підтвердити пароль",
+    "minCharacters": "Мінімум 8 символів",
+    "savePassword": "Зберегти пароль",
+    "cancelChange": "Скасувати",
+    "passwordSuccess": "✅ Пароль успішно змінено",
+    "passwordError": "❌ Помилка зміни пароля",
+    "passwordMismatch": "❌ Паролі не збігаються",
+    "passwordTooShort": "❌ Пароль повинен містити мінімум 8 символів"
   },
   "cancel": {
     "title": "Скасувати підписку",

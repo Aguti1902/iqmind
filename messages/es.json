@@ -452,7 +452,19 @@
     "practiceKey": "La práctica regular es la clave. Realiza tests periódicamente y observa tu progreso.",
     "startNow": "Empezar Ahora",
     "premium": "Premium",
-    "lastTest": "Último Test"
+    "lastTest": "Último Test",
+    "security": "Seguridad",
+    "changePassword": "Cambiar Contraseña",
+    "currentPassword": "Contraseña actual",
+    "newPassword": "Nueva contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "minCharacters": "Mínimo 8 caracteres",
+    "savePassword": "Guardar",
+    "cancelChange": "Cancelar",
+    "passwordSuccess": "✅ Contraseña cambiada exitosamente",
+    "passwordError": "❌ Error al cambiar la contraseña",
+    "passwordMismatch": "❌ Las contraseñas no coinciden",
+    "passwordTooShort": "❌ La contraseña debe tener al menos 8 caracteres"
   },
   "notices": {
     "importantTitle": "⚠️ Importante:",
