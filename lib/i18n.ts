@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-type Locale = 'es' | 'en' | 'fr' | 'de' | 'it' | 'pt' | 'sv' | 'no'
+type Locale = 'es' | 'en' | 'fr' | 'de' | 'it' | 'pt' | 'sv' | 'no' | 'uk'
 
 interface I18nStore {
   locale: Locale
@@ -29,6 +29,7 @@ export const languages = {
   pt: { name: 'Português', flag: '🇵🇹' },
   sv: { name: 'Svenska', flag: '🇸🇪' },
   no: { name: 'Norsk', flag: '🇳🇴' },
+  uk: { name: 'Українська', flag: '🇺🇦' },
 }
 
 export async function getTranslations(locale: Locale) {

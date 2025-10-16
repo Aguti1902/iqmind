@@ -330,6 +330,7 @@ export default function CheckoutPage() {
     'pt': 'pt',
     'sv': 'sv',
     'no': 'nb', // Noruego Bokmål
+    'uk': 'en', // Ucraniano (Stripe no soporta uk, usamos en)
   }
 
   const elementsOptions: StripeElementsOptions = {

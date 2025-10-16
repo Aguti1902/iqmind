@@ -201,7 +201,8 @@ export default function ResultadoPage() {
       'it': 'it-IT',
       'pt': 'pt-PT',
       'sv': 'sv-SE',
-      'no': 'no-NO'
+      'no': 'no-NO',
+      'uk': 'uk-UA'
     }
     const fecha = new Date().toLocaleDateString(localeMap[lang] || 'en-US', { 
       year: 'numeric', 
