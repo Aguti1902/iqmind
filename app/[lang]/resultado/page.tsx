@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import MinimalHeader from '@/components/MinimalHeader'
+import GoogleAdsConversion from '@/components/GoogleAdsConversion'
 import { getIQCategory, getIQDescription, visualQuestions as questions } from '@/lib/visual-questions'
 import { FaFacebook, FaTwitter, FaLinkedin, FaDownload, FaTrophy, FaBrain, FaLightbulb, FaEye, FaSearch, FaBolt, FaChartBar, FaMemory } from 'react-icons/fa'
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from 'recharts'
@@ -304,6 +305,9 @@ export default function ResultadoPage() {
 
   return (
     <>
+      {/* Google Ads Conversion Tracking */}
+      <GoogleAdsConversion conversionValue={0.50} />
+      
       <MinimalHeader email={userEmail} />
       
       <div className="min-h-screen bg-gradient-to-br from-primary-50 to-white py-12">
