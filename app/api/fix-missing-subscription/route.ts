@@ -9,6 +9,18 @@ const stripe = process.env.STRIPE_SECRET_KEY
     })
   : null
 
+// Handle CORS preflight
+export async function OPTIONS(request: NextRequest) {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
+  })
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
@@ -17,21 +29,21 @@ export async function POST(request: NextRequest) {
     if (!email) {
       return NextResponse.json(
         { error: 'Email es requerido' },
-        { status: 400 }
+        { status: 400, headers: { 'Access-Control-Allow-Origin': '*' } }
       )
     }
 
     if (!stripe) {
       return NextResponse.json(
         { error: 'Stripe no configurado' },
-        { status: 500 }
+        { status: 500, headers: { 'Access-Control-Allow-Origin': '*' } }
       )
     }
 
     if (!process.env.STRIPE_PRICE_ID) {
       return NextResponse.json(
         { error: 'STRIPE_PRICE_ID no configurado' },
-        { status: 500 }
+        { status: 500, headers: { 'Access-Control-Allow-Origin': '*' } }
       )
     }
 
@@ -43,7 +55,7 @@ export async function POST(request: NextRequest) {
     if (customers.data.length === 0) {
       return NextResponse.json(
         { error: 'Customer no encontrado' },
-        { status: 404 }
+        { status: 404, headers: { 'Access-Control-Allow-Origin': '*' } }
       )
     }
 
@@ -70,6 +82,8 @@ export async function POST(request: NextRequest) {
           status: activeSubs[0].status,
           trial_end: activeSubs[0].trial_end,
         }
+      }, {
+        headers: { 'Access-Control-Allow-Origin': '*' }
       })
     }
 
@@ -79,7 +93,7 @@ export async function POST(request: NextRequest) {
     if (!defaultPaymentMethod) {
       return NextResponse.json(
         { error: 'Customer no tiene método de pago configurado' },
-        { status: 400 }
+        { status: 400, headers: { 'Access-Control-Allow-Origin': '*' } }
       )
     }
 
@@ -142,6 +156,10 @@ export async function POST(request: NextRequest) {
         current_period_end: subscription.current_period_end,
       },
       message: 'Suscripción creada exitosamente',
+    }, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      },
     })
 
   } catch (error: any) {
@@ -152,7 +170,12 @@ export async function POST(request: NextRequest) {
         type: error.type,
         stack: error.stack,
       },
-      { status: 500 }
+      { 
+        status: 500,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+        },
+      }
     )
   }
 }
