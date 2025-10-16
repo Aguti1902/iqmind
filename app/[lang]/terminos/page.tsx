@@ -170,7 +170,7 @@ export default function TerminosPage() {
               <p>
                 If you have any questions about these Terms and Conditions, please contact us through our{' '}
                 <a href={`/${lang}/contacto`} className="text-primary-600 underline">contact page</a> or email us at{' '}
-                <a href="mailto:support@iqmind.io" className="text-primary-600 underline">support@iqmind.io</a>.
+                <a href="mailto:support@iqmind.mobi" className="text-primary-600 underline">support@iqmind.mobi</a>.
               </p>
             </section>
 

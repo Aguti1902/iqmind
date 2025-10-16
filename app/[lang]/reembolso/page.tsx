@@ -202,7 +202,7 @@ export default function ReembolsoPage() {
               <p className="mb-4">You can cancel your subscription anytime:</p>
               <ul className="list-disc pl-6 space-y-2">
                 <li>From your <strong>Account Settings</strong> on the website</li>
-                <li>By contacting us at <a href="mailto:support@iqmind.io" className="text-blue-600 underline">support@iqmind.io</a></li>
+                <li>By contacting us at <a href="mailto:support@iqmind.mobi" className="text-blue-600 underline">support@iqmind.mobi</a></li>
                 <li>Through our <a href={`/${lang}/contacto`} className="text-blue-600 underline">contact page</a></li>
               </ul>
             </section>
@@ -214,7 +214,7 @@ export default function ReembolsoPage() {
               <h3 className="text-xl font-semibold text-gray-900 mb-3">5.1 How to Request a Refund</h3>
               <ol className="list-decimal pl-6 space-y-3 mb-4">
                 <li>
-                  <strong>Contact us</strong> at <a href="mailto:support@iqmind.io" className="text-blue-600 underline">support@iqmind.io</a> or 
+                  <strong>Contact us</strong> at <a href="mailto:support@iqmind.mobi" className="text-blue-600 underline">support@iqmind.mobi</a> or 
                   through our <a href={`/${lang}/contacto`} className="text-blue-600 underline">contact form</a>
                 </li>
                 <li>Provide your <strong>email address</strong> and <strong>order/transaction ID</strong></li>
@@ -320,7 +320,7 @@ export default function ReembolsoPage() {
                 <ul className="space-y-3">
                   <li className="flex items-start gap-3">
                     <strong>Email:</strong>
-                    <a href="mailto:support@iqmind.io" className="text-blue-600 underline">support@iqmind.io</a>
+                    <a href="mailto:support@iqmind.mobi" className="text-blue-600 underline">support@iqmind.mobi</a>
                   </li>
                   <li className="flex items-start gap-3">
                     <strong>Contact Form:</strong>

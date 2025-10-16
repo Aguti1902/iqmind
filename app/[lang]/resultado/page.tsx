@@ -221,7 +221,7 @@ export default function ResultadoPage() {
     doc.setTextColor(100, 100, 100)
     const footerText = t.certificate?.footer || 'IQmind - Professional Intelligence Test'
     doc.text(footerText, 148.5, 193, { align: 'center' })
-    doc.text('iqmind.io', 148.5, 198, { align: 'center' })
+    doc.text('iqmind.mobi', 148.5, 198, { align: 'center' })
     
     // Guardar el PDF
     const fileName = t.certificate?.fileName || 'Certificate_IQ'
