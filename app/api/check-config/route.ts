@@ -80,7 +80,7 @@ export async function GET(request: NextRequest) {
       response.warnings.push('El precio existe pero está INACTIVO en Stripe')
     }
     if (priceDetails && priceDetails.amount !== 1999) {
-      response.warnings.push(`El precio es ${priceDetails.amountFormatted}, no 19.99 EUR`)
+      response.warnings.push(`El precio es ${priceDetails.amountFormatted}, no 9.99 EUR`)
     }
 
     return NextResponse.json(response, {

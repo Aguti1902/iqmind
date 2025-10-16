@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
     }
 
     // El pago de €0.50 ya fue procesado por el PaymentIntent
-    // Crear la suscripción con trial de 2 días para el precio de 19.99€
+    // Crear la suscripción con trial de 2 días para el precio de 9.99€
     console.log('🚀 Creando suscripción con trial de 2 días...')
     console.log('Price ID:', process.env.STRIPE_PRICE_ID)
     

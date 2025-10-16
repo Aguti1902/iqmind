@@ -46,7 +46,7 @@ export default function ReembolsoPage() {
                 <li><a href="#overview" className="text-blue-600 hover:underline">Service Overview</a></li>
                 <li><a href="#initial-payment" className="text-blue-600 hover:underline">Initial Access Payment (€0.50)</a></li>
                 <li><a href="#trial-period" className="text-blue-600 hover:underline">2-Day Trial Period</a></li>
-                <li><a href="#premium-subscription" className="text-blue-600 hover:underline">Premium Subscription (€19.99/month)</a></li>
+                <li><a href="#premium-subscription" className="text-blue-600 hover:underline">Premium Subscription (€9.99/month)</a></li>
                 <li><a href="#refund-process" className="text-blue-600 hover:underline">Refund Request Process</a></li>
                 <li><a href="#exceptions" className="text-blue-600 hover:underline">Exceptions and Special Cases</a></li>
                 <li><a href="#non-refundable" className="text-blue-600 hover:underline">Non-Refundable Services</a></li>
@@ -69,11 +69,11 @@ export default function ReembolsoPage() {
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-[#218B8E] font-bold">•</span>
-                    <span><strong>Trial period:</strong> 2 days of free premium access (€19.99/month value)</span>
+                    <span><strong>Trial period:</strong> 2 days of free premium access (€9.99/month value)</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-[#218B8E] font-bold">•</span>
-                    <span><strong>Standard subscription:</strong> €19.99/month after trial period</span>
+                    <span><strong>Standard subscription:</strong> €9.99/month after trial period</span>
                   </li>
                 </ul>
               </div>
@@ -82,7 +82,7 @@ export default function ReembolsoPage() {
                 <p className="text-sm">
                   <strong>⚠️ Important:</strong> By making the initial €0.50 payment, you agree that the 2-day premium 
                   trial period will be automatically activated. If you do not cancel before the trial ends, you will be 
-                  automatically charged €19.99/month.
+                  automatically charged €9.99/month.
                 </p>
               </div>
             </section>
@@ -164,12 +164,12 @@ export default function ReembolsoPage() {
 
             {/* 4. PREMIUM SUBSCRIPTION */}
             <section id="premium-subscription" className="mb-8 scroll-mt-20">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">4. Premium Subscription (€19.99/month)</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">4. Premium Subscription (€9.99/month)</h2>
               
               <h3 className="text-xl font-semibold text-gray-900 mb-3">4.1 Subscription Activation</h3>
               <p className="mb-4">
                 If you do not cancel during the 2-day trial, the subscription will automatically activate, and you will 
-                be charged €19.99/month on a recurring basis.
+                be charged €9.99/month on a recurring basis.
               </p>
 
               <h3 className="text-xl font-semibold text-gray-900 mb-3">4.2 Monthly Subscription Refunds</h3>
