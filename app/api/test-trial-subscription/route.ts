@@ -69,7 +69,10 @@ export async function POST(request: NextRequest) {
     const paymentMethod = await stripe.paymentMethods.create({
       type: 'card',
       card: {
-        token: 'tok_visa', // Token de prueba de Stripe
+        number: '4242424242424242', // Tarjeta de prueba de Stripe
+        exp_month: 12,
+        exp_year: 2030,
+        cvc: '123',
       },
     })
     console.log('✅ Payment method creado:', paymentMethod.id)
