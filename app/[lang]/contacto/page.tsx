@@ -27,28 +27,32 @@ export default function ContactoPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
+    setSubmitStatus('idle')
 
     try {
-      // Crear el cuerpo del email
-      const emailBody = `
-Nombre: ${formData.name}
-Email: ${formData.email}
-Asunto: ${formData.subject}
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          lang
+        }),
+      })
 
-Mensaje:
-${formData.message}
-      `
+      const data = await response.json()
 
-      // Enviar email usando mailto (alternativa simple)
-      // En producción, deberías usar un servicio de backend o API de email
-      const mailtoLink = `mailto:support@iqmind.io?subject=${encodeURIComponent(`Contacto: ${formData.subject}`)}&body=${encodeURIComponent(emailBody)}`
-      
-      window.location.href = mailtoLink
-      
-      setSubmitStatus('success')
-      setFormData({ name: '', email: '', subject: '', message: '' })
-      
-      setTimeout(() => setSubmitStatus('idle'), 5000)
+      if (response.ok) {
+        setSubmitStatus('success')
+        setFormData({ name: '', email: '', subject: '', message: '' })
+        
+        // Resetear el estado después de 5 segundos
+        setTimeout(() => setSubmitStatus('idle'), 5000)
+      } else {
+        console.error('Error del servidor:', data.error)
+        setSubmitStatus('error')
+      }
     } catch (error) {
       console.error('Error al enviar:', error)
       setSubmitStatus('error')
