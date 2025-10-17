@@ -4,32 +4,40 @@ import { db } from '@/lib/database-postgres'
 // GET - Obtener la clave pública de Stripe según el modo actual
 export async function GET() {
   try {
-    // Obtener el modo actual de la base de datos
-    const currentMode = await db.getConfigByKey('stripe_mode') || 'test'
+    console.log('🔍 [stripe-config API] Obteniendo configuración...')
     
-    // Devolver la clave pública correspondiente
+    // Obtener TODA la configuración desde la BD
+    const config = await db.getAllConfig()
+    const currentMode = config.stripe_mode || 'test'
+    
+    console.log('📊 [stripe-config API] Modo:', currentMode)
+    
+    // Leer la clave pública desde la BD (NO de variables de entorno)
     const publishableKey = currentMode === 'test'
-      ? process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_TEST
-      : process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+      ? config.stripe_test_publishable_key
+      : config.stripe_live_publishable_key
+    
+    console.log('🔑 [stripe-config API] Publishable Key:', publishableKey?.substring(0, 20) + '...')
     
     if (!publishableKey) {
+      console.error('❌ [stripe-config API] No hay publishable key en la BD')
       return NextResponse.json(
-        { error: 'Stripe no configurado correctamente' },
+        { error: 'Stripe no configurado correctamente en la base de datos' },
         { status: 500 }
       )
     }
 
+    console.log('✅ [stripe-config API] Devolviendo configuración')
     return NextResponse.json({
       publishableKey,
       mode: currentMode
     })
   } catch (error: any) {
-    console.error('Error obteniendo configuración de Stripe:', error)
-    // En caso de error, usar modo test por defecto
+    console.error('❌ [stripe-config API] Error:', error)
     return NextResponse.json({
-      publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_TEST || '',
-      mode: 'test'
-    })
+      error: 'Error obteniendo configuración de Stripe',
+      details: error.message
+    }, { status: 500 })
   }
 }
 
