@@ -25,6 +25,22 @@ export default function RootLayout({
         <Analytics />
         <link rel="icon" href="/images/FAVICON2.png" type="image/png" />
         
+        {/* Google Tag (gtag.js) - Conversiones */}
+        <script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=GT-M9M82F3V"
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'GT-M9M82F3V');
+            `,
+          }}
+        />
+        
         {/* Google Ads Tag (gtag.js) */}
         <script
           async
