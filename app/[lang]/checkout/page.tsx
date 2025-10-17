@@ -255,16 +255,24 @@ export default function CheckoutPage() {
   useEffect(() => {
     const loadStripeConfig = async () => {
       try {
+        console.log('🔄 Iniciando carga de configuración de Stripe...')
         const response = await fetch('/api/stripe-config')
+        console.log('📡 Respuesta de /api/stripe-config:', response.status)
         const data = await response.json()
+        console.log('📦 Datos recibidos:', data)
         
         if (data.publishableKey) {
           console.log(`🔑 Cargando Stripe en modo: ${data.mode}`)
+          console.log(`📌 Publishable Key: ${data.publishableKey.substring(0, 20)}...`)
           setStripeMode(data.mode)
-          setStripePromise(loadStripe(data.publishableKey))
+          const stripe = await loadStripe(data.publishableKey)
+          console.log('✅ Stripe cargado:', stripe ? 'OK' : 'ERROR')
+          setStripePromise(Promise.resolve(stripe))
+        } else {
+          console.error('❌ No se recibió publishableKey')
         }
       } catch (error) {
-        console.error('Error cargando configuración de Stripe:', error)
+        console.error('❌ Error cargando configuración de Stripe:', error)
       }
     }
 
@@ -292,9 +300,13 @@ export default function CheckoutPage() {
   // Cargar payment intent automáticamente cuando se carga la página
   useEffect(() => {
     const loadPaymentIntent = async () => {
-      if (!email || !userIQ) return
+      if (!email || !userIQ) {
+        console.log('⏳ Esperando email y userIQ...', { email, userIQ })
+        return
+      }
 
       try {
+        console.log('💳 Creando Payment Intent...', { email, userIQ, userName })
         const response = await fetch('/api/create-payment-intent', {
           method: 'POST',
           headers: {
@@ -308,16 +320,21 @@ export default function CheckoutPage() {
           }),
         })
 
+        console.log('📡 Respuesta de create-payment-intent:', response.status)
         const data = await response.json()
+        console.log('📦 Datos del Payment Intent:', data)
 
         if (data.error) {
+          console.error('❌ Error en Payment Intent:', data.error)
           setEmailError(data.error)
           return
         }
 
+        console.log('✅ Client Secret recibido')
         setClientSecret(data.clientSecret)
         localStorage.setItem('userEmail', email)
       } catch (error) {
+        console.error('❌ Error al inicializar el pago:', error)
         setEmailError('Error al inicializar el pago')
       }
     }
@@ -375,19 +392,6 @@ export default function CheckoutPage() {
       
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-12 px-4">
         <div className="container mx-auto max-w-6xl">
-          
-          {/* Banner de Modo TEST */}
-          {stripeMode === 'test' && (
-            <div className="bg-yellow-100 border-2 border-yellow-400 rounded-xl p-4 mb-6 text-center">
-              <div className="flex items-center justify-center gap-2 text-yellow-800">
-                <FaCheckCircle className="text-yellow-600" />
-                <span className="font-bold">MODO TEST</span>
-              </div>
-              <p className="text-sm text-yellow-700 mt-1">
-                Puedes usar la tarjeta de prueba: <strong>4242 4242 4242 4242</strong>
-              </p>
-            </div>
-          )}
           
           {/* Hero Section */}
           <div className="text-center mb-12">

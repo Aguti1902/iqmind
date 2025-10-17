@@ -8,6 +8,10 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { email, userIQ, userName, lang } = body
 
+    console.log('=== CREATE PAYMENT INTENT - INICIO ===')
+    console.log('Email:', email)
+    console.log('UserIQ:', userIQ)
+
     if (!email) {
       return NextResponse.json(
         { error: 'Email requerido' },
@@ -16,15 +20,24 @@ export async function POST(request: NextRequest) {
     }
 
     // Obtener configuración de Stripe según el modo actual
+    console.log('🔍 Obteniendo configuración de Stripe...')
     const stripeConfig = await getStripeConfig()
+    console.log('📋 Configuración obtenida:', {
+      mode: stripeConfig.mode,
+      secretKeyPrefix: stripeConfig.secretKey?.substring(0, 10) + '...',
+      publishableKeyPrefix: stripeConfig.publishableKey?.substring(0, 20) + '...',
+      hasPriceId: !!stripeConfig.priceId
+    })
     
     if (!stripeConfig.secretKey) {
+      console.error('❌ No hay secretKey en la configuración')
       return NextResponse.json(
         { error: 'Stripe no configurado' },
         { status: 500 }
       )
     }
 
+    console.log('✅ Inicializando Stripe con modo:', stripeConfig.mode)
     const stripe = new Stripe(stripeConfig.secretKey, {
       apiVersion: '2023-10-16',
     })

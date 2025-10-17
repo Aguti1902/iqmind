@@ -6,11 +6,27 @@ import { db } from './database-postgres'
  */
 export async function getStripeConfig() {
   try {
+    console.log('🔍 [stripe-config] Iniciando getStripeConfig...')
+    
     // Obtener el modo actual de la base de datos
     const currentMode = await db.getConfigByKey('stripe_mode') || 'test'
+    console.log('📊 [stripe-config] Modo desde BD:', currentMode)
     
     // Seleccionar las variables de entorno según el modo
     const isTestMode = currentMode === 'test'
+    console.log('🔀 [stripe-config] isTestMode:', isTestMode)
+    
+    // Log de variables disponibles
+    console.log('📦 [stripe-config] Variables de entorno disponibles:', {
+      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_TEST: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_TEST ? 'SÍ' : 'NO',
+      STRIPE_SECRET_KEY_TEST: process.env.STRIPE_SECRET_KEY_TEST ? 'SÍ' : 'NO',
+      STRIPE_WEBHOOK_SECRET_TEST: process.env.STRIPE_WEBHOOK_SECRET_TEST ? 'SÍ' : 'NO',
+      STRIPE_PRICE_ID_TEST: process.env.STRIPE_PRICE_ID_TEST ? 'SÍ' : 'NO',
+      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ? 'SÍ' : 'NO',
+      STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY ? 'SÍ' : 'NO',
+      STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET ? 'SÍ' : 'NO',
+      STRIPE_PRICE_ID: process.env.STRIPE_PRICE_ID ? 'SÍ' : 'NO',
+    })
     
     const config = {
       mode: currentMode,
@@ -28,13 +44,15 @@ export async function getStripeConfig() {
         : process.env.STRIPE_PRICE_ID,
     }
     
-    console.log(`🔑 Stripe Config: Modo ${currentMode.toUpperCase()}`)
-    console.log(`📌 Using publishableKey: ${config.publishableKey?.substring(0, 20)}...`)
-    console.log(`📌 Using priceId: ${config.priceId}`)
+    console.log(`🔑 [stripe-config] Configuración seleccionada:`)
+    console.log(`   - Modo: ${currentMode.toUpperCase()}`)
+    console.log(`   - PublishableKey: ${config.publishableKey?.substring(0, 20)}...`)
+    console.log(`   - SecretKey: ${config.secretKey?.substring(0, 10)}...`)
+    console.log(`   - PriceId: ${config.priceId}`)
     
     return config
   } catch (error) {
-    console.error('Error obteniendo configuración de Stripe:', error)
+    console.error('❌ [stripe-config] Error obteniendo configuración de Stripe:', error)
     // Por defecto, usar modo test si hay error
     return {
       mode: 'test',
