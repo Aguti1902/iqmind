@@ -97,17 +97,13 @@ export async function POST(request: NextRequest) {
     // Actualizar TODA la configuración en base de datos (test y production)
     await db.setMultipleConfig(config, userData.email)
 
-    console.log('✅ Configuración guardada en BD')
+    console.log('✅ Configuración guardada en BD - TODO se lee de la BD ahora')
 
-    // Intentar actualizar variables de entorno en Vercel
-    const vercelToken = process.env.VERCEL_TOKEN
-    const vercelProjectId = process.env.VERCEL_PROJECT_ID
-    const vercelDeployHook = process.env.VERCEL_DEPLOY_HOOK
+    // YA NO necesitamos actualizar Vercel - las credenciales se leen de la BD
+    const vercelUpdateStatus = '✅ Configuración guardada. Los cambios se aplican inmediatamente.'
+    const shouldDeploy = false
     
-    let vercelUpdateStatus = '💾 Guardado en BD'
-    let shouldDeploy = false
-    
-    if (vercelToken && vercelProjectId) {
+    if (false) { // Desactivado - ya no usamos Vercel API
       try {
         console.log('🔄 Actualizando variables de entorno en Vercel...')
         

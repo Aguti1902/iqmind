@@ -8,59 +8,46 @@ export async function getStripeConfig() {
   try {
     console.log('🔍 [stripe-config] Iniciando getStripeConfig...')
     
-    // Obtener el modo actual de la base de datos
-    const currentMode = await db.getConfigByKey('stripe_mode') || 'test'
+    // Obtener TODA la configuración desde la base de datos
+    const dbConfig = await db.getAllConfig()
+    const currentMode = dbConfig.stripe_mode || 'production'
     console.log('📊 [stripe-config] Modo desde BD:', currentMode)
     
-    // Seleccionar las variables de entorno según el modo
     const isTestMode = currentMode === 'test'
     console.log('🔀 [stripe-config] isTestMode:', isTestMode)
     
-    // Log de variables disponibles
-    console.log('📦 [stripe-config] Variables de entorno disponibles:', {
-      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_TEST: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_TEST ? 'SÍ' : 'NO',
-      STRIPE_SECRET_KEY_TEST: process.env.STRIPE_SECRET_KEY_TEST ? 'SÍ' : 'NO',
-      STRIPE_WEBHOOK_SECRET_TEST: process.env.STRIPE_WEBHOOK_SECRET_TEST ? 'SÍ' : 'NO',
-      STRIPE_PRICE_ID_TEST: process.env.STRIPE_PRICE_ID_TEST ? 'SÍ' : 'NO',
-      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ? 'SÍ' : 'NO',
-      STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY ? 'SÍ' : 'NO',
-      STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET ? 'SÍ' : 'NO',
-      STRIPE_PRICE_ID: process.env.STRIPE_PRICE_ID ? 'SÍ' : 'NO',
-    })
-    
+    // Leer SIEMPRE de la base de datos (NO de variables de entorno)
     const config = {
       mode: currentMode,
       publishableKey: isTestMode 
-        ? process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_TEST 
-        : process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
+        ? dbConfig.stripe_test_publishable_key
+        : dbConfig.stripe_live_publishable_key,
       secretKey: isTestMode 
-        ? process.env.STRIPE_SECRET_KEY_TEST 
-        : process.env.STRIPE_SECRET_KEY,
+        ? dbConfig.stripe_test_secret_key
+        : dbConfig.stripe_live_secret_key,
       webhookSecret: isTestMode 
-        ? process.env.STRIPE_WEBHOOK_SECRET_TEST 
-        : process.env.STRIPE_WEBHOOK_SECRET,
+        ? dbConfig.stripe_test_webhook_secret
+        : dbConfig.stripe_live_webhook_secret,
       priceId: isTestMode 
-        ? process.env.STRIPE_PRICE_ID_TEST 
-        : process.env.STRIPE_PRICE_ID,
+        ? dbConfig.stripe_test_price_id
+        : dbConfig.stripe_live_price_id,
     }
     
-    console.log(`🔑 [stripe-config] Configuración seleccionada:`)
+    console.log(`🔑 [stripe-config] Configuración desde BD:`)
     console.log(`   - Modo: ${currentMode.toUpperCase()}`)
-    console.log(`   - PublishableKey: ${config.publishableKey?.substring(0, 20)}...`)
-    console.log(`   - SecretKey: ${config.secretKey?.substring(0, 10)}...`)
-    console.log(`   - PriceId: ${config.priceId}`)
+    console.log(`   - PublishableKey: ${config.publishableKey?.substring(0, 20)}... (${config.publishableKey ? 'OK' : 'VACÍO'})`)
+    console.log(`   - SecretKey: ${config.secretKey?.substring(0, 10)}... (${config.secretKey ? 'OK' : 'VACÍO'})`)
+    console.log(`   - PriceId: ${config.priceId || 'VACÍO'}`)
+    
+    if (!config.publishableKey || !config.secretKey) {
+      console.error('❌ [stripe-config] Faltan credenciales en la BD')
+      throw new Error('Credenciales de Stripe no configuradas en la base de datos')
+    }
     
     return config
   } catch (error) {
     console.error('❌ [stripe-config] Error obteniendo configuración de Stripe:', error)
-    // Por defecto, usar modo test si hay error
-    return {
-      mode: 'test',
-      publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_TEST,
-      secretKey: process.env.STRIPE_SECRET_KEY_TEST,
-      webhookSecret: process.env.STRIPE_WEBHOOK_SECRET_TEST,
-      priceId: process.env.STRIPE_PRICE_ID_TEST,
-    }
+    throw error
   }
 }
 
