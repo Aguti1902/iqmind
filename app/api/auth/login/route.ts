@@ -32,11 +32,23 @@ export async function POST(request: NextRequest) {
     // No enviar la contraseña hasheada en la respuesta
     const { password: _, ...userWithoutPassword } = result.user
 
-    return NextResponse.json({
+    // Crear la respuesta
+    const response = NextResponse.json({
       success: true,
       user: userWithoutPassword,
       token: result.token,
     })
+
+    // Guardar el token en una cookie HTTP-only para mayor seguridad
+    response.cookies.set('auth_token', result.token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 7, // 7 días
+      path: '/',
+    })
+
+    return response
 
   } catch (error: any) {
     console.error('❌ Error en login:', error)
