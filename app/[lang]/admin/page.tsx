@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useSession } from 'next-auth/react'
 import { FaCog, FaSave, FaSync, FaCreditCard, FaDollarSign, FaToggleOn, FaToggleOff, FaShieldAlt, FaKey, FaLock, FaExclamationTriangle } from 'react-icons/fa'
 import MinimalHeader from '@/components/MinimalHeader'
 
@@ -22,10 +21,10 @@ interface Config {
 
 export default function AdminPage() {
   const router = useRouter()
-  const { data: session, status } = useSession()
   const [isAdmin, setIsAdmin] = useState(false)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [userEmail, setUserEmail] = useState('')
   const [config, setConfig] = useState<Config>({
     stripe_mode: 'test',
     stripe_test_publishable_key: '',
@@ -44,30 +43,25 @@ export default function AdminPage() {
 
   useEffect(() => {
     checkAdmin()
-  }, [status])
+  }, [])
 
   const checkAdmin = async () => {
-    if (status === 'loading') return
-    
-    if (status === 'unauthenticated') {
-      router.push('/es/login')
-      return
-    }
-
     try {
       const response = await fetch('/api/admin/check')
       const data = await response.json()
       
       if (!data.isAdmin) {
-        router.push('/es')
+        // Si no es admin, redirigir al login
+        router.push('/es/login')
         return
       }
       
       setIsAdmin(true)
+      setUserEmail(data.email || '')
       loadConfig()
     } catch (error) {
       console.error('Error verificando admin:', error)
-      router.push('/es')
+      router.push('/es/login')
     }
   }
 
@@ -127,7 +121,7 @@ export default function AdminPage() {
   if (loading) {
     return (
       <>
-        <MinimalHeader email={session?.user?.email || ''} />
+        <MinimalHeader email={userEmail} />
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#218B8E] mx-auto mb-4"></div>
@@ -140,7 +134,7 @@ export default function AdminPage() {
 
   return (
     <>
-      <MinimalHeader email={session?.user?.email || ''} />
+      <MinimalHeader email={userEmail} />
       
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4">
         <div className="container mx-auto max-w-7xl">
