@@ -1,17 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/database-postgres'
+import { hashPassword, generateRandomPassword } from '@/lib/auth'
 
-// GET - Configurar email de administrador
-// Uso: /api/admin/setup?email=tu@email.com
+// GET - Configurar email de administrador y crear usuario
+// Uso: /api/admin/setup?email=tu@email.com&password=tuPassword123
+// O sin password para generar una automáticamente: /api/admin/setup?email=tu@email.com
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams
     const email = searchParams.get('email')
+    const customPassword = searchParams.get('password')
     
     if (!email) {
       return NextResponse.json({ 
         error: 'Falta el parámetro email',
-        usage: 'GET /api/admin/setup?email=tu@email.com'
+        usage: 'GET /api/admin/setup?email=tu@email.com&password=tuPassword (opcional)'
       }, { status: 400 })
     }
 
@@ -24,10 +27,37 @@ export async function GET(request: NextRequest) {
       }, { status: 400 })
     }
 
+    // Generar o usar la contraseña proporcionada
+    const password = customPassword || generateRandomPassword()
+    const hashedPassword = await hashPassword(password)
+
+    // Verificar si el usuario ya existe
+    let user = await db.getUserByEmail(email)
+    let userAction = ''
+
+    if (user) {
+      // Usuario existe, actualizar contraseña
+      await db.updateUser(user.id, {
+        password: hashedPassword
+      })
+      userAction = '🔄 Usuario actualizado con nueva contraseña'
+    } else {
+      // Crear nuevo usuario
+      user = await db.createUser({
+        email: email,
+        userName: 'Administrador',
+        password: hashedPassword,
+        subscriptionStatus: 'active',
+        iq: 0
+      })
+      userAction = '✅ Nuevo usuario creado'
+    }
+
     // Obtener configuración actual de admin_emails
     const currentAdmins = await db.getConfigByKey('admin_emails')
     
     let newAdmins = email
+    let adminAction = ''
     
     // Si ya hay admins, añadir el nuevo separado por coma
     if (currentAdmins && currentAdmins.trim() !== '') {
@@ -35,16 +65,16 @@ export async function GET(request: NextRequest) {
       
       // Verificar si el email ya existe
       if (adminList.includes(email)) {
-        return NextResponse.json({ 
-          message: 'Este email ya es administrador',
-          email: email,
-          current_admins: currentAdmins
-        }, { status: 200 })
+        adminAction = '📋 Email ya estaba en lista de administradores'
+        newAdmins = currentAdmins
+      } else {
+        // Añadir el nuevo email
+        adminList.push(email)
+        newAdmins = adminList.join(', ')
+        adminAction = '✅ Email añadido a lista de administradores'
       }
-      
-      // Añadir el nuevo email
-      adminList.push(email)
-      newAdmins = adminList.join(', ')
+    } else {
+      adminAction = '✅ Email configurado como primer administrador'
     }
 
     // Actualizar configuración
@@ -55,13 +85,20 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ 
       success: true,
-      message: '✅ Email añadido como administrador exitosamente',
-      email: email,
+      message: '🎉 Configuración de administrador completada',
+      actions: [userAction, adminAction],
+      credentials: {
+        email: email,
+        password: customPassword ? '(la que proporcionaste)' : password,
+        note: customPassword ? 'Usa la contraseña que proporcionaste' : '⚠️ GUARDA ESTA CONTRASEÑA - No la verás de nuevo'
+      },
       admin_emails: updatedAdmins,
       next_steps: [
-        '1. Inicia sesión en /es/login con este email',
-        '2. Ve a /es/admin para acceder al panel',
-        '3. ⚠️ IMPORTANTE: Elimina este endpoint después (app/api/admin/setup/route.ts)'
+        `1. ${customPassword ? 'Usa tu contraseña' : 'GUARDA la contraseña mostrada arriba'}`,
+        '2. Ve a https://iqmind.mobi/es/login',
+        `3. Inicia sesión con: ${email}`,
+        '4. Ve a https://iqmind.mobi/es/admin',
+        '5. ⚠️ IMPORTANTE: Elimina este endpoint después (app/api/admin/setup/route.ts)'
       ]
     }, { status: 200 })
   } catch (error: any) {
