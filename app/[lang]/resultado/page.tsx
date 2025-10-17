@@ -58,10 +58,19 @@ export default function ResultadoPage() {
 
     // Enviar evento de conversión a analytics
     if (typeof window !== 'undefined' && (window as any).gtag) {
+      // Evento de compra general
       ;(window as any).gtag('event', 'purchase', {
         transaction_id: localStorage.getItem('transactionId'),
         value: 0.50,
         currency: 'EUR'
+      })
+      
+      // Evento de conversión específico para Google Ads
+      ;(window as any).gtag('event', 'conversion', {
+        'send_to': 'AW-17232820139/qMCRCP_NnK4bEKvvn5lA',
+        'value': 1.0,
+        'currency': 'USD',
+        'transaction_id': localStorage.getItem('transactionId') || ''
       })
     }
 
