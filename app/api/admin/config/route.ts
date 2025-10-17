@@ -100,8 +100,8 @@ export async function POST(request: NextRequest) {
     console.log('✅ Configuración guardada en BD - TODO se lee de la BD ahora')
 
     // YA NO necesitamos actualizar Vercel - las credenciales se leen de la BD
-    const vercelUpdateStatus = '✅ Configuración guardada. Los cambios se aplican inmediatamente.'
-    const shouldDeploy = false
+    let vercelUpdateStatus = '✅ Configuración guardada. Los cambios se aplican inmediatamente.'
+    let shouldDeploy = false
     
     if (false) { // Desactivado - ya no usamos Vercel API
       try {
