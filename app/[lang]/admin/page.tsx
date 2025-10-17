@@ -9,8 +9,10 @@ interface Config {
   stripe_mode: string
   stripe_test_publishable_key: string
   stripe_test_secret_key: string
+  stripe_test_webhook_secret: string
   stripe_live_publishable_key: string
   stripe_live_secret_key: string
+  stripe_live_webhook_secret: string
   stripe_test_price_id: string
   stripe_live_price_id: string
   subscription_price: string
@@ -29,8 +31,10 @@ export default function AdminPage() {
     stripe_mode: 'test',
     stripe_test_publishable_key: '',
     stripe_test_secret_key: '',
+    stripe_test_webhook_secret: '',
     stripe_live_publishable_key: '',
     stripe_live_secret_key: '',
+    stripe_live_webhook_secret: '',
     stripe_test_price_id: '',
     stripe_live_price_id: '',
     subscription_price: '9.99',
@@ -306,6 +310,21 @@ export default function AdminPage() {
                       </div>
                       <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-2">
+                          Webhook Secret (Test)
+                        </label>
+                        <input
+                          type="password"
+                          value={config.stripe_test_webhook_secret}
+                          onChange={(e) => setConfig({...config, stripe_test_webhook_secret: e.target.value})}
+                          placeholder="whsec_test_..."
+                          className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#218B8E] focus:outline-none font-mono text-sm"
+                        />
+                        <p className="text-xs text-gray-600 mt-1">
+                          🔒 Necesaria para verificar webhooks de Stripe
+                        </p>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">
                           Price ID (Test)
                         </label>
                         <input
@@ -348,6 +367,21 @@ export default function AdminPage() {
                           placeholder="sk_live_..."
                           className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#218B8E] focus:outline-none font-mono text-sm"
                         />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                          Webhook Secret (Live)
+                        </label>
+                        <input
+                          type="password"
+                          value={config.stripe_live_webhook_secret}
+                          onChange={(e) => setConfig({...config, stripe_live_webhook_secret: e.target.value})}
+                          placeholder="whsec_..."
+                          className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#218B8E] focus:outline-none font-mono text-sm"
+                        />
+                        <p className="text-xs text-gray-600 mt-1">
+                          🔒 Necesaria para verificar webhooks de Stripe
+                        </p>
                       </div>
                       <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-2">

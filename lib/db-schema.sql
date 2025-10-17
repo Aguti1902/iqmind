@@ -55,12 +55,14 @@ INSERT INTO site_config (key, value, description) VALUES
   ('stripe_mode', 'test', 'Modo de Stripe: test o production'),
   ('stripe_test_publishable_key', '', 'Clave pública de Stripe (test)'),
   ('stripe_test_secret_key', '', 'Clave secreta de Stripe (test)'),
+  ('stripe_test_webhook_secret', '', 'Webhook secret de Stripe (test)'),
   ('stripe_live_publishable_key', '', 'Clave pública de Stripe (live)'),
   ('stripe_live_secret_key', '', 'Clave secreta de Stripe (live)'),
+  ('stripe_live_webhook_secret', '', 'Webhook secret de Stripe (live)'),
   ('stripe_test_price_id', '', 'Price ID del producto (test)'),
   ('stripe_live_price_id', '', 'Price ID del producto (live)'),
   ('subscription_price', '9.99', 'Precio de la suscripción mensual'),
-  ('trial_days', '7', 'Días de prueba gratuita'),
+  ('trial_days', '2', 'Días de prueba gratuita'),
   ('initial_payment', '0.50', 'Pago inicial para acceder al resultado'),
   ('admin_emails', '', 'Emails de administradores separados por coma')
 ON CONFLICT (key) DO NOTHING;

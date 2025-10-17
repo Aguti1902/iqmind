@@ -33,8 +33,10 @@ export async function GET(request: NextRequest) {
       stripe_mode: dbConfig.stripe_mode || 'test',
       stripe_test_publishable_key: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || dbConfig.stripe_test_publishable_key || '',
       stripe_test_secret_key: process.env.STRIPE_SECRET_KEY || dbConfig.stripe_test_secret_key || '',
+      stripe_test_webhook_secret: process.env.STRIPE_WEBHOOK_SECRET || dbConfig.stripe_test_webhook_secret || '',
       stripe_live_publishable_key: process.env.NEXT_PUBLIC_STRIPE_LIVE_PUBLISHABLE_KEY || dbConfig.stripe_live_publishable_key || '',
       stripe_live_secret_key: process.env.STRIPE_LIVE_SECRET_KEY || dbConfig.stripe_live_secret_key || '',
+      stripe_live_webhook_secret: process.env.STRIPE_LIVE_WEBHOOK_SECRET || dbConfig.stripe_live_webhook_secret || '',
       stripe_test_price_id: process.env.STRIPE_PRICE_ID || dbConfig.stripe_test_price_id || '',
       stripe_live_price_id: process.env.STRIPE_LIVE_PRICE_ID || dbConfig.stripe_live_price_id || '',
       subscription_price: dbConfig.subscription_price || '9.99',
@@ -106,6 +108,10 @@ export async function POST(request: NextRequest) {
           { 
             key: 'STRIPE_SECRET_KEY', 
             value: config.stripe_mode === 'test' ? config.stripe_test_secret_key : config.stripe_live_secret_key 
+          },
+          { 
+            key: 'STRIPE_WEBHOOK_SECRET', 
+            value: config.stripe_mode === 'test' ? config.stripe_test_webhook_secret : config.stripe_live_webhook_secret 
           },
           { 
             key: 'STRIPE_PRICE_ID', 
