@@ -7,8 +7,7 @@ import { db } from './database-postgres'
 export async function getStripeConfig() {
   try {
     // Obtener el modo actual de la base de datos
-    const modeConfig = await db.getConfigByKey('stripe_mode')
-    const currentMode = modeConfig?.value || 'test'
+    const currentMode = await db.getConfigByKey('stripe_mode') || 'test'
     
     // Seleccionar las variables de entorno según el modo
     const isTestMode = currentMode === 'test'
