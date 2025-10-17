@@ -5,12 +5,9 @@ import { useRouter } from 'next/navigation'
 import MinimalHeader from '@/components/MinimalHeader'
 import Footer from '@/components/Footer'
 import { FaLock, FaCheckCircle, FaBrain, FaCertificate, FaChartLine, FaUsers } from 'react-icons/fa'
-import { loadStripe, StripeElementsOptions, StripeElementLocale } from '@stripe/stripe-js'
+import { loadStripe, Stripe, StripeElementsOptions, StripeElementLocale } from '@stripe/stripe-js'
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import { useTranslations } from '@/hooks/useTranslations'
-
-// Inicializar Stripe
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '')
 
 // Componente interno para el formulario de pago
 function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userName: string, userIQ: number, lang: string }) {
@@ -251,6 +248,28 @@ export default function CheckoutPage() {
   const [userName, setUserName] = useState('')
   const [clientSecret, setClientSecret] = useState<string | null>(null)
   const [emailError, setEmailError] = useState('')
+  const [stripePromise, setStripePromise] = useState<Promise<Stripe | null> | null>(null)
+  const [stripeMode, setStripeMode] = useState<string>('test')
+
+  // Cargar la configuración de Stripe según el modo actual
+  useEffect(() => {
+    const loadStripeConfig = async () => {
+      try {
+        const response = await fetch('/api/stripe-config')
+        const data = await response.json()
+        
+        if (data.publishableKey) {
+          console.log(`🔑 Cargando Stripe en modo: ${data.mode}`)
+          setStripeMode(data.mode)
+          setStripePromise(loadStripe(data.publishableKey))
+        }
+      } catch (error) {
+        console.error('Error cargando configuración de Stripe:', error)
+      }
+    }
+
+    loadStripeConfig()
+  }, [])
 
   useEffect(() => {
     const iq = localStorage.getItem('userIQ')
@@ -356,6 +375,19 @@ export default function CheckoutPage() {
       
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-12 px-4">
         <div className="container mx-auto max-w-6xl">
+          
+          {/* Banner de Modo TEST */}
+          {stripeMode === 'test' && (
+            <div className="bg-yellow-100 border-2 border-yellow-400 rounded-xl p-4 mb-6 text-center">
+              <div className="flex items-center justify-center gap-2 text-yellow-800">
+                <FaCheckCircle className="text-yellow-600" />
+                <span className="font-bold">MODO TEST</span>
+              </div>
+              <p className="text-sm text-yellow-700 mt-1">
+                Puedes usar la tarjeta de prueba: <strong>4242 4242 4242 4242</strong>
+              </p>
+            </div>
+          )}
           
           {/* Hero Section */}
           <div className="text-center mb-12">
@@ -525,7 +557,7 @@ export default function CheckoutPage() {
                 </div>
 
                 {/* Payment Element */}
-                {clientSecret && userIQ && userName ? (
+                {clientSecret && userIQ && userName && stripePromise ? (
                   <Elements stripe={stripePromise} options={elementsOptions}>
                     <CheckoutForm 
                       email={email} 
