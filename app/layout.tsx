@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import { Analytics } from '@/components/Analytics'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -22,13 +21,12 @@ export default function RootLayout({
   return (
     <html lang="es">
       <head>
-        <Analytics />
         <link rel="icon" href="/images/FAVICON2.png" type="image/png" />
         
-        {/* Google Tag (gtag.js) - Conversiones */}
+        {/* Google tag (gtag.js) */}
         <script
           async
-          src="https://www.googletagmanager.com/gtag/js?id=GT-M9M82F3V"
+          src="https://www.googletagmanager.com/gtag/js?id=GT-NGM8ZF3V"
         />
         <script
           dangerouslySetInnerHTML={{
@@ -36,23 +34,7 @@ export default function RootLayout({
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
-              gtag('config', 'GT-M9M82F3V');
-            `,
-          }}
-        />
-        
-        {/* Google Ads Tag (gtag.js) */}
-        <script
-          async
-          src="https://www.googletagmanager.com/gtag/js?id=AW-17232820139"
-        />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', 'AW-17232820139');
+              gtag('config', 'GT-NGM8ZF3V');
             `,
           }}
         />
