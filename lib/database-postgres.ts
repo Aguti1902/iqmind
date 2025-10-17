@@ -58,6 +58,15 @@ export interface PasswordReset {
   createdAt: string
 }
 
+export interface SiteConfig {
+  id: number
+  key: string
+  value: string
+  description?: string
+  updatedAt: string
+  updatedBy?: string
+}
+
 export const db = {
   // ============================================
   // USUARIOS
@@ -403,5 +412,67 @@ export const db = {
       'UPDATE password_resets SET used = TRUE WHERE token = $1',
       [token]
     )
+  },
+
+  // ============================================
+  // SITE CONFIGURATION
+  // ============================================
+  
+  getAllConfig: async (): Promise<Record<string, string>> => {
+    const result = await getPool().query(
+      'SELECT key, value FROM site_config'
+    )
+    
+    const config: Record<string, string> = {}
+    result.rows.forEach(row => {
+      config[row.key] = row.value
+    })
+    
+    return config
+  },
+
+  getConfigByKey: async (key: string): Promise<string | null> => {
+    const result = await getPool().query(
+      'SELECT value FROM site_config WHERE key = $1 LIMIT 1',
+      [key]
+    )
+    
+    if (result.rows.length === 0) return null
+    
+    return result.rows[0].value
+  },
+
+  setConfig: async (key: string, value: string, updatedBy?: string): Promise<void> => {
+    const now = new Date().toISOString()
+    
+    await getPool().query(
+      `INSERT INTO site_config (key, value, updated_at, updated_by)
+       VALUES ($1, $2, $3, $4)
+       ON CONFLICT (key) 
+       DO UPDATE SET value = $2, updated_at = $3, updated_by = $4`,
+      [key, value, now, updatedBy || null]
+    )
+  },
+
+  setMultipleConfig: async (configs: Record<string, string>, updatedBy?: string): Promise<void> => {
+    const now = new Date().toISOString()
+    
+    for (const [key, value] of Object.entries(configs)) {
+      await getPool().query(
+        `INSERT INTO site_config (key, value, updated_at, updated_by)
+         VALUES ($1, $2, $3, $4)
+         ON CONFLICT (key) 
+         DO UPDATE SET value = $2, updated_at = $3, updated_by = $4`,
+        [key, value, now, updatedBy || null]
+      )
+    }
+  },
+
+  isAdmin: async (email: string): Promise<boolean> => {
+    const adminEmails = await db.getConfigByKey('admin_emails')
+    if (!adminEmails) return false
+    
+    const emailList = adminEmails.split(',').map(e => e.trim().toLowerCase())
+    return emailList.includes(email.toLowerCase())
   }
 }

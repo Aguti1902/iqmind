@@ -40,10 +40,36 @@ CREATE TABLE IF NOT EXISTS password_resets (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Tabla de configuración del sitio
+CREATE TABLE IF NOT EXISTS site_config (
+  id SERIAL PRIMARY KEY,
+  key VARCHAR(255) UNIQUE NOT NULL,
+  value TEXT NOT NULL,
+  description TEXT,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_by VARCHAR(255)
+);
+
+-- Insertar valores por defecto
+INSERT INTO site_config (key, value, description) VALUES
+  ('stripe_mode', 'test', 'Modo de Stripe: test o production'),
+  ('stripe_test_publishable_key', '', 'Clave pública de Stripe (test)'),
+  ('stripe_test_secret_key', '', 'Clave secreta de Stripe (test)'),
+  ('stripe_live_publishable_key', '', 'Clave pública de Stripe (live)'),
+  ('stripe_live_secret_key', '', 'Clave secreta de Stripe (live)'),
+  ('stripe_test_price_id', '', 'Price ID del producto (test)'),
+  ('stripe_live_price_id', '', 'Price ID del producto (live)'),
+  ('subscription_price', '9.99', 'Precio de la suscripción mensual'),
+  ('trial_days', '7', 'Días de prueba gratuita'),
+  ('initial_payment', '0.50', 'Pago inicial para acceder al resultado'),
+  ('admin_emails', '', 'Emails de administradores separados por coma')
+ON CONFLICT (key) DO NOTHING;
+
 -- Índices para mejorar performance
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_test_results_user_id ON test_results(user_id);
 CREATE INDEX IF NOT EXISTS idx_test_results_completed_at ON test_results(completed_at);
 CREATE INDEX IF NOT EXISTS idx_password_resets_token ON password_resets(token);
 CREATE INDEX IF NOT EXISTS idx_password_resets_email ON password_resets(email);
+CREATE INDEX IF NOT EXISTS idx_site_config_key ON site_config(key);
 
