@@ -99,9 +99,39 @@ export async function POST(request: NextRequest) {
 
     console.log('✅ Configuración guardada en BD - TODO se lee de la BD ahora')
 
-    // YA NO necesitamos actualizar Vercel - las credenciales se leen de la BD
-    const vercelUpdateStatus = '✅ Configuración guardada. Los cambios se aplican inmediatamente.'
-    const shouldDeploy = false
+    // Trigger redeploy automático en Vercel
+    let vercelUpdateStatus = '✅ Configuración guardada.'
+    let shouldDeploy = false
+    
+    const vercelDeployHook = process.env.VERCEL_DEPLOY_HOOK
+    
+    if (vercelDeployHook) {
+      try {
+        console.log('🚀 Iniciando redeploy automático en Vercel...')
+        const deployResponse = await fetch(vercelDeployHook, { 
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        })
+        
+        if (deployResponse.ok) {
+          console.log('✅ Redeploy iniciado exitosamente')
+          vercelUpdateStatus = '✅ Configuración guardada. Redeploy iniciado automáticamente (~2 minutos).'
+          shouldDeploy = false
+        } else {
+          console.error('❌ Error en redeploy:', await deployResponse.text())
+          vercelUpdateStatus = '✅ Configuración guardada. Usa el botón "🚀 Deploy Manual"'
+          shouldDeploy = true
+        }
+      } catch (error: any) {
+        console.error('❌ Error triggering deploy:', error)
+        vercelUpdateStatus = '✅ Configuración guardada. Usa el botón "🚀 Deploy Manual"'
+        shouldDeploy = true
+      }
+    } else {
+      console.log('⚠️ VERCEL_DEPLOY_HOOK no configurado')
+      vercelUpdateStatus = '✅ Configuración guardada. Los cambios de credenciales se aplican inmediatamente. Para cambios de precios/días, usa el botón "🚀 Deploy Manual"'
+      shouldDeploy = true
+    }
 
     // Obtener configuración actualizada
     const updatedConfig = await db.getAllConfig()

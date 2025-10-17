@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { getStripeConfig } from '@/lib/stripe-config'
+import { db } from '@/lib/database-postgres'
 export const dynamic = 'force-dynamic'
 
 export async function POST(request: NextRequest) {
@@ -110,8 +111,11 @@ export async function POST(request: NextRequest) {
     }
 
     // El pago de €0.50 ya fue procesado por el PaymentIntent
-    // Crear la suscripción con trial de 2 días para el precio de 9.99€
-    console.log('🚀 Creando suscripción con trial de 2 días...')
+    // Leer días de prueba desde la BD
+    const trialDaysStr = await db.getConfigByKey('trial_days')
+    const trialDays = trialDaysStr ? parseInt(trialDaysStr) : 2
+    
+    console.log(`🚀 Creando suscripción con trial de ${trialDays} días...`)
     console.log('Price ID:', stripeConfig.priceId)
     
     const subscription = await stripe.subscriptions.create({
@@ -137,7 +141,7 @@ export async function POST(request: NextRequest) {
         testCorrectAnswers: testData?.correctAnswers?.toString() || '',
         testCategoryScores: testData?.categoryScores ? JSON.stringify(testData.categoryScores) : '',
       },
-      trial_period_days: 2,
+      trial_period_days: trialDays,
     })
 
     console.log('✅ Suscripción creada exitosamente:', subscription.id)
