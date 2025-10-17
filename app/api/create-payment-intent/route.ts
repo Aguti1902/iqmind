@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
+import { getStripeConfig } from '@/lib/stripe-config'
 export const dynamic = 'force-dynamic'
-
-const stripe = process.env.STRIPE_SECRET_KEY
-  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: '2023-10-16',
-    })
-  : null
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,12 +15,19 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (!stripe) {
+    // Obtener configuración de Stripe según el modo actual
+    const stripeConfig = await getStripeConfig()
+    
+    if (!stripeConfig.secretKey) {
       return NextResponse.json(
         { error: 'Stripe no configurado' },
         { status: 500 }
       )
     }
+
+    const stripe = new Stripe(stripeConfig.secretKey, {
+      apiVersion: '2023-10-16',
+    })
 
     // Buscar o crear customer
     const customers = await stripe.customers.list({

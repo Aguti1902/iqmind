@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
+import { getStripeConfig } from '@/lib/stripe-config'
 export const dynamic = 'force-dynamic'
-
-const stripe = process.env.STRIPE_SECRET_KEY
-  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: '2023-10-16',
-    })
-  : null
 
 export async function POST(request: NextRequest) {
   try {
@@ -24,7 +19,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (!stripe) {
+    // Obtener configuración de Stripe según el modo actual
+    const stripeConfig = await getStripeConfig()
+    
+    if (!stripeConfig.secretKey) {
       console.error('❌ Stripe no configurado')
       return NextResponse.json(
         { error: 'Stripe no configurado' },
@@ -32,13 +30,17 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (!process.env.STRIPE_PRICE_ID) {
+    if (!stripeConfig.priceId) {
       console.error('❌ STRIPE_PRICE_ID no configurado en variables de entorno')
       return NextResponse.json(
         { error: 'Configuración de precio no encontrada' },
         { status: 500 }
       )
     }
+
+    const stripe = new Stripe(stripeConfig.secretKey, {
+      apiVersion: '2023-10-16',
+    })
 
     // Obtener el PaymentIntent desde el backend para acceder al customer y payment method
     console.log('🔍 Recuperando PaymentIntent desde Stripe...')
@@ -110,13 +112,13 @@ export async function POST(request: NextRequest) {
     // El pago de €0.50 ya fue procesado por el PaymentIntent
     // Crear la suscripción con trial de 2 días para el precio de 9.99€
     console.log('🚀 Creando suscripción con trial de 2 días...')
-    console.log('Price ID:', process.env.STRIPE_PRICE_ID)
+    console.log('Price ID:', stripeConfig.priceId)
     
     const subscription = await stripe.subscriptions.create({
       customer: customerId,
       items: [
         {
-          price: process.env.STRIPE_PRICE_ID,
+          price: stripeConfig.priceId,
         },
       ],
       default_payment_method: paymentMethodId,

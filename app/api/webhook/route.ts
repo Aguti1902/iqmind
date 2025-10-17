@@ -5,12 +5,7 @@ import { sendEmail, emailTemplates } from '@/lib/email-service'
 import { createOrUpdateUser } from '@/lib/auth'
 import { db } from '@/lib/database-postgres'
 import { getEmailTranslation } from '@/lib/email-translations'
-
-const stripe = process.env.STRIPE_SECRET_KEY
-  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: '2023-10-16',
-    })
-  : null
+import { getStripeConfig } from '@/lib/stripe-config'
 
 // Función helper para enviar emails
 async function sendEmailToUser(type: string, data: any) {
@@ -211,10 +206,17 @@ async function sendEmailToUser(type: string, data: any) {
 
 // Endpoint para webhooks de Stripe
 export async function POST(request: NextRequest) {
-  if (!stripe) {
+  // Obtener configuración de Stripe según el modo actual
+  const stripeConfig = await getStripeConfig()
+  
+  if (!stripeConfig.secretKey) {
     console.error('❌ Stripe no configurado')
     return NextResponse.json({ error: 'Stripe no configurado' }, { status: 500 })
   }
+
+  const stripe = new Stripe(stripeConfig.secretKey, {
+    apiVersion: '2023-10-16',
+  })
 
   const body = await request.text()
   const signature = request.headers.get('stripe-signature')
@@ -226,7 +228,7 @@ export async function POST(request: NextRequest) {
 
   try {
     // Verificar webhook signature
-    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
+    const webhookSecret = stripeConfig.webhookSecret
     
     if (!webhookSecret) {
       console.error('❌ STRIPE_WEBHOOK_SECRET no configurado')

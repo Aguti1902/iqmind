@@ -127,28 +127,21 @@ export async function POST(request: NextRequest) {
       try {
         console.log('🔄 Actualizando variables de entorno en Vercel...')
         
-        // Mapear configuración a variables de entorno de Vercel (solo del modo activo)
-        const activePublishableKey = config.stripe_mode === 'test' 
-          ? config.stripe_test_publishable_key 
-          : config.stripe_live_publishable_key
-        
-        const activeSecretKey = config.stripe_mode === 'test' 
-          ? config.stripe_test_secret_key 
-          : config.stripe_live_secret_key
-        
-        const activeWebhookSecret = config.stripe_mode === 'test' 
-          ? config.stripe_test_webhook_secret 
-          : config.stripe_live_webhook_secret
-        
-        const activePriceId = config.stripe_mode === 'test' 
-          ? config.stripe_test_price_id 
-          : config.stripe_live_price_id
-
+        // Mapear configuración a variables de entorno de Vercel
+        // Ahora usamos variables separadas para TEST y PRODUCTION
         const envVars = [
-          { key: 'NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY', value: activePublishableKey },
-          { key: 'STRIPE_SECRET_KEY', value: activeSecretKey },
-          { key: 'STRIPE_WEBHOOK_SECRET', value: activeWebhookSecret },
-          { key: 'STRIPE_PRICE_ID', value: activePriceId },
+          // Variables de TEST
+          { key: 'NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_TEST', value: config.stripe_test_publishable_key },
+          { key: 'STRIPE_SECRET_KEY_TEST', value: config.stripe_test_secret_key },
+          { key: 'STRIPE_WEBHOOK_SECRET_TEST', value: config.stripe_test_webhook_secret },
+          { key: 'STRIPE_PRICE_ID_TEST', value: config.stripe_test_price_id },
+          // Variables de PRODUCTION (sin sufijo _TEST)
+          { key: 'NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY', value: config.stripe_live_publishable_key },
+          { key: 'STRIPE_SECRET_KEY', value: config.stripe_live_secret_key },
+          { key: 'STRIPE_WEBHOOK_SECRET', value: config.stripe_live_webhook_secret },
+          { key: 'STRIPE_PRICE_ID', value: config.stripe_live_price_id },
+          // Variable para indicar el modo activo
+          { key: 'STRIPE_MODE', value: config.stripe_mode },
         ]
 
         // Paso 1: Obtener todas las variables de entorno existentes
