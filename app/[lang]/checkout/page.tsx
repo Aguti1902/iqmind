@@ -250,6 +250,7 @@ export default function CheckoutPage() {
   const [emailError, setEmailError] = useState('')
   const [stripePromise, setStripePromise] = useState<Promise<Stripe | null> | null>(null)
   const [stripeMode, setStripeMode] = useState<string>('test')
+  const [forceRefresh, setForceRefresh] = useState(0)
 
   // Cargar la configuración de Stripe según el modo actual
   useEffect(() => {
@@ -300,13 +301,17 @@ export default function CheckoutPage() {
   // Cargar payment intent automáticamente cuando se carga la página
   useEffect(() => {
     const loadPaymentIntent = async () => {
-      if (!email || !userIQ) {
-        console.log('⏳ Esperando email y userIQ...', { email, userIQ })
+      if (!email || !userIQ || !stripePromise) {
+        console.log('⏳ Esperando email, userIQ y stripePromise...', { email, userIQ, hasStripe: !!stripePromise })
         return
       }
 
+      // Limpiar el clientSecret anterior para forzar un refresh
+      setClientSecret(null)
+      setEmailError('')
+
       try {
-        console.log('💳 Creando Payment Intent...', { email, userIQ, userName })
+        console.log('💳 Creando NUEVO Payment Intent...', { email, userIQ, userName, attempt: forceRefresh })
         const response = await fetch('/api/create-payment-intent', {
           method: 'POST',
           headers: {
@@ -330,7 +335,7 @@ export default function CheckoutPage() {
           return
         }
 
-        console.log('✅ Client Secret recibido')
+        console.log('✅ Client Secret recibido:', data.clientSecret?.substring(0, 20) + '...')
         setClientSecret(data.clientSecret)
         localStorage.setItem('userEmail', email)
       } catch (error) {
@@ -340,7 +345,7 @@ export default function CheckoutPage() {
     }
 
     loadPaymentIntent()
-  }, [email, userIQ, userName])
+  }, [email, userIQ, userName, stripePromise, forceRefresh])
 
   if (loading || !t) {
     return (
@@ -561,8 +566,23 @@ export default function CheckoutPage() {
                 </div>
 
                 {/* Payment Element */}
-                {clientSecret && userIQ && userName && stripePromise ? (
-                  <Elements stripe={stripePromise} options={elementsOptions}>
+                {emailError ? (
+                  <div className="text-center py-8">
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-4">
+                      <p className="text-red-800 mb-4">{emailError}</p>
+                      <button
+                        onClick={() => {
+                          setEmailError('')
+                          setForceRefresh(prev => prev + 1)
+                        }}
+                        className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition"
+                      >
+                        🔄 Reintentar
+                      </button>
+                    </div>
+                  </div>
+                ) : clientSecret && userIQ && userName && stripePromise ? (
+                  <Elements stripe={stripePromise} options={elementsOptions} key={clientSecret}>
                     <CheckoutForm 
                       email={email} 
                       userName={userName} 
@@ -574,6 +594,8 @@ export default function CheckoutPage() {
                   <div className="text-center py-8">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#218B8E] mx-auto mb-4"></div>
                     <p className="text-gray-600">{t.checkout.loadingPayment}</p>
+                    {!stripePromise && <p className="text-sm text-gray-500 mt-2">Cargando Stripe...</p>}
+                    {!clientSecret && stripePromise && <p className="text-sm text-gray-500 mt-2">Preparando pago...</p>}
                   </div>
                 )}
               </div>
