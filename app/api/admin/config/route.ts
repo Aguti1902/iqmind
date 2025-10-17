@@ -110,78 +110,125 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Configuración inválida' }, { status: 400 })
     }
 
-    // Actualizar configuración en base de datos
+    // Actualizar TODA la configuración en base de datos (test y production)
     await db.setMultipleConfig(config, userData.email)
 
-    // Intentar actualizar variables de entorno en Vercel
+    // Intentar actualizar variables de entorno en Vercel Y hacer deploy
     const vercelToken = process.env.VERCEL_TOKEN
     const vercelProjectId = process.env.VERCEL_PROJECT_ID
     
-    let vercelUpdateStatus = 'No configurado (actualizado solo en BD)'
+    let vercelUpdateStatus = '💾 Guardado en BD (Configura VERCEL_TOKEN para auto-deploy)'
     
     if (vercelToken && vercelProjectId) {
       try {
-        // Mapear configuración a variables de entorno de Vercel
+        console.log('🔄 Actualizando variables de entorno en Vercel...')
+        
+        // Mapear configuración a variables de entorno de Vercel (solo del modo activo)
+        const activePublishableKey = config.stripe_mode === 'test' 
+          ? config.stripe_test_publishable_key 
+          : config.stripe_live_publishable_key
+        
+        const activeSecretKey = config.stripe_mode === 'test' 
+          ? config.stripe_test_secret_key 
+          : config.stripe_live_secret_key
+        
+        const activeWebhookSecret = config.stripe_mode === 'test' 
+          ? config.stripe_test_webhook_secret 
+          : config.stripe_live_webhook_secret
+        
+        const activePriceId = config.stripe_mode === 'test' 
+          ? config.stripe_test_price_id 
+          : config.stripe_live_price_id
+
         const envVars = [
-          { 
-            key: 'NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY', 
-            value: config.stripe_mode === 'test' ? config.stripe_test_publishable_key : config.stripe_live_publishable_key 
-          },
-          { 
-            key: 'STRIPE_SECRET_KEY', 
-            value: config.stripe_mode === 'test' ? config.stripe_test_secret_key : config.stripe_live_secret_key 
-          },
-          { 
-            key: 'STRIPE_WEBHOOK_SECRET', 
-            value: config.stripe_mode === 'test' ? config.stripe_test_webhook_secret : config.stripe_live_webhook_secret 
-          },
-          { 
-            key: 'STRIPE_PRICE_ID', 
-            value: config.stripe_mode === 'test' ? config.stripe_test_price_id : config.stripe_live_price_id 
-          },
+          { key: 'NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY', value: activePublishableKey },
+          { key: 'STRIPE_SECRET_KEY', value: activeSecretKey },
+          { key: 'STRIPE_WEBHOOK_SECRET', value: activeWebhookSecret },
+          { key: 'STRIPE_PRICE_ID', value: activePriceId },
         ]
 
-        // Actualizar cada variable de entorno en Vercel
+        // Actualizar cada variable de entorno en Vercel usando UPSERT
+        let updateErrors = 0
         for (const envVar of envVars) {
           if (envVar.value) {
-            await fetch(`https://api.vercel.com/v10/projects/${vercelProjectId}/env/${envVar.key}`, {
-              method: 'PATCH',
-              headers: {
-                'Authorization': `Bearer ${vercelToken}`,
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                value: envVar.value,
-                target: ['production', 'preview', 'development']
-              })
-            })
+            try {
+              // Primero intentar actualizar
+              const updateResponse = await fetch(
+                `https://api.vercel.com/v9/projects/${vercelProjectId}/env/${envVar.key}`,
+                {
+                  method: 'PATCH',
+                  headers: {
+                    'Authorization': `Bearer ${vercelToken}`,
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({
+                    value: envVar.value,
+                    target: ['production']
+                  })
+                }
+              )
+
+              // Si no existe, crear
+              if (!updateResponse.ok && updateResponse.status === 404) {
+                await fetch(
+                  `https://api.vercel.com/v10/projects/${vercelProjectId}/env`,
+                  {
+                    method: 'POST',
+                    headers: {
+                      'Authorization': `Bearer ${vercelToken}`,
+                      'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                      key: envVar.key,
+                      value: envVar.value,
+                      target: ['production'],
+                      type: 'encrypted'
+                    })
+                  }
+                )
+              }
+              
+              console.log(`✅ Variable ${envVar.key} actualizada`)
+            } catch (varError) {
+              console.error(`Error actualizando ${envVar.key}:`, varError)
+              updateErrors++
+            }
           }
         }
 
         // Trigger redeploy en Vercel
-        const deployResponse = await fetch(`https://api.vercel.com/v13/deployments`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${vercelToken}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            name: vercelProjectId,
-            gitSource: {
-              type: 'github',
-              ref: 'main'
-            }
-          })
-        })
+        console.log('🚀 Iniciando redeploy en Vercel...')
+        const deployResponse = await fetch(
+          `https://api.vercel.com/v13/deployments`,
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${vercelToken}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              name: vercelProjectId,
+              gitSource: {
+                type: 'github',
+                ref: 'main'
+              },
+              target: 'production'
+            })
+          }
+        )
 
         if (deployResponse.ok) {
-          vercelUpdateStatus = '✅ Variables de entorno actualizadas en Vercel y redeploy iniciado'
+          const deployData = await deployResponse.json()
+          console.log('✅ Deploy iniciado:', deployData.id)
+          vercelUpdateStatus = `✅ Variables actualizadas en Vercel (${updateErrors > 0 ? 'con algunos errores' : 'exitosamente'}) y redeploy iniciado`
         } else {
-          vercelUpdateStatus = '⚠️ Actualizado en BD, pero hubo un problema con Vercel'
+          const errorText = await deployResponse.text()
+          console.error('Error en deploy:', errorText)
+          vercelUpdateStatus = '⚠️ Variables actualizadas pero hubo un problema iniciando el deploy'
         }
-      } catch (vercelError) {
+      } catch (vercelError: any) {
         console.error('Error actualizando Vercel:', vercelError)
-        vercelUpdateStatus = '⚠️ Actualizado en BD, pero fallo al actualizar Vercel'
+        vercelUpdateStatus = `⚠️ Guardado en BD, pero error con Vercel: ${vercelError.message}`
       }
     }
 
