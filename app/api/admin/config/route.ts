@@ -28,17 +28,39 @@ export async function GET(request: NextRequest) {
     // Obtener configuración de la base de datos
     const dbConfig = await db.getAllConfig()
 
-    // Combinar con variables de entorno (las variables de entorno tienen prioridad)
+    // Determinar el modo actual (desde BD o desde las variables que están activas)
+    const currentMode = dbConfig.stripe_mode || 'test'
+    
+    // Combinar con variables de entorno
+    // Las variables de entorno actuales reflejan el modo activo en Vercel
     const config = {
-      stripe_mode: dbConfig.stripe_mode || 'test',
-      stripe_test_publishable_key: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || dbConfig.stripe_test_publishable_key || '',
-      stripe_test_secret_key: process.env.STRIPE_SECRET_KEY || dbConfig.stripe_test_secret_key || '',
-      stripe_test_webhook_secret: process.env.STRIPE_WEBHOOK_SECRET || dbConfig.stripe_test_webhook_secret || '',
-      stripe_live_publishable_key: process.env.NEXT_PUBLIC_STRIPE_LIVE_PUBLISHABLE_KEY || dbConfig.stripe_live_publishable_key || '',
-      stripe_live_secret_key: process.env.STRIPE_LIVE_SECRET_KEY || dbConfig.stripe_live_secret_key || '',
-      stripe_live_webhook_secret: process.env.STRIPE_LIVE_WEBHOOK_SECRET || dbConfig.stripe_live_webhook_secret || '',
-      stripe_test_price_id: process.env.STRIPE_PRICE_ID || dbConfig.stripe_test_price_id || '',
-      stripe_live_price_id: process.env.STRIPE_LIVE_PRICE_ID || dbConfig.stripe_live_price_id || '',
+      stripe_mode: currentMode,
+      // Si el modo es test, las variables actuales son de test
+      stripe_test_publishable_key: currentMode === 'test' 
+        ? (process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || dbConfig.stripe_test_publishable_key || '')
+        : (dbConfig.stripe_test_publishable_key || ''),
+      stripe_test_secret_key: currentMode === 'test'
+        ? (process.env.STRIPE_SECRET_KEY || dbConfig.stripe_test_secret_key || '')
+        : (dbConfig.stripe_test_secret_key || ''),
+      stripe_test_webhook_secret: currentMode === 'test'
+        ? (process.env.STRIPE_WEBHOOK_SECRET || dbConfig.stripe_test_webhook_secret || '')
+        : (dbConfig.stripe_test_webhook_secret || ''),
+      stripe_test_price_id: currentMode === 'test'
+        ? (process.env.STRIPE_PRICE_ID || dbConfig.stripe_test_price_id || '')
+        : (dbConfig.stripe_test_price_id || ''),
+      // Si el modo es production, las variables actuales son de production
+      stripe_live_publishable_key: currentMode === 'production'
+        ? (process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || dbConfig.stripe_live_publishable_key || '')
+        : (dbConfig.stripe_live_publishable_key || ''),
+      stripe_live_secret_key: currentMode === 'production'
+        ? (process.env.STRIPE_SECRET_KEY || dbConfig.stripe_live_secret_key || '')
+        : (dbConfig.stripe_live_secret_key || ''),
+      stripe_live_webhook_secret: currentMode === 'production'
+        ? (process.env.STRIPE_WEBHOOK_SECRET || dbConfig.stripe_live_webhook_secret || '')
+        : (dbConfig.stripe_live_webhook_secret || ''),
+      stripe_live_price_id: currentMode === 'production'
+        ? (process.env.STRIPE_PRICE_ID || dbConfig.stripe_live_price_id || '')
+        : (dbConfig.stripe_live_price_id || ''),
       subscription_price: dbConfig.subscription_price || '9.99',
       trial_days: '2', // Valor correcto: 2 días
       initial_payment: dbConfig.initial_payment || '0.50',
