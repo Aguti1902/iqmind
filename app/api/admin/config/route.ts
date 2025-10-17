@@ -151,30 +151,65 @@ export async function POST(request: NextRequest) {
           { key: 'STRIPE_PRICE_ID', value: activePriceId },
         ]
 
-        // Actualizar cada variable de entorno en Vercel usando UPSERT
+        // Paso 1: Obtener todas las variables de entorno existentes
+        console.log('📥 Obteniendo variables existentes de Vercel...')
+        const getEnvResponse = await fetch(
+          `https://api.vercel.com/v9/projects/${vercelProjectId}/env`,
+          {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${vercelToken}`,
+              'Content-Type': 'application/json'
+            }
+          }
+        )
+
+        let existingEnvVars: any[] = []
+        if (getEnvResponse.ok) {
+          const envData = await getEnvResponse.json()
+          existingEnvVars = envData.envs || []
+          console.log(`✅ Encontradas ${existingEnvVars.length} variables en Vercel`)
+        } else {
+          console.error('❌ Error obteniendo variables:', await getEnvResponse.text())
+        }
+
+        // Paso 2: Actualizar o crear cada variable
         let updateErrors = 0
         for (const envVar of envVars) {
           if (envVar.value) {
             try {
-              // Primero intentar actualizar
-              const updateResponse = await fetch(
-                `https://api.vercel.com/v9/projects/${vercelProjectId}/env/${envVar.key}`,
-                {
-                  method: 'PATCH',
-                  headers: {
-                    'Authorization': `Bearer ${vercelToken}`,
-                    'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify({
-                    value: envVar.value,
-                    target: ['production']
-                  })
-                }
-              )
+              // Buscar si la variable ya existe
+              const existingVar = existingEnvVars.find(v => v.key === envVar.key)
+              
+              if (existingVar) {
+                // Actualizar variable existente usando su ID
+                console.log(`🔄 Actualizando ${envVar.key} (ID: ${existingVar.id})...`)
+                const updateResponse = await fetch(
+                  `https://api.vercel.com/v9/projects/${vercelProjectId}/env/${existingVar.id}`,
+                  {
+                    method: 'PATCH',
+                    headers: {
+                      'Authorization': `Bearer ${vercelToken}`,
+                      'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                      value: envVar.value,
+                      target: ['production', 'preview', 'development']
+                    })
+                  }
+                )
 
-              // Si no existe, crear
-              if (!updateResponse.ok && updateResponse.status === 404) {
-                await fetch(
+                if (updateResponse.ok) {
+                  console.log(`✅ Variable ${envVar.key} actualizada exitosamente`)
+                } else {
+                  const errorText = await updateResponse.text()
+                  console.error(`❌ Error actualizando ${envVar.key}:`, errorText)
+                  updateErrors++
+                }
+              } else {
+                // Crear nueva variable
+                console.log(`➕ Creando nueva variable ${envVar.key}...`)
+                const createResponse = await fetch(
                   `https://api.vercel.com/v10/projects/${vercelProjectId}/env`,
                   {
                     method: 'POST',
@@ -185,20 +220,28 @@ export async function POST(request: NextRequest) {
                     body: JSON.stringify({
                       key: envVar.key,
                       value: envVar.value,
-                      target: ['production'],
+                      target: ['production', 'preview', 'development'],
                       type: 'encrypted'
                     })
                   }
                 )
+
+                if (createResponse.ok) {
+                  console.log(`✅ Variable ${envVar.key} creada exitosamente`)
+                } else {
+                  const errorText = await createResponse.text()
+                  console.error(`❌ Error creando ${envVar.key}:`, errorText)
+                  updateErrors++
+                }
               }
-              
-              console.log(`✅ Variable ${envVar.key} actualizada`)
             } catch (varError) {
-              console.error(`Error actualizando ${envVar.key}:`, varError)
+              console.error(`❌ Error procesando ${envVar.key}:`, varError)
               updateErrors++
             }
           }
         }
+
+        console.log(`📊 Resumen: ${envVars.length - updateErrors}/${envVars.length} variables actualizadas correctamente`)
 
         // Trigger redeploy en Vercel
         console.log('🚀 Iniciando redeploy en Vercel...')
