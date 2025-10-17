@@ -44,6 +44,8 @@ export default function AdminPage() {
   })
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
   const [activeTab, setActiveTab] = useState<'stripe' | 'pricing' | 'admins'>('stripe')
+  const [deploying, setDeploying] = useState(false)
+  const [needsManualDeploy, setNeedsManualDeploy] = useState(false)
 
   useEffect(() => {
     checkAdmin()
@@ -110,6 +112,11 @@ export default function AdminPage() {
           successMessage += `\n\n💡 ${data.note}`
         }
         
+        // Detectar si se necesita deploy manual
+        if (data.needsManualDeploy) {
+          setNeedsManualDeploy(true)
+        }
+        
         setMessage({ type: 'success', text: successMessage })
         setTimeout(() => setMessage(null), 8000) // Más tiempo para leer el mensaje
       } else {
@@ -128,6 +135,32 @@ export default function AdminPage() {
       ...config,
       stripe_mode: config.stripe_mode === 'test' ? 'production' : 'test'
     })
+  }
+
+  const handleDeploy = async () => {
+    setDeploying(true)
+    setMessage(null)
+    
+    try {
+      const response = await fetch('/api/admin/deploy', {
+        method: 'POST'
+      })
+      
+      const data = await response.json()
+      
+      if (response.ok) {
+        setMessage({ type: 'success', text: `${data.message}\n\n${data.note || ''}` })
+        setNeedsManualDeploy(false)
+        setTimeout(() => setMessage(null), 8000)
+      } else {
+        setMessage({ type: 'error', text: `${data.error}\n\n${data.fallback || ''}` })
+      }
+    } catch (error) {
+      console.error('Error haciendo deploy:', error)
+      setMessage({ type: 'error', text: 'Error iniciando deploy. Ve a Vercel Dashboard y haz Redeploy manualmente.' })
+    } finally {
+      setDeploying(false)
+    }
   }
 
   if (loading) {
@@ -513,25 +546,49 @@ export default function AdminPage() {
             </div>
           </div>
 
-          {/* Botón de Guardar - Fijo en la parte inferior */}
+          {/* Botones de acción - Fijo en la parte inferior */}
           <div className="mt-8 bg-white rounded-2xl shadow-xl p-6">
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="w-full bg-gradient-to-r from-[#218B8E] to-[#1a6f72] hover:from-[#1a6f72] hover:to-[#145356] text-white px-8 py-5 rounded-xl font-bold text-xl shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {saving ? (
-                <>
-                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
-                  Guardando cambios...
-                </>
-              ) : (
-                <>
-                  <FaSave className="text-2xl" />
-                  Guardar Configuración
-                </>
+            <div className="space-y-4">
+              {/* Botón de Guardar */}
+              <button
+                onClick={handleSave}
+                disabled={saving}
+                className="w-full bg-gradient-to-r from-[#218B8E] to-[#1a6f72] hover:from-[#1a6f72] hover:to-[#145356] text-white px-8 py-5 rounded-xl font-bold text-xl shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {saving ? (
+                  <>
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                    Guardando cambios...
+                  </>
+                ) : (
+                  <>
+                    <FaSave className="text-2xl" />
+                    Guardar Configuración
+                  </>
+                )}
+              </button>
+
+              {/* Botón de Deploy Manual (solo se muestra si es necesario) */}
+              {needsManualDeploy && (
+                <button
+                  onClick={handleDeploy}
+                  disabled={deploying}
+                  className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-8 py-5 rounded-xl font-bold text-xl shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed animate-pulse"
+                >
+                  {deploying ? (
+                    <>
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                      Desplegando...
+                    </>
+                  ) : (
+                    <>
+                      <FaSync className="text-2xl" />
+                      🚀 Deploy Manual - Aplicar Cambios
+                    </>
+                  )}
+                </button>
               )}
-            </button>
+            </div>
           </div>
         </div>
       </div>

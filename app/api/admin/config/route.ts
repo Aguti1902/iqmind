@@ -113,11 +113,15 @@ export async function POST(request: NextRequest) {
     // Actualizar TODA la configuración en base de datos (test y production)
     await db.setMultipleConfig(config, userData.email)
 
-    // Intentar actualizar variables de entorno en Vercel Y hacer deploy
+    console.log('✅ Configuración guardada en BD')
+
+    // Intentar actualizar variables de entorno en Vercel
     const vercelToken = process.env.VERCEL_TOKEN
     const vercelProjectId = process.env.VERCEL_PROJECT_ID
+    const vercelDeployHook = process.env.VERCEL_DEPLOY_HOOK
     
-    let vercelUpdateStatus = '💾 Guardado en BD (Configura VERCEL_TOKEN para auto-deploy)'
+    let vercelUpdateStatus = '💾 Guardado en BD'
+    let shouldDeploy = false
     
     if (vercelToken && vercelProjectId) {
       try {
@@ -220,16 +224,38 @@ export async function POST(request: NextRequest) {
         if (deployResponse.ok) {
           const deployData = await deployResponse.json()
           console.log('✅ Deploy iniciado:', deployData.id)
-          vercelUpdateStatus = `✅ Variables actualizadas en Vercel (${updateErrors > 0 ? 'con algunos errores' : 'exitosamente'}) y redeploy iniciado`
+          shouldDeploy = false // Ya se hizo deploy
+          vercelUpdateStatus = `✅ Variables actualizadas y deploy iniciado`
         } else {
           const errorText = await deployResponse.text()
           console.error('Error en deploy:', errorText)
-          vercelUpdateStatus = '⚠️ Variables actualizadas pero hubo un problema iniciando el deploy'
+          shouldDeploy = true // Marcar que se necesita deploy manual
+          vercelUpdateStatus = '✅ Variables actualizadas. Usa el botón "🚀 Deploy Manual" para aplicar cambios'
         }
       } catch (vercelError: any) {
         console.error('Error actualizando Vercel:', vercelError)
-        vercelUpdateStatus = `⚠️ Guardado en BD, pero error con Vercel: ${vercelError.message}`
+        shouldDeploy = true
+        vercelUpdateStatus = `💾 Guardado en BD. ${vercelError.message}. Usa el botón "🚀 Deploy Manual"`
       }
+    } else if (vercelDeployHook) {
+      // Si no hay token pero hay deploy hook, intentar deploy
+      try {
+        console.log('🚀 Usando Deploy Hook...')
+        const hookResponse = await fetch(vercelDeployHook, { method: 'POST' })
+        if (hookResponse.ok) {
+          shouldDeploy = false
+          vercelUpdateStatus = '✅ Guardado y deploy iniciado automáticamente'
+        } else {
+          shouldDeploy = true
+          vercelUpdateStatus = '💾 Guardado en BD. Usa el botón "🚀 Deploy Manual"'
+        }
+      } catch (hookError) {
+        shouldDeploy = true
+        vercelUpdateStatus = '💾 Guardado en BD. Usa el botón "🚀 Deploy Manual"'
+      }
+    } else {
+      shouldDeploy = true
+      vercelUpdateStatus = '💾 Guardado en BD. Usa el botón "🚀 Deploy Manual" para aplicar cambios'
     }
 
     // Obtener configuración actualizada
@@ -239,8 +265,11 @@ export async function POST(request: NextRequest) {
       success: true,
       message: 'Configuración actualizada exitosamente',
       vercelStatus: vercelUpdateStatus,
+      needsManualDeploy: shouldDeploy,
       config: updatedConfig,
-      note: vercelToken ? 'Los cambios se aplicarán en ~2 minutos (redeploy en progreso)' : 'Configura VERCEL_TOKEN y VERCEL_PROJECT_ID para actualizaciones automáticas'
+      note: shouldDeploy 
+        ? 'Haz click en "🚀 Deploy Manual" para aplicar los cambios en producción'
+        : 'Los cambios se aplicarán en ~2 minutos (redeploy en progreso)'
     }, { status: 200 })
   } catch (error: any) {
     console.error('Error actualizando configuración:', error)
