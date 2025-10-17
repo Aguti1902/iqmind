@@ -98,8 +98,16 @@ export default function AdminPage() {
       const data = await response.json()
       
       if (response.ok) {
-        setMessage({ type: 'success', text: 'Configuración guardada exitosamente' })
-        setTimeout(() => setMessage(null), 3000)
+        let successMessage = '✅ Configuración guardada exitosamente'
+        if (data.vercelStatus) {
+          successMessage += `\n\n${data.vercelStatus}`
+        }
+        if (data.note) {
+          successMessage += `\n\n💡 ${data.note}`
+        }
+        
+        setMessage({ type: 'success', text: successMessage })
+        setTimeout(() => setMessage(null), 8000) // Más tiempo para leer el mensaje
       } else {
         setMessage({ type: 'error', text: data.error || 'Error guardando configuración' })
       }
@@ -157,9 +165,15 @@ export default function AdminPage() {
             <div className={`mb-6 p-4 rounded-xl ${
               message.type === 'success' ? 'bg-green-50 border-2 border-green-300 text-green-800' : 'bg-red-50 border-2 border-red-300 text-red-800'
             }`}>
-              <div className="flex items-center gap-3">
-                {message.type === 'success' ? '✅' : '❌'}
-                <span className="font-semibold">{message.text}</span>
+              <div className="flex items-start gap-3">
+                <span className="text-xl">{message.type === 'success' ? '✅' : '❌'}</span>
+                <div className="flex-1">
+                  {message.text.split('\n').map((line, i) => (
+                    <p key={i} className={i === 0 ? 'font-semibold' : 'text-sm mt-1'}>
+                      {line}
+                    </p>
+                  ))}
+                </div>
               </div>
             </div>
           )}
