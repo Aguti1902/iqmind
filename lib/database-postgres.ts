@@ -315,6 +315,65 @@ export const db = {
     }
   },
 
+  getUserBySubscriptionId: async (subscriptionId: string): Promise<User | null> => {
+    try {
+      const result = await getPool().query(
+        'SELECT * FROM users WHERE subscription_id = $1 LIMIT 1',
+        [subscriptionId]
+      )
+      
+      if (result.rows.length === 0) return null
+      
+      const user = result.rows[0]
+      
+      return {
+        id: user.id,
+        email: user.email,
+        password: user.password,
+        userName: user.user_name,
+        iq: user.iq,
+        subscriptionStatus: user.subscription_status,
+        subscriptionId: user.subscription_id,
+        trialEndDate: user.trial_end_date,
+        accessUntil: user.access_until,
+        createdAt: user.created_at,
+        updatedAt: user.updated_at,
+        lastLogin: user.last_login
+      }
+    } catch (error) {
+      console.error('Error getting user by subscription ID:', error)
+      return null
+    }
+  },
+
+  updateUserSubscription: async (
+    userId: string,
+    subscriptionId: string,
+    status: 'trial' | 'active' | 'cancelled' | 'expired',
+    trialEndDate?: Date,
+    accessUntil?: Date
+  ): Promise<void> => {
+    try {
+      const updates: any = {
+        subscriptionId,
+        subscriptionStatus: status
+      }
+      
+      if (trialEndDate) {
+        updates.trialEndDate = trialEndDate.toISOString()
+      }
+      
+      if (accessUntil) {
+        updates.accessUntil = accessUntil.toISOString()
+      }
+      
+      await db.updateUser(userId, updates)
+    } catch (error) {
+      console.error('Error updating user subscription:', error)
+      throw error
+    }
+  },
+
   // ============================================
   // TEST RESULTS
   // ============================================

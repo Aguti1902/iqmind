@@ -52,7 +52,11 @@ CREATE TABLE IF NOT EXISTS site_config (
 
 -- Insertar valores por defecto
 INSERT INTO site_config (key, value, description) VALUES
-  ('stripe_mode', 'test', 'Modo de Stripe: test o production'),
+  -- Configuración general de pagos
+  ('payment_provider', 'lemonsqueezy', 'Proveedor de pagos: stripe o lemonsqueezy'),
+  ('payment_mode', 'test', 'Modo de pago: test o production'),
+  
+  -- Configuración de Stripe (mantenido para migración)
   ('stripe_test_publishable_key', '', 'Clave pública de Stripe (test)'),
   ('stripe_test_secret_key', '', 'Clave secreta de Stripe (test)'),
   ('stripe_test_webhook_secret', '', 'Webhook secret de Stripe (test)'),
@@ -61,6 +65,18 @@ INSERT INTO site_config (key, value, description) VALUES
   ('stripe_live_webhook_secret', '', 'Webhook secret de Stripe (live)'),
   ('stripe_test_price_id', '', 'Price ID del producto (test)'),
   ('stripe_live_price_id', '', 'Price ID del producto (live)'),
+  
+  -- Configuración de Lemon Squeezy
+  ('lemonsqueezy_test_api_key', '', 'API Key de Lemon Squeezy (test)'),
+  ('lemonsqueezy_live_api_key', '', 'API Key de Lemon Squeezy (production)'),
+  ('lemonsqueezy_test_store_id', '', 'Store ID de Lemon Squeezy (test)'),
+  ('lemonsqueezy_live_store_id', '', 'Store ID de Lemon Squeezy (production)'),
+  ('lemonsqueezy_test_variant_id', '', 'Variant ID del producto/suscripción (test)'),
+  ('lemonsqueezy_live_variant_id', '', 'Variant ID del producto/suscripción (production)'),
+  ('lemonsqueezy_test_webhook_secret', '', 'Webhook secret de Lemon Squeezy (test)'),
+  ('lemonsqueezy_live_webhook_secret', '', 'Webhook secret de Lemon Squeezy (production)'),
+  
+  -- Configuración de precios y suscripción
   ('subscription_price', '9.99', 'Precio de la suscripción mensual'),
   ('trial_days', '2', 'Días de prueba gratuita'),
   ('initial_payment', '0.50', 'Pago inicial para acceder al resultado'),
