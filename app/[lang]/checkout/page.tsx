@@ -28,7 +28,7 @@ export default function CheckoutPage() {
     fetch('/api/site-config')
       .then(r => r.json())
       .then(data => {
-        const prov = data.config?.payment_provider || 'lemonsqueezy'
+        const prov = data.config?.payment_provider || 'stripe' // Default a Stripe
         setProvider(prov)
         setLoading(false)
       })
