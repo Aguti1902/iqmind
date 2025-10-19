@@ -97,9 +97,14 @@ export default function CheckoutRouter() {
           }, 500)
 
         } else {
-          // Si es Stripe, redirigir a la página de checkout de Stripe
-          setStatus('Redirigiendo a checkout de Stripe...')
-          router.push(`/${lang}/checkout-stripe`)
+          // Si es Stripe, usar el checkout de Stripe embebido
+          setStatus('Cargando checkout de Stripe...')
+          // Importar dinámicamente el checkout de Stripe
+          import('./checkout-stripe').then(module => {
+            // Renderizar el componente de Stripe aquí
+            // Por ahora, simplemente dejamos que la página se recargue
+            window.location.href = `${window.location.origin}/${lang}/checkout`
+          })
         }
 
       } catch (error: any) {
