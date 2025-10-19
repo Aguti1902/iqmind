@@ -27,7 +27,10 @@ export async function POST(request: NextRequest) {
       iq: parseInt(iq),
       password: hashedPassword,
       subscriptionStatus: 'trial',
-      trialEndDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString()
+      subscriptionId: undefined,
+      trialEndDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
+      accessUntil: undefined,
+      lastLogin: undefined
     })
 
     console.log(`✅ Usuario creado: ${user.email}`)
@@ -36,6 +39,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: 'Usuario creado exitosamente',
+      userId: user.id,
       user: {
         id: user.id,
         email: user.email,
