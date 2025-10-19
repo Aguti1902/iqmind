@@ -48,10 +48,10 @@ export async function POST(request: NextRequest) {
         userName: email.split('@')[0],
         iq: 0,
         subscriptionStatus: 'active',
-        subscriptionId: null,
-        trialEndDate: null,
-        accessUntil: null,
-        lastLogin: null
+        subscriptionId: undefined,
+        trialEndDate: undefined,
+        accessUntil: undefined,
+        lastLogin: undefined
       })
 
       console.log('✅ Usuario creado')
