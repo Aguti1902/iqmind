@@ -14,8 +14,32 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
-    console.log('🔄 Creando usuario simple:', { email, userName, iq })
+    console.log('🔄 Verificando/Creando usuario:', { email, userName, iq })
 
+    // Verificar si el usuario ya existe
+    const existingUser = await db.getUserByEmail(email)
+    
+    if (existingUser) {
+      console.log(`✅ Usuario ya existe: ${existingUser.email}`)
+      // Usuario ya existe, devolver sus datos
+      return NextResponse.json({
+        success: true,
+        message: 'Usuario encontrado',
+        userId: existingUser.id,
+        user: {
+          id: existingUser.id,
+          email: existingUser.email,
+          userName: existingUser.userName,
+          iq: existingUser.iq,
+          subscriptionStatus: existingUser.subscriptionStatus
+        },
+        existing: true
+      })
+    }
+
+    // Usuario no existe, crear uno nuevo
+    console.log('➕ Creando nuevo usuario...')
+    
     // Generar contraseña si no se proporciona
     const finalPassword = password || 'TempPass123!'
     const hashedPassword = await hashPassword(finalPassword)
@@ -47,7 +71,8 @@ export async function POST(request: NextRequest) {
         iq: user.iq,
         subscriptionStatus: user.subscriptionStatus
       },
-      password: finalPassword
+      password: finalPassword,
+      existing: false
     })
 
   } catch (error: any) {
