@@ -39,10 +39,7 @@ export async function POST(request: NextRequest) {
       // Usuario no existe, crear nuevo
       console.log('➕ Usuario no existe, creando nuevo...')
       
-      const userId = `user_${Date.now()}_${Math.random().toString(36).substring(7)}`
-      
       await db.createUser({
-        id: userId,
         email: email,
         password: hashedPassword,
         userName: email.split('@')[0],
