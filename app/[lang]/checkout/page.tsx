@@ -4,10 +4,22 @@
 import { useState, useEffect } from 'react'
 import { useTranslations } from '@/hooks/useTranslations'
 import CheckoutRouter from './checkout-router'
-// Importar el checkout de Stripe dinámicamente
+// Importar checkouts dinámicamente
 import dynamic from 'next/dynamic'
 
 const StripeCheckout = dynamic(() => import('./checkout-stripe').then(mod => ({ default: mod.default })), {
+  ssr: false,
+  loading: () => (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="text-center">
+        <div className="w-16 h-16 border-4 border-[#218B8E] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+        <p className="text-gray-600">Cargando checkout...</p>
+      </div>
+    </div>
+  )
+})
+
+const FastSpringCheckout = dynamic(() => import('./checkout-fastspring').then(mod => ({ default: mod.default })), {
   ssr: false,
   loading: () => (
     <div className="min-h-screen flex items-center justify-center">
@@ -28,12 +40,13 @@ export default function CheckoutPage() {
     fetch('/api/site-config')
       .then(r => r.json())
       .then(data => {
-        const prov = data.config?.payment_provider || 'stripe' // Default a Stripe
+        const prov = data.config?.payment_provider || 'fastspring' // Default a FastSpring
         setProvider(prov)
         setLoading(false)
+        console.log('💳 Payment provider:', prov)
       })
       .catch(() => {
-        setProvider('stripe') // Default a Stripe si falla
+        setProvider('fastspring') // Default a FastSpring si falla
         setLoading(false)
       })
   }, [])
@@ -49,9 +62,13 @@ export default function CheckoutPage() {
     )
   }
   
-  // Si es Stripe, mostrar el checkout de Stripe directamente
+  // Seleccionar checkout según el proveedor configurado
   if (provider === 'stripe') {
     return <StripeCheckout />
+  }
+  
+  if (provider === 'fastspring') {
+    return <FastSpringCheckout />
   }
   
   // Si es Lemon Squeezy, usar el router

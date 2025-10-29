@@ -217,14 +217,23 @@ export default function AdminPage() {
           
           {/* Header */}
           <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-8">
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-[#218B8E] to-[#1a6f72] rounded-xl flex items-center justify-center">
-                <FaShieldAlt className="text-3xl text-white" />
+            <div className="flex items-center justify-between gap-4 flex-wrap">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-[#218B8E] to-[#1a6f72] rounded-xl flex items-center justify-center">
+                  <FaShieldAlt className="text-3xl text-white" />
+                </div>
+                <div>
+                  <h1 className="text-3xl font-bold text-gray-900">Panel de Administración</h1>
+                  <p className="text-gray-600">Gestiona la configuración de tu sitio web</p>
+                </div>
               </div>
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">Panel de Administración</h1>
-                <p className="text-gray-600">Gestiona la configuración de tu sitio web</p>
-              </div>
+              <a
+                href="/es/admin/disputes"
+                className="inline-flex items-center gap-3 bg-red-600 text-white px-6 py-3 rounded-xl hover:bg-red-700 transition-all shadow-lg hover:shadow-xl font-semibold"
+              >
+                <FaExclamationTriangle className="text-xl" />
+                Monitor de Disputas
+              </a>
             </div>
           </div>
 

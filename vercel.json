@@ -4,6 +4,20 @@
       "source": "/.well-known/apple-developer-merchantid-domain-association",
       "destination": "/api/apple-pay-domain-association"
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron/check-disputes",
+      "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/cron/daily-dispute-report",
+      "schedule": "0 9 * * *"
+    },
+    {
+      "path": "/api/cron/scan-high-risk-users",
+      "schedule": "0 */6 * * *"
+    }
   ]
 }
 
