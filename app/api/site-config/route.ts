@@ -10,12 +10,11 @@ export async function GET() {
     
     // Devolver solo información pública (NO credenciales)
     const publicConfig = {
-      payment_provider: config.payment_provider || 'lemonsqueezy',
-      payment_mode: config.payment_mode || 'test',
+      payment_provider: config.payment_provider || 'fastspring',
+      payment_mode: config.payment_mode || 'production',
       trial_days: parseInt(config.trial_days || '2'),
       subscription_price: parseFloat(config.subscription_price || '9.99'),
-      initial_payment: parseFloat(config.initial_payment || '0.50'),
-      stripe_mode: config.stripe_mode || 'production' // Mantener por compatibilidad
+      initial_payment: parseFloat(config.initial_payment || '0.50')
     }
     
     console.log('✅ [site-config] Configuración pública:', publicConfig)
@@ -31,12 +30,11 @@ export async function GET() {
     return NextResponse.json({
       success: false,
       config: {
-        payment_provider: 'lemonsqueezy',
-        payment_mode: 'test',
+        payment_provider: 'fastspring',
+        payment_mode: 'production',
         trial_days: 2,
         subscription_price: 9.99,
-        initial_payment: 0.50,
-        stripe_mode: 'production'
+        initial_payment: 0.50
       },
       error: error.message
     })

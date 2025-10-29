@@ -25,7 +25,7 @@ export default function CancelarSuscripcionPage() {
     setError('')
 
     try {
-      // Llamar a la API para cancelar la suscripción en Stripe
+      // Llamar a la API para cancelar la suscripción en FastSpring
       const response = await fetch('/api/cancel-subscription', {
         method: 'POST',
         headers: {
