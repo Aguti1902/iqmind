@@ -29,21 +29,21 @@ export async function POST(request: NextRequest) {
     }
 
     // Verificar que tiene una suscripción activa
-    if (!user.subscription_id || user.subscription_status !== 'active') {
+    if (!user.subscriptionId || user.subscriptionStatus !== 'active') {
       return NextResponse.json(
         { error: 'No tienes ninguna suscripción activa' },
         { status: 404 }
       )
     }
 
-    console.log('📞 [cancel-subscription] Cancelando en FastSpring:', user.subscription_id)
+    console.log('📞 [cancel-subscription] Cancelando en FastSpring:', user.subscriptionId)
 
     // Obtener configuración de FastSpring
     const config = await getFastSpringConfig()
     
     // Cancelar la suscripción en FastSpring
     const response = await fetch(
-      `https://api.fastspring.com/subscriptions/${user.subscription_id}`,
+      `https://api.fastspring.com/subscriptions/${user.subscriptionId}`,
       {
         method: 'DELETE',
         headers: {
@@ -64,19 +64,19 @@ export async function POST(request: NextRequest) {
 
     // Actualizar el estado en nuestra base de datos
     await db.updateUser(email, {
-      subscription_status: 'cancelled',
-      updated_at: new Date()
+      subscriptionStatus: 'cancelled',
+      updatedAt: new Date()
     })
 
     console.log('✅ Suscripción cancelada:', {
       email,
-      subscriptionId: user.subscription_id,
+      subscriptionId: user.subscriptionId,
       cancelledAt: new Date().toISOString()
     })
 
     // Calcular fecha de finalización (fin del período actual)
-    const endDate = user.premium_until 
-      ? new Date(user.premium_until).toLocaleDateString('es-ES', { 
+    const endDate = user.accessUntil 
+      ? new Date(user.accessUntil).toLocaleDateString('es-ES', { 
           year: 'numeric', 
           month: 'long', 
           day: 'numeric' 
