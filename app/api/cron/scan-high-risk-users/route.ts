@@ -12,15 +12,8 @@ export const dynamic = 'force-dynamic'
 /**
  * Cron job para escanear usuarios de alto riesgo y tomar acciones preventivas
  * 
- * Configurar en vercel.json:
- * {
- *   "crons": [{
- *     "path": "/api/cron/scan-high-risk-users",
- *     "schedule": "0 */6 * * *"
- *   }]
- * }
- * 
- * Schedule: Cada 6 horas
+ * Schedule: Cada 6 horas (0 asterisco-slash-6 asterisco asterisco asterisco)
+ * Configurado en vercel.json
  */
 export async function GET(request: NextRequest) {
   try {
