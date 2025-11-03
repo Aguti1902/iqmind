@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
       {
         method: 'DELETE',
         headers: {
-          'Authorization': `Basic ${Buffer.from(`${config.api_username}:${config.api_password}`).toString('base64')}`,
+          'Authorization': `Basic ${Buffer.from(`${config.apiUsername}:${config.apiPassword}`).toString('base64')}`,
           'Content-Type': 'application/json'
         }
       }
