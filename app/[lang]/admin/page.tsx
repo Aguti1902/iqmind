@@ -46,6 +46,8 @@ export default function AdminPage() {
   const [activeTab, setActiveTab] = useState<'payment' | 'pricing' | 'admins'>('payment')
   const [deploying, setDeploying] = useState(false)
   const [needsManualDeploy, setNeedsManualDeploy] = useState(false)
+  const [testUserCredentials, setTestUserCredentials] = useState<{ email: string, password: string } | null>(null)
+  const [creatingTestUser, setCreatingTestUser] = useState(false)
 
   useEffect(() => {
     checkAdmin()
@@ -171,6 +173,37 @@ export default function AdminPage() {
     }
   }
 
+  const handleCreateTestUser = async () => {
+    setCreatingTestUser(true)
+    setTestUserCredentials(null)
+    
+    try {
+      const response = await fetch('/api/admin/create-test-user', {
+        method: 'POST',
+        headers: {
+          'x-user-email': userEmail
+        }
+      })
+      
+      const data = await response.json()
+      
+      if (response.ok) {
+        setTestUserCredentials({
+          email: data.credentials.email,
+          password: data.credentials.password
+        })
+        setMessage({ type: 'success', text: '✅ ' + data.message })
+      } else {
+        setMessage({ type: 'error', text: data.error || 'Error creando usuario de prueba' })
+      }
+    } catch (error) {
+      console.error('Error creando usuario de prueba:', error)
+      setMessage({ type: 'error', text: 'Error creando usuario de prueba' })
+    } finally {
+      setCreatingTestUser(false)
+    }
+  }
+
   if (loading) {
     return (
       <>
@@ -204,13 +237,32 @@ export default function AdminPage() {
                   <p className="text-gray-600">Gestiona la configuración de tu sitio web</p>
                 </div>
               </div>
-              <a
-                href="/es/admin/disputes"
-                className="inline-flex items-center gap-3 bg-red-600 text-white px-6 py-3 rounded-xl hover:bg-red-700 transition-all shadow-lg hover:shadow-xl font-semibold"
-              >
-                <FaExclamationTriangle className="text-xl" />
-                Monitor de Disputas
-              </a>
+              <div className="flex gap-3">
+                <a
+                  href="/es/admin/disputes"
+                  className="inline-flex items-center gap-3 bg-red-600 text-white px-6 py-3 rounded-xl hover:bg-red-700 transition-all shadow-lg hover:shadow-xl font-semibold"
+                >
+                  <FaExclamationTriangle className="text-xl" />
+                  Monitor de Disputas
+                </a>
+                <button
+                  onClick={handleCreateTestUser}
+                  disabled={creatingTestUser}
+                  className="inline-flex items-center gap-3 bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition-all shadow-lg hover:shadow-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {creatingTestUser ? (
+                    <>
+                      <FaSync className="text-xl animate-spin" />
+                      Creando...
+                    </>
+                  ) : (
+                    <>
+                      <FaShieldAlt className="text-xl" />
+                      Crear Usuario de Prueba
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
 
@@ -228,6 +280,49 @@ export default function AdminPage() {
                     </p>
                   ))}
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* Credenciales del usuario de prueba */}
+          {testUserCredentials && (
+            <div className="mb-6 p-6 rounded-xl bg-blue-50 border-2 border-blue-300">
+              <div className="flex items-start gap-3">
+                <FaShieldAlt className="text-2xl text-blue-600 mt-1" />
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold text-blue-900 mb-3">
+                    🎉 Usuario de Prueba Creado
+                  </h3>
+                  <div className="bg-white p-4 rounded-lg border border-blue-200 space-y-2">
+                    <div>
+                      <p className="text-sm font-semibold text-gray-600">Email:</p>
+                      <p className="text-lg font-mono text-gray-900">{testUserCredentials.email}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-600">Contraseña:</p>
+                      <p className="text-lg font-mono text-gray-900">{testUserCredentials.password}</p>
+                    </div>
+                  </div>
+                  <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                    <p className="text-sm text-amber-800">
+                      <strong>Nota:</strong> Este usuario NO tiene privilegios de admin y está en estado "trial" (sin suscripción premium).
+                    </p>
+                  </div>
+                  <a
+                    href="https://iqmind.mobi/es/login"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-4 inline-flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+                  >
+                    🌐 Ir a Login
+                  </a>
+                </div>
+                <button
+                  onClick={() => setTestUserCredentials(null)}
+                  className="text-gray-400 hover:text-gray-600 text-xl"
+                >
+                  ×
+                </button>
               </div>
             </div>
           )}
