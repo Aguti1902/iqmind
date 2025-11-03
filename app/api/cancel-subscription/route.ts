@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
     // Actualizar el estado en nuestra base de datos
     await db.updateUser(email, {
       subscriptionStatus: 'cancelled',
-      updatedAt: new Date()
+      updatedAt: new Date().toISOString()
     })
 
     console.log('✅ Suscripción cancelada:', {
