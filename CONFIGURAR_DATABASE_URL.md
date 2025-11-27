@@ -31,7 +31,7 @@ postgresql://postgres:password123@containers-us-west-xxx.railway.app:7890/railwa
 #### **Opción A: Desde el Dashboard de Vercel (Recomendado)**
 
 1. Ve a https://vercel.com/dashboard
-2. Click en tu proyecto **"IQmind"** (o como lo hayas llamado)
+2. Click en tu proyecto **"MindMetric"** (o como lo hayas llamado)
 3. Click en **"Settings"** (arriba)
 4. Click en **"Environment Variables"** (menú izquierdo)
 5. Click en **"Add New"**

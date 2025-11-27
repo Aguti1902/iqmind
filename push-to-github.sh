@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# 🚀 Push to GitHub - IQmind
+# 🚀 Push to GitHub - MindMetric
 # Script interactivo para subir código a GitHub
 
 set -e
@@ -13,7 +13,7 @@ BLUE='\033[0;34m'
 NC='\033[0m'
 
 echo -e "${BLUE}╔════════════════════════════════════════╗${NC}"
-echo -e "${BLUE}║   🚀 Push to GitHub - IQmind          ║${NC}"
+echo -e "${BLUE}║   🚀 Push to GitHub - MindMetric          ║${NC}"
 echo -e "${BLUE}╚════════════════════════════════════════╝${NC}"
 echo ""
 
@@ -30,7 +30,7 @@ if ! git remote | grep -q "^origin$"; then
     read -p "¿Agregar remote? (y/n): " add_remote
     
     if [ "$add_remote" = "y" ]; then
-        git remote add origin https://github.com/Aguti1902/iqmind.git
+        git remote add origin https://github.com/Aguti1902/mindmetric.git
         echo -e "${GREEN}✅ Remote agregado${NC}"
     else
         echo -e "${RED}❌ No se puede continuar sin remote${NC}"
@@ -90,7 +90,7 @@ if git push -u origin main; then
     echo -e "${GREEN}╚════════════════════════════════════════╝${NC}"
     echo ""
     echo -e "${BLUE}🔗 Ver en GitHub:${NC}"
-    echo -e "   https://github.com/Aguti1902/iqmind"
+    echo -e "   https://github.com/Aguti1902/mindmetric"
     echo ""
     echo -e "${BLUE}📋 Próximos pasos:${NC}"
     echo -e "   1. Ve a Vercel.com"

@@ -1,5 +1,5 @@
 -- =====================================================
--- IQMIND DATABASE SCHEMA
+-- MINDMETRIC DATABASE SCHEMA
 -- PostgreSQL Schema for Railway
 -- =====================================================
 

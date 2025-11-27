@@ -246,5 +246,5 @@ describe('Anti-Bot Protection', () => {
   year: 'numeric' 
 })}
 
-**Autor:** IQmind Development Team
+**Autor:** MindMetric Development Team
 

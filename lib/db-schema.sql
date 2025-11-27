@@ -1,4 +1,4 @@
--- Schema para base de datos PostgreSQL de IQmind
+-- Schema para base de datos PostgreSQL de MindMetric
 
 -- Tabla de usuarios
 CREATE TABLE IF NOT EXISTS users (

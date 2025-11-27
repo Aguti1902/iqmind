@@ -40,7 +40,7 @@ export default function PrivacidadPage() {
             <section>
               <h2 className="text-2xl font-bold text-gray-900 mb-4">1. Introduction</h2>
               <p>
-                At IQmind, we take the privacy of our users very seriously. This Privacy Policy describes how we 
+                At MindMetric, we take the privacy of our users very seriously. This Privacy Policy describes how we 
                 collect, use, store, and protect your personal information when you use our website and services.
               </p>
               <p>

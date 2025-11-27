@@ -1,4 +1,4 @@
-# Panel de Administración - IQmind
+# Panel de Administración - MindMetric
 
 ## 🎯 Descripción
 

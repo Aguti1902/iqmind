@@ -2,7 +2,7 @@
 
 ## 🎯 Resumen
 
-Sistema completo de emails automáticos para todo el flujo de usuario en IQmind.
+Sistema completo de emails automáticos para todo el flujo de usuario en MindMetric.
 
 ---
 
@@ -63,7 +63,7 @@ Sistema completo de emails automáticos para todo el flujo de usuario en IQmind.
 
 1. Ve a: https://app.sendgrid.com/settings/api_keys
 2. Clic en **"Create API Key"**
-3. Nombre: `IQmind Production`
+3. Nombre: `MindMetric Production`
 4. Permisos: **Full Access**
 5. **Copia la API Key** (solo se muestra una vez)
 
@@ -79,7 +79,7 @@ Sistema completo de emails automáticos para todo el flujo de usuario en IQmind.
 ### **Paso 4: Configurar en Vercel**
 
 1. Ve a: https://vercel.com/dashboard
-2. Selecciona proyecto `iqmind`
+2. Selecciona proyecto `mindmetric`
 3. Ve a **Settings → Environment Variables**
 4. Agrega:
    ```

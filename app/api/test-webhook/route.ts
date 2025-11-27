@@ -34,14 +34,14 @@ async function sendEmailToUser(type: string, data: any) {
           const loginUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://mindmetric.io'}/login`
           emailData = {
             to: data.email,
-            subject: '¡Bienvenido a IQmind! - Acceso a tu Dashboard',
+            subject: '¡Bienvenido a MindMetric! - Acceso a tu Dashboard',
             html: `
               <!DOCTYPE html>
               <html>
               <head>
                 <meta charset="utf-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Bienvenido a IQmind</title>
+                <title>Bienvenido a MindMetric</title>
               </head>
               <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f5;">
                 <table role="presentation" style="width: 100%; border-collapse: collapse;">
@@ -52,7 +52,7 @@ async function sendEmailToUser(type: string, data: any) {
                         <tr>
                           <td style="background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); padding: 40px 30px; text-align: center;">
                             <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">
-                              🧠 IQmind
+                              🧠 MindMetric
                             </h1>
                           </td>
                         </tr>
@@ -61,7 +61,7 @@ async function sendEmailToUser(type: string, data: any) {
                         <tr>
                           <td style="padding: 40px 30px; text-align: center;">
                             <h2 style="color: #031C43; margin: 0 0 20px 0; font-size: 28px; font-weight: 600;">
-                              ¡Bienvenido a IQmind!
+                              ¡Bienvenido a MindMetric!
                             </h2>
                             
                             <p style="color: #4a5568; font-size: 16px; line-height: 1.6; margin: 0 0 30px 0;">
@@ -110,7 +110,7 @@ async function sendEmailToUser(type: string, data: any) {
                         <tr>
                           <td style="background-color: #f7fafc; padding: 30px; text-align: center; border-top: 1px solid #e2e8f0;">
                             <p style="color: #718096; font-size: 12px; margin: 0 0 10px 0;">
-                              © ${new Date().getFullYear()} IQmind. Todos los derechos reservados.
+                              © ${new Date().getFullYear()} MindMetric. Todos los derechos reservados.
                             </p>
                             <p style="color: #718096; font-size: 12px; margin: 0;">
                               support@mindmetric.io

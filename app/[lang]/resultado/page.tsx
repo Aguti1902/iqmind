@@ -229,7 +229,7 @@ export default function ResultadoPage() {
     // Texto de firma
     doc.setFontSize(9)
     doc.setTextColor(100, 100, 100)
-    const footerText = t.certificate?.footer || 'IQmind - Professional Intelligence Test'
+    const footerText = t.certificate?.footer || 'MindMetric - Professional Intelligence Test'
     doc.text(footerText, 148.5, 193, { align: 'center' })
     doc.text('mindmetric.io', 148.5, 198, { align: 'center' })
     

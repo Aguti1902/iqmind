@@ -48,7 +48,7 @@ OPCIÓN B - Terminal:
 ─────────────────────────────────────────────────────────────
 
   1. Ve a https://vercel.com/dashboard
-  2. Click en tu proyecto "IQmind"
+  2. Click en tu proyecto "MindMetric"
   3. Verás el deploy automático iniciándose
   4. Espera 2-3 minutos
   5. Verifica que el deploy sea exitoso ✅
@@ -58,11 +58,11 @@ OPCIÓN B - Terminal:
 📋 PASO 4: PROBAR QUE TODO FUNCIONA
 ─────────────────────────────────────────────────────────────
 
-  1. Ve a https://www.iqmind.io/es/test
+  1. Ve a https://www.mindmetric.io/es/test
   2. Completa un test
   3. Haz el pago de 0.50€
   4. Revisa tu email y copia las credenciales
-  5. Ve a https://www.iqmind.io/es/cuenta
+  5. Ve a https://www.mindmetric.io/es/cuenta
   6. Haz login con las credenciales del email
   7. ✅ Deberías ver tu resultado del test
   8. ✅ Recarga la página - los datos deben seguir ahí

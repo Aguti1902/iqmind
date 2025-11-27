@@ -1,10 +1,10 @@
-# 🔍 DIAGNÓSTICO DE PAGO - iqmind2025@gmail.com
+# 🔍 DIAGNÓSTICO DE PAGO - mindmetric2025@gmail.com
 
 ## 1. ✅ Verificar si el usuario existe en la base de datos
 
 Accede a esta URL en tu navegador:
 ```
-https://www.mindmetric.io/api/debug-user?email=iqmind2025@gmail.com
+https://www.mindmetric.io/api/debug-user?email=mindmetric2025@gmail.com
 ```
 
 **Resultado esperado:**
@@ -15,17 +15,17 @@ https://www.mindmetric.io/api/debug-user?email=iqmind2025@gmail.com
 
 ## 2. 📋 Verificar logs de Vercel
 
-1. Ve a: https://vercel.com/[tu-cuenta]/iqmind/logs
-2. Filtra por: `iqmind2025@gmail.com`
+1. Ve a: https://vercel.com/[tu-cuenta]/mindmetric/logs
+2. Filtra por: `mindmetric2025@gmail.com`
 3. Busca estos mensajes:
 
 ### Mensajes que DEBES ver si todo funcionó:
 ```
-✅ PaymentIntent exitoso: { email: "iqmind2025@gmail.com" }
-👤 Usuario creado/actualizado: iqmind2025@gmail.com
+✅ PaymentIntent exitoso: { email: "mindmetric2025@gmail.com" }
+👤 Usuario creado/actualizado: mindmetric2025@gmail.com
 🔑 Contraseña generada: [password]
-📧 Enviando email a: iqmind2025@gmail.com
-✅ Email enviado a iqmind2025@gmail.com
+📧 Enviando email a: mindmetric2025@gmail.com
+✅ Email enviado a mindmetric2025@gmail.com
 ```
 
 ### Si NO ves estos mensajes:
@@ -39,7 +39,7 @@ https://www.mindmetric.io/api/debug-user?email=iqmind2025@gmail.com
 1. Ve a: https://dashboard.stripe.com/webhooks
 2. Busca tu webhook de producción
 3. Haz clic en "Events" o "Eventos"
-4. Busca el evento más reciente con el email `iqmind2025@gmail.com`
+4. Busca el evento más reciente con el email `mindmetric2025@gmail.com`
 5. Verifica:
    - ✅ Estado del evento (succeeded/failed)
    - ✅ Si se envió el webhook a tu servidor
@@ -59,9 +59,9 @@ https://www.mindmetric.io/api/debug-user?email=iqmind2025@gmail.com
 ### Problema B: Usuario existe pero NO recibió email
 **Causa:** SendGrid falló o el email está en spam
 **Solución:**
-1. Verifica la bandeja de SPAM de `iqmind2025@gmail.com`
+1. Verifica la bandeja de SPAM de `mindmetric2025@gmail.com`
 2. Verifica en SendGrid: https://app.sendgrid.com/email_activity
-3. Busca por `iqmind2025@gmail.com` y mira el estado
+3. Busca por `mindmetric2025@gmail.com` y mira el estado
 
 ### Problema C: Lang no se guardó correctamente
 **Causa:** El idioma no se pasó en el checkout
@@ -78,7 +78,7 @@ Si el usuario existe pero no recibió el email, puedes usar este endpoint:
 ```bash
 curl -X POST https://www.mindmetric.io/api/resend-welcome-email \
   -H "Content-Type: application/json" \
-  -d '{"email": "iqmind2025@gmail.com"}'
+  -d '{"email": "mindmetric2025@gmail.com"}'
 ```
 
 ---
@@ -103,7 +103,7 @@ Por favor, completa esta información:
 curl -X POST https://www.mindmetric.io/api/create-user-manual \
   -H "Content-Type: application/json" \
   -d '{
-    "email": "iqmind2025@gmail.com",
+    "email": "mindmetric2025@gmail.com",
     "userName": "Usuario",
     "password": "TempPass123!",
     "iq": 120,
@@ -117,7 +117,7 @@ curl -X POST https://www.mindmetric.io/api/create-user-manual \
 curl -X POST https://www.mindmetric.io/api/auth/forgot-password \
   -H "Content-Type: application/json" \
   -d '{
-    "email": "iqmind2025@gmail.com",
+    "email": "mindmetric2025@gmail.com",
     "lang": "sv"
   }'
 ```
@@ -129,7 +129,7 @@ curl -X POST https://www.mindmetric.io/api/auth/forgot-password \
 Después de aplicar cualquier solución, verifica:
 
 1. ✅ Usuario puede hacer login: https://www.mindmetric.io/sv/login
-2. ✅ Email: iqmind2025@gmail.com
+2. ✅ Email: mindmetric2025@gmail.com
 3. ✅ Contraseña: [la que se generó o reseteó]
 4. ✅ Dashboard muestra el resultado del test
 

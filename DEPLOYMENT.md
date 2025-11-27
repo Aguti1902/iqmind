@@ -1,6 +1,6 @@
-# 🚀 Deployment Guide - IQmind
+# 🚀 Deployment Guide - MindMetric
 
-This guide will help you deploy IQmind to production using GitHub, Vercel, and Railway.
+This guide will help you deploy MindMetric to production using GitHub, Vercel, and Railway.
 
 ## 📋 Prerequisites
 
@@ -18,7 +18,7 @@ This guide will help you deploy IQmind to production using GitHub, Vercel, and R
 1. Go to [github.com](https://github.com) and sign in
 2. Click the "+" icon in the top right → "New repository"
 3. Fill in:
-   - **Repository name**: `iqmind` (or your preferred name)
+   - **Repository name**: `mindmetric` (or your preferred name)
    - **Description**: "Online Intelligence Test Platform"
    - **Visibility**: Private (recommended) or Public
    - **DO NOT** initialize with README, .gitignore, or license (we already have these)
@@ -33,7 +33,7 @@ Run these commands in your terminal:
 cd /Users/guti/Desktop/CURSOR\ WEBS/IQLEVEL
 
 # Add GitHub remote (replace YOUR_USERNAME with your GitHub username)
-git remote add origin https://github.com/YOUR_USERNAME/iqmind.git
+git remote add origin https://github.com/YOUR_USERNAME/mindmetric.git
 
 # Rename branch to main (if needed)
 git branch -M main
@@ -67,7 +67,7 @@ git push -u origin main
 
 1. Click "New Project"
 2. Select "Deploy from GitHub repo"
-3. Choose your `iqmind` repository
+3. Choose your `mindmetric` repository
 4. Railway will detect it's a Next.js app
 
 ### Step 3: Add PostgreSQL Database
@@ -141,7 +141,7 @@ CREATE INDEX IF NOT EXISTS idx_test_results_date ON test_results(test_date DESC)
 2. Click "Login" → "Continue with GitHub"
 3. Authorize Vercel
 4. Click "Add New..." → "Project"
-5. Import your `iqmind` repository
+5. Import your `mindmetric` repository
 6. Vercel will auto-detect Next.js settings
 
 ### Step 2: Configure Build Settings
@@ -175,7 +175,7 @@ NEXT_PUBLIC_APP_URL=https://your-domain.vercel.app
 
 ### Step 4: Get Your Vercel URL
 
-1. After deployment, you'll get a URL like: `https://iqmind-xxxxx.vercel.app`
+1. After deployment, you'll get a URL like: `https://mindmetric-xxxxx.vercel.app`
 2. Copy this URL (you'll need it for Stripe webhook)
 
 ---
@@ -194,7 +194,7 @@ NEXT_PUBLIC_APP_URL=https://your-domain.vercel.app
 
 1. Go to "Products" → "Add product"
 2. Fill in:
-   - **Name**: IQmind Premium Subscription
+   - **Name**: MindMetric Premium Subscription
    - **Description**: Monthly subscription for unlimited tests
 3. Add pricing:
    - **Price**: €19.99
@@ -351,13 +351,13 @@ Visit your Vercel URL and verify:
 - **Vercel Docs**: [vercel.com/docs](https://vercel.com/docs)
 - **Railway Docs**: [docs.railway.app](https://docs.railway.app)
 - **Stripe Docs**: [stripe.com/docs](https://stripe.com/docs)
-- **IQmind Support**: support@mindmetric.io
+- **MindMetric Support**: support@mindmetric.io
 
 ---
 
 ## 🎉 You're Live!
 
-Once all steps are complete, your IQmind platform will be:
+Once all steps are complete, your MindMetric platform will be:
 - ✅ Accessible worldwide
 - ✅ Processing payments securely
 - ✅ Storing data reliably

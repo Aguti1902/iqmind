@@ -16,7 +16,7 @@ export default function Header() {
     <header className="bg-white shadow-sm sticky top-0 z-50">
       <nav className="container-custom py-4">
         <div className="flex justify-between items-center">
-          {/* Logo IQmind */}
+          {/* Logo MindMetric */}
           <Link href={`/${lang}`} className="flex items-center">
             <img src="/images/MINDMETRIC/Logo.png" alt="MindMetric" className="h-10 md:h-12 w-auto" />
           </Link>

@@ -25,7 +25,7 @@ export default function LanguageSelector() {
     setIsOpen(false)
     
     // Guardar en localStorage
-    localStorage.setItem('iqmind-locale', newLocale)
+    localStorage.setItem('mindmetric-locale', newLocale)
     
     // Construir nueva URL
     const pathSegments = pathname.split('/')

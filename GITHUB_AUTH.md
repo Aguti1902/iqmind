@@ -2,8 +2,8 @@
 
 ## Problema
 ```
-remote: Permission to Aguti1902/iqmind.git denied to nexgent-ai-systems.
-fatal: unable to access 'https://github.com/Aguti1902/iqmind.git/': The requested URL returned error: 403
+remote: Permission to Aguti1902/mindmetric.git denied to nexgent-ai-systems.
+fatal: unable to access 'https://github.com/Aguti1902/mindmetric.git/': The requested URL returned error: 403
 ```
 
 ## ✅ Solución Recomendada: Personal Access Token
@@ -13,7 +13,7 @@ fatal: unable to access 'https://github.com/Aguti1902/iqmind.git/': The requeste
 1. Ve a: **https://github.com/settings/tokens**
 2. Click en **"Generate new token"** → **"Generate new token (classic)"**
 3. Configura el token:
-   - **Note**: `IQmind Development`
+   - **Note**: `MindMetric Development`
    - **Expiration**: `90 days` (o el que prefieras)
    - **Select scopes**: Marca `repo` (todo)
 4. Click **"Generate token"**
@@ -115,7 +115,7 @@ cd /Users/guti/Desktop/CURSOR\ WEBS/IQLEVEL
 git remote remove origin
 
 # Agregar remote SSH
-git remote add origin git@github.com:Aguti1902/iqmind.git
+git remote add origin git@github.com:Aguti1902/mindmetric.git
 
 # Push
 git push -u origin main
@@ -149,8 +149,8 @@ git config --global user.email "tu-email@example.com"
 git remote -v
 
 # Debería ser:
-# origin  https://github.com/Aguti1902/iqmind.git (fetch)
-# origin  https://github.com/Aguti1902/iqmind.git (push)
+# origin  https://github.com/Aguti1902/mindmetric.git (fetch)
+# origin  https://github.com/Aguti1902/mindmetric.git (push)
 ```
 
 ### Error: "Permission denied (publickey)"
@@ -208,7 +208,7 @@ git log --oneline
 - [ ] Remote configurado correctamente
 - [ ] Credenciales guardadas (opcional)
 - [ ] Push exitoso a GitHub
-- [ ] Código visible en https://github.com/Aguti1902/iqmind
+- [ ] Código visible en https://github.com/Aguti1902/mindmetric
 
 ---
 

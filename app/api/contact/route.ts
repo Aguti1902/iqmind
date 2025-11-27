@@ -139,7 +139,7 @@ ${message}
         </html>
       `,
       text: `
-Nuevo mensaje de contacto de IQmind
+Nuevo mensaje de contacto de MindMetric
 
 Nombre: ${name}
 Email: ${email}

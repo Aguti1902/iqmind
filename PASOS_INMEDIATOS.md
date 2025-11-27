@@ -15,7 +15,7 @@
 Abre en tu navegador:
 
 ```
-https://iqlevel.iqmind.es/api/check-config
+https://iqlevel.mindmetric.es/api/check-config
 ```
 
 **¿Qué buscar?**
@@ -44,7 +44,7 @@ https://iqlevel.iqmind.es/api/check-config
 
 Recarga:
 ```
-https://iqlevel.iqmind.es/api/check-config
+https://iqlevel.mindmetric.es/api/check-config
 ```
 
 **Ahora debería mostrar:**

@@ -1,6 +1,6 @@
-# ⚡ Quick Start - IQmind
+# ⚡ Quick Start - MindMetric
 
-Guía ultra rápida para poner en marcha IQmind en 5 minutos.
+Guía ultra rápida para poner en marcha MindMetric en 5 minutos.
 
 ## 🚀 Inicio Rápido (Sin Configuración)
 

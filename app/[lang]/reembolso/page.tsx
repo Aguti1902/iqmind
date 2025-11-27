@@ -35,7 +35,7 @@ export default function ReembolsoPage() {
               <strong>Last updated:</strong> {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
             </p>
             <p className="text-gray-700 mb-6">
-              At IQmind, we are committed to providing high-quality cognitive assessment services. 
+              At MindMetric, we are committed to providing high-quality cognitive assessment services. 
               This policy clearly and transparently describes our refund terms.
             </p>
 
@@ -59,7 +59,7 @@ export default function ReembolsoPage() {
             <section id="overview" className="mb-8 scroll-mt-20">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">1. Service Overview</h2>
               
-              <p className="mb-4">IQmind offers intelligence assessment services with the following pricing structure:</p>
+              <p className="mb-4">MindMetric offers intelligence assessment services with the following pricing structure:</p>
               
               <div className="bg-gray-50 rounded-lg p-6 mb-4">
                 <ul className="space-y-3">

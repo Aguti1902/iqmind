@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
         <head>
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>${t('welcome')} IQmind</title>
+          <title>${t('welcome')} MindMetric</title>
         </head>
         <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f5;">
           <table role="presentation" style="width: 100%; border-collapse: collapse;">
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
                   <tr>
                     <td style="padding: 40px 30px; text-align: center;">
                       <h2 style="color: #031C43; margin: 0 0 20px 0; font-size: 28px; font-weight: 600;">
-                        ${t('welcome')} IQmind!
+                        ${t('welcome')} MindMetric!
                       </h2>
                       
                       <p style="color: #4a5568; font-size: 16px; line-height: 1.6; margin: 0 0 30px 0;">
@@ -122,7 +122,7 @@ export async function POST(request: NextRequest) {
                   <tr>
                     <td style="background-color: #f7fafc; padding: 30px; text-align: center; border-top: 1px solid #e2e8f0;">
                       <p style="color: #718096; font-size: 12px; margin: 0 0 10px 0;">
-                        © ${new Date().getFullYear()} IQmind. ${t('allRightsReserved')}
+                        © ${new Date().getFullYear()} MindMetric. ${t('allRightsReserved')}
                       </p>
                       <p style="color: #718096; font-size: 12px; margin: 0;">
                         support@mindmetric.io

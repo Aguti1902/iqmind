@@ -1,6 +1,6 @@
-# ⚡ Quick Deploy - IQmind
+# ⚡ Quick Deploy - MindMetric
 
-Guía rápida para desplegar IQmind en producción.
+Guía rápida para desplegar MindMetric en producción.
 
 ## 🚀 Pasos Rápidos
 
@@ -12,7 +12,7 @@ Guía rápida para desplegar IQmind en producción.
 # Selecciona opción 1
 
 # Opción B: Manual
-git remote add origin https://github.com/TU_USUARIO/iqmind.git
+git remote add origin https://github.com/TU_USUARIO/mindmetric.git
 git branch -M main
 git push -u origin main
 ```
@@ -29,7 +29,7 @@ git push -u origin main
 
 1. Ve a [vercel.com](https://vercel.com)
 2. Login con GitHub
-3. New Project → Import `iqmind`
+3. New Project → Import `mindmetric`
 4. Add Environment Variables:
    ```
    DATABASE_URL=tu_railway_url
@@ -79,7 +79,7 @@ https://tu-app.vercel.app
 
 ## 🔗 Enlaces Importantes
 
-- **GitHub**: https://github.com/TU_USUARIO/iqmind
+- **GitHub**: https://github.com/TU_USUARIO/mindmetric
 - **Vercel**: https://vercel.com/dashboard
 - **Railway**: https://railway.app/dashboard
 - **Stripe**: https://dashboard.stripe.com

@@ -393,7 +393,7 @@ Test → [6s ANÁLISIS VISUAL] → Resultado
 
 **Fecha de implementación:** ${new Date().toLocaleDateString('es-ES')}
 
-**Autor:** IQmind Development Team
+**Autor:** MindMetric Development Team
 
 **Status:** ✅ Producción Ready
 

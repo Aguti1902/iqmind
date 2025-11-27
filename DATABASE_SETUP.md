@@ -1,6 +1,6 @@
 # 🗄️ Database Setup Guide - Railway PostgreSQL
 
-This guide will help you set up a PostgreSQL database on Railway for IQmind.
+This guide will help you set up a PostgreSQL database on Railway for MindMetric.
 
 ## 📋 Prerequisites
 
@@ -248,6 +248,6 @@ For Railway support:
 - Docs: [docs.railway.app](https://docs.railway.app)
 - Discord: [Railway Community](https://discord.gg/railway)
 
-For IQmind issues:
+For MindMetric issues:
 - Email: support@mindmetric.io
 

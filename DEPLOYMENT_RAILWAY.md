@@ -128,7 +128,7 @@ Si te pide credenciales:
 ### **Paso 3: Verificar Deploy en Vercel**
 
 1. Ve a [Vercel Dashboard](https://vercel.com/dashboard)
-2. Click en tu proyecto **"IQmind"**
+2. Click en tu proyecto **"MindMetric"**
 3. Verás el deploy automático iniciándose
 4. Espera a que termine (2-3 minutos)
 5. Verifica que el deploy sea exitoso ✅

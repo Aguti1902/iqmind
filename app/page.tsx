@@ -13,7 +13,7 @@ export default function RootPage() {
     const defaultLang = supportedLangs.includes(browserLang) ? browserLang : 'es'
     
     // Verificar si hay idioma guardado en localStorage
-    const savedLang = localStorage.getItem('iqmind-locale')
+    const savedLang = localStorage.getItem('mindmetric-locale')
     const finalLang = savedLang && supportedLangs.includes(savedLang) ? savedLang : defaultLang
     
     router.replace(`/${finalLang}`)

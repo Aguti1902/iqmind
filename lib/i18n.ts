@@ -15,7 +15,7 @@ export const useI18n = create<I18nStore>()(
       setLocale: (locale) => set({ locale }),
     }),
     {
-      name: 'iqmind-locale',
+      name: 'mindmetric-locale',
     }
   )
 )

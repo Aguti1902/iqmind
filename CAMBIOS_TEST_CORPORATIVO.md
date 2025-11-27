@@ -23,7 +23,7 @@ El usuario solicitó 3 mejoras principales:
 - Fondos: `#FFE5E5` (rosa claro)
 - Bordes: Coral
 
-### Después (Verde/Azul IQmind):
+### Después (Verde/Azul MindMetric):
 - **Verde Principal:** `#218B8E` 
   - Números
   - Formas principales
@@ -257,7 +257,7 @@ const handleNext = () => {
 ❌ No se puede ir atrás  
 
 ### Después:
-✅ Colores corporativos IQmind (verde/azul)  
+✅ Colores corporativos MindMetric (verde/azul)  
 ✅ Todo visible sin scroll  
 ✅ 20 preguntas únicas y variadas  
 ✅ Navegación completa con flechas  

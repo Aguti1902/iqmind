@@ -27,7 +27,7 @@ Error: ENOENT: no such file or directory, open '/var/task/public/messages/es.jso
 ### PASO 1: Acceder a Vercel
 
 1. Ve a: https://vercel.com
-2. Selecciona tu proyecto IQmind
+2. Selecciona tu proyecto MindMetric
 3. Click en **Settings**
 4. Click en **Environment Variables** (en el menú izquierdo)
 
@@ -106,7 +106,7 @@ Environment: Production, Preview, Development
 
 1. Ve a: https://app.sendgrid.com/settings/api_keys
 2. Click en **Create API Key**
-3. Nombre: `IQmind Production`
+3. Nombre: `MindMetric Production`
 4. Permisos: **Full Access** (o al menos **Mail Send**)
 5. Click **Create & View**
 6. **COPIA LA KEY INMEDIATAMENTE** (solo se muestra una vez)

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# 🚀 IQmind Deployment Helper Script
-# This script helps you deploy IQmind to production
+# 🚀 MindMetric Deployment Helper Script
+# This script helps you deploy MindMetric to production
 
 set -e
 
@@ -13,7 +13,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 echo -e "${BLUE}╔════════════════════════════════════════╗${NC}"
-echo -e "${BLUE}║   🧠 IQmind Deployment Helper 🚀      ║${NC}"
+echo -e "${BLUE}║   🧠 MindMetric Deployment Helper 🚀      ║${NC}"
 echo -e "${BLUE}╚════════════════════════════════════════╝${NC}"
 echo ""
 
@@ -67,8 +67,8 @@ case $choice in
         print_info "Setting up GitHub repository..."
         echo ""
         read -p "Enter your GitHub username: " github_username
-        read -p "Enter your repository name [iqmind]: " repo_name
-        repo_name=${repo_name:-iqmind}
+        read -p "Enter your repository name [mindmetric]: " repo_name
+        repo_name=${repo_name:-mindmetric}
         
         # Check if remote already exists
         if git remote | grep -q "^origin$"; then
