@@ -4,7 +4,7 @@
 
 Accede a esta URL en tu navegador:
 ```
-https://www.iqmind.io/api/debug-user?email=iqmind2025@gmail.com
+https://www.mindmetric.io/api/debug-user?email=iqmind2025@gmail.com
 ```
 
 **Resultado esperado:**
@@ -53,7 +53,7 @@ https://www.iqmind.io/api/debug-user?email=iqmind2025@gmail.com
 **Causa:** El webhook no se ejecutó o falló
 **Solución:**
 1. Verifica en Stripe que el webhook esté configurado
-2. URL del webhook debe ser: `https://www.iqmind.io/api/webhook`
+2. URL del webhook debe ser: `https://www.mindmetric.io/api/webhook`
 3. Debe estar escuchando: `payment_intent.succeeded`
 
 ### Problema B: Usuario existe pero NO recibió email
@@ -76,7 +76,7 @@ https://www.iqmind.io/api/debug-user?email=iqmind2025@gmail.com
 Si el usuario existe pero no recibió el email, puedes usar este endpoint:
 
 ```bash
-curl -X POST https://www.iqmind.io/api/resend-welcome-email \
+curl -X POST https://www.mindmetric.io/api/resend-welcome-email \
   -H "Content-Type: application/json" \
   -d '{"email": "iqmind2025@gmail.com"}'
 ```
@@ -100,7 +100,7 @@ Por favor, completa esta información:
 ### Si el usuario NO existe:
 ```bash
 # Crear usuario manualmente
-curl -X POST https://www.iqmind.io/api/create-user-manual \
+curl -X POST https://www.mindmetric.io/api/create-user-manual \
   -H "Content-Type: application/json" \
   -d '{
     "email": "iqmind2025@gmail.com",
@@ -114,7 +114,7 @@ curl -X POST https://www.iqmind.io/api/create-user-manual \
 ### Si el usuario existe pero sin contraseña:
 ```bash
 # Resetear contraseña
-curl -X POST https://www.iqmind.io/api/auth/forgot-password \
+curl -X POST https://www.mindmetric.io/api/auth/forgot-password \
   -H "Content-Type: application/json" \
   -d '{
     "email": "iqmind2025@gmail.com",
@@ -128,7 +128,7 @@ curl -X POST https://www.iqmind.io/api/auth/forgot-password \
 
 Después de aplicar cualquier solución, verifica:
 
-1. ✅ Usuario puede hacer login: https://www.iqmind.io/sv/login
+1. ✅ Usuario puede hacer login: https://www.mindmetric.io/sv/login
 2. ✅ Email: iqmind2025@gmail.com
 3. ✅ Contraseña: [la que se generó o reseteó]
 4. ✅ Dashboard muestra el resultado del test

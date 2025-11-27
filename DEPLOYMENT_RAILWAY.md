@@ -136,14 +136,14 @@ Si te pide credenciales:
 ### **Paso 4: Verificar que Todo Funciona**
 
 1. **Hacer un pago de prueba:**
-   - Ve a https://www.iqmind.io/es/test
+   - Ve a https://www.mindmetric.io/es/test
    - Completa el test
    - Haz el pago de 0.50€
 
 2. **Verificar login:**
    - Revisa tu email (el que usaste para el pago)
    - Deberías recibir credenciales de acceso
-   - Haz login en https://www.iqmind.io/es/cuenta
+   - Haz login en https://www.mindmetric.io/es/cuenta
 
 3. **Verificar dashboard:**
    - Deberías ver tu resultado del test

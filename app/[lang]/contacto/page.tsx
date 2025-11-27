@@ -217,10 +217,10 @@ export default function ContactoPage() {
                 {t.contact.emailDirect}
               </p>
               <a 
-                href="mailto:support@iqmind.mobi" 
+                href="mailto:support@mindmetric.io" 
                 className="text-[#218B8E] hover:text-[#1a6f72] font-semibold text-lg"
               >
-                support@iqmind.mobi
+                support@mindmetric.io
               </a>
             </div>
           </div>

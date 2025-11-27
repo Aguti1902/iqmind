@@ -48,7 +48,7 @@
     "step3Desc": "Access your exact IQ, detailed analysis and comparison charts. Share your results on social media."
   },
   "features": {
-    "title": "Why IQmind?",
+    "title": "Why MindMetric?",
     "subtitle": "The most accurate and accessible way to know your IQ",
     "validated": "Scientifically Validated",
     "validatedDesc": "Our test is based on recognized psychometric principles and validated by intelligence experts.",
@@ -113,7 +113,7 @@
   },
   "test": {
     "title": "Intelligence Test",
-    "welcomeTitle": "IQmind Intelligence Test",
+    "welcomeTitle": "MindMetric Intelligence Test",
     "welcomeSubtitle": "Before we begin, tell us your name",
     "namePlaceholder": "Your name",
     "startButton": "Start Test",
@@ -317,7 +317,7 @@
     "fullNamePlaceholder": "John Doe",
     "email": "Registered Email",
     "emailPlaceholder": "your@email.com",
-    "emailHelper": "Use the same email you registered with on IQmind",
+    "emailHelper": "Use the same email you registered with on MindMetric",
     "reason": "Reason for Cancellation (Optional)",
     "reasonPlaceholder": "Tell us why you're canceling. Your feedback helps us improve.",
     "confirmButton": "Confirm Cancellation",
@@ -358,13 +358,13 @@
   "certificate": {
     "title": "INTELLIGENCE CERTIFICATE",
     "certifies": "This certifies that",
-    "completed": "has successfully completed the IQmind intelligence test",
+    "completed": "has successfully completed the MindMetric intelligence test",
     "obtained": "obtaining an Intelligence Quotient of",
     "category": "Category",
     "correctAnswers": "correct answers",
     "percentile": "Percentile",
     "issueDate": "Issue date",
-    "footer": "IQmind - Professional Intelligence Test",
+    "footer": "MindMetric - Professional Intelligence Test",
     "fileName": "Certificate_IQ"
   },
   "account": {
@@ -465,7 +465,7 @@
     "cancelNoticeMessage": "Your premium access will remain active until the end of your current billing period. No further charges will be made after that date."
   },
   "legal": {
-    "noticeTranslation": "This legal document is primarily available in Spanish. For inquiries in other languages, please contact support@iqmind.mobi"
+    "noticeTranslation": "This legal document is primarily available in Spanish. For inquiries in other languages, please contact support@mindmetric.io"
   },
   "login": {
     "title": "Log In",

@@ -18,7 +18,7 @@
 
 ## 📋 OPCIÓN 3: Ver el error en el navegador
 
-1. Abre https://www.iqmind.io/api/migrate-db
+1. Abre https://www.mindmetric.io/api/migrate-db
 2. Si ves un JSON con error, cópialo completo
 3. Pégamelo para que pueda ver qué está fallando
 

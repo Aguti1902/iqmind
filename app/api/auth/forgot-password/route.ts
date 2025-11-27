@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     await db.createPasswordResetToken(email, token, expiresAt)
     
     // Enviar email de recuperación
-    const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://iqmind.mobi'}/${lang}/reset-password?token=${token}`
+    const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://mindmetric.io'}/${lang}/reset-password?token=${token}`
     
     const t = (key: any) => getEmailTranslation(lang, key)
     
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
                   <!-- Header -->
                   <tr>
                     <td style="background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); padding: 40px 30px; text-align: center;">
-                      <img src="https://www.iqmind.mobi/images/LOGO2BLANCO.png" alt="IQmind" style="height: 40px; width: auto; margin: 0 auto; display: block;" />
+                      <img src="https://www.mindmetric.io/images/MINDMETRIC/Logo_blanco.png" alt="MindMetric" style="height: 40px; width: auto; margin: 0 auto; display: block;" />
                     </td>
                   </tr>
                   
@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
                         © ${new Date().getFullYear()} IQmind. ${t('allRightsReserved')}
                       </p>
                       <p style="color: #718096; font-size: 12px; margin: 0;">
-                        support@iqmind.mobi
+                        support@mindmetric.io
                       </p>
                     </td>
                   </tr>

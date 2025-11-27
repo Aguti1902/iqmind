@@ -154,7 +154,7 @@ export default function PrivacidadPage() {
               </ul>
               <p>
                 To exercise any of these rights, please contact us at{' '}
-                <a href="mailto:support@iqmind.mobi" className="text-primary-600 underline">support@iqmind.mobi</a>.
+                <a href="mailto:support@mindmetric.io" className="text-primary-600 underline">support@mindmetric.io</a>.
               </p>
             </section>
 
@@ -206,7 +206,7 @@ export default function PrivacidadPage() {
                 If you have any questions about this Privacy Policy or our data practices, please contact us at:
               </p>
               <ul className="list-none space-y-1 ml-0">
-                <li><strong>Email:</strong> <a href="mailto:support@iqmind.mobi" className="text-primary-600 underline">support@iqmind.mobi</a></li>
+                <li><strong>Email:</strong> <a href="mailto:support@mindmetric.io" className="text-primary-600 underline">support@mindmetric.io</a></li>
                 <li><strong>Contact page:</strong> <a href={`/${lang}/contacto`} className="text-primary-600 underline">Contact Form</a></li>
               </ul>
             </section>

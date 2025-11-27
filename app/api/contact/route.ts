@@ -27,9 +27,9 @@ export async function POST(request: NextRequest) {
 
     console.log('📧 Enviando email de contacto:', { name, email, subject })
 
-    // Preparar el email para support@iqmind.mobi
+    // Preparar el email para support@mindmetric.io
     const emailData = {
-      to: 'support@iqmind.mobi',
+      to: 'support@mindmetric.io',
       subject: `[Contacto Web] ${subject}`,
       html: `
         <!DOCTYPE html>
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
                   <!-- Header -->
                   <tr>
                     <td style="background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); padding: 30px; text-align: center;">
-                      <img src="https://www.iqmind.mobi/images/LOGO2BLANCO.png" alt="IQmind" style="height: 40px; width: auto; margin: 0 auto; display: block;" />
+                      <img src="https://www.mindmetric.io/images/MINDMETRIC/Logo_blanco.png" alt="MindMetric" style="height: 40px; width: auto; margin: 0 auto; display: block;" />
                       <h1 style="color: #ffffff; margin: 20px 0 0 0; font-size: 24px; font-weight: 700;">
                         📬 Nuevo Mensaje de Contacto
                       </h1>
@@ -124,7 +124,7 @@ ${message}
                   <tr>
                     <td style="background-color: #f7fafc; padding: 20px; text-align: center; border-top: 1px solid #e2e8f0;">
                       <p style="color: #718096; font-size: 12px; margin: 0;">
-                        Este email fue enviado desde el formulario de contacto de <strong>iqmind.mobi</strong>
+                        Este email fue enviado desde el formulario de contacto de <strong>mindmetric.io</strong>
                       </p>
                       <p style="color: #718096; font-size: 12px; margin: 5px 0 0 0;">
                         Fecha: ${new Date().toLocaleString('es-ES', { timeZone: 'Europe/Madrid' })}

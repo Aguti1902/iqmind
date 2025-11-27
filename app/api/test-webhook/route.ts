@@ -31,7 +31,7 @@ async function sendEmailToUser(type: string, data: any) {
           console.log(`🔑 Contraseña generada: ${password}`)
           
           // Enviar email con credenciales de acceso
-          const loginUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://iqmind.mobi'}/login`
+          const loginUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://mindmetric.io'}/login`
           emailData = {
             to: data.email,
             subject: '¡Bienvenido a IQmind! - Acceso a tu Dashboard',
@@ -113,7 +113,7 @@ async function sendEmailToUser(type: string, data: any) {
                               © ${new Date().getFullYear()} IQmind. Todos los derechos reservados.
                             </p>
                             <p style="color: #718096; font-size: 12px; margin: 0;">
-                              support@iqmind.mobi
+                              support@mindmetric.io
                             </p>
                           </td>
                         </tr>

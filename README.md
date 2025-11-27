@@ -1,6 +1,6 @@
-# 🧠 IQmind - Online Intelligence Test Platform
+# 🧠 MindMetric - Advanced Intelligence Assessment Platform
 
-A modern, professional online IQ testing platform built with Next.js 14, TypeScript, and Tailwind CSS.
+A cutting-edge cognitive assessment platform delivering professional IQ analysis through advanced pattern recognition technology. Built with Next.js 14, TypeScript, and Tailwind CSS.
 
 ## 🌟 Features
 
@@ -36,8 +36,8 @@ A modern, professional online IQ testing platform built with Next.js 14, TypeScr
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/iqmind.git
-cd iqmind
+git clone https://github.com/yourusername/mindmetric.git
+cd mindmetric
 ```
 
 2. Install dependencies:
@@ -98,7 +98,7 @@ See [STRIPE_SETUP.md](./STRIPE_SETUP.md) for detailed instructions on configurin
 ## 📱 Project Structure
 
 ```
-iqmind/
+mindmetric/
 ├── app/
 │   ├── [lang]/           # Multi-language routes
 │   ├── api/              # API routes (Stripe, webhooks)
@@ -136,16 +136,16 @@ iqmind/
 
 ## 🤝 Contributing
 
-This is a private project. For any issues or questions, contact support@iqmind.io
+This is a private project. For any issues or questions, contact support@mindmetric.io
 
 ## 📧 Contact
 
-- **Email**: support@iqmind.io
-- **Website**: [iqmind.io](https://iqmind.io)
+- **Email**: support@mindmetric.io
+- **Website**: [mindmetric.io](https://mindmetric.io)
 
 ## 📝 License
 
-All rights reserved © 2025 IQmind
+All rights reserved © 2025 MindMetric
 
 ---
 

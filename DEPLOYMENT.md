@@ -232,14 +232,14 @@ NEXT_PUBLIC_APP_URL=https://your-domain.vercel.app
 ### Step 1: Add Domain to Vercel
 
 1. Go to Project Settings → Domains
-2. Add your domain: `iqmind.io`
+2. Add your domain: `mindmetric.io`
 3. Follow DNS configuration instructions
 
 ### Step 2: Update Environment Variables
 
 Update `NEXT_PUBLIC_APP_URL` to your custom domain:
 ```
-NEXT_PUBLIC_APP_URL=https://iqmind.io
+NEXT_PUBLIC_APP_URL=https://mindmetric.io
 ```
 
 ---
@@ -351,7 +351,7 @@ Visit your Vercel URL and verify:
 - **Vercel Docs**: [vercel.com/docs](https://vercel.com/docs)
 - **Railway Docs**: [docs.railway.app](https://docs.railway.app)
 - **Stripe Docs**: [stripe.com/docs](https://stripe.com/docs)
-- **IQmind Support**: support@iqmind.io
+- **IQmind Support**: support@mindmetric.io
 
 ---
 

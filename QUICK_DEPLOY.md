@@ -120,7 +120,7 @@ git push
 - **Guía completa**: Ver `DEPLOYMENT.md`
 - **Setup DB**: Ver `DATABASE_SETUP.md`
 - **Setup Stripe**: Ver `STRIPE_SETUP.md`
-- **Soporte**: support@iqmind.io
+- **Soporte**: support@mindmetric.io
 
 ## 🎉 ¡Listo!
 

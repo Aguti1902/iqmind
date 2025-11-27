@@ -104,12 +104,12 @@ export const db = {
 
   getUserByEmail: async (email: string): Promise<User | null> => {
     // Si es el usuario de prueba y aún no se ha creado, crearlo
-    if (email === 'test@iqmind.mobi' && !testUserCreated) {
+    if (email === 'test@mindmetric.io' && !testUserCreated) {
       const bcrypt = require('bcryptjs')
       const hashedPassword = await bcrypt.hash('Test1234!', 12)
       const testUser: User = {
         id: 'test-user-001',
-        email: 'test@iqmind.mobi',
+        email: 'test@mindmetric.io',
         password: hashedPassword,
         userName: 'Usuario Test',
         iq: 125,

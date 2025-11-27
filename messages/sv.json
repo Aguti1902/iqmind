@@ -48,7 +48,7 @@
     "step3Desc": "Få tillgång till ditt exakta IQ, detaljerad analys och jämförelsediagram. Dela dina resultat på sociala medier."
   },
   "features": {
-    "title": "Varför IQmind?",
+    "title": "Varför MindMetric?",
     "subtitle": "Det mest exakta och tillgängliga sättet att känna till ditt IQ",
     "validated": "Vetenskapligt Validerat",
     "validatedDesc": "Vårt test är baserat på erkända psykometriska principer och validerat av intelligensexperter.",
@@ -113,7 +113,7 @@
   },
   "test": {
     "title": "Intelligenstest",
-    "welcomeTitle": "IQmind Intelligenstest",
+    "welcomeTitle": "MindMetric Intelligenstest",
     "welcomeSubtitle": "Innan vi börjar, berätta ditt namn",
     "namePlaceholder": "Ditt namn",
     "startButton": "Starta Test",
@@ -317,7 +317,7 @@
     "fullNamePlaceholder": "Erik Andersson",
     "email": "Registrerad E-post",
     "emailPlaceholder": "din@email.com",
-    "emailHelper": "Använd samma e-post som du registrerade dig med på IQmind",
+    "emailHelper": "Använd samma e-post som du registrerade dig med på MindMetric",
     "reason": "Orsak till Avbokning (Valfritt)",
     "reasonPlaceholder": "Berätta varför du avbryter. Din feedback hjälper oss att förbättra oss.",
     "confirmButton": "Bekräfta Avbokning",
@@ -358,13 +358,13 @@
   "certificate": {
     "title": "INTELLIGENS CERTIFIKAT",
     "certifies": "Intygar att",
-    "completed": "har framgångsrikt slutfört IQmind intelligenstest",
+    "completed": "har framgångsrikt slutfört MindMetric intelligenstest",
     "obtained": "och erhållit en intelligenskvot på",
     "category": "Kategori",
     "correctAnswers": "korrekta svar",
     "percentile": "Percentil",
     "issueDate": "Utfärdandedatum",
-    "footer": "IQmind - Professionellt Intelligenstest",
+    "footer": "MindMetric - Professionellt Intelligenstest",
     "fileName": "Certifikat_IQ"
   },
   "account": {
@@ -420,7 +420,7 @@
     "cancelNoticeMessage": "Din premium-åtkomst förblir aktiv till slutet av din nuvarande faktureringsperiod. Inga ytterligare avgifter kommer att tas ut efter det datumet."
   },
   "legal": {
-    "noticeTranslation": "Detta juridiska dokument är främst tillgängligt på spanska. För förfrågningar på andra språk, kontakta support@iqmind.mobi"
+    "noticeTranslation": "Detta juridiska dokument är främst tillgängligt på spanska. För förfrågningar på andra språk, kontakta support@mindmetric.io"
   },
   "login": {
     "title": "Logga In",

@@ -48,7 +48,7 @@
     "step3Desc": "Få tilgang til din nøyaktige IQ, detaljert analyse og sammenligningsdiagrammer. Del dine resultater på sosiale medier."
   },
   "features": {
-    "title": "Hvorfor IQmind?",
+    "title": "Hvorfor MindMetric?",
     "subtitle": "Den mest nøyaktige og tilgjengelige måten å kjenne din IQ",
     "validated": "Vitenskapelig Validert",
     "validatedDesc": "Vår test er basert på anerkjente psykometriske prinsipper og validert av intelligenseksperter.",
@@ -113,7 +113,7 @@
   },
   "test": {
     "title": "Intelligenstest",
-    "welcomeTitle": "IQmind Intelligenstest",
+    "welcomeTitle": "MindMetric Intelligenstest",
     "welcomeSubtitle": "Før vi begynner, fortell oss navnet ditt",
     "namePlaceholder": "Ditt navn",
     "startButton": "Start Test",
@@ -317,7 +317,7 @@
     "fullNamePlaceholder": "Ola Nordmann",
     "email": "Registrert E-post",
     "emailPlaceholder": "din@email.com",
-    "emailHelper": "Bruk samme e-post som du registrerte deg med på IQmind",
+    "emailHelper": "Bruk samme e-post som du registrerte deg med på MindMetric",
     "reason": "Årsak til Avbestilling (Valgfritt)",
     "reasonPlaceholder": "Fortell oss hvorfor du avbryter. Din tilbakemelding hjelper oss å forbedre oss.",
     "confirmButton": "Bekreft Avbestilling",
@@ -358,13 +358,13 @@
   "certificate": {
     "title": "INTELLIGENS SERTIFIKAT",
     "certifies": "Bekrefter at",
-    "completed": "har fullført IQmind intelligenstesten",
+    "completed": "har fullført MindMetric intelligenstesten",
     "obtained": "og oppnådd en intelligenskvotient på",
     "category": "Kategori",
     "correctAnswers": "riktige svar",
     "percentile": "Persentil",
     "issueDate": "Utstedelsesdato",
-    "footer": "IQmind - Profesjonell Intelligenstest",
+    "footer": "MindMetric - Profesjonell Intelligenstest",
     "fileName": "Sertifikat_IQ"
   },
   "account": {
@@ -420,7 +420,7 @@
     "cancelNoticeMessage": "Din premium-tilgang forblir aktiv til slutten av din nåværende faktureringsperiode. Ingen ytterligere belastninger vil bli gjort etter den datoen."
   },
   "legal": {
-    "noticeTranslation": "Dette juridiske dokumentet er primært tilgjengelig på spansk. For henvendelser på andre språk, kontakt support@iqmind.mobi"
+    "noticeTranslation": "Dette juridiske dokumentet er primært tilgjengelig på spansk. For henvendelser på andre språk, kontakt support@mindmetric.io"
   },
   "login": {
     "title": "Logg Inn",

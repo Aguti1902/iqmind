@@ -39,8 +39,8 @@ const session = await stripe.checkout.sessions.create({
     quantity: 1,
   }],
   mode: 'payment',
-  success_url: 'https://iqmind.io/es/resultado',
-  cancel_url: 'https://iqmind.io/es/checkout',
+  success_url: 'https://mindmetric.io/es/resultado',
+  cancel_url: 'https://mindmetric.io/es/checkout',
   customer_email: email,
   metadata: {
     userIQ,
@@ -70,7 +70,7 @@ Si nada funciona, contacta directamente:
 3. Diles:
 
 ```
-Mi dominio iqmind.io está verificado para Apple Pay 
+Mi dominio mindmetric.io está verificado para Apple Pay 
 (ID: pmd_1SIFYFCMVuDiKeMPEPCE4lqI).
 
 Apple Pay está activado en Payment Methods.

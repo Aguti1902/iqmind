@@ -56,7 +56,7 @@ Sistema completo de emails automáticos para todo el flujo de usuario en IQmind.
 ### **Paso 1: Crear cuenta en SendGrid**
 
 1. Ve a: https://signup.sendgrid.com/
-2. Crea cuenta con: `support@iqmind.io`
+2. Crea cuenta con: `support@mindmetric.io`
 3. Verifica email
 
 ### **Paso 2: Obtener API Key**
@@ -73,7 +73,7 @@ Sistema completo de emails automáticos para todo el flujo de usuario en IQmind.
 2. Clic en **"Authenticate Your Domain"**
 3. Selecciona proveedor DNS: **Other**
 4. Copia los registros DNS que te da SendGrid
-5. Agrega esos registros en **DonDominio** (donde tienes `iqmind.io`)
+5. Agrega esos registros en **DonDominio** (donde tienes `mindmetric.io`)
 6. Espera verificación (puede tardar 24-48 horas)
 
 ### **Paso 4: Configurar en Vercel**
@@ -292,7 +292,7 @@ const subscription = await stripe.subscriptions.create({
 })
 
 // Enviar email de trial iniciado
-await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'https://iqmind.io'}/api/send-email`, {
+await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'https://mindmetric.io'}/api/send-email`, {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
@@ -504,7 +504,7 @@ SendGrid Dashboard te mostrará:
 
 1. ✅ Crear cuenta en SendGrid
 2. ✅ Obtener API Key
-3. ✅ Verificar dominio `iqmind.io`
+3. ✅ Verificar dominio `mindmetric.io`
 4. ✅ Agregar `SENDGRID_API_KEY` en Vercel
 5. ✅ Redeploy
 6. ✅ Integrar triggers en el código
@@ -514,7 +514,7 @@ SendGrid Dashboard te mostrará:
 
 ## 📝 Notas
 
-- Los emails se envían desde `support@iqmind.io`
+- Los emails se envían desde `support@mindmetric.io`
 - Todos los emails son responsive (móvil + desktop)
 - Todos los emails tienen versión en español e inglés
 - Los emails incluyen botones de acción (CTAs)

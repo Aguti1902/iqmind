@@ -15,7 +15,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Logo y descripción */}
           <div className="col-span-1 md:col-span-2">
-            <img src="/images/LOGO2BLANCO.svg" alt="IQmind" className="h-10 md:h-12 w-auto mb-4" />
+            <img src="/images/MINDMETRIC/Logo_blanco.png" alt="MindMetric" className="h-10 md:h-12 w-auto mb-4" />
             <p className="text-gray-400 mb-4">
               {t.footer.description}
             </p>
@@ -88,7 +88,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-          <p>&copy; {new Date().getFullYear()} IQmind. {t.footer.allRightsReserved}.</p>
+          <p>&copy; {new Date().getFullYear()} MindMetric. {t.footer.allRightsReserved}.</p>
         </div>
       </div>
     </footer>

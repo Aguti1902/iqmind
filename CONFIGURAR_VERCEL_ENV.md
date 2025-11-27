@@ -136,7 +136,7 @@ STRIPE_PRICE_ID=price_xxxxx
 STRIPE_WEBHOOK_SECRET=whsec_xxxxx
 
 # App URL
-NEXT_PUBLIC_APP_URL=https://www.iqmind.io
+NEXT_PUBLIC_APP_URL=https://www.mindmetric.io
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_xxxxx
 ```
 
@@ -183,7 +183,7 @@ Las variables se actualizan automáticamente en nuevas requests.
 2. **Esperar que Vercel haga deploy** (1-2 minutos)
 
 3. **Probar un pago de prueba:**
-   - Ve a: https://www.iqmind.io/sv/test
+   - Ve a: https://www.mindmetric.io/sv/test
    - Completa el test
    - Usa tarjeta de prueba: `4242 4242 4242 4242`
    - Email: `test@example.com`

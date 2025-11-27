@@ -27,7 +27,7 @@ git push origin main
 **Simplemente abre esta URL en tu navegador:**
 
 ```
-https://www.iqmind.io/api/migrate-db
+https://www.mindmetric.io/api/migrate-db
 ```
 
 O en local (si estás probando):
@@ -74,11 +74,11 @@ git push origin main
 
 ### 5️⃣ VERIFICAR QUE TODO FUNCIONA
 
-1. Ve a https://www.iqmind.io/es/test
+1. Ve a https://www.mindmetric.io/es/test
 2. Completa un test
 3. Haz el pago de 0.50€
 4. Revisa tu email y obtén las credenciales
-5. Haz login en https://www.iqmind.io/es/cuenta
+5. Haz login en https://www.mindmetric.io/es/cuenta
 6. ✅ Deberías ver tu resultado del test
 7. ✅ Recarga la página - los datos deben persistir
 

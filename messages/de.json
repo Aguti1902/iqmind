@@ -48,7 +48,7 @@
     "step3Desc": "Zugriff auf Ihren genauen IQ, detaillierte Analyse und Vergleichsdiagramme. Teilen Sie Ihre Ergebnisse in sozialen Medien."
   },
   "features": {
-    "title": "Warum IQmind?",
+    "title": "Warum MindMetric?",
     "subtitle": "Die genaueste und zugänglichste Art, Ihren IQ zu kennen",
     "validated": "Wissenschaftlich Validiert",
     "validatedDesc": "Unser Test basiert auf anerkannten psychometrischen Prinzipien, die von Intelligenzexperten validiert wurden.",
@@ -113,7 +113,7 @@
   },
   "test": {
     "title": "Intelligenztest",
-    "welcomeTitle": "IQmind Intelligenztest",
+    "welcomeTitle": "MindMetric Intelligenztest",
     "welcomeSubtitle": "Bevor wir beginnen, sagen Sie uns Ihren Namen",
     "namePlaceholder": "Ihr Name",
     "startButton": "Test Starten",
@@ -317,7 +317,7 @@
     "fullNamePlaceholder": "Max Mustermann",
     "email": "Registrierte E-Mail",
     "emailPlaceholder": "ihre@email.com",
-    "emailHelper": "Verwenden Sie dieselbe E-Mail, mit der Sie sich bei IQmind registriert haben",
+    "emailHelper": "Verwenden Sie dieselbe E-Mail, mit der Sie sich bei MindMetric registriert haben",
     "reason": "Kündigungsgrund (Optional)",
     "reasonPlaceholder": "Sagen Sie uns, warum Sie kündigen. Ihr Feedback hilft uns zu verbessern.",
     "confirmButton": "Kündigung Bestätigen",
@@ -358,13 +358,13 @@
   "certificate": {
     "title": "INTELLIGENZ-ZERTIFIKAT",
     "certifies": "Hiermit wird bescheinigt, dass",
-    "completed": "den IQmind-Intelligenztest erfolgreich abgeschlossen hat",
+    "completed": "den MindMetric-Intelligenztest erfolgreich abgeschlossen hat",
     "obtained": "mit einem Intelligenzquotienten von",
     "category": "Kategorie",
     "correctAnswers": "richtige Antworten",
     "percentile": "Perzentil",
     "issueDate": "Ausstellungsdatum",
-    "footer": "IQmind - Professioneller Intelligenztest",
+    "footer": "MindMetric - Professioneller Intelligenztest",
     "fileName": "Zertifikat_IQ"
   },
   "account": {
@@ -420,7 +420,7 @@
     "cancelNoticeMessage": "Ihr Premium-Zugang bleibt bis zum Ende Ihrer aktuellen Abrechnungsperiode aktiv. Nach diesem Datum werden keine weiteren Gebühren erhoben."
   },
   "legal": {
-    "noticeTranslation": "Dieses rechtliche Dokument ist hauptsächlich auf Spanisch verfügbar. Für Anfragen in anderen Sprachen kontaktieren Sie bitte support@iqmind.mobi"
+    "noticeTranslation": "Dieses rechtliche Dokument ist hauptsächlich auf Spanisch verfügbar. Für Anfragen in anderen Sprachen kontaktieren Sie bitte support@mindmetric.io"
   },
   "login": {
     "title": "Anmelden",

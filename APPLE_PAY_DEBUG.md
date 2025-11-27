@@ -5,8 +5,8 @@
 ### 1. Verificación del Dominio
 
 **URL para probar:**
-- https://iqmind.io/api/apple-pay-domain-association
-- https://iqmind.io/.well-known/apple-developer-merchantid-domain-association
+- https://mindmetric.io/api/apple-pay-domain-association
+- https://mindmetric.io/.well-known/apple-developer-merchantid-domain-association
 
 **Debe mostrar:** Una cadena larga de texto hexadecimal que empieza con `7B227073644964...`
 
@@ -27,12 +27,12 @@
 
 3. Verifica:
    - [ ] ¿Está habilitado el toggle de Apple Pay?
-   - [ ] ¿Aparece `iqmind.io` en la lista de dominios?
+   - [ ] ¿Aparece `mindmetric.io` en la lista de dominios?
    - [ ] ¿Estado del dominio? (debe ser **"Verified"** ✅)
 
 4. Si no está:
    - Clic en **"Add domain"**
-   - Ingresa: `iqmind.io` (sin https://, sin www)
+   - Ingresa: `mindmetric.io` (sin https://, sin www)
    - Clic en **"Add"**
    - Espera 1-2 minutos
    - Recarga la página
@@ -85,7 +85,7 @@
 
 **Lo que deberías ver:**
 
-Cuando abres https://iqmind.io/es/checkout en Safari con Apple Pay disponible:
+Cuando abres https://mindmetric.io/es/checkout en Safari con Apple Pay disponible:
 
 ```
 ┌─────────────────────────────────┐
@@ -130,7 +130,7 @@ Cuando abres https://iqmind.io/es/checkout en Safari con Apple Pay disponible:
 
 1. **Verifica que el archivo sea accesible:**
    ```bash
-   curl https://iqmind.io/api/apple-pay-domain-association
+   curl https://mindmetric.io/api/apple-pay-domain-association
    ```
    Debe devolver texto largo hexadecimal
 
@@ -152,7 +152,7 @@ Cuando abres https://iqmind.io/es/checkout en Safari con Apple Pay disponible:
 **Para verificar si todo funciona:**
 
 1. Abre **Safari** en iPhone
-2. Ve a: https://iqmind.io/es/test
+2. Ve a: https://mindmetric.io/es/test
 3. Completa el test rápido
 4. En el checkout:
    - ¿Ves el botón de Apple Pay? ✅ / ❌
@@ -183,7 +183,7 @@ Si después de seguir todos estos pasos Apple Pay sigue sin aparecer:
 Para que Apple Pay funcione necesitas **TODOS** estos:
 
 - ✅ Archivo de verificación accesible en `/.well-known/...`
-- ✅ Dominio `iqmind.io` verificado en Stripe Dashboard
+- ✅ Dominio `mindmetric.io` verificado en Stripe Dashboard
 - ✅ Safari en iOS/iPadOS/macOS
 - ✅ Apple Pay configurado en el dispositivo
 - ✅ `automatic_payment_methods: { enabled: true }` en backend (✅ ya está)

@@ -35,7 +35,7 @@ and no 'POSTGRES_URL' env var was found.
    - Espera 2-3 minutos
 
 4. **Ejecutar migración:**
-   - Abre: https://www.iqmind.io/api/migrate-db
+   - Abre: https://www.mindmetric.io/api/migrate-db
    - Deberías ver: `{"success": true}`
 
 ---

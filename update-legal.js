@@ -2,13 +2,13 @@ const fs = require('fs');
 const path = require('path');
 
 const translations = {
-  "en": "This legal document is primarily available in Spanish. For inquiries in other languages, please contact support@iqmind.io",
-  "fr": "Ce document juridique est principalement disponible en espagnol. Pour des demandes dans d'autres langues, veuillez contacter support@iqmind.io",
-  "de": "Dieses rechtliche Dokument ist hauptsächlich auf Spanisch verfügbar. Für Anfragen in anderen Sprachen kontaktieren Sie bitte support@iqmind.io",
-  "it": "Questo documento legale è disponibile principalmente in spagnolo. Per richieste in altre lingue, contattare support@iqmind.io",
-  "pt": "Este documento legal está disponível principalmente em espanhol. Para consultas em outros idiomas, contacte support@iqmind.io",
-  "sv": "Detta juridiska dokument är främst tillgängligt på spanska. För förfrågningar på andra språk, kontakta support@iqmind.io",
-  "no": "Dette juridiske dokumentet er primært tilgjengelig på spansk. For henvendelser på andre språk, kontakt support@iqmind.io"
+  "en": "This legal document is primarily available in Spanish. For inquiries in other languages, please contact support@mindmetric.io",
+  "fr": "Ce document juridique est principalement disponible en espagnol. Pour des demandes dans d'autres langues, veuillez contacter support@mindmetric.io",
+  "de": "Dieses rechtliche Dokument ist hauptsächlich auf Spanisch verfügbar. Für Anfragen in anderen Sprachen kontaktieren Sie bitte support@mindmetric.io",
+  "it": "Questo documento legale è disponibile principalmente in spagnolo. Per richieste in altre lingue, contattare support@mindmetric.io",
+  "pt": "Este documento legal está disponível principalmente em espanhol. Para consultas em outros idiomas, contacte support@mindmetric.io",
+  "sv": "Detta juridiska dokument är främst tillgängligt på spanska. För förfrågningar på andra språk, kontakta support@mindmetric.io",
+  "no": "Dette juridiske dokumentet er primært tilgjengelig på spansk. For henvendelser på andre språk, kontakt support@mindmetric.io"
 };
 
 Object.keys(translations).forEach(lang => {

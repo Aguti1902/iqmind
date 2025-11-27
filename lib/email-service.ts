@@ -6,7 +6,7 @@ if (process.env.SENDGRID_API_KEY) {
   sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 }
 
-const FROM_EMAIL = 'support@iqmind.mobi'
+const FROM_EMAIL = 'support@mindmetric.io'
 const FROM_NAME = 'IQmind'
 
 export interface EmailOptions {
@@ -68,7 +68,7 @@ export const emailTemplates = {
                 <!-- Header -->
                 <tr>
                   <td style="background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); padding: 40px 30px; text-align: center;">
-                    <img src="https://www.iqmind.mobi/images/LOGO2BLANCO.png" alt="IQmind" style="height: 40px; width: auto; margin: 0 auto; display: block;" />
+                    <img src="https://www.mindmetric.io/images/LOGO2BLANCO.png" alt="IQmind" style="height: 40px; width: auto; margin: 0 auto; display: block;" />
                   </td>
                 </tr>
                 
@@ -106,7 +106,7 @@ export const emailTemplates = {
                       </p>
                     </div>
                     
-                    <a href="https://iqmind.mobi/${lang}/checkout" style="display: inline-block; background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 16px; margin: 20px 0;">
+                    <a href="https://mindmetric.io/${lang}/checkout" style="display: inline-block; background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 16px; margin: 20px 0;">
                       ${t('viewCompleteResult')}
                     </a>
                     
@@ -123,7 +123,7 @@ export const emailTemplates = {
                       © ${new Date().getFullYear()} IQmind. ${lang === 'es' ? 'Todos los derechos reservados.' : 'All rights reserved.'}
                     </p>
                     <p style="color: #718096; font-size: 12px; margin: 0;">
-                      support@iqmind.mobi
+                      support@mindmetric.io
                     </p>
                   </td>
                 </tr>
@@ -158,7 +158,7 @@ export const emailTemplates = {
                 <!-- Header -->
                 <tr>
                   <td style="background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); padding: 40px 30px; text-align: center;">
-                    <img src="https://www.iqmind.mobi/images/LOGO2BLANCO.png" alt="IQmind" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
+                    <img src="https://www.mindmetric.io/images/LOGO2BLANCO.png" alt="IQmind" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
                     <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">
                       🎁 ${lang === 'es' ? '¡Tu Resultado te Espera!' : 'Your Result Awaits!'}
                     </h1>
@@ -203,7 +203,7 @@ export const emailTemplates = {
                     </div>
                     
                     <div style="text-align: center; margin: 30px 0;">
-                      <a href="https://iqmind.mobi/${lang}/checkout" style="display: inline-block; background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 18px;">
+                      <a href="https://mindmetric.io/${lang}/checkout" style="display: inline-block; background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 18px;">
                         ${lang === 'es' ? 'Completar Pago Ahora' : 'Complete Payment Now'}
                       </a>
                     </div>
@@ -223,7 +223,7 @@ export const emailTemplates = {
                       © ${new Date().getFullYear()} IQmind. ${lang === 'es' ? 'Todos los derechos reservados.' : 'All rights reserved.'}
                     </p>
                     <p style="color: #718096; font-size: 12px; margin: 0;">
-                      support@iqmind.mobi
+                      support@mindmetric.io
                     </p>
                   </td>
                 </tr>
@@ -258,7 +258,7 @@ export const emailTemplates = {
                 <!-- Header -->
                 <tr>
                   <td style="background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); padding: 40px 30px; text-align: center;">
-                    <img src="https://www.iqmind.mobi/images/LOGO2BLANCO.png" alt="IQmind" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
+                    <img src="https://www.mindmetric.io/images/LOGO2BLANCO.png" alt="IQmind" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
                     <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">
                       🎉 ${lang === 'es' ? '¡Pago Confirmado!' : 'Payment Confirmed!'}
                     </h1>
@@ -306,7 +306,7 @@ export const emailTemplates = {
                     </div>
                     
                     <div style="text-align: center; margin: 30px 0;">
-                      <a href="https://iqmind.mobi/${lang}/resultado" style="display: inline-block; background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 18px;">
+                      <a href="https://mindmetric.io/${lang}/resultado" style="display: inline-block; background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 18px;">
                         ${lang === 'es' ? 'Ver Mi Resultado Completo' : 'View My Complete Result'}
                       </a>
                     </div>
@@ -326,7 +326,7 @@ export const emailTemplates = {
                       © ${new Date().getFullYear()} IQmind. ${lang === 'es' ? 'Todos los derechos reservados.' : 'All rights reserved.'}
                     </p>
                     <p style="color: #718096; font-size: 12px; margin: 0;">
-                      support@iqmind.mobi
+                      support@mindmetric.io
                     </p>
                   </td>
                 </tr>
@@ -361,7 +361,7 @@ export const emailTemplates = {
                 <!-- Header -->
                 <tr>
                   <td style="background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); padding: 40px 30px; text-align: center;">
-                    <img src="https://www.iqmind.mobi/images/LOGO2BLANCO.png" alt="IQmind" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
+                    <img src="https://www.mindmetric.io/images/LOGO2BLANCO.png" alt="IQmind" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
                     <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">
                       🚀 ${lang === 'es' ? '¡Premium Activado!' : 'Premium Activated!'}
                     </h1>
@@ -409,7 +409,7 @@ export const emailTemplates = {
                     </div>
                     
                     <div style="text-align: center; margin: 30px 0;">
-                      <a href="https://iqmind.mobi/${lang}/cuenta" style="display: inline-block; background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 18px;">
+                      <a href="https://mindmetric.io/${lang}/cuenta" style="display: inline-block; background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 18px;">
                         ${lang === 'es' ? 'Acceder a Mi Dashboard' : 'Access My Dashboard'}
                       </a>
                     </div>
@@ -429,7 +429,7 @@ export const emailTemplates = {
                       © ${new Date().getFullYear()} IQmind. ${lang === 'es' ? 'Todos los derechos reservados.' : 'All rights reserved.'}
                     </p>
                     <p style="color: #718096; font-size: 12px; margin: 0;">
-                      support@iqmind.mobi
+                      support@mindmetric.io
                     </p>
                   </td>
                 </tr>
@@ -464,7 +464,7 @@ export const emailTemplates = {
                 <!-- Header -->
                 <tr>
                   <td style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); padding: 40px 30px; text-align: center;">
-                    <img src="https://www.iqmind.mobi/images/LOGO2BLANCO.png" alt="IQmind" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
+                    <img src="https://www.mindmetric.io/images/LOGO2BLANCO.png" alt="IQmind" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
                     <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">
                       ⏰ ${lang === 'es' ? 'Trial Termina Mañana' : 'Trial Ends Tomorrow'}
                     </h1>
@@ -511,7 +511,7 @@ export const emailTemplates = {
                     </p>
                     
                     <div style="text-align: center; margin: 30px 0;">
-                      <a href="https://iqmind.mobi/${lang}/cuenta" style="display: inline-block; background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 18px; margin: 0;">
+                      <a href="https://mindmetric.io/${lang}/cuenta" style="display: inline-block; background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 18px; margin: 0;">
                         ${lang === 'es' ? 'Gestionar Suscripción' : 'Manage Subscription'}
                       </a>
                     </div>
@@ -531,7 +531,7 @@ export const emailTemplates = {
                       © ${new Date().getFullYear()} IQmind. ${lang === 'es' ? 'Todos los derechos reservados.' : 'All rights reserved.'}
                     </p>
                     <p style="color: #718096; font-size: 12px; margin: 0;">
-                      support@iqmind.mobi
+                      support@mindmetric.io
                     </p>
                   </td>
                 </tr>
@@ -566,7 +566,7 @@ export const emailTemplates = {
                 <!-- Header -->
                 <tr>
                   <td style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 40px 30px; text-align: center;">
-                    <img src="https://www.iqmind.mobi/images/LOGO2BLANCO.png" alt="IQmind" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
+                    <img src="https://www.mindmetric.io/images/LOGO2BLANCO.png" alt="IQmind" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
                     <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">
                       ✅ ${lang === 'es' ? '¡Suscripción Activada!' : 'Subscription Activated!'}
                     </h1>
@@ -608,7 +608,7 @@ export const emailTemplates = {
                     </div>
                     
                     <div style="text-align: center; margin: 30px 0;">
-                      <a href="https://iqmind.mobi/${lang}/cuenta" style="display: inline-block; background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 18px;">
+                      <a href="https://mindmetric.io/${lang}/cuenta" style="display: inline-block; background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 18px;">
                         ${lang === 'es' ? 'Acceder a Mi Dashboard' : 'Access My Dashboard'}
                       </a>
                     </div>
@@ -628,7 +628,7 @@ export const emailTemplates = {
                       © ${new Date().getFullYear()} IQmind. ${lang === 'es' ? 'Todos los derechos reservados.' : 'All rights reserved.'}
                     </p>
                     <p style="color: #718096; font-size: 12px; margin: 0;">
-                      support@iqmind.mobi
+                      support@mindmetric.io
                     </p>
                   </td>
                 </tr>
@@ -663,7 +663,7 @@ export const emailTemplates = {
                 <!-- Header -->
                 <tr>
                   <td style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 40px 30px; text-align: center;">
-                    <img src="https://www.iqmind.mobi/images/LOGO2BLANCO.png" alt="IQmind" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
+                    <img src="https://www.mindmetric.io/images/LOGO2BLANCO.png" alt="IQmind" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
                     <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">
                       ✅ ${lang === 'es' ? 'Pago Recibido' : 'Payment Received'}
                     </h1>
@@ -702,7 +702,7 @@ export const emailTemplates = {
                     </p>
                     
                     <div style="text-align: center; margin: 30px 0;">
-                      <a href="https://iqmind.mobi/${lang}/cuenta" style="display: inline-block; background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 18px;">
+                      <a href="https://mindmetric.io/${lang}/cuenta" style="display: inline-block; background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 18px;">
                         ${lang === 'es' ? 'Ver Mi Cuenta' : 'View My Account'}
                       </a>
                     </div>
@@ -722,7 +722,7 @@ export const emailTemplates = {
                       © ${new Date().getFullYear()} IQmind. ${lang === 'es' ? 'Todos los derechos reservados.' : 'All rights reserved.'}
                     </p>
                     <p style="color: #718096; font-size: 12px; margin: 0;">
-                      support@iqmind.mobi
+                      support@mindmetric.io
                     </p>
                   </td>
                 </tr>
@@ -757,7 +757,7 @@ export const emailTemplates = {
                 <!-- Header -->
                 <tr>
                   <td style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); padding: 40px 30px; text-align: center;">
-                    <img src="https://www.iqmind.mobi/images/LOGO2BLANCO.png" alt="IQmind" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
+                    <img src="https://www.mindmetric.io/images/LOGO2BLANCO.png" alt="IQmind" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
                     <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">
                       ⚠️ ${lang === 'es' ? 'Problema con el Pago' : 'Payment Issue'}
                     </h1>
@@ -808,7 +808,7 @@ export const emailTemplates = {
                     </p>
                     
                     <div style="text-align: center; margin: 30px 0;">
-                      <a href="https://iqmind.mobi/${lang}/cuenta" style="display: inline-block; background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 18px;">
+                      <a href="https://mindmetric.io/${lang}/cuenta" style="display: inline-block; background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 18px;">
                         ${lang === 'es' ? 'Actualizar Método de Pago' : 'Update Payment Method'}
                       </a>
                     </div>
@@ -828,7 +828,7 @@ export const emailTemplates = {
                       © ${new Date().getFullYear()} IQmind. ${lang === 'es' ? 'Todos los derechos reservados.' : 'All rights reserved.'}
                     </p>
                     <p style="color: #718096; font-size: 12px; margin: 0;">
-                      support@iqmind.mobi
+                      support@mindmetric.io
                     </p>
                   </td>
                 </tr>
@@ -863,7 +863,7 @@ export const emailTemplates = {
                 <!-- Header -->
                 <tr>
                   <td style="background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); padding: 40px 30px; text-align: center;">
-                    <img src="https://www.iqmind.mobi/images/LOGO2BLANCO.png" alt="IQmind" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
+                    <img src="https://www.mindmetric.io/images/LOGO2BLANCO.png" alt="IQmind" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
                     <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">
                       ✅ ${lang === 'es' ? 'Suscripción Cancelada' : 'Subscription Cancelled'}
                     </h1>
@@ -904,7 +904,7 @@ export const emailTemplates = {
                     </p>
                     
                     <div style="text-align: center; margin: 30px 0;">
-                      <a href="https://iqmind.mobi/${lang}/cuenta" style="display: inline-block; background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 18px;">
+                      <a href="https://mindmetric.io/${lang}/cuenta" style="display: inline-block; background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 18px;">
                         ${lang === 'es' ? 'Ver Mi Cuenta' : 'View My Account'}
                       </a>
                     </div>
@@ -930,7 +930,7 @@ export const emailTemplates = {
                       © ${new Date().getFullYear()} IQmind. ${lang === 'es' ? 'Todos los derechos reservados.' : 'All rights reserved.'}
                     </p>
                     <p style="color: #718096; font-size: 12px; margin: 0;">
-                      support@iqmind.mobi
+                      support@mindmetric.io
                     </p>
                   </td>
                 </tr>

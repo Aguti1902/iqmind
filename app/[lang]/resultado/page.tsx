@@ -126,10 +126,10 @@ export default function ResultadoPage() {
     doc.setDrawColor(...greenColor)
     doc.rect(12, 12, 273, 186)
     
-    // Cargar y añadir el logo (solo imagen, sin texto)
+    // Cargar y añadir el logo (isotipo de MindMetric)
     try {
       const logoImg = new Image()
-      logoImg.src = '/images/Favicon.png'
+      logoImg.src = '/images/MINDMETRIC/Isotipo.png'
       await new Promise((resolve, reject) => {
         logoImg.onload = resolve
         logoImg.onerror = reject
@@ -231,7 +231,7 @@ export default function ResultadoPage() {
     doc.setTextColor(100, 100, 100)
     const footerText = t.certificate?.footer || 'IQmind - Professional Intelligence Test'
     doc.text(footerText, 148.5, 193, { align: 'center' })
-    doc.text('iqmind.mobi', 148.5, 198, { align: 'center' })
+    doc.text('mindmetric.io', 148.5, 198, { align: 'center' })
     
     // Guardar el PDF
     const fileName = t.certificate?.fileName || 'Certificate_IQ'

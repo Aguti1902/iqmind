@@ -3,7 +3,7 @@
 ## 📋 PARA VER EL ERROR COMPLETO:
 
 ### Opción 1: Abrir directamente en el navegador
-1. Ve a: https://www.iqmind.io/api/migrate-db
+1. Ve a: https://www.mindmetric.io/api/migrate-db
 2. Deberías ver un JSON con el error
 3. Cópiame TODO el JSON que aparece
 

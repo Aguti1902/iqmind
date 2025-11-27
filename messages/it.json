@@ -48,7 +48,7 @@
     "step3Desc": "Accedi al tuo QI esatto, analisi dettagliata e grafici comparativi. Condividi i tuoi risultati sui social media."
   },
   "features": {
-    "title": "Perché IQmind?",
+    "title": "Perché MindMetric?",
     "subtitle": "Il modo più preciso e accessibile per conoscere il tuo QI",
     "validated": "Scientificamente Validato",
     "validatedDesc": "Il nostro test si basa su principi psicometrici riconosciuti e validati da esperti di intelligenza.",
@@ -113,7 +113,7 @@
   },
   "test": {
     "title": "Test di Intelligenza",
-    "welcomeTitle": "Test di Intelligenza IQmind",
+    "welcomeTitle": "Test di Intelligenza MindMetric",
     "welcomeSubtitle": "Prima di iniziare, dicci il tuo nome",
     "namePlaceholder": "Il tuo nome",
     "startButton": "Inizia il Test",
@@ -317,7 +317,7 @@
     "fullNamePlaceholder": "Mario Rossi",
     "email": "Email Registrata",
     "emailPlaceholder": "tua@email.com",
-    "emailHelper": "Usa la stessa email con cui ti sei registrato su IQmind",
+    "emailHelper": "Usa la stessa email con cui ti sei registrato su MindMetric",
     "reason": "Motivo della Cancellazione (Opzionale)",
     "reasonPlaceholder": "Dicci perché stai annullando. Il tuo feedback ci aiuta a migliorare.",
     "confirmButton": "Conferma Cancellazione",
@@ -358,13 +358,13 @@
   "certificate": {
     "title": "CERTIFICATO DI INTELLIGENZA",
     "certifies": "Si certifica che",
-    "completed": "ha completato con successo il test di intelligenza IQmind",
+    "completed": "ha completato con successo il test di intelligenza MindMetric",
     "obtained": "ottenendo un Quoziente Intellettivo di",
     "category": "Categoria",
     "correctAnswers": "risposte corrette",
     "percentile": "Percentile",
     "issueDate": "Data di emissione",
-    "footer": "IQmind - Test di Intelligenza Professionale",
+    "footer": "MindMetric - Test di Intelligenza Professionale",
     "fileName": "Certificato_QI"
   },
   "account": {
@@ -420,7 +420,7 @@
     "cancelNoticeMessage": "Il tuo accesso premium rimarrà attivo fino alla fine del tuo periodo di fatturazione corrente. Non verranno effettuati ulteriori addebiti dopo quella data."
   },
   "legal": {
-    "noticeTranslation": "Questo documento legale è disponibile principalmente in spagnolo. Per richieste in altre lingue, contattare support@iqmind.mobi"
+    "noticeTranslation": "Questo documento legale è disponibile principalmente in spagnolo. Per richieste in altre lingue, contattare support@mindmetric.io"
   },
   "login": {
     "title": "Accedi",

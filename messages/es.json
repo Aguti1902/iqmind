@@ -49,7 +49,7 @@
     "step3Desc": "Accede a tu CI exacto, análisis detallado y gráficos comparativos. Comparte tus resultados en redes sociales."
   },
   "features": {
-    "title": "¿Por qué IQmind?",
+    "title": "¿Por qué MindMetric?",
     "subtitle": "La forma más precisa y accesible de conocer tu coeficiente intelectual",
     "validated": "Científicamente Validado",
     "validatedDesc": "Nuestro test está basado en principios psicométricos reconocidos y validados por expertos en inteligencia.",
@@ -114,7 +114,7 @@
   },
   "test": {
     "title": "Test de Inteligencia",
-    "welcomeTitle": "IQmind Test de Inteligencia",
+    "welcomeTitle": "MindMetric - Evaluación de Inteligencia",
     "welcomeSubtitle": "Antes de comenzar, cuéntanos cómo te llamas",
     "namePlaceholder": "Tu nombre",
     "startButton": "Comenzar Test",
@@ -290,7 +290,7 @@
     "fullNamePlaceholder": "Juan Pérez García",
     "email": "Correo Electrónico de Registro",
     "emailPlaceholder": "tu@email.com",
-    "emailHelper": "Usa el mismo email con el que te registraste en IQmind",
+    "emailHelper": "Usa el mismo email con el que te registraste en MindMetric",
     "reason": "Motivo de Cancelación (Opcional)",
     "reasonPlaceholder": "Cuéntanos por qué cancelas. Tu feedback nos ayuda a mejorar.",
     "confirmButton": "Confirmar Cancelación",
@@ -329,18 +329,18 @@
     "emailDirect": "O escríbenos directamente a:"
   },
   "legal": {
-    "noticeTranslation": "Este documento legal está disponible principalmente en español. Para consultas en otros idiomas, contacta con support@iqmind.mobi"
+    "noticeTranslation": "Este documento legal está disponible principalmente en español. Para consultas en otros idiomas, contacta con support@mindmetric.io"
   },
   "certificate": {
     "title": "CERTIFICADO DE INTELIGENCIA",
     "certifies": "Se certifica que",
-    "completed": "ha completado exitosamente el test de inteligencia de IQmind",
+    "completed": "ha completado exitosamente el test de inteligencia de MindMetric",
     "obtained": "obteniendo un Coeficiente Intelectual de",
     "category": "Categoría",
     "correctAnswers": "respuestas correctas",
     "percentile": "Percentil",
     "issueDate": "Fecha de emisión",
-    "footer": "IQmind - Test de Inteligencia Profesional",
+    "footer": "MindMetric - Evaluación de Inteligencia Profesional",
     "fileName": "Certificado_IQ"
   },
   "result": {

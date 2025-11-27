@@ -249,5 +249,5 @@ For Railway support:
 - Discord: [Railway Community](https://discord.gg/railway)
 
 For IQmind issues:
-- Email: support@iqmind.io
+- Email: support@mindmetric.io
 

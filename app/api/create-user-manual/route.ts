@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
                           </p>
                         </div>
                         
-                        <a href="https://iqmind.mobi/es/login" style="display: inline-block; background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 16px; margin: 20px 0;">
+                        <a href="https://mindmetric.io/es/login" style="display: inline-block; background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 16px; margin: 20px 0;">
                           Acceder a mi Dashboard
                         </a>
                         
@@ -134,7 +134,7 @@ export async function POST(request: NextRequest) {
                           © ${new Date().getFullYear()} IQmind. Todos los derechos reservados.
                         </p>
                         <p style="color: #718096; font-size: 12px; margin: 0;">
-                          support@iqmind.mobi
+                          support@mindmetric.io
                         </p>
                       </td>
                     </tr>
