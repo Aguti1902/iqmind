@@ -18,7 +18,7 @@ export default function VisualCell({ cell, size = 120, isOption = false, isHighl
       case 'number':
         return (
           <div className="w-full h-full flex items-center justify-center">
-            <span className="text-4xl font-bold text-[#218B8E]">{cell.content}</span>
+            <span className="text-4xl font-bold text-[#07C59A]">{cell.content}</span>
           </div>
         )
       
@@ -40,7 +40,7 @@ export default function VisualCell({ cell, size = 120, isOption = false, isHighl
       case 'empty':
         return (
           <div className="w-full h-full flex items-center justify-center">
-            <span className="text-5xl font-bold text-[#218B8E]">?</span>
+            <span className="text-5xl font-bold text-[#07C59A]">?</span>
           </div>
         )
       
@@ -51,7 +51,7 @@ export default function VisualCell({ cell, size = 120, isOption = false, isHighl
 
   const renderShape = () => {
     const fill = cell.fillColor || 'none'
-    const stroke = cell.strokeColor || '#031C43'
+    const stroke = cell.strokeColor || '#113240'
     const strokeWidth = cell.fillColor ? 0 : 2
 
     let shapeElement
@@ -112,7 +112,7 @@ export default function VisualCell({ cell, size = 120, isOption = false, isHighl
     // Si es anidada, agregar forma interior
     let innerElement = null
     if (cell.nested && cell.innerShape) {
-      const innerStroke = stroke === '#031C43' ? '#218B8E' : '#031C43'
+      const innerStroke = stroke === '#113240' ? '#07C59A' : '#113240'
       switch (cell.innerShape) {
         case 'triangle':
           innerElement = (
@@ -159,7 +159,7 @@ export default function VisualCell({ cell, size = 120, isOption = false, isHighl
 
   const renderCard = () => {
     const fill = cell.fillColor || 'none'
-    const stroke = cell.strokeColor || '#031C43'
+    const stroke = cell.strokeColor || '#113240'
 
     let cardShape
     switch (cell.content) {
@@ -224,10 +224,10 @@ export default function VisualCell({ cell, size = 120, isOption = false, isHighl
     return (
       <svg viewBox="0 0 100 100" className="w-full h-full p-1">
         {/* Grid lines */}
-        <line x1="33" y1="0" x2="33" y2="100" stroke="#031C43" strokeWidth="1.5" />
-        <line x1="67" y1="0" x2="67" y2="100" stroke="#031C43" strokeWidth="1.5" />
-        <line x1="0" y1="33" x2="100" y2="33" stroke="#031C43" strokeWidth="1.5" />
-        <line x1="0" y1="67" x2="100" y2="67" stroke="#031C43" strokeWidth="1.5" />
+        <line x1="33" y1="0" x2="33" y2="100" stroke="#113240" strokeWidth="1.5" />
+        <line x1="67" y1="0" x2="67" y2="100" stroke="#113240" strokeWidth="1.5" />
+        <line x1="0" y1="33" x2="100" y2="33" stroke="#113240" strokeWidth="1.5" />
+        <line x1="0" y1="67" x2="100" y2="67" stroke="#113240" strokeWidth="1.5" />
         
         {/* Square at position */}
         {cell.content !== 'cross' ? (
@@ -236,13 +236,13 @@ export default function VisualCell({ cell, size = 120, isOption = false, isHighl
             y={pos.y}
             width="20"
             height="20"
-            fill="#218B8E"
+            fill="#07C59A"
           />
         ) : (
           <>
-            <line x1="30" y1="30" x2="70" y2="70" stroke="#031C43" strokeWidth="3" />
-            <line x1="70" y1="30" x2="30" y2="70" stroke="#031C43" strokeWidth="3" />
-            <rect x="65" y="65" width="15" height="15" fill="#218B8E" />
+            <line x1="30" y1="30" x2="70" y2="70" stroke="#113240" strokeWidth="3" />
+            <line x1="70" y1="30" x2="30" y2="70" stroke="#113240" strokeWidth="3" />
+            <rect x="65" y="65" width="15" height="15" fill="#07C59A" />
           </>
         )}
       </svg>
@@ -255,42 +255,42 @@ export default function VisualCell({ cell, size = 120, isOption = false, isHighl
 
     return (
       <svg viewBox="0 0 100 100" className="w-full h-full p-2">
-        <rect x="10" y="10" width="80" height="80" fill="none" stroke="#031C43" strokeWidth="2" />
+        <rect x="10" y="10" width="80" height="80" fill="none" stroke="#113240" strokeWidth="2" />
         {patternType === 'top-left-triangle' && (
-          <polygon points="10,10 90,10 10,90" fill="#218B8E" />
+          <polygon points="10,10 90,10 10,90" fill="#07C59A" />
         )}
         {patternType === 'top-right-half' && (
-          <rect x="50" y="10" width="40" height="80" fill="#218B8E" />
+          <rect x="50" y="10" width="40" height="80" fill="#07C59A" />
         )}
         {patternType === 'bottom-right-diagonal' && (
-          <polygon points="90,10 90,90 10,90" fill="#218B8E" />
+          <polygon points="90,10 90,90 10,90" fill="#07C59A" />
         )}
         {patternType === 'bottom-left-triangle' && (
-          <polygon points="10,10 10,90 90,90" fill="#218B8E" />
+          <polygon points="10,10 10,90 90,90" fill="#07C59A" />
         )}
         {patternType === 'bottom-half' && (
-          <rect x="10" y="50" width="80" height="40" fill="#218B8E" />
+          <rect x="10" y="50" width="80" height="40" fill="#07C59A" />
         )}
         {patternType === 'right-triangle' && (
-          <polygon points="90,10 90,90 50,50" fill="#218B8E" />
+          <polygon points="90,10 90,90 50,50" fill="#07C59A" />
         )}
         {patternType === 'top-half' && (
-          <rect x="10" y="10" width="80" height="40" fill="#218B8E" />
+          <rect x="10" y="10" width="80" height="40" fill="#07C59A" />
         )}
         {patternType === 'full-square' && (
-          <rect x="10" y="10" width="80" height="80" fill="#218B8E" />
+          <rect x="10" y="10" width="80" height="80" fill="#07C59A" />
         )}
         {patternType === 'right-half' && (
-          <rect x="50" y="10" width="40" height="80" fill="#218B8E" />
+          <rect x="50" y="10" width="40" height="80" fill="#07C59A" />
         )}
         {patternType === 'left-half' && (
-          <rect x="10" y="10" width="40" height="80" fill="#218B8E" />
+          <rect x="10" y="10" width="40" height="80" fill="#07C59A" />
         )}
         {patternType === 'center-square' && (
-          <rect x="35" y="35" width="30" height="30" fill="#218B8E" />
+          <rect x="35" y="35" width="30" height="30" fill="#07C59A" />
         )}
         {patternType === 'full-square-red' && (
-          <rect x="10" y="10" width="80" height="80" fill="#031C43" />
+          <rect x="10" y="10" width="80" height="80" fill="#113240" />
         )}
       </svg>
     )
@@ -308,32 +308,32 @@ export default function VisualCell({ cell, size = 120, isOption = false, isHighl
         case 'up':
           arrowPath = (
             <g key={i} transform={`translate(${50 + offset}, 0)`}>
-              <line x1="0" y1="70" x2="0" y2="30" stroke="#218B8E" strokeWidth="4" />
-              <polygon points="-8,35 0,25 8,35" fill="#218B8E" />
+              <line x1="0" y1="70" x2="0" y2="30" stroke="#07C59A" strokeWidth="4" />
+              <polygon points="-8,35 0,25 8,35" fill="#07C59A" />
             </g>
           )
           break
         case 'down':
           arrowPath = (
             <g key={i} transform={`translate(${50 + offset}, 0)`}>
-              <line x1="0" y1="30" x2="0" y2="70" stroke="#218B8E" strokeWidth="4" />
-              <polygon points="-8,65 0,75 8,65" fill="#218B8E" />
+              <line x1="0" y1="30" x2="0" y2="70" stroke="#07C59A" strokeWidth="4" />
+              <polygon points="-8,65 0,75 8,65" fill="#07C59A" />
             </g>
           )
           break
         case 'left':
           arrowPath = (
             <g key={i} transform={`translate(0, ${50 + offset})`}>
-              <line x1="70" y1="0" x2="30" y2="0" stroke="#218B8E" strokeWidth="4" />
-              <polygon points="35,-8 25,0 35,8" fill="#218B8E" />
+              <line x1="70" y1="0" x2="30" y2="0" stroke="#07C59A" strokeWidth="4" />
+              <polygon points="35,-8 25,0 35,8" fill="#07C59A" />
             </g>
           )
           break
         case 'right':
           arrowPath = (
             <g key={i} transform={`translate(0, ${50 + offset})`}>
-              <line x1="30" y1="0" x2="70" y2="0" stroke="#218B8E" strokeWidth="4" />
-              <polygon points="65,-8 75,0 65,8" fill="#218B8E" />
+              <line x1="30" y1="0" x2="70" y2="0" stroke="#07C59A" strokeWidth="4" />
+              <polygon points="65,-8 75,0 65,8" fill="#07C59A" />
             </g>
           )
           break
@@ -352,10 +352,10 @@ export default function VisualCell({ cell, size = 120, isOption = false, isHighl
     <div
       className={`rounded-xl border-2 flex items-center justify-center ${
         isHighlighted
-          ? 'border-[#218B8E] border-4'
+          ? 'border-[#07C59A] border-4'
           : isOption
-          ? 'border-[#218B8E]/40 hover:border-[#218B8E] hover:shadow-lg transition-all duration-200 cursor-pointer'
-          : 'border-[#218B8E]/30'
+          ? 'border-[#07C59A]/40 hover:border-[#07C59A] hover:shadow-lg transition-all duration-200 cursor-pointer'
+          : 'border-[#07C59A]/30'
       }`}
       style={{
         backgroundColor: bgColor,

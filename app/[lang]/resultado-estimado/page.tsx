@@ -169,10 +169,10 @@ export default function ResultadoEstimadoPage() {
             </div>
 
             {/* Email Section - Redesigned */}
-            <div className="bg-gradient-to-br from-[#e6f5f5] to-white rounded-2xl p-8 mb-8 border-2 border-[#218B8E]">
+            <div className="bg-gradient-to-br from-[#e6f5f5] to-white rounded-2xl p-8 mb-8 border-2 border-[#07C59A]">
               <div className="text-center mb-8">
                 <h2 className="text-4xl md:text-5xl font-bold mb-4">
-                  {t.estimatedResult.mainTitle} <span className="text-[#218B8E]">{t.estimatedResult.mainTitleHighlight}</span>
+                  {t.estimatedResult.mainTitle} <span className="text-[#07C59A]">{t.estimatedResult.mainTitleHighlight}</span>
                 </h2>
                 <p className="text-lg text-gray-700 max-w-2xl mx-auto">
                   {t.estimatedResult.mainSubtitle}
@@ -193,7 +193,7 @@ export default function ResultadoEstimadoPage() {
                     className={`w-full px-6 py-4 text-lg border-2 rounded-xl focus:outline-none focus:ring-2 transition-all bg-white ${
                       emailError 
                         ? 'border-red-300 focus:ring-red-500 focus:border-red-500' 
-                        : 'border-gray-300 focus:ring-[#218B8E] focus:border-[#218B8E]'
+                        : 'border-gray-300 focus:ring-[#07C59A] focus:border-[#07C59A]'
                     }`}
                   />
                   {emailError && (
@@ -208,7 +208,7 @@ export default function ResultadoEstimadoPage() {
                       type="checkbox"
                       checked={agreedToTerms}
                       onChange={(e) => setAgreedToTerms(e.target.checked)}
-                      className="mt-1 w-5 h-5 text-[#218B8E] border-gray-300 rounded focus:ring-[#218B8E] cursor-pointer"
+                      className="mt-1 w-5 h-5 text-[#07C59A] border-gray-300 rounded focus:ring-[#07C59A] cursor-pointer"
                     />
                     <span className="text-gray-700 text-sm leading-relaxed">
                       {t.estimatedResult.acceptTerms}{' '}
@@ -216,7 +216,7 @@ export default function ResultadoEstimadoPage() {
                         href={`/${lang}/terminos`} 
                         target="_blank" 
                         rel="noopener noreferrer" 
-                        className="text-[#218B8E] underline hover:text-[#1a6f72]"
+                        className="text-[#07C59A] underline hover:text-[#069e7b]"
                       >
                         {t.estimatedResult.termsLink}
                       </a>
@@ -225,7 +225,7 @@ export default function ResultadoEstimadoPage() {
                         href={`/${lang}/privacidad`} 
                         target="_blank" 
                         rel="noopener noreferrer" 
-                        className="text-[#218B8E] underline hover:text-[#1a6f72]"
+                        className="text-[#07C59A] underline hover:text-[#069e7b]"
                       >
                         {t.estimatedResult.privacyLink}
                       </a>
@@ -240,7 +240,7 @@ export default function ResultadoEstimadoPage() {
                   disabled={!email || !agreedToTerms}
                   className={`w-full text-xl font-bold py-4 px-8 rounded-xl transition-all duration-200 ${
                     email && agreedToTerms
-                      ? 'bg-[#031C43] hover:bg-[#052547] text-white shadow-lg hover:shadow-xl cursor-pointer'
+                      ? 'bg-[#113240] hover:bg-[#052547] text-white shadow-lg hover:shadow-xl cursor-pointer'
                       : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                   }`}
                 >

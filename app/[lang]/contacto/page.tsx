@@ -67,7 +67,7 @@ export default function ContactoPage() {
         <Header />
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
-            <div className="w-16 h-16 border-4 border-[#218B8E] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <div className="w-16 h-16 border-4 border-[#07C59A] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
             <p className="text-gray-600">Loading...</p>
           </div>
         </div>
@@ -122,7 +122,7 @@ export default function ContactoPage() {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#218B8E] focus:border-[#218B8E]"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#07C59A] focus:border-[#07C59A]"
                     placeholder={t.contact.namePlaceholder}
                   />
                 </div>
@@ -138,7 +138,7 @@ export default function ContactoPage() {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#218B8E] focus:border-[#218B8E]"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#07C59A] focus:border-[#07C59A]"
                     placeholder={t.contact.emailPlaceholder}
                   />
                 </div>
@@ -154,7 +154,7 @@ export default function ContactoPage() {
                   value={formData.subject}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#218B8E] focus:border-[#218B8E]"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#07C59A] focus:border-[#07C59A]"
                 >
                   <option value="">{t.contact.subjectSelect}</option>
                   <option value={t.contact.subjectTech}>{t.contact.subjectTech}</option>
@@ -177,7 +177,7 @@ export default function ContactoPage() {
                   onChange={handleChange}
                   required
                   rows={6}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#218B8E] focus:border-[#218B8E]"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#07C59A] focus:border-[#07C59A]"
                   placeholder={t.contact.messagePlaceholder}
                 />
               </div>
@@ -189,7 +189,7 @@ export default function ContactoPage() {
                   className={`inline-flex items-center gap-3 px-8 py-4 rounded-lg font-bold text-lg transition ${
                     isSubmitting
                       ? 'bg-gray-400 cursor-not-allowed'
-                      : 'bg-[#031C43] hover:bg-[#052547] text-white shadow-lg hover:shadow-xl'
+                      : 'bg-[#113240] hover:bg-[#052547] text-white shadow-lg hover:shadow-xl'
                   }`}
                 >
                   {isSubmitting ? (
@@ -218,7 +218,7 @@ export default function ContactoPage() {
               </p>
               <a 
                 href="mailto:support@mindmetric.io" 
-                className="text-[#218B8E] hover:text-[#1a6f72] font-semibold text-lg"
+                className="text-[#07C59A] hover:text-[#069e7b] font-semibold text-lg"
               >
                 support@mindmetric.io
               </a>

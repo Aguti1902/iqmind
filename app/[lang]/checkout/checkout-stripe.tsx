@@ -22,7 +22,7 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
   if (tLoading || !t) {
     return (
       <div className="text-center py-8">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#218B8E] mx-auto mb-4"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#07C59A] mx-auto mb-4"></div>
         <p className="text-gray-600">{t?.checkout?.loading || 'Loading...'}</p>
       </div>
     )
@@ -187,10 +187,10 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
                   type="checkbox"
                   checked={agreedToTerms}
                   onChange={(e) => setAgreedToTerms(e.target.checked)}
-            className="mt-1 w-5 h-5 text-[#218B8E] border-gray-300 rounded focus:ring-[#218B8E]"
+            className="mt-1 w-5 h-5 text-[#07C59A] border-gray-300 rounded focus:ring-[#07C59A]"
                 />
                 <span className="text-sm text-gray-700">
-            {t.checkout.acceptTerms} <a href={`/${lang}/terminos`} target="_blank" className="text-[#218B8E] underline font-semibold">{t.checkout.termsAndConditions}</a>. 
+            {t.checkout.acceptTerms} <a href={`/${lang}/terminos`} target="_blank" className="text-[#07C59A] underline font-semibold">{t.checkout.termsAndConditions}</a>. 
             {t.checkout.trialNote}
                 </span>
               </label>
@@ -203,7 +203,7 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
         className={`w-full py-4 rounded-xl font-bold text-lg transition-all duration-200 flex items-center justify-center gap-3 ${
           isProcessing || !stripe || !agreedToTerms
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-            : 'bg-[#031C43] text-white hover:bg-[#052547] shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
+            : 'bg-[#113240] text-white hover:bg-[#052547] shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
               }`}
             >
               {isProcessing ? (
@@ -353,7 +353,7 @@ export default function CheckoutPage() {
         <MinimalHeader email={email} />
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
-            <div className="w-16 h-16 border-4 border-[#218B8E] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <div className="w-16 h-16 border-4 border-[#07C59A] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
             <p className="text-gray-600">Loading...</p>
           </div>
         </div>
@@ -380,7 +380,7 @@ export default function CheckoutPage() {
     appearance: {
       theme: 'stripe',
       variables: {
-        colorPrimary: '#218B8E',
+        colorPrimary: '#07C59A',
         colorBackground: '#ffffff',
         colorText: '#1f2937',
         colorDanger: '#ef4444',
@@ -417,14 +417,14 @@ export default function CheckoutPage() {
             <div className="space-y-6 order-2 lg:order-1">
               
               {/* Precio Destacado */}
-              <div className="bg-white rounded-2xl shadow-xl p-8 border-4 border-[#218B8E]">
+              <div className="bg-white rounded-2xl shadow-xl p-8 border-4 border-[#07C59A]">
                 <div className="text-center mb-6">
                   <h3 className="text-2xl font-bold text-gray-900 mb-2">
                     {t.checkout.unlockComplete}
                   </h3>
                   <div className="flex items-baseline justify-center gap-2 mb-4">
                     <span className="text-gray-500 line-through text-2xl">{t.checkout.originalPrice}</span>
-                    <span className="text-6xl font-bold text-[#218B8E]">{t.checkout.currentPrice}</span>
+                    <span className="text-6xl font-bold text-[#07C59A]">{t.checkout.currentPrice}</span>
                   </div>
                   <div className="inline-block bg-green-100 text-green-800 px-4 py-2 rounded-full font-semibold mb-4">
                     {t.checkout.save97}
@@ -455,7 +455,7 @@ export default function CheckoutPage() {
                 </h3>
                 <div className="space-y-4">
                   <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-[#218B8E] rounded-full flex items-center justify-center flex-shrink-0">
+                    <div className="w-10 h-10 bg-[#07C59A] rounded-full flex items-center justify-center flex-shrink-0">
                       <FaBrain className="text-white" />
                     </div>
                     <div>
@@ -465,7 +465,7 @@ export default function CheckoutPage() {
                   </div>
 
                   <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-[#218B8E] rounded-full flex items-center justify-center flex-shrink-0">
+                    <div className="w-10 h-10 bg-[#07C59A] rounded-full flex items-center justify-center flex-shrink-0">
                       <FaChartLine className="text-white" />
                     </div>
                     <div>
@@ -475,7 +475,7 @@ export default function CheckoutPage() {
                   </div>
 
                   <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-[#218B8E] rounded-full flex items-center justify-center flex-shrink-0">
+                    <div className="w-10 h-10 bg-[#07C59A] rounded-full flex items-center justify-center flex-shrink-0">
                       <FaCertificate className="text-white" />
                     </div>
                     <div>
@@ -485,7 +485,7 @@ export default function CheckoutPage() {
                   </div>
 
                   <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-[#218B8E] rounded-full flex items-center justify-center flex-shrink-0">
+                    <div className="w-10 h-10 bg-[#07C59A] rounded-full flex items-center justify-center flex-shrink-0">
                       <FaUsers className="text-white" />
                     </div>
                     <div>
@@ -530,7 +530,7 @@ export default function CheckoutPage() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="tu@email.com"
-                      className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#218B8E] focus:border-transparent"
+                      className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#07C59A] focus:border-transparent"
                       required
                     />
                     <FaLock className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -560,7 +560,7 @@ export default function CheckoutPage() {
                     </div>
                     <div className="border-t-2 pt-3 flex justify-between items-center">
                       <span className="text-lg font-bold text-gray-900">{t.checkout.total}</span>
-                      <span className="text-3xl font-bold text-[#218B8E]">0,50€</span>
+                      <span className="text-3xl font-bold text-[#07C59A]">0,50€</span>
                     </div>
                   </div>
                 </div>
@@ -592,7 +592,7 @@ export default function CheckoutPage() {
                   </Elements>
                 ) : (
                   <div className="text-center py-8">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#218B8E] mx-auto mb-4"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#07C59A] mx-auto mb-4"></div>
                     <p className="text-gray-600">{t.checkout.loadingPayment}</p>
                     {!stripePromise && <p className="text-sm text-gray-500 mt-2">Cargando Stripe...</p>}
                     {!clientSecret && stripePromise && <p className="text-sm text-gray-500 mt-2">Preparando pago...</p>}
@@ -616,7 +616,7 @@ export default function CheckoutPage() {
           <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-white rounded-xl p-6 shadow-lg">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-12 h-12 bg-[#e6f5f5] rounded-full flex items-center justify-center text-[#218B8E] font-bold">
+                <div className="w-12 h-12 bg-[#e6f5f5] rounded-full flex items-center justify-center text-[#07C59A] font-bold">
                   {t.checkout.testimonial1Name?.split(' ').map((n: string) => n[0]).join('') || 'AB'}
                 </div>
                 <div>
@@ -631,7 +631,7 @@ export default function CheckoutPage() {
 
             <div className="bg-white rounded-xl p-6 shadow-lg">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-12 h-12 bg-[#e6f5f5] rounded-full flex items-center justify-center text-[#218B8E] font-bold">
+                <div className="w-12 h-12 bg-[#e6f5f5] rounded-full flex items-center justify-center text-[#07C59A] font-bold">
                   {t.checkout.testimonial2Name?.split(' ').map((n: string) => n[0]).join('') || 'CD'}
                 </div>
                 <div>
@@ -646,7 +646,7 @@ export default function CheckoutPage() {
 
             <div className="bg-white rounded-xl p-6 shadow-lg">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-12 h-12 bg-[#e6f5f5] rounded-full flex items-center justify-center text-[#218B8E] font-bold">
+                <div className="w-12 h-12 bg-[#e6f5f5] rounded-full flex items-center justify-center text-[#07C59A] font-bold">
                   {t.checkout.testimonial3Name?.split(' ').map((n: string) => n[0]).join('') || 'EF'}
                 </div>
                 <div>

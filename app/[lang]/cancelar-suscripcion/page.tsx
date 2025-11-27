@@ -74,7 +74,7 @@ export default function CancelarSuscripcionPage() {
         <Header />
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
-            <div className="w-16 h-16 border-4 border-[#218B8E] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <div className="w-16 h-16 border-4 border-[#07C59A] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
             <p className="text-gray-600">Loading...</p>
           </div>
         </div>
@@ -115,7 +115,7 @@ export default function CancelarSuscripcionPage() {
 
               <a
                 href={`/${lang}`}
-                className="inline-block bg-[#218B8E] hover:bg-[#1a6f72] text-white font-semibold py-3 px-8 rounded-lg transition-all duration-200"
+                className="inline-block bg-[#07C59A] hover:bg-[#069e7b] text-white font-semibold py-3 px-8 rounded-lg transition-all duration-200"
               >
                 {t.cancel.backHome}
               </a>
@@ -184,7 +184,7 @@ export default function CancelarSuscripcionPage() {
                     required
                     value={formData.fullName}
                     onChange={handleChange}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#218B8E] focus:border-transparent"
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#07C59A] focus:border-transparent"
                     placeholder={t.cancel.fullNamePlaceholder}
                   />
                 </div>
@@ -206,7 +206,7 @@ export default function CancelarSuscripcionPage() {
                     required
                     value={formData.email}
                     onChange={handleChange}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#218B8E] focus:border-transparent"
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#07C59A] focus:border-transparent"
                     placeholder={t.cancel.emailPlaceholder}
                   />
                 </div>
@@ -226,7 +226,7 @@ export default function CancelarSuscripcionPage() {
                   rows={4}
                   value={formData.reason}
                   onChange={handleChange}
-                  className="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#218B8E] focus:border-transparent"
+                  className="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#07C59A] focus:border-transparent"
                   placeholder={t.cancel.reasonPlaceholder}
                 />
               </div>
@@ -255,7 +255,7 @@ export default function CancelarSuscripcionPage() {
               <p className="text-gray-600 mb-2">
                 {t.cancel.helpTitle}
               </p>
-              <a href={`/${lang}/contacto`} className="text-[#218B8E] hover:text-[#1a6f72] font-medium">
+              <a href={`/${lang}/contacto`} className="text-[#07C59A] hover:text-[#069e7b] font-medium">
                 {t.cancel.contactUs}
               </a>
             </div>

@@ -184,7 +184,7 @@ export default function TestPage() {
         <Header />
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
-            <div className="w-16 h-16 border-4 border-[#218B8E] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <div className="w-16 h-16 border-4 border-[#07C59A] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
             <p className="text-gray-600">{t ? t.test.loading : 'Loading...'}</p>
           </div>
         </div>
@@ -202,11 +202,11 @@ export default function TestPage() {
           <div className="container-custom max-w-2xl">
             <div className="bg-white rounded-2xl shadow-2xl p-12 text-center animate-fadeIn">
               <div className="w-20 h-20 bg-[#e6f5f5] rounded-full flex items-center justify-center mx-auto mb-6">
-                <FaUser className="text-4xl text-[#218B8E]" />
+                <FaUser className="text-4xl text-[#07C59A]" />
               </div>
               
               <h1 className="text-4xl font-bold text-gray-900 mb-4">
-                <span className="text-[#031C43]">IQ</span><span className="text-[#218B8E]">mind</span> {t.test.title}
+                <span className="text-[#113240]">IQ</span><span className="text-[#07C59A]">mind</span> {t.test.title}
               </h1>
               
               <p className="text-xl text-gray-600 mb-8">
@@ -262,7 +262,7 @@ export default function TestPage() {
           {/* Barra de progreso */}
           <div className="w-full bg-gray-200 rounded-full h-2 lg:h-3 mb-3 lg:mb-8">
             <div 
-              className="bg-[#218B8E] h-2 lg:h-3 rounded-full transition-all duration-500"
+              className="bg-[#07C59A] h-2 lg:h-3 rounded-full transition-all duration-500"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -288,7 +288,7 @@ export default function TestPage() {
             </div>
 
             {/* Panel derecho - Opciones A-F */}
-            <div className="bg-white rounded-2xl lg:rounded-3xl shadow-lg lg:shadow-xl p-3 lg:p-6 border-2 lg:border-4 border-[#218B8E] flex flex-col">
+            <div className="bg-white rounded-2xl lg:rounded-3xl shadow-lg lg:shadow-xl p-3 lg:p-6 border-2 lg:border-4 border-[#07C59A] flex flex-col">
               <h3 className="text-sm lg:text-base font-semibold text-gray-900 mb-2 lg:mb-3 text-center">
                 {t.test.chooseAnswer}
               </h3>
@@ -296,7 +296,7 @@ export default function TestPage() {
               <div className="grid grid-cols-3 gap-1.5 lg:gap-2 w-full max-w-[280px] lg:max-w-[340px] mx-auto p-1 lg:p-2 flex-1">
                 {question.options.map((option, index) => (
                   <div key={index} className="flex flex-col items-center gap-1 lg:gap-1.5">
-                    <div className="w-6 h-6 lg:w-8 lg:h-8 bg-[#031C43] text-white rounded-full flex items-center justify-center text-xs lg:text-sm font-bold">
+                    <div className="w-6 h-6 lg:w-8 lg:h-8 bg-[#113240] text-white rounded-full flex items-center justify-center text-xs lg:text-sm font-bold">
                       {optionLetters[index]}
                     </div>
                     <div 
@@ -319,7 +319,7 @@ export default function TestPage() {
               className={`flex items-center gap-1.5 lg:gap-2 px-3 lg:px-5 py-2 lg:py-2.5 rounded-full font-semibold text-xs lg:text-sm transition-all ${
                 currentQuestion === 0 
                   ? 'bg-gray-200 text-gray-400 cursor-not-allowed' 
-                  : 'bg-[#031C43] text-white hover:bg-[#052547]'
+                  : 'bg-[#113240] text-white hover:bg-[#052547]'
               }`}
             >
               <svg className="w-3.5 h-3.5 lg:w-4 lg:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -328,13 +328,13 @@ export default function TestPage() {
               <span className="hidden sm:inline">{t.test.previous}</span>
             </button>
 
-            <div className="px-3 lg:px-6 py-2 lg:py-2.5 bg-[#218B8E] text-white rounded-full font-bold text-sm lg:text-base">
+            <div className="px-3 lg:px-6 py-2 lg:py-2.5 bg-[#07C59A] text-white rounded-full font-bold text-sm lg:text-base">
               {currentQuestion + 1}/{visualQuestions.length}
             </div>
 
             <button
               onClick={handleNext}
-              className="flex items-center gap-1.5 lg:gap-2 px-3 lg:px-5 py-2 lg:py-2.5 rounded-full font-semibold text-xs lg:text-sm transition-all bg-[#031C43] text-white hover:bg-[#052547]"
+              className="flex items-center gap-1.5 lg:gap-2 px-3 lg:px-5 py-2 lg:py-2.5 rounded-full font-semibold text-xs lg:text-sm transition-all bg-[#113240] text-white hover:bg-[#052547]"
             >
               <span className="hidden sm:inline">{currentQuestion === visualQuestions.length - 1 ? t.test.finish : t.test.next}</span>
               <svg className="w-3.5 h-3.5 lg:w-4 lg:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -370,7 +370,7 @@ export default function TestPage() {
                     setShowFinishConfirmModal(false)
                     handleFinishTest()
                   }}
-                  className="flex-1 bg-[#031C43] hover:bg-[#052547] text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
+                  className="flex-1 bg-[#113240] hover:bg-[#052547] text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
                 >
                   {t.test.getResults}
                 </button>
@@ -399,7 +399,7 @@ export default function TestPage() {
               
               <button
                 onClick={() => setShowTooFastModal(false)}
-                className="w-full bg-[#031C43] hover:bg-[#052547] text-white font-semibold py-3 px-8 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
+                className="w-full bg-[#113240] hover:bg-[#052547] text-white font-semibold py-3 px-8 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
               >
                 {t?.test?.understood}
               </button>

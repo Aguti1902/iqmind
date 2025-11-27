@@ -10,11 +10,11 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-[#031C43] hover:bg-[#052547] text-white font-semibold py-3 px-8 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5;
+    @apply bg-[#113240] hover:bg-[#052547] text-white font-semibold py-3 px-8 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5;
   }
   
   .btn-secondary {
-    @apply bg-white hover:bg-gray-50 text-[#218B8E] font-semibold py-3 px-8 rounded-lg border-2 border-[#218B8E] transition-all duration-200;
+    @apply bg-white hover:bg-gray-50 text-[#07C59A] font-semibold py-3 px-8 rounded-lg border-2 border-[#07C59A] transition-all duration-200;
   }
   
   .container-custom {

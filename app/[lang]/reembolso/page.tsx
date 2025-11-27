@@ -64,15 +64,15 @@ export default function ReembolsoPage() {
               <div className="bg-gray-50 rounded-lg p-6 mb-4">
                 <ul className="space-y-3">
                   <li className="flex items-start gap-3">
-                    <span className="text-[#218B8E] font-bold">•</span>
+                    <span className="text-[#07C59A] font-bold">•</span>
                     <span><strong>Initial payment:</strong> €0.50 for immediate access to test results</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <span className="text-[#218B8E] font-bold">•</span>
+                    <span className="text-[#07C59A] font-bold">•</span>
                     <span><strong>Trial period:</strong> 2 days of free premium access (€9.99/month value)</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <span className="text-[#218B8E] font-bold">•</span>
+                    <span className="text-[#07C59A] font-bold">•</span>
                     <span><strong>Standard subscription:</strong> €9.99/month after trial period</span>
                   </li>
                 </ul>

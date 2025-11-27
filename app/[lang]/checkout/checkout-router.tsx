@@ -69,7 +69,7 @@ export default function CheckoutRouter() {
             </>
           ) : (
             <>
-              <div className="w-16 h-16 border-4 border-[#218B8E] border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
+              <div className="w-16 h-16 border-4 border-[#07C59A] border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
               <h2 className="text-2xl font-bold text-gray-900 mb-4">
                 {t?.checkout?.preparing || 'Preparando pago...'}
               </h2>

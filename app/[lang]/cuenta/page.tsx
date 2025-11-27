@@ -416,18 +416,18 @@ export default function CuentaPage() {
                   <Line 
                     type="monotone" 
                     dataKey="iq" 
-                    stroke="#218B8E" 
+                    stroke="#07C59A" 
                     strokeWidth={3}
-                    dot={{ fill: '#218B8E', r: 6 }}
+                    dot={{ fill: '#07C59A', r: 6 }}
                     activeDot={{ r: 8 }}
                     name="CI"
                   />
                   <Line 
                     type="monotone" 
                     dataKey="correctAnswers" 
-                    stroke="#031C43" 
+                    stroke="#113240" 
                     strokeWidth={2}
-                    dot={{ fill: '#031C43', r: 4 }}
+                    dot={{ fill: '#113240', r: 4 }}
                     name="Respuestas Correctas"
                   />
                 </LineChart>

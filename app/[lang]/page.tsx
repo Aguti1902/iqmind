@@ -15,7 +15,7 @@ export default function Home() {
         <Header />
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
-            <div className="w-16 h-16 border-4 border-[#218B8E] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <div className="w-16 h-16 border-4 border-[#07C59A] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
             <p className="text-gray-600">Cargando...</p>
           </div>
         </div>
@@ -35,7 +35,7 @@ export default function Home() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div className="animate-fadeIn">
               <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
-                {t.hero.title} <span className="text-[#218B8E]">{t.hero.titleHighlight}</span>
+                {t.hero.title} <span className="text-[#07C59A]">{t.hero.titleHighlight}</span>
               </h1>
                 <p className="text-xl text-gray-600 mb-8">
                   {t.hero.description}
@@ -52,15 +52,15 @@ export default function Home() {
                 {/* Trust indicators */}
                 <div className="mt-8 flex items-center gap-6 text-sm text-gray-600">
                   <div className="flex items-center gap-2">
-                    <FaCheckCircle className="text-[#218B8E]" />
+                    <FaCheckCircle className="text-[#07C59A]" />
                     <span>{t.hero.secure}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <FaCheckCircle className="text-[#218B8E]" />
+                    <FaCheckCircle className="text-[#07C59A]" />
                     <span>{t.hero.validated}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <FaCheckCircle className="text-[#218B8E]" />
+                    <FaCheckCircle className="text-[#07C59A]" />
                     <span>{t.hero.instant}</span>
                   </div>
                 </div>
@@ -69,15 +69,15 @@ export default function Home() {
               <div className="hidden lg:block">
                 <div className="relative">
                   {/* Card con efecto glassmorphism */}
-                  <div className="bg-gradient-to-br from-[#218B8E]/10 to-[#031C43]/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20 shadow-2xl">
+                  <div className="bg-gradient-to-br from-[#07C59A]/10 to-[#113240]/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20 shadow-2xl">
                     {/* Stats destacadas */}
                     <div className="grid grid-cols-2 gap-6 mb-8">
                       <div className="bg-white/90 rounded-2xl p-6 text-center shadow-lg">
-                        <div className="text-4xl font-bold text-[#218B8E] mb-2">100K+</div>
+                        <div className="text-4xl font-bold text-[#07C59A] mb-2">100K+</div>
                         <div className="text-sm text-gray-600">Usuarios</div>
                       </div>
                       <div className="bg-white/90 rounded-2xl p-6 text-center shadow-lg">
-                        <div className="text-4xl font-bold text-[#031C43] mb-2">20</div>
+                        <div className="text-4xl font-bold text-[#113240] mb-2">20</div>
                         <div className="text-sm text-gray-600">Preguntas</div>
                       </div>
                     </div>
@@ -85,7 +85,7 @@ export default function Home() {
                     {/* Features list */}
                     <div className="space-y-4">
                       <div className="bg-white/90 rounded-xl p-4 flex items-center gap-4 shadow-md hover:shadow-lg transition-shadow">
-                        <div className="w-14 h-14 bg-gradient-to-br from-[#218B8E] to-[#1a6f72] rounded-xl flex items-center justify-center flex-shrink-0">
+                        <div className="w-14 h-14 bg-gradient-to-br from-[#07C59A] to-[#069e7b] rounded-xl flex items-center justify-center flex-shrink-0">
                           <FaBrain className="text-white text-2xl" />
                         </div>
                         <div>
@@ -95,7 +95,7 @@ export default function Home() {
                       </div>
                       
                       <div className="bg-white/90 rounded-xl p-4 flex items-center gap-4 shadow-md hover:shadow-lg transition-shadow">
-                        <div className="w-14 h-14 bg-gradient-to-br from-[#218B8E] to-[#1a6f72] rounded-xl flex items-center justify-center flex-shrink-0">
+                        <div className="w-14 h-14 bg-gradient-to-br from-[#07C59A] to-[#069e7b] rounded-xl flex items-center justify-center flex-shrink-0">
                           <FaChartLine className="text-white text-2xl" />
                         </div>
                         <div>
@@ -105,7 +105,7 @@ export default function Home() {
                       </div>
                       
                       <div className="bg-white/90 rounded-xl p-4 flex items-center gap-4 shadow-md hover:shadow-lg transition-shadow">
-                        <div className="w-14 h-14 bg-gradient-to-br from-[#218B8E] to-[#1a6f72] rounded-xl flex items-center justify-center flex-shrink-0">
+                        <div className="w-14 h-14 bg-gradient-to-br from-[#07C59A] to-[#069e7b] rounded-xl flex items-center justify-center flex-shrink-0">
                           <FaCertificate className="text-white text-2xl" />
                         </div>
                         <div>
@@ -117,7 +117,7 @@ export default function Home() {
                   </div>
 
                   {/* Elemento decorativo */}
-                  <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-gradient-to-br from-[#218B8E]/20 to-[#031C43]/20 rounded-full blur-3xl -z-10"></div>
+                  <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-gradient-to-br from-[#07C59A]/20 to-[#113240]/20 rounded-full blur-3xl -z-10"></div>
                 </div>
               </div>
             </div>
@@ -138,7 +138,7 @@ export default function Home() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="text-center">
-                <div className="w-20 h-20 bg-[#218B8E] text-white rounded-full flex items-center justify-center text-3xl font-bold mx-auto mb-6">
+                <div className="w-20 h-20 bg-[#07C59A] text-white rounded-full flex items-center justify-center text-3xl font-bold mx-auto mb-6">
                   1
                 </div>
                 <h3 className="text-2xl font-semibold mb-4">{t.howItWorks.step1}</h3>
@@ -148,7 +148,7 @@ export default function Home() {
               </div>
 
               <div className="text-center">
-                <div className="w-20 h-20 bg-[#218B8E] text-white rounded-full flex items-center justify-center text-3xl font-bold mx-auto mb-6">
+                <div className="w-20 h-20 bg-[#07C59A] text-white rounded-full flex items-center justify-center text-3xl font-bold mx-auto mb-6">
                   2
                 </div>
                 <h3 className="text-2xl font-semibold mb-4">{t.howItWorks.step2}</h3>
@@ -158,7 +158,7 @@ export default function Home() {
               </div>
 
               <div className="text-center">
-                <div className="w-20 h-20 bg-[#218B8E] text-white rounded-full flex items-center justify-center text-3xl font-bold mx-auto mb-6">
+                <div className="w-20 h-20 bg-[#07C59A] text-white rounded-full flex items-center justify-center text-3xl font-bold mx-auto mb-6">
                   3
                 </div>
                 <h3 className="text-2xl font-semibold mb-4">{t.howItWorks.step3}</h3>
@@ -184,7 +184,7 @@ export default function Home() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               <div className="card hover:shadow-xl transition-shadow">
-                <FaBrain className="text-4xl text-[#218B8E] mb-4" />
+                <FaBrain className="text-4xl text-[#07C59A] mb-4" />
                 <h3 className="text-xl font-semibold mb-3">{t.features.validated}</h3>
                 <p className="text-gray-600">
                   {t.features.validatedDesc}
@@ -192,7 +192,7 @@ export default function Home() {
               </div>
 
               <div className="card hover:shadow-xl transition-shadow">
-                <FaUserFriends className="text-4xl text-[#218B8E] mb-4" />
+                <FaUserFriends className="text-4xl text-[#07C59A] mb-4" />
                 <h3 className="text-xl font-semibold mb-3">{t.features.users}</h3>
                 <p className="text-gray-600">
                   {t.features.usersDesc}
@@ -200,7 +200,7 @@ export default function Home() {
               </div>
 
               <div className="card hover:shadow-xl transition-shadow">
-                <FaLock className="text-4xl text-[#218B8E] mb-4" />
+                <FaLock className="text-4xl text-[#07C59A] mb-4" />
                 <h3 className="text-xl font-semibold mb-3">{t.features.secure}</h3>
                 <p className="text-gray-600">
                   {t.features.secureDesc}
@@ -208,7 +208,7 @@ export default function Home() {
               </div>
 
               <div className="card hover:shadow-xl transition-shadow">
-                <FaChartLine className="text-4xl text-[#218B8E] mb-4" />
+                <FaChartLine className="text-4xl text-[#07C59A] mb-4" />
                 <h3 className="text-xl font-semibold mb-3">{t.features.analysis}</h3>
                 <p className="text-gray-600">
                   {t.features.analysisDesc}
@@ -216,7 +216,7 @@ export default function Home() {
               </div>
 
               <div className="card hover:shadow-xl transition-shadow">
-                <FaCertificate className="text-4xl text-[#218B8E] mb-4" />
+                <FaCertificate className="text-4xl text-[#07C59A] mb-4" />
                 <h3 className="text-xl font-semibold mb-3">{t.features.certificate}</h3>
                 <p className="text-gray-600">
                   {t.features.certificateDesc}
@@ -224,7 +224,7 @@ export default function Home() {
               </div>
 
               <div className="card hover:shadow-xl transition-shadow">
-                <FaCheckCircle className="text-4xl text-[#218B8E] mb-4" />
+                <FaCheckCircle className="text-4xl text-[#07C59A] mb-4" />
                 <h3 className="text-xl font-semibold mb-3">{t.features.instant}</h3>
                 <p className="text-gray-600">
                   {t.features.instantDesc}
@@ -249,7 +249,7 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="card">
                 <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 bg-[#e6f5f5] rounded-full flex items-center justify-center text-[#218B8E] font-bold">
+                  <div className="w-12 h-12 bg-[#e6f5f5] rounded-full flex items-center justify-center text-[#07C59A] font-bold">
                     MG
                   </div>
                   <div className="ml-4">
@@ -264,7 +264,7 @@ export default function Home() {
 
               <div className="card">
                 <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 bg-[#e6f5f5] rounded-full flex items-center justify-center text-[#218B8E] font-bold">
+                  <div className="w-12 h-12 bg-[#e6f5f5] rounded-full flex items-center justify-center text-[#07C59A] font-bold">
                     JL
                   </div>
                   <div className="ml-4">
@@ -279,7 +279,7 @@ export default function Home() {
 
               <div className="card">
                 <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 bg-[#e6f5f5] rounded-full flex items-center justify-center text-[#218B8E] font-bold">
+                  <div className="w-12 h-12 bg-[#e6f5f5] rounded-full flex items-center justify-center text-[#07C59A] font-bold">
                     AP
                   </div>
                   <div className="ml-4">
@@ -309,11 +309,11 @@ export default function Home() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
               {/* Plan Inicial */}
-              <div className="bg-white rounded-2xl shadow-xl p-8 border-2 border-[#218B8E]">
+              <div className="bg-white rounded-2xl shadow-xl p-8 border-2 border-[#07C59A]">
                 <div className="text-center mb-6">
                   <h3 className="text-2xl font-bold text-gray-900 mb-2">{t.pricing.initialPayment}</h3>
                   <div className="flex items-baseline justify-center gap-2">
-                    <span className="text-5xl font-bold text-[#218B8E]">{t.pricing.initialPrice}</span>
+                    <span className="text-5xl font-bold text-[#07C59A]">{t.pricing.initialPrice}</span>
                   </div>
                   <p className="text-gray-600 mt-2">{t.pricing.initialDesc}</p>
                   
@@ -327,35 +327,35 @@ export default function Home() {
                 
                 <ul className="space-y-4 mb-8">
                   <li className="flex items-center gap-3">
-                    <FaCheckCircle className="text-[#218B8E] flex-shrink-0" />
+                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0" />
                     <span className="text-gray-700">{t.pricing.initialFeature1}</span>
                   </li>
                   <li className="flex items-center gap-3">
-                    <FaCheckCircle className="text-[#218B8E] flex-shrink-0" />
+                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0" />
                     <span className="text-gray-700">{t.pricing.initialFeature2}</span>
                   </li>
                   <li className="flex items-center gap-3">
-                    <FaCheckCircle className="text-[#218B8E] flex-shrink-0" />
+                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0" />
                     <span className="text-gray-700">{t.pricing.initialFeature3}</span>
                   </li>
                   <li className="flex items-center gap-3">
-                    <FaCheckCircle className="text-[#218B8E] flex-shrink-0" />
+                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0" />
                     <span className="text-gray-700">{t.pricing.initialFeature4}</span>
                   </li>
                 </ul>
 
-                <Link href={`/${lang}/test`} className="block w-full bg-[#218B8E] hover:bg-[#1a6f72] text-white font-semibold py-4 px-6 rounded-lg text-center transition-all duration-200 shadow-lg hover:shadow-xl">
+                <Link href={`/${lang}/test`} className="block w-full bg-[#07C59A] hover:bg-[#069e7b] text-white font-semibold py-4 px-6 rounded-lg text-center transition-all duration-200 shadow-lg hover:shadow-xl">
                   {t.pricing.button}
                 </Link>
               </div>
 
               {/* Plan Premium */}
-              <div className="bg-gradient-to-br from-[#031C43] to-[#052547] rounded-2xl shadow-xl p-8 text-white relative overflow-hidden">
+              <div className="bg-gradient-to-br from-[#113240] to-[#052547] rounded-2xl shadow-xl p-8 text-white relative overflow-hidden">
                 <div className="text-center mb-6">
                   <h3 className="text-2xl font-bold mb-2">{t.pricing.subscription}</h3>
                   
                   {/* Badge debajo del título */}
-                  <div className="inline-block bg-[#218B8E] text-white px-4 py-1 rounded-full text-sm font-semibold mb-3">
+                  <div className="inline-block bg-[#07C59A] text-white px-4 py-1 rounded-full text-sm font-semibold mb-3">
                     {t.pricing.cancelAnytime}
                   </div>
                   
@@ -368,24 +368,24 @@ export default function Home() {
                 
                 <ul className="space-y-4 mb-8">
                   <li className="flex items-center gap-3">
-                    <FaCheckCircle className="text-[#218B8E] flex-shrink-0" />
+                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0" />
                     <span>{t.pricing.subscriptionFeature1}</span>
                   </li>
                   <li className="flex items-center gap-3">
-                    <FaCheckCircle className="text-[#218B8E] flex-shrink-0" />
+                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0" />
                     <span>{t.pricing.subscriptionFeature2}</span>
                   </li>
                   <li className="flex items-center gap-3">
-                    <FaCheckCircle className="text-[#218B8E] flex-shrink-0" />
+                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0" />
                     <span>{t.pricing.subscriptionFeature3}</span>
                   </li>
                   <li className="flex items-center gap-3">
-                    <FaCheckCircle className="text-[#218B8E] flex-shrink-0" />
+                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0" />
                     <span>{t.pricing.subscriptionFeature4}</span>
                   </li>
                 </ul>
 
-                <Link href={`/${lang}/test`} className="block w-full bg-white text-[#031C43] hover:bg-gray-100 font-semibold py-4 px-6 rounded-lg text-center transition-all duration-200 shadow-lg hover:shadow-xl">
+                <Link href={`/${lang}/test`} className="block w-full bg-white text-[#113240] hover:bg-gray-100 font-semibold py-4 px-6 rounded-lg text-center transition-all duration-200 shadow-lg hover:shadow-xl">
                   {t.pricing.button}
                 </Link>
               </div>
@@ -409,7 +409,7 @@ export default function Home() {
               {/* Question 1 */}
               <div className="bg-gray-50 rounded-xl p-6 hover:shadow-lg transition-shadow">
                 <h3 className="text-xl font-semibold text-gray-900 mb-3 flex items-start gap-3">
-                  <span className="text-[#218B8E] text-2xl flex-shrink-0">?</span>
+                  <span className="text-[#07C59A] text-2xl flex-shrink-0">?</span>
                   {t.faq.q1}
                 </h3>
                 <p className="text-gray-600 ml-8">{t.faq.a1}</p>
@@ -418,7 +418,7 @@ export default function Home() {
               {/* Question 2 */}
               <div className="bg-gray-50 rounded-xl p-6 hover:shadow-lg transition-shadow">
                 <h3 className="text-xl font-semibold text-gray-900 mb-3 flex items-start gap-3">
-                  <span className="text-[#218B8E] text-2xl flex-shrink-0">?</span>
+                  <span className="text-[#07C59A] text-2xl flex-shrink-0">?</span>
                   {t.faq.q2}
                 </h3>
                 <p className="text-gray-600 ml-8">{t.faq.a2}</p>
@@ -427,7 +427,7 @@ export default function Home() {
               {/* Question 3 */}
               <div className="bg-gray-50 rounded-xl p-6 hover:shadow-lg transition-shadow">
                 <h3 className="text-xl font-semibold text-gray-900 mb-3 flex items-start gap-3">
-                  <span className="text-[#218B8E] text-2xl flex-shrink-0">?</span>
+                  <span className="text-[#07C59A] text-2xl flex-shrink-0">?</span>
                   {t.faq.q3}
                 </h3>
                 <p className="text-gray-600 ml-8">{t.faq.a3}</p>
@@ -436,7 +436,7 @@ export default function Home() {
               {/* Question 4 */}
               <div className="bg-gray-50 rounded-xl p-6 hover:shadow-lg transition-shadow">
                 <h3 className="text-xl font-semibold text-gray-900 mb-3 flex items-start gap-3">
-                  <span className="text-[#218B8E] text-2xl flex-shrink-0">?</span>
+                  <span className="text-[#07C59A] text-2xl flex-shrink-0">?</span>
                   {t.faq.q4}
                 </h3>
                 <p className="text-gray-600 ml-8">{t.faq.a4}</p>
@@ -445,7 +445,7 @@ export default function Home() {
               {/* Question 5 */}
               <div className="bg-gray-50 rounded-xl p-6 hover:shadow-lg transition-shadow">
                 <h3 className="text-xl font-semibold text-gray-900 mb-3 flex items-start gap-3">
-                  <span className="text-[#218B8E] text-2xl flex-shrink-0">?</span>
+                  <span className="text-[#07C59A] text-2xl flex-shrink-0">?</span>
                   {t.faq.q5}
                 </h3>
                 <p className="text-gray-600 ml-8">{t.faq.a5}</p>
@@ -454,7 +454,7 @@ export default function Home() {
               {/* Question 6 */}
               <div className="bg-gray-50 rounded-xl p-6 hover:shadow-lg transition-shadow">
                 <h3 className="text-xl font-semibold text-gray-900 mb-3 flex items-start gap-3">
-                  <span className="text-[#218B8E] text-2xl flex-shrink-0">?</span>
+                  <span className="text-[#07C59A] text-2xl flex-shrink-0">?</span>
                   {t.faq.q6}
                 </h3>
                 <p className="text-gray-600 ml-8">{t.faq.a6}</p>
@@ -464,7 +464,7 @@ export default function Home() {
         </section>
 
         {/* CTA Final */}
-        <section className="py-20 bg-gradient-to-br from-[#218B8E] to-[#1a6f72] text-white">
+        <section className="py-20 bg-gradient-to-br from-[#07C59A] to-[#069e7b] text-white">
           <div className="container-custom text-center">
             <h2 className="text-4xl font-bold mb-6">
               {t.cta.title}
@@ -472,7 +472,7 @@ export default function Home() {
             <p className="text-xl mb-8 opacity-90">
               {t.cta.subtitle}
             </p>
-                <Link href={`/${lang}/test`} className="bg-white text-[#218B8E] hover:bg-gray-100 font-semibold py-4 px-12 rounded-lg text-lg transition-all duration-200 shadow-lg hover:shadow-xl inline-block">
+                <Link href={`/${lang}/test`} className="bg-white text-[#07C59A] hover:bg-gray-100 font-semibold py-4 px-12 rounded-lg text-lg transition-all duration-200 shadow-lg hover:shadow-xl inline-block">
                   {t.cta.button}
                 </Link>
             <p className="mt-6 text-sm opacity-75">

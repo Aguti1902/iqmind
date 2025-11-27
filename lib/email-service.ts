@@ -67,7 +67,7 @@ export const emailTemplates = {
               <table role="presentation" style="max-width: 600px; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
                 <!-- Header -->
                 <tr>
-                  <td style="background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); padding: 40px 30px; text-align: center;">
+                  <td style="background: linear-gradient(135deg, #113240 0%, #07C59A 100%); padding: 40px 30px; text-align: center;">
                     <img src="https://www.mindmetric.io/images/LOGO2BLANCO.png" alt="MindMetric" style="height: 40px; width: auto; margin: 0 auto; display: block;" />
                   </td>
                 </tr>
@@ -75,7 +75,7 @@ export const emailTemplates = {
                 <!-- Content -->
                 <tr>
                   <td style="padding: 40px 30px; text-align: center;">
-                    <h2 style="color: #031C43; margin: 0 0 20px 0; font-size: 28px; font-weight: 600;">
+                    <h2 style="color: #113240; margin: 0 0 20px 0; font-size: 28px; font-weight: 600;">
                       ${t('welcome')}, ${userName}!
                     </h2>
                     
@@ -84,7 +84,7 @@ export const emailTemplates = {
                     </p>
                     
                     <!-- IQ Score -->
-                    <div style="background: linear-gradient(135deg, #218B8E 0%, #031C43 100%); border-radius: 16px; padding: 30px; margin: 30px 0; color: #ffffff;">
+                    <div style="background: linear-gradient(135deg, #07C59A 0%, #113240 100%); border-radius: 16px; padding: 30px; margin: 30px 0; color: #ffffff;">
                       <p style="margin: 0 0 10px 0; font-size: 14px; opacity: 0.9;">
                         ${t('estimatedIQ')}
                       </p>
@@ -106,7 +106,7 @@ export const emailTemplates = {
                       </p>
                     </div>
                     
-                    <a href="https://mindmetric.io/${lang}/checkout" style="display: inline-block; background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 16px; margin: 20px 0;">
+                    <a href="https://mindmetric.io/${lang}/checkout" style="display: inline-block; background: linear-gradient(135deg, #113240 0%, #07C59A 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 16px; margin: 20px 0;">
                       ${t('viewCompleteResult')}
                     </a>
                     
@@ -157,7 +157,7 @@ export const emailTemplates = {
               <table role="presentation" style="max-width: 600px; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
                 <!-- Header -->
                 <tr>
-                  <td style="background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); padding: 40px 30px; text-align: center;">
+                  <td style="background: linear-gradient(135deg, #113240 0%, #07C59A 100%); padding: 40px 30px; text-align: center;">
                     <img src="https://www.mindmetric.io/images/LOGO2BLANCO.png" alt="MindMetric" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
                     <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">
                       🎁 ${lang === 'es' ? '¡Tu Resultado te Espera!' : 'Your Result Awaits!'}
@@ -168,7 +168,7 @@ export const emailTemplates = {
                 <!-- Content -->
                 <tr>
                   <td style="padding: 40px 30px;">
-                    <h2 style="color: #031C43; margin: 0 0 20px 0; font-size: 24px; font-weight: 600;">
+                    <h2 style="color: #113240; margin: 0 0 20px 0; font-size: 24px; font-weight: 600;">
                       ${lang === 'es' ? 'Hola' : 'Hello'}, ${userName} 👋
                     </h2>
                     
@@ -178,8 +178,8 @@ export const emailTemplates = {
                         : 'We noticed you started the payment process but didn\'t complete it. Your exact result is just €0.50 away!'}
                     </p>
                     
-                    <div style="background-color: #e6f5f5; border-left: 4px solid #218B8E; padding: 20px; margin: 30px 0; border-radius: 4px;">
-                      <h3 style="color: #218B8E; margin: 0 0 10px 0; font-size: 18px; font-weight: 600;">
+                    <div style="background-color: #e6f5f5; border-left: 4px solid #07C59A; padding: 20px; margin: 30px 0; border-radius: 4px;">
+                      <h3 style="color: #07C59A; margin: 0 0 10px 0; font-size: 18px; font-weight: 600;">
                         ${lang === 'es' ? '¿Qué obtienes por 0,50€?' : 'What do you get for €0.50?'}
                       </h3>
                       <ul style="color: #2d3748; margin: 0; padding-left: 20px; line-height: 1.8;">
@@ -203,7 +203,7 @@ export const emailTemplates = {
                     </div>
                     
                     <div style="text-align: center; margin: 30px 0;">
-                      <a href="https://mindmetric.io/${lang}/checkout" style="display: inline-block; background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 18px;">
+                      <a href="https://mindmetric.io/${lang}/checkout" style="display: inline-block; background: linear-gradient(135deg, #113240 0%, #07C59A 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 18px;">
                         ${lang === 'es' ? 'Completar Pago Ahora' : 'Complete Payment Now'}
                       </a>
                     </div>
@@ -257,7 +257,7 @@ export const emailTemplates = {
               <table role="presentation" style="max-width: 600px; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
                 <!-- Header -->
                 <tr>
-                  <td style="background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); padding: 40px 30px; text-align: center;">
+                  <td style="background: linear-gradient(135deg, #113240 0%, #07C59A 100%); padding: 40px 30px; text-align: center;">
                     <img src="https://www.mindmetric.io/images/LOGO2BLANCO.png" alt="MindMetric" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
                     <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">
                       🎉 ${lang === 'es' ? '¡Pago Confirmado!' : 'Payment Confirmed!'}
@@ -268,7 +268,7 @@ export const emailTemplates = {
                 <!-- Content -->
                 <tr>
                   <td style="padding: 40px 30px; text-align: center;">
-                    <h2 style="color: #031C43; margin: 0 0 20px 0; font-size: 28px; font-weight: 600;">
+                    <h2 style="color: #113240; margin: 0 0 20px 0; font-size: 28px; font-weight: 600;">
                       ${lang === 'es' ? '¡Gracias' : 'Thank you'}, ${userName}!
                     </h2>
                     
@@ -279,7 +279,7 @@ export const emailTemplates = {
                     </p>
                     
                     <!-- IQ Score -->
-                    <div style="background: linear-gradient(135deg, #218B8E 0%, #031C43 100%); border-radius: 16px; padding: 30px; margin: 30px 0; color: #ffffff;">
+                    <div style="background: linear-gradient(135deg, #07C59A 0%, #113240 100%); border-radius: 16px; padding: 30px; margin: 30px 0; color: #ffffff;">
                       <p style="margin: 0 0 10px 0; font-size: 14px; opacity: 0.9;">
                         ${lang === 'es' ? 'Tu Coeficiente Intelectual' : 'Your Intelligence Quotient'}
                       </p>
@@ -306,7 +306,7 @@ export const emailTemplates = {
                     </div>
                     
                     <div style="text-align: center; margin: 30px 0;">
-                      <a href="https://mindmetric.io/${lang}/resultado" style="display: inline-block; background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 18px;">
+                      <a href="https://mindmetric.io/${lang}/resultado" style="display: inline-block; background: linear-gradient(135deg, #113240 0%, #07C59A 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 18px;">
                         ${lang === 'es' ? 'Ver Mi Resultado Completo' : 'View My Complete Result'}
                       </a>
                     </div>
@@ -360,7 +360,7 @@ export const emailTemplates = {
               <table role="presentation" style="max-width: 600px; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
                 <!-- Header -->
                 <tr>
-                  <td style="background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); padding: 40px 30px; text-align: center;">
+                  <td style="background: linear-gradient(135deg, #113240 0%, #07C59A 100%); padding: 40px 30px; text-align: center;">
                     <img src="https://www.mindmetric.io/images/LOGO2BLANCO.png" alt="MindMetric" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
                     <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">
                       🚀 ${lang === 'es' ? '¡Premium Activado!' : 'Premium Activated!'}
@@ -371,7 +371,7 @@ export const emailTemplates = {
                 <!-- Content -->
                 <tr>
                   <td style="padding: 40px 30px;">
-                    <h2 style="color: #031C43; margin: 0 0 20px 0; font-size: 24px; font-weight: 600;">
+                    <h2 style="color: #113240; margin: 0 0 20px 0; font-size: 24px; font-weight: 600;">
                       ${lang === 'es' ? 'Hola' : 'Hello'}, ${userName}! 👋
                     </h2>
                     
@@ -381,8 +381,8 @@ export const emailTemplates = {
                         : 'Your 2-day premium trial period has started! You now have access to all advanced features.'}
                     </p>
                     
-                    <div style="background-color: #e6f5f5; border-left: 4px solid #218B8E; padding: 20px; margin: 30px 0; border-radius: 4px;">
-                      <h3 style="color: #218B8E; margin: 0 0 15px 0; font-size: 18px; font-weight: 600;">
+                    <div style="background-color: #e6f5f5; border-left: 4px solid #07C59A; padding: 20px; margin: 30px 0; border-radius: 4px;">
+                      <h3 style="color: #07C59A; margin: 0 0 15px 0; font-size: 18px; font-weight: 600;">
                         ✨ ${lang === 'es' ? '¿Qué puedes hacer ahora?' : 'What can you do now?'}
                       </h3>
                       <ul style="color: #2d3748; margin: 0; padding-left: 20px; line-height: 1.8;">
@@ -409,7 +409,7 @@ export const emailTemplates = {
                     </div>
                     
                     <div style="text-align: center; margin: 30px 0;">
-                      <a href="https://mindmetric.io/${lang}/cuenta" style="display: inline-block; background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 18px;">
+                      <a href="https://mindmetric.io/${lang}/cuenta" style="display: inline-block; background: linear-gradient(135deg, #113240 0%, #07C59A 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 18px;">
                         ${lang === 'es' ? 'Acceder a Mi Dashboard' : 'Access My Dashboard'}
                       </a>
                     </div>
@@ -474,7 +474,7 @@ export const emailTemplates = {
                 <!-- Content -->
                 <tr>
                   <td style="padding: 40px 30px;">
-                    <h2 style="color: #031C43; margin: 0 0 20px 0; font-size: 24px; font-weight: 600;">
+                    <h2 style="color: #113240; margin: 0 0 20px 0; font-size: 24px; font-weight: 600;">
                       ${lang === 'es' ? 'Hola' : 'Hello'}, ${userName} 👋
                     </h2>
                     
@@ -511,7 +511,7 @@ export const emailTemplates = {
                     </p>
                     
                     <div style="text-align: center; margin: 30px 0;">
-                      <a href="https://mindmetric.io/${lang}/cuenta" style="display: inline-block; background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 18px; margin: 0;">
+                      <a href="https://mindmetric.io/${lang}/cuenta" style="display: inline-block; background: linear-gradient(135deg, #113240 0%, #07C59A 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 18px; margin: 0;">
                         ${lang === 'es' ? 'Gestionar Suscripción' : 'Manage Subscription'}
                       </a>
                     </div>
@@ -576,7 +576,7 @@ export const emailTemplates = {
                 <!-- Content -->
                 <tr>
                   <td style="padding: 40px 30px; text-align: center;">
-                    <h2 style="color: #031C43; margin: 0 0 20px 0; font-size: 28px; font-weight: 600;">
+                    <h2 style="color: #113240; margin: 0 0 20px 0; font-size: 28px; font-weight: 600;">
                       ${lang === 'es' ? '¡Bienvenido a Premium!' : 'Welcome to Premium!'}
                     </h2>
                     
@@ -599,8 +599,8 @@ export const emailTemplates = {
                       </ul>
                     </div>
                     
-                    <div style="background-color: #e6f5f5; border-left: 4px solid #218B8E; padding: 20px; margin: 30px 0; border-radius: 4px;">
-                      <p style="color: #218B8E; font-size: 14px; margin: 0; line-height: 1.6;">
+                    <div style="background-color: #e6f5f5; border-left: 4px solid #07C59A; padding: 20px; margin: 30px 0; border-radius: 4px;">
+                      <p style="color: #07C59A; font-size: 14px; margin: 0; line-height: 1.6;">
                         <strong>${lang === 'es' ? 'Próximo cobro:' : 'Next charge:'}</strong><br>
                         9,99€ ${lang === 'es' ? 'el próximo mes' : 'next month'}<br>
                         ${lang === 'es' ? 'Puedes cancelar en cualquier momento desde tu cuenta.' : 'You can cancel anytime from your account.'}
@@ -608,7 +608,7 @@ export const emailTemplates = {
                     </div>
                     
                     <div style="text-align: center; margin: 30px 0;">
-                      <a href="https://mindmetric.io/${lang}/cuenta" style="display: inline-block; background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 18px;">
+                      <a href="https://mindmetric.io/${lang}/cuenta" style="display: inline-block; background: linear-gradient(135deg, #113240 0%, #07C59A 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 18px;">
                         ${lang === 'es' ? 'Acceder a Mi Dashboard' : 'Access My Dashboard'}
                       </a>
                     </div>
@@ -673,7 +673,7 @@ export const emailTemplates = {
                 <!-- Content -->
                 <tr>
                   <td style="padding: 40px 30px; text-align: center;">
-                    <h2 style="color: #031C43; margin: 0 0 20px 0; font-size: 24px; font-weight: 600;">
+                    <h2 style="color: #113240; margin: 0 0 20px 0; font-size: 24px; font-weight: 600;">
                       ${lang === 'es' ? 'Hola' : 'Hello'}, ${userName}! 👋
                     </h2>
                     
@@ -683,11 +683,11 @@ export const emailTemplates = {
                         : 'We have received your monthly Premium payment. Thank you for trusting us!'}
                     </p>
                     
-                    <div style="background-color: #e6f5f5; border-left: 4px solid #218B8E; padding: 20px; margin: 30px 0; border-radius: 4px;">
-                      <p style="color: #218B8E; font-size: 14px; margin: 0 0 10px 0;">
+                    <div style="background-color: #e6f5f5; border-left: 4px solid #07C59A; padding: 20px; margin: 30px 0; border-radius: 4px;">
+                      <p style="color: #07C59A; font-size: 14px; margin: 0 0 10px 0;">
                         ${lang === 'es' ? 'Monto pagado:' : 'Amount paid:'}
                       </p>
-                      <p style="color: #218B8E; font-size: 32px; margin: 0; font-weight: 700;">
+                      <p style="color: #07C59A; font-size: 32px; margin: 0; font-weight: 700;">
                         ${amount}€
                       </p>
                       <p style="color: #2d3748; font-size: 14px; margin: 10px 0 0 0;">
@@ -702,7 +702,7 @@ export const emailTemplates = {
                     </p>
                     
                     <div style="text-align: center; margin: 30px 0;">
-                      <a href="https://mindmetric.io/${lang}/cuenta" style="display: inline-block; background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 18px;">
+                      <a href="https://mindmetric.io/${lang}/cuenta" style="display: inline-block; background: linear-gradient(135deg, #113240 0%, #07C59A 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 18px;">
                         ${lang === 'es' ? 'Ver Mi Cuenta' : 'View My Account'}
                       </a>
                     </div>
@@ -767,7 +767,7 @@ export const emailTemplates = {
                 <!-- Content -->
                 <tr>
                   <td style="padding: 40px 30px;">
-                    <h2 style="color: #031C43; margin: 0 0 20px 0; font-size: 24px; font-weight: 600;">
+                    <h2 style="color: #113240; margin: 0 0 20px 0; font-size: 24px; font-weight: 600;">
                       ${lang === 'es' ? 'Hola' : 'Hello'}, ${userName} 👋
                     </h2>
                     
@@ -808,7 +808,7 @@ export const emailTemplates = {
                     </p>
                     
                     <div style="text-align: center; margin: 30px 0;">
-                      <a href="https://mindmetric.io/${lang}/cuenta" style="display: inline-block; background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 18px;">
+                      <a href="https://mindmetric.io/${lang}/cuenta" style="display: inline-block; background: linear-gradient(135deg, #113240 0%, #07C59A 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 18px;">
                         ${lang === 'es' ? 'Actualizar Método de Pago' : 'Update Payment Method'}
                       </a>
                     </div>
@@ -873,7 +873,7 @@ export const emailTemplates = {
                 <!-- Content -->
                 <tr>
                   <td style="padding: 40px 30px;">
-                    <h2 style="color: #031C43; margin: 0 0 20px 0; font-size: 24px; font-weight: 600;">
+                    <h2 style="color: #113240; margin: 0 0 20px 0; font-size: 24px; font-weight: 600;">
                       ${lang === 'es' ? 'Hola' : 'Hello'}, ${userName} 👋
                     </h2>
                     
@@ -883,11 +883,11 @@ export const emailTemplates = {
                         : 'Your cancellation request has been processed. We\'re sorry to see you go.'}
                     </p>
                     
-                    <div style="background-color: #e6f5f5; border-left: 4px solid #218B8E; padding: 20px; margin: 30px 0; border-radius: 4px;">
-                      <p style="color: #218B8E; font-size: 14px; margin: 0 0 10px 0;">
+                    <div style="background-color: #e6f5f5; border-left: 4px solid #07C59A; padding: 20px; margin: 30px 0; border-radius: 4px;">
+                      <p style="color: #07C59A; font-size: 14px; margin: 0 0 10px 0;">
                         ${lang === 'es' ? 'Acceso hasta:' : 'Access until:'}
                       </p>
-                      <p style="color: #218B8E; font-size: 18px; margin: 0; font-weight: 700;">
+                      <p style="color: #07C59A; font-size: 18px; margin: 0; font-weight: 700;">
                         ${accessUntil}
                       </p>
                       <p style="color: #2d3748; font-size: 14px; margin: 10px 0 0 0; line-height: 1.6;">
@@ -904,7 +904,7 @@ export const emailTemplates = {
                     </p>
                     
                     <div style="text-align: center; margin: 30px 0;">
-                      <a href="https://mindmetric.io/${lang}/cuenta" style="display: inline-block; background: linear-gradient(135deg, #031C43 0%, #218B8E 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 18px;">
+                      <a href="https://mindmetric.io/${lang}/cuenta" style="display: inline-block; background: linear-gradient(135deg, #113240 0%, #07C59A 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 18px;">
                         ${lang === 'es' ? 'Ver Mi Cuenta' : 'View My Account'}
                       </a>
                     </div>

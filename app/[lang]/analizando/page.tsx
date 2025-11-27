@@ -72,7 +72,7 @@ export default function AnalyzingPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-white">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-[#218B8E] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-16 h-16 border-4 border-[#07C59A] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600">Loading...</p>
         </div>
       </div>
@@ -88,7 +88,7 @@ export default function AnalyzingPage() {
           <div className="relative w-32 h-32 mx-auto mb-8">
             <div className="absolute inset-0 border-8 border-gray-200 rounded-full"></div>
             <div 
-              className="absolute inset-0 border-8 border-[#031C43] rounded-full border-t-transparent animate-spin"
+              className="absolute inset-0 border-8 border-[#113240] rounded-full border-t-transparent animate-spin"
               style={{ animationDuration: '1s' }}
             ></div>
           </div>
@@ -105,7 +105,7 @@ export default function AnalyzingPage() {
           {/* Barra de progreso */}
           <div className="w-full bg-gray-200 rounded-full h-3 mb-4 overflow-hidden">
             <div 
-              className="bg-gradient-to-r from-[#218B8E] to-[#031C43] h-full rounded-full transition-all duration-300 ease-out"
+              className="bg-gradient-to-r from-[#07C59A] to-[#113240] h-full rounded-full transition-all duration-300 ease-out"
               style={{ width: `${progress}%` }}
             ></div>
           </div>
@@ -135,7 +135,7 @@ export default function AnalyzingPage() {
               >
                 <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-500 ${
                   completedCategories.includes(index)
-                    ? 'bg-[#218B8E] scale-100'
+                    ? 'bg-[#07C59A] scale-100'
                     : 'bg-gray-600 scale-75'
                 }`}>
                   {completedCategories.includes(index) && (
@@ -155,7 +155,7 @@ export default function AnalyzingPage() {
 
                 {completedCategories.includes(index) && (
                   <div className="flex-shrink-0">
-                    <div className="w-2 h-2 bg-[#218B8E] rounded-full animate-pulse"></div>
+                    <div className="w-2 h-2 bg-[#07C59A] rounded-full animate-pulse"></div>
                   </div>
                 )}
               </div>

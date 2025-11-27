@@ -110,8 +110,8 @@ export default function ResultadoPage() {
     })
     
     // Colores corporativos
-    const greenColor: [number, number, number] = [33, 139, 142] // #218B8E
-    const blueColor: [number, number, number] = [3, 28, 67] // #031C43
+    const greenColor: [number, number, number] = [33, 139, 142] // #07C59A
+    const blueColor: [number, number, number] = [3, 28, 67] // #113240
     
     // Fondo degradado (simulado con rectángulos)
     doc.setFillColor(240, 250, 250)
@@ -259,7 +259,7 @@ export default function ResultadoPage() {
   const distributionData = t ? [
     { name: `${t.result.veryLow} (<70)`, value: 2.2, color: '#ef4444', range: '<70' },
     { name: `${t.result.low} (70-85)`, value: 13.6, color: '#f97316', range: '70-85' },
-    { name: `${t.result.average} (85-115)`, value: 68, color: '#218B8E', range: '85-115' },
+    { name: `${t.result.average} (85-115)`, value: 68, color: '#07C59A', range: '85-115' },
     { name: `${t.result.superior} (115-130)`, value: 13.6, color: '#8b5cf6', range: '115-130' },
     { name: `${t.result.verySuperior} (>130)`, value: 2.2, color: '#10b981', range: '>130' }
   ] : []
@@ -299,7 +299,7 @@ export default function ResultadoPage() {
     }
   ] : []
 
-  const COLORS = ['#ef4444', '#f97316', '#218B8E', '#8b5cf6', '#10b981']
+  const COLORS = ['#ef4444', '#f97316', '#07C59A', '#8b5cf6', '#10b981']
   
   // Determinar posición en la curva de distribución
   const getUserPercentile = (iq: number) => {
@@ -336,7 +336,7 @@ export default function ResultadoPage() {
           {/* Main IQ Score Card - Hero */}
           <div className="bg-white rounded-3xl shadow-2xl overflow-hidden mb-8 animate-fadeIn">
             {/* Gradient Header */}
-            <div className="bg-gradient-to-r from-[#218B8E] via-[#1a6f72] to-[#031C43] p-6 md:p-12 text-white text-center relative overflow-hidden">
+            <div className="bg-gradient-to-r from-[#07C59A] via-[#069e7b] to-[#113240] p-6 md:p-12 text-white text-center relative overflow-hidden">
               {/* Decorative circles */}
               <div className="absolute top-0 right-0 w-32 h-32 md:w-64 md:h-64 bg-white opacity-5 rounded-full -mr-16 md:-mr-32 -mt-16 md:-mt-32"></div>
               <div className="absolute bottom-0 left-0 w-24 h-24 md:w-48 md:h-48 bg-white opacity-5 rounded-full -ml-12 md:-ml-24 -mb-12 md:-mb-24"></div>
@@ -384,7 +384,7 @@ export default function ResultadoPage() {
 
             {/* Description Card */}
             <div className="p-8 md:p-12">
-              <div className="bg-gradient-to-br from-[#e6f5f5] to-white rounded-2xl p-8 border-2 border-[#218B8E]/20">
+              <div className="bg-gradient-to-br from-[#e6f5f5] to-white rounded-2xl p-8 border-2 border-[#07C59A]/20">
                 <h3 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-3">
                   <span className="text-3xl">📊</span>
                   {t.result.analysisTitle}
@@ -416,15 +416,15 @@ export default function ResultadoPage() {
                                       FaBolt;
                 
                 return (
-                  <div key={index} className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-4 md:p-6 border-2 border-gray-100 hover:border-[#218B8E] transition-all duration-300">
+                  <div key={index} className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-4 md:p-6 border-2 border-gray-100 hover:border-[#07C59A] transition-all duration-300">
                     <div className="flex items-center justify-between mb-3 md:mb-4">
-                      <IconComponent className="text-2xl md:text-3xl lg:text-4xl text-[#218B8E]" />
-                      <span className="text-xl md:text-2xl lg:text-3xl font-bold text-[#218B8E]">{cat.score}%</span>
+                      <IconComponent className="text-2xl md:text-3xl lg:text-4xl text-[#07C59A]" />
+                      <span className="text-xl md:text-2xl lg:text-3xl font-bold text-[#07C59A]">{cat.score}%</span>
                     </div>
                     <h4 className="font-bold text-gray-900 mb-2 text-sm md:text-base">{cat.name}</h4>
                     <div className="w-full bg-gray-200 rounded-full h-2 md:h-3">
                       <div 
-                        className="bg-gradient-to-r from-[#218B8E] to-[#1a6f72] h-2 md:h-3 rounded-full transition-all duration-1000"
+                        className="bg-gradient-to-r from-[#07C59A] to-[#069e7b] h-2 md:h-3 rounded-full transition-all duration-1000"
                         style={{ width: `${cat.score}%` }}
                       ></div>
                     </div>
@@ -468,7 +468,7 @@ export default function ResultadoPage() {
                   <div 
                     key={index} 
                     className={`flex items-center justify-between p-2 rounded ${
-                      userIQ >= parseInt(item.range.replace(/[<>]/g, '').split('-')[0] || '0') ? 'bg-[#218B8E]/10 font-semibold' : ''
+                      userIQ >= parseInt(item.range.replace(/[<>]/g, '').split('-')[0] || '0') ? 'bg-[#07C59A]/10 font-semibold' : ''
                     }`}
                   >
                     <div className="flex items-center gap-3">
@@ -494,10 +494,10 @@ export default function ResultadoPage() {
                   <XAxis dataKey="category" style={{ fontSize: '12px' }} />
                   <YAxis domain={[0, 8]} />
                   <Tooltip 
-                    contentStyle={{ backgroundColor: '#fff', border: '2px solid #218B8E', borderRadius: '8px' }}
+                    contentStyle={{ backgroundColor: '#fff', border: '2px solid #07C59A', borderRadius: '8px' }}
                   />
                           <Legend wrapperStyle={{ fontSize: '12px' }} formatter={(value) => value === 'correctas' ? t.result.correct : t.result.incorrect} />
-                  <Bar dataKey="correctas" fill="#218B8E" name={t.result.correct} radius={[8, 8, 0, 0]} />
+                  <Bar dataKey="correctas" fill="#07C59A" name={t.result.correct} radius={[8, 8, 0, 0]} />
                   <Bar dataKey="incorrectas" fill="#ef4444" name={t.result.incorrect} radius={[8, 8, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
@@ -514,7 +514,7 @@ export default function ResultadoPage() {
                     <div className="text-xs text-gray-600">{t.result.incorrect}</div>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-[#218B8E]">{percentageCorrect}%</div>
+                    <div className="text-2xl font-bold text-[#07C59A]">{percentageCorrect}%</div>
                     <div className="text-xs text-gray-600">{t.result.accuracy}</div>
                   </div>
                 </div>
@@ -524,22 +524,22 @@ export default function ResultadoPage() {
 
           {/* Certificate Card */}
           <div className="bg-white rounded-3xl shadow-2xl overflow-hidden mb-8">
-            <div className="bg-gradient-to-r from-[#031C43] to-[#052547] p-6 md:p-8 text-white text-center">
+            <div className="bg-gradient-to-r from-[#113240] to-[#052547] p-6 md:p-8 text-white text-center">
               <FaDownload className="text-4xl md:text-6xl mx-auto mb-3 md:mb-4" />
               <h2 className="text-xl md:text-2xl lg:text-3xl font-bold mb-2">{t.result.certificateTitle}</h2>
               <p className="text-sm md:text-base lg:text-lg opacity-90">{t.result.certificateSubtitle}</p>
             </div>
             <div className="p-4 md:p-8">
               {/* Certificate Preview */}
-              <div className="border-4 border-[#218B8E] rounded-xl p-8 bg-gradient-to-br from-white to-gray-50 mb-6">
+              <div className="border-4 border-[#07C59A] rounded-xl p-8 bg-gradient-to-br from-white to-gray-50 mb-6">
                 <div className="text-center">
                   <div className="text-6xl mb-4">🏆</div>
                   <h3 className="text-2xl font-bold text-gray-900 mb-2">{t.certificate.title}</h3>
                   <p className="text-gray-600 mb-4">{t.certificate.certifies}</p>
-                  <p className="text-3xl font-bold text-[#218B8E] mb-4">{userName}</p>
+                  <p className="text-3xl font-bold text-[#07C59A] mb-4">{userName}</p>
                   <p className="text-gray-600 mb-2">{t.certificate.completed}</p>
                   <p className="text-gray-600 mb-4">{t.certificate.obtained}</p>
-                  <div className="text-6xl font-black text-[#031C43] mb-4">{userIQ}</div>
+                  <div className="text-6xl font-black text-[#113240] mb-4">{userIQ}</div>
                   <p className="text-lg font-semibold text-gray-800 mb-6">{t.certificate.category}: {category}</p>
                   <p className="text-sm text-gray-500">
                     {t.certificate.issueDate}: {new Date().toLocaleDateString(
@@ -558,7 +558,7 @@ export default function ResultadoPage() {
               
               <button
                 onClick={downloadCertificate}
-                className="w-full bg-gradient-to-r from-[#218B8E] to-[#1a6f72] hover:from-[#1a6f72] hover:to-[#145356] text-white px-8 py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-3"
+                className="w-full bg-gradient-to-r from-[#07C59A] to-[#069e7b] hover:from-[#069e7b] hover:to-[#04775c] text-white px-8 py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-3"
               >
                 <FaDownload className="text-2xl" />
                 {t.result.downloadCertificate}

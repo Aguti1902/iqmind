@@ -173,7 +173,7 @@ export default function AdminPage() {
         <MinimalHeader email={userEmail} />
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#218B8E] mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#07C59A] mx-auto mb-4"></div>
             <p className="text-gray-600">Cargando panel de administración...</p>
           </div>
         </div>
@@ -191,7 +191,7 @@ export default function AdminPage() {
           {/* Header */}
           <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-8">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-[#218B8E] to-[#1a6f72] rounded-xl flex items-center justify-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-[#07C59A] to-[#069e7b] rounded-xl flex items-center justify-center">
                 <FaShieldAlt className="text-3xl text-white" />
               </div>
               <div>
@@ -285,7 +285,7 @@ export default function AdminPage() {
                 onClick={() => setActiveTab('payment')}
                 className={`flex-1 px-6 py-4 font-semibold transition-colors ${
                   activeTab === 'payment' 
-                    ? 'bg-[#218B8E] text-white' 
+                    ? 'bg-[#07C59A] text-white' 
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
@@ -298,7 +298,7 @@ export default function AdminPage() {
                 onClick={() => setActiveTab('pricing')}
                 className={`flex-1 px-6 py-4 font-semibold transition-colors ${
                   activeTab === 'pricing' 
-                    ? 'bg-[#218B8E] text-white' 
+                    ? 'bg-[#07C59A] text-white' 
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
@@ -311,7 +311,7 @@ export default function AdminPage() {
                 onClick={() => setActiveTab('admins')}
                 className={`flex-1 px-6 py-4 font-semibold transition-colors ${
                   activeTab === 'admins' 
-                    ? 'bg-[#218B8E] text-white' 
+                    ? 'bg-[#07C59A] text-white' 
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
@@ -327,7 +327,7 @@ export default function AdminPage() {
               {activeTab === 'payment' && (
                 <div className="space-y-6">
                   <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
-                    <FaKey className="text-[#218B8E]" />
+                    <FaKey className="text-[#07C59A]" />
                     Credenciales de Stripe
                   </h2>
                   
@@ -346,7 +346,7 @@ export default function AdminPage() {
                           value={config.stripe_test_publishable_key}
                           onChange={(e) => setConfig({...config, stripe_test_publishable_key: e.target.value})}
                           placeholder="pk_test_..."
-                          className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#218B8E] focus:outline-none font-mono text-sm"
+                          className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#07C59A] focus:outline-none font-mono text-sm"
                         />
                       </div>
                       <div>
@@ -358,7 +358,7 @@ export default function AdminPage() {
                           value={config.stripe_test_secret_key}
                           onChange={(e) => setConfig({...config, stripe_test_secret_key: e.target.value})}
                           placeholder="sk_test_..."
-                          className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#218B8E] focus:outline-none font-mono text-sm"
+                          className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#07C59A] focus:outline-none font-mono text-sm"
                         />
                       </div>
                       <div>
@@ -370,7 +370,7 @@ export default function AdminPage() {
                           value={config.stripe_test_webhook_secret}
                           onChange={(e) => setConfig({...config, stripe_test_webhook_secret: e.target.value})}
                           placeholder="whsec_test_..."
-                          className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#218B8E] focus:outline-none font-mono text-sm"
+                          className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#07C59A] focus:outline-none font-mono text-sm"
                         />
                         <p className="text-xs text-gray-600 mt-1">
                           🔒 Necesaria para verificar webhooks de Stripe
@@ -385,7 +385,7 @@ export default function AdminPage() {
                           value={config.stripe_test_price_id}
                           onChange={(e) => setConfig({...config, stripe_test_price_id: e.target.value})}
                           placeholder="price_test_..."
-                          className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#218B8E] focus:outline-none font-mono text-sm"
+                          className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#07C59A] focus:outline-none font-mono text-sm"
                         />
                       </div>
                     </div>
@@ -406,7 +406,7 @@ export default function AdminPage() {
                           value={config.stripe_live_publishable_key}
                           onChange={(e) => setConfig({...config, stripe_live_publishable_key: e.target.value})}
                           placeholder="pk_live_..."
-                          className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#218B8E] focus:outline-none font-mono text-sm"
+                          className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#07C59A] focus:outline-none font-mono text-sm"
                         />
                       </div>
                       <div>
@@ -418,7 +418,7 @@ export default function AdminPage() {
                           value={config.stripe_live_secret_key}
                           onChange={(e) => setConfig({...config, stripe_live_secret_key: e.target.value})}
                           placeholder="sk_live_..."
-                          className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#218B8E] focus:outline-none font-mono text-sm"
+                          className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#07C59A] focus:outline-none font-mono text-sm"
                         />
                       </div>
                       <div>
@@ -430,7 +430,7 @@ export default function AdminPage() {
                           value={config.stripe_live_webhook_secret}
                           onChange={(e) => setConfig({...config, stripe_live_webhook_secret: e.target.value})}
                           placeholder="whsec_..."
-                          className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#218B8E] focus:outline-none font-mono text-sm"
+                          className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#07C59A] focus:outline-none font-mono text-sm"
                         />
                         <p className="text-xs text-gray-600 mt-1">
                           🔒 Necesaria para verificar webhooks de Stripe
@@ -445,7 +445,7 @@ export default function AdminPage() {
                           value={config.stripe_live_price_id}
                           onChange={(e) => setConfig({...config, stripe_live_price_id: e.target.value})}
                           placeholder="price_live_..."
-                          className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#218B8E] focus:outline-none font-mono text-sm"
+                          className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#07C59A] focus:outline-none font-mono text-sm"
                         />
                       </div>
                     </div>
@@ -457,7 +457,7 @@ export default function AdminPage() {
               {activeTab === 'pricing' && (
                 <div className="space-y-6">
                   <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
-                    <FaDollarSign className="text-[#218B8E]" />
+                    <FaDollarSign className="text-[#07C59A]" />
                     Configuración de Precios
                   </h2>
                   
@@ -471,7 +471,7 @@ export default function AdminPage() {
                         step="0.01"
                         value={config.initial_payment}
                         onChange={(e) => setConfig({...config, initial_payment: e.target.value})}
-                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#218B8E] focus:outline-none text-2xl font-bold text-center"
+                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#07C59A] focus:outline-none text-2xl font-bold text-center"
                       />
                       <p className="text-xs text-gray-600 mt-2">
                         Cobro único para ver resultados
@@ -487,7 +487,7 @@ export default function AdminPage() {
                         step="0.01"
                         value={config.subscription_price}
                         onChange={(e) => setConfig({...config, subscription_price: e.target.value})}
-                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#218B8E] focus:outline-none text-2xl font-bold text-center"
+                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#07C59A] focus:outline-none text-2xl font-bold text-center"
                       />
                       <p className="text-xs text-gray-600 mt-2">
                         Cobro mensual recurrente
@@ -502,7 +502,7 @@ export default function AdminPage() {
                         type="number"
                         value={config.trial_days}
                         onChange={(e) => setConfig({...config, trial_days: e.target.value})}
-                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#218B8E] focus:outline-none text-2xl font-bold text-center"
+                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#07C59A] focus:outline-none text-2xl font-bold text-center"
                       />
                       <p className="text-xs text-gray-600 mt-2">
                         Período de prueba gratuita
@@ -529,7 +529,7 @@ export default function AdminPage() {
               {activeTab === 'admins' && (
                 <div className="space-y-6">
                   <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
-                    <FaShieldAlt className="text-[#218B8E]" />
+                    <FaShieldAlt className="text-[#07C59A]" />
                     Gestión de Administradores
                   </h2>
                   
@@ -542,7 +542,7 @@ export default function AdminPage() {
                       onChange={(e) => setConfig({...config, admin_emails: e.target.value})}
                       placeholder="admin@ejemplo.com, otro@ejemplo.com"
                       rows={4}
-                      className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#218B8E] focus:outline-none font-mono text-sm"
+                      className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#07C59A] focus:outline-none font-mono text-sm"
                     />
                     <p className="text-xs text-gray-600 mt-2">
                       Separa múltiples emails con comas. Estos usuarios tendrán acceso al panel de administración.
@@ -573,7 +573,7 @@ export default function AdminPage() {
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="w-full bg-gradient-to-r from-[#218B8E] to-[#1a6f72] hover:from-[#1a6f72] hover:to-[#145356] text-white px-8 py-5 rounded-xl font-bold text-xl shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-gradient-to-r from-[#07C59A] to-[#069e7b] hover:from-[#069e7b] hover:to-[#04775c] text-white px-8 py-5 rounded-xl font-bold text-xl shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {saving ? (
                   <>

@@ -23,17 +23,17 @@ export default function Header() {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link href={`/${lang}/#como-funciona`} className="text-gray-700 hover:text-[#218B8E] transition">
+            <Link href={`/${lang}/#como-funciona`} className="text-gray-700 hover:text-[#07C59A] transition">
               {t.nav.howItWorks}
             </Link>
-            <Link href={`/${lang}/#testimonios`} className="text-gray-700 hover:text-[#218B8E] transition">
+            <Link href={`/${lang}/#testimonios`} className="text-gray-700 hover:text-[#07C59A] transition">
               {t.nav.testimonials}
             </Link>
-            <Link href={`/${lang}/cancelar-suscripcion`} className="text-gray-700 hover:text-[#218B8E] transition">
+            <Link href={`/${lang}/cancelar-suscripcion`} className="text-gray-700 hover:text-[#07C59A] transition">
               {t.nav.help}
             </Link>
             <LanguageSelector />
-            <Link href={`/${lang}/test`} className="bg-[#031C43] hover:bg-[#052547] text-white font-semibold py-3 px-8 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl">
+            <Link href={`/${lang}/test`} className="bg-[#113240] hover:bg-[#052547] text-white font-semibold py-3 px-8 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl">
               {t.nav.startTest}
             </Link>
           </div>
@@ -52,21 +52,21 @@ export default function Header() {
           <div className="md:hidden mt-4 pb-4 space-y-4">
             <Link
               href={`/${lang}/#como-funciona`}
-              className="block text-gray-700 hover:text-[#218B8E] transition"
+              className="block text-gray-700 hover:text-[#07C59A] transition"
               onClick={() => setIsMenuOpen(false)}
             >
               {t.nav.howItWorks}
             </Link>
             <Link
               href={`/${lang}/#testimonios`}
-              className="block text-gray-700 hover:text-[#218B8E] transition"
+              className="block text-gray-700 hover:text-[#07C59A] transition"
               onClick={() => setIsMenuOpen(false)}
             >
               {t.nav.testimonials}
             </Link>
             <Link
               href={`/${lang}/cancelar-suscripcion`}
-              className="block text-gray-700 hover:text-[#218B8E] transition"
+              className="block text-gray-700 hover:text-[#07C59A] transition"
               onClick={() => setIsMenuOpen(false)}
             >
               {t.nav.help}
@@ -79,7 +79,7 @@ export default function Header() {
             
             <Link
               href={`/${lang}/test`}
-              className="block bg-[#031C43] hover:bg-[#052547] text-white font-semibold py-3 px-8 rounded-lg transition-all duration-200 text-center"
+              className="block bg-[#113240] hover:bg-[#052547] text-white font-semibold py-3 px-8 rounded-lg transition-all duration-200 text-center"
               onClick={() => setIsMenuOpen(false)}
             >
               {t.nav.startTest}
