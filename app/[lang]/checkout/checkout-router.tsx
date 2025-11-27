@@ -4,7 +4,6 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import MinimalHeader from '@/components/MinimalHeader'
-import { FaSpinner } from 'react-icons/fa'
 import { useTranslations } from '@/hooks/useTranslations'
 
 export default function CheckoutRouter() {
@@ -33,74 +32,8 @@ export default function CheckoutRouter() {
         setUserName(storedUserName || 'Usuario')
         setUserIQ(parseInt(storedIQ))
 
-        setStatus('Detectando proveedor de pago...')
-
-        // Detectar proveedor de pago
-        const configResponse = await fetch('/api/site-config')
-        const configData = await configResponse.json()
-        
-        const provider = configData.config?.payment_provider || 'lemonsqueezy'
-        console.log('💳 Proveedor detectado:', provider)
-
-        if (provider === 'lemonsqueezy') {
-          setStatus('Preparando checkout con Lemon Squeezy...')
-          
-          // Crear user temporal
-          const userResponse = await fetch('/api/create-user-simple', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              email: storedEmail,
-              userName: storedUserName || 'Usuario',
-              iq: parseInt(storedIQ)
-            })
-          })
-
-          if (!userResponse.ok) {
-            throw new Error('Error creando usuario')
-          }
-
-          const userData = await userResponse.json()
-          const userId = userData.userId
-
-          setStatus('Creando checkout seguro...')
-
-          // Crear checkout en Lemon Squeezy
-          const checkoutResponse = await fetch('/api/create-lemon-checkout', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              email: storedEmail,
-              userId
-            })
-          })
-
-          if (!checkoutResponse.ok) {
-            throw new Error('Error creando checkout')
-          }
-
-          const checkoutData = await checkoutResponse.json()
-
-          if (checkoutData.error) {
-            throw new Error(checkoutData.error)
-          }
-
-          console.log('✅ Checkout creado, redirigiendo:', checkoutData.checkoutUrl)
-          setStatus('Redirigiendo a página de pago...')
-          
-          // Guardar para tracking
-          localStorage.setItem('lemonCheckoutId', checkoutData.checkoutId)
-          
-          // Redirigir al checkout de Lemon Squeezy
-          setTimeout(() => {
-            window.location.href = checkoutData.checkoutUrl
-          }, 500)
-
-        } else {
-          // Si es Stripe, redirigir a la página de checkout de Stripe
-          setStatus('Redirigiendo a checkout de Stripe...')
-          router.push(`/${lang}/checkout-stripe`)
-        }
+        setStatus('Redirigiendo a checkout de Stripe...')
+        router.push(`/${lang}/checkout-stripe`)
 
       } catch (error: any) {
         console.error('❌ Error en checkout:', error)

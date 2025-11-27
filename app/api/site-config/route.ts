@@ -10,7 +10,7 @@ export async function GET() {
     
     // Devolver solo información pública (NO credenciales)
     const publicConfig = {
-      payment_provider: config.payment_provider || 'lemonsqueezy',
+      payment_provider: 'stripe', // Siempre Stripe
       payment_mode: config.payment_mode || 'test',
       trial_days: parseInt(config.trial_days || '2'),
       subscription_price: parseFloat(config.subscription_price || '9.99'),
@@ -31,7 +31,7 @@ export async function GET() {
     return NextResponse.json({
       success: false,
       config: {
-        payment_provider: 'lemonsqueezy',
+        payment_provider: 'stripe',
         payment_mode: 'test',
         trial_days: 2,
         subscription_price: 9.99,

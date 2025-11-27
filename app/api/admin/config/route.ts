@@ -28,13 +28,11 @@ export async function GET(request: NextRequest) {
     // Obtener configuración de la base de datos
     const dbConfig = await db.getAllConfig()
 
-    // Determinar el proveedor y modo actual
-    const paymentProvider = dbConfig.payment_provider || 'lemonsqueezy'
+    // Determinar el modo actual
     const paymentMode = dbConfig.payment_mode || 'test'
     
     // Toda la configuración se lee de la BD
     const config = {
-      payment_provider: paymentProvider,
       payment_mode: paymentMode,
       // Stripe
       stripe_test_publishable_key: dbConfig.stripe_test_publishable_key || '',
@@ -45,15 +43,6 @@ export async function GET(request: NextRequest) {
       stripe_live_secret_key: dbConfig.stripe_live_secret_key || '',
       stripe_live_webhook_secret: dbConfig.stripe_live_webhook_secret || '',
       stripe_live_price_id: dbConfig.stripe_live_price_id || '',
-      // Lemon Squeezy
-      lemonsqueezy_test_api_key: dbConfig.lemonsqueezy_test_api_key || '',
-      lemonsqueezy_live_api_key: dbConfig.lemonsqueezy_live_api_key || '',
-      lemonsqueezy_test_store_id: dbConfig.lemonsqueezy_test_store_id || '',
-      lemonsqueezy_live_store_id: dbConfig.lemonsqueezy_live_store_id || '',
-      lemonsqueezy_test_variant_id: dbConfig.lemonsqueezy_test_variant_id || '',
-      lemonsqueezy_live_variant_id: dbConfig.lemonsqueezy_live_variant_id || '',
-      lemonsqueezy_test_webhook_secret: dbConfig.lemonsqueezy_test_webhook_secret || '',
-      lemonsqueezy_live_webhook_secret: dbConfig.lemonsqueezy_live_webhook_secret || '',
       // Precios y configuración
       subscription_price: dbConfig.subscription_price || '9.99',
       trial_days: dbConfig.trial_days || '2',

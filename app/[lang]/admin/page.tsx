@@ -6,7 +6,6 @@ import { FaCog, FaSave, FaSync, FaCreditCard, FaDollarSign, FaToggleOn, FaToggle
 import MinimalHeader from '@/components/MinimalHeader'
 
 interface Config {
-  payment_provider: string
   payment_mode: string
   // Stripe credentials
   stripe_test_publishable_key: string
@@ -17,15 +16,6 @@ interface Config {
   stripe_live_webhook_secret: string
   stripe_test_price_id: string
   stripe_live_price_id: string
-  // Lemon Squeezy credentials
-  lemonsqueezy_test_api_key: string
-  lemonsqueezy_live_api_key: string
-  lemonsqueezy_test_store_id: string
-  lemonsqueezy_live_store_id: string
-  lemonsqueezy_test_variant_id: string
-  lemonsqueezy_live_variant_id: string
-  lemonsqueezy_test_webhook_secret: string
-  lemonsqueezy_live_webhook_secret: string
   // Pricing
   subscription_price: string
   trial_days: string
@@ -40,7 +30,6 @@ export default function AdminPage() {
   const [saving, setSaving] = useState(false)
   const [userEmail, setUserEmail] = useState('')
   const [config, setConfig] = useState<Config>({
-    payment_provider: 'lemonsqueezy',
     payment_mode: 'test',
     // Stripe
     stripe_test_publishable_key: '',
@@ -51,15 +40,6 @@ export default function AdminPage() {
     stripe_live_webhook_secret: '',
     stripe_test_price_id: '',
     stripe_live_price_id: '',
-    // Lemon Squeezy
-    lemonsqueezy_test_api_key: '',
-    lemonsqueezy_live_api_key: '',
-    lemonsqueezy_test_store_id: '',
-    lemonsqueezy_live_store_id: '',
-    lemonsqueezy_test_variant_id: '',
-    lemonsqueezy_live_variant_id: '',
-    lemonsqueezy_test_webhook_secret: '',
-    lemonsqueezy_live_webhook_secret: '',
     // Pricing
     subscription_price: '9.99',
     trial_days: '2',
@@ -161,13 +141,6 @@ export default function AdminPage() {
     })
   }
 
-  const togglePaymentProvider = () => {
-    setConfig({
-      ...config,
-      payment_provider: config.payment_provider === 'stripe' ? 'lemonsqueezy' : 'stripe'
-    })
-  }
-
   const handleDeploy = async () => {
     setDeploying(true)
     setMessage(null)
@@ -248,37 +221,16 @@ export default function AdminPage() {
 
           {/* Proveedor de Pago y Modo - Destacado */}
           <div className="mb-8 space-y-4">
-            {/* Selector de Proveedor */}
-            <div className={`p-6 rounded-2xl shadow-lg ${
-              config.payment_provider === 'lemonsqueezy' ? 'bg-yellow-50 border-4 border-yellow-400' : 'bg-blue-50 border-4 border-blue-400'
-            }`}>
-              <div className="flex items-center justify-between flex-wrap gap-4">
-                <div className="flex items-center gap-4">
-                  <div className={`w-14 h-14 rounded-xl flex items-center justify-center ${
-                    config.payment_provider === 'lemonsqueezy' ? 'bg-yellow-400' : 'bg-blue-500'
-                  }`}>
-                    <FaCreditCard className="text-2xl text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900">Proveedor de Pago</h3>
-                    <p className={`text-lg font-semibold ${
-                      config.payment_provider === 'lemonsqueezy' ? 'text-yellow-800' : 'text-blue-800'
-                    }`}>
-                      {config.payment_provider === 'lemonsqueezy' ? '🍋 Lemon Squeezy' : '💳 Stripe'}
-                    </p>
-                  </div>
+            {/* Banner de Stripe */}
+            <div className="p-6 rounded-2xl shadow-lg bg-blue-50 border-4 border-blue-400">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-xl flex items-center justify-center bg-blue-500">
+                  <FaCreditCard className="text-2xl text-white" />
                 </div>
-                <button
-                  onClick={togglePaymentProvider}
-                  className={`px-8 py-4 rounded-xl font-bold text-white shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-3 ${
-                    config.payment_provider === 'lemonsqueezy' 
-                      ? 'bg-blue-600 hover:bg-blue-700' 
-                      : 'bg-yellow-600 hover:bg-yellow-700'
-                  }`}
-                >
-                  {config.payment_provider === 'lemonsqueezy' ? <FaToggleOff className="text-2xl" /> : <FaToggleOn className="text-2xl" />}
-                  Cambiar a {config.payment_provider === 'lemonsqueezy' ? 'Stripe' : 'Lemon Squeezy'}
-                </button>
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900">Proveedor de Pago</h3>
+                  <p className="text-lg font-semibold text-blue-800">💳 Stripe</p>
+                </div>
               </div>
             </div>
 
@@ -376,143 +328,8 @@ export default function AdminPage() {
                 <div className="space-y-6">
                   <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
                     <FaKey className="text-[#218B8E]" />
-                    Credenciales de {config.payment_provider === 'lemonsqueezy' ? 'Lemon Squeezy' : 'Stripe'}
+                    Credenciales de Stripe
                   </h2>
-                  
-                  {/* Lemon Squeezy Credentials */}
-                  {config.payment_provider === 'lemonsqueezy' && (
-                    <>
-                      {/* Claves de Test - Lemon Squeezy */}
-                      <div className="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-6">
-                        <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                          🧪 Claves de Test (Desarrollo) - Lemon Squeezy
-                        </h3>
-                        <div className="space-y-4">
-                          <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">
-                              API Key (Test)
-                            </label>
-                            <input
-                              type="password"
-                              value={config.lemonsqueezy_test_api_key}
-                              onChange={(e) => setConfig({...config, lemonsqueezy_test_api_key: e.target.value})}
-                              placeholder="lmsk_test_..."
-                              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#218B8E] focus:outline-none font-mono text-sm"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">
-                              Store ID (Test)
-                            </label>
-                            <input
-                              type="text"
-                              value={config.lemonsqueezy_test_store_id}
-                              onChange={(e) => setConfig({...config, lemonsqueezy_test_store_id: e.target.value})}
-                              placeholder="12345"
-                              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#218B8E] focus:outline-none font-mono text-sm"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">
-                              Variant ID (Test)
-                            </label>
-                            <input
-                              type="text"
-                              value={config.lemonsqueezy_test_variant_id}
-                              onChange={(e) => setConfig({...config, lemonsqueezy_test_variant_id: e.target.value})}
-                              placeholder="67890"
-                              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#218B8E] focus:outline-none font-mono text-sm"
-                            />
-                            <p className="text-xs text-gray-600 mt-1">
-                              📦 ID del producto/variante de suscripción
-                            </p>
-                          </div>
-                          <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">
-                              Webhook Secret (Test)
-                            </label>
-                            <input
-                              type="password"
-                              value={config.lemonsqueezy_test_webhook_secret}
-                              onChange={(e) => setConfig({...config, lemonsqueezy_test_webhook_secret: e.target.value})}
-                              placeholder="whsec_test_..."
-                              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#218B8E] focus:outline-none font-mono text-sm"
-                            />
-                            <p className="text-xs text-gray-600 mt-1">
-                              🔒 Necesario para verificar webhooks de Lemon Squeezy
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Claves de Producción - Lemon Squeezy */}
-                      <div className="bg-green-50 border-2 border-green-200 rounded-xl p-6">
-                        <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                          🚀 Claves de Producción (Live) - Lemon Squeezy
-                        </h3>
-                        <div className="space-y-4">
-                          <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">
-                              API Key (Live)
-                            </label>
-                            <input
-                              type="password"
-                              value={config.lemonsqueezy_live_api_key}
-                              onChange={(e) => setConfig({...config, lemonsqueezy_live_api_key: e.target.value})}
-                              placeholder="lmsk_live_..."
-                              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#218B8E] focus:outline-none font-mono text-sm"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">
-                              Store ID (Live)
-                            </label>
-                            <input
-                              type="text"
-                              value={config.lemonsqueezy_live_store_id}
-                              onChange={(e) => setConfig({...config, lemonsqueezy_live_store_id: e.target.value})}
-                              placeholder="12345"
-                              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#218B8E] focus:outline-none font-mono text-sm"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">
-                              Variant ID (Live)
-                            </label>
-                            <input
-                              type="text"
-                              value={config.lemonsqueezy_live_variant_id}
-                              onChange={(e) => setConfig({...config, lemonsqueezy_live_variant_id: e.target.value})}
-                              placeholder="67890"
-                              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#218B8E] focus:outline-none font-mono text-sm"
-                            />
-                            <p className="text-xs text-gray-600 mt-1">
-                              📦 ID del producto/variante de suscripción
-                            </p>
-                          </div>
-                          <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">
-                              Webhook Secret (Live)
-                            </label>
-                            <input
-                              type="password"
-                              value={config.lemonsqueezy_live_webhook_secret}
-                              onChange={(e) => setConfig({...config, lemonsqueezy_live_webhook_secret: e.target.value})}
-                              placeholder="whsec_..."
-                              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#218B8E] focus:outline-none font-mono text-sm"
-                            />
-                            <p className="text-xs text-gray-600 mt-1">
-                              🔒 Necesario para verificar webhooks de Lemon Squeezy
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </>
-                  )}
-                  
-                  {/* Stripe Credentials */}
-                  {config.payment_provider === 'stripe' && (
-                    <>
                   
                   {/* Claves de Test */}
                   <div className="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-6">
@@ -633,8 +450,6 @@ export default function AdminPage() {
                       </div>
                     </div>
                   </div>
-                    </>
-                  )}
                 </div>
               )}
 
