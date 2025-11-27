@@ -83,7 +83,7 @@ export default function ResultadoPage() {
   }, [router, lang])
 
   const shareOnFacebook = () => {
-    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.origin)}&quote=${encodeURIComponent(`¡Acabo de descubrir que mi CI es ${userIQ}! Descubre el tuyo en IQLevel`)}`
+    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.origin)}&quote=${encodeURIComponent(`¡Acabo de descubrir que mi CI es ${userIQ}! Descubre el tuyo en MindMetric`)}`
     window.open(url, '_blank', 'width=600,height=400')
   }
 

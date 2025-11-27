@@ -206,7 +206,7 @@ export default function TestPage() {
               </div>
               
               <h1 className="text-4xl font-bold text-gray-900 mb-4">
-                <span className="text-[#113240]">IQ</span><span className="text-[#07C59A]">mind</span> {t.test.title}
+                <span className="text-[#113240]">Mind</span><span className="text-[#07C59A]">Metric</span> {t.test.title}
               </h1>
               
               <p className="text-xl text-gray-600 mb-8">
