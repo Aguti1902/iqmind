@@ -87,8 +87,7 @@ export async function GET(request: NextRequest) {
           numerical: 80 + result.days % 8,
           verbal: 88 + result.days % 6
         },
-        completedAt: testDate.toISOString(),
-        createdAt: testDate.toISOString()
+        completedAt: testDate.toISOString()
       })
       
       createdTests.push({

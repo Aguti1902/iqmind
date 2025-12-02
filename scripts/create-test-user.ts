@@ -82,8 +82,7 @@ async function createTestUser() {
           numerical: 80 + result.days % 8,
           verbal: 88 + result.days % 6
         },
-        completedAt: testDate.toISOString(),
-        createdAt: testDate.toISOString()
+        completedAt: testDate.toISOString()
       })
       
       console.log(`  ✓ Test de IQ ${result.iq} (hace ${result.days} días)`)
