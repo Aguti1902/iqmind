@@ -366,7 +366,7 @@ export default function Home() {
                 <div className="relative z-10 space-y-3 mb-8 flex-1">
                   <div className="flex items-start gap-3">
                     <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
-                    <span className="text-sm">Ahorra hasta un 33% vs plan quincenal</span>
+                    <span className="text-sm">Mejor relación precio/valor a largo plazo</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
