@@ -313,7 +313,7 @@ export default function Home() {
                 <div className="mb-6">
                   <h3 className="text-xl font-bold text-gray-900 mb-4">Suscripción Quincenal</h3>
                   <div className="flex items-baseline gap-1 mb-2">
-                    <span className="text-5xl font-bold text-gray-900 leading-none">€14.99</span>
+                    <span className="text-5xl font-bold text-gray-900 leading-none">€9.99</span>
                     <span className="text-gray-500 text-lg font-normal ml-1">/2 semanas</span>
                     <span className="text-gray-500 text-base font-medium ml-1">*</span>
                   </div>
@@ -355,7 +355,7 @@ export default function Home() {
                 <div className="relative z-10 mb-6">
                   <h3 className="text-xl font-bold mb-4">Excelencia Mensual</h3>
                   <div className="flex items-baseline gap-1 mb-2">
-                    <span className="text-5xl font-bold leading-none">€29.99</span>
+                    <span className="text-5xl font-bold leading-none">€19.99</span>
                     <span className="text-white/70 text-lg font-normal ml-1">/mes</span>
                     <span className="text-white/70 text-base font-medium ml-1">*</span>
                   </div>
