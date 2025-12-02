@@ -370,7 +370,7 @@ export default function Home() {
                   </div>
                   <div className="flex items-start gap-3">
                     <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
-                    <span className="text-sm">6 tests psicométricos completos (CI, TDAH, Ansiedad, Depresión, Personalidad, Inteligencia Emocional)</span>
+                    <span className="text-sm">6 tests psicométricos completos</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
