@@ -73,11 +73,9 @@ async function createTestUser() {
         iq: result.iq,
         correctAnswers: result.correctAnswers,
         timeElapsed: 1200 - (result.days * 5), // Simulado
-        answers: Array(20).fill(null).map((_, i) => ({
-          questionId: i + 1,
-          answer: i < result.correctAnswers ? 'correct' : 'wrong',
-          timeSpent: 60
-        })),
+        answers: Array(20).fill(null).map((_, i) => 
+          i < result.correctAnswers ? Math.floor(Math.random() * 6) : null
+        ),
         categoryScores: {
           logical: 85 + result.days % 10,
           spatial: 90 - result.days % 5,
