@@ -465,6 +465,96 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Datos de interés - IQ Statistics */}
+        <section className="py-20 bg-gradient-to-br from-gray-50 to-white">
+          <div className="container-custom max-w-7xl">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-bold text-gray-900 mb-4">
+                Datos de interés
+              </h2>
+              <p className="text-xl text-gray-600">
+                Promedios de CI basados en millones de tests realizados
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12">
+              {/* CI promedio por edad */}
+              <div className="bg-white rounded-2xl shadow-xl p-8">
+                <h3 className="text-2xl font-bold text-gray-900 mb-6">CI promedio por edad</h3>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={[
+                    { age: '< 18 años', iq: 95 },
+                    { age: '18-39 años', iq: 105 },
+                    { age: '40-59 años', iq: 98 },
+                    { age: '60-79 años', iq: 90 },
+                    { age: '+80 años', iq: 80 }
+                  ]}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                    <XAxis 
+                      dataKey="age" 
+                      tick={{ fill: '#374151', fontSize: 12 }}
+                    />
+                    <YAxis 
+                      domain={[0, 120]}
+                      tick={{ fill: '#6b7280', fontSize: 12 }}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'white',
+                        border: '2px solid #e5e7eb',
+                        borderRadius: '12px',
+                        padding: '12px'
+                      }}
+                    />
+                    <Bar 
+                      dataKey="iq" 
+                      fill="#07C59A"
+                      radius={[8, 8, 0, 0]}
+                      name="CI promedio"
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* CI promedio por país */}
+              <div className="bg-white rounded-2xl shadow-xl p-8">
+                <h3 className="text-2xl font-bold text-gray-900 mb-6">CI promedio por país</h3>
+                <div className="space-y-4">
+                  {[
+                    { country: 'China', flag: '🇨🇳', iq: 105 },
+                    { country: 'Estonia', flag: '🇪🇪', iq: 100 },
+                    { country: 'Reino Unido', flag: '🇬🇧', iq: 99 },
+                    { country: 'Australia', flag: '🇦🇺', iq: 99 },
+                    { country: 'Canadá', flag: '🇨🇦', iq: 99 },
+                    { country: 'EE. UU.', flag: '🇺🇸', iq: 97 },
+                    { country: 'Argentina', flag: '🇦🇷', iq: 86 },
+                    { country: 'India', flag: '🇮🇳', iq: 76 }
+                  ].map((item) => (
+                    <div key={item.country} className="flex items-center justify-between p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
+                      <div className="flex items-center gap-4">
+                        <span className="text-4xl">{item.flag}</span>
+                        <span className="font-semibold text-gray-900">{item.country}</span>
+                      </div>
+                      <div className="text-3xl font-bold text-[#07C59A]">
+                        {item.iq}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Nota informativa */}
+            <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-lg max-w-4xl mx-auto">
+              <p className="text-sm text-blue-800">
+                <strong>📊 Nota:</strong> Estos datos son promedios estadísticos basados en millones de tests de CI realizados a nivel mundial. 
+                El CI puede variar significativamente entre individuos y está influenciado por múltiples factores como la educación, 
+                el entorno socioeconómico y las oportunidades de desarrollo cognitivo.
+              </p>
+            </div>
+          </div>
+        </section>
+
         {/* CTA Final */}
         <section className="py-20 bg-gradient-to-br from-[#07C59A] to-[#069e7b] text-white">
           <div className="container-custom text-center">
