@@ -11,7 +11,6 @@ import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, L
 import SubscriptionModal from '@/components/SubscriptionModal'
 import AchievementBadges from '@/components/AchievementBadges'
 import AllTestsComparison from '@/components/AllTestsComparison'
-import ExportResults from '@/components/ExportResults'
 
 export default function CuentaPage() {
   const router = useRouter()
@@ -781,11 +780,6 @@ export default function CuentaPage() {
           {/* Achievement Badges */}
           <div className="mb-8">
             <AchievementBadges stats={stats} />
-          </div>
-
-          {/* Export Results */}
-          <div className="mb-8">
-            <ExportResults />
           </div>
 
           {/* Available Tests Section */}
