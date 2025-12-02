@@ -174,13 +174,13 @@ export const emailTemplates = {
                     
                     <p style="color: #4a5568; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
                       ${lang === 'es'
-                        ? 'Notamos que iniciaste el proceso de pago pero no lo completaste. ¡Tu resultado exacto está a solo 0,50€ de distancia!'
-                        : 'We noticed you started the payment process but didn\'t complete it. Your exact result is just €0.50 away!'}
+                        ? 'Notamos que iniciaste el proceso de pago pero no lo completaste. ¡Tu resultado exacto está a solo 1,00€ de distancia!'
+                        : 'We noticed you started the payment process but didn\'t complete it. Your exact result is just €1.00 away!'}
                     </p>
                     
                     <div style="background-color: #e6f5f5; border-left: 4px solid #07C59A; padding: 20px; margin: 30px 0; border-radius: 4px;">
                       <h3 style="color: #07C59A; margin: 0 0 10px 0; font-size: 18px; font-weight: 600;">
-                        ${lang === 'es' ? '¿Qué obtienes por 0,50€?' : 'What do you get for €0.50?'}
+                        ${lang === 'es' ? '¿Qué obtienes por 1,00€?' : 'What do you get for €1.00?'}
                       </h3>
                       <ul style="color: #2d3748; margin: 0; padding-left: 20px; line-height: 1.8;">
                         <li>${lang === 'es' ? 'Tu CI exacto' : 'Your exact IQ'}</li>
@@ -274,8 +274,8 @@ export const emailTemplates = {
                     
                     <p style="color: #4a5568; font-size: 18px; line-height: 1.6; margin: 0 0 30px 0;">
                       ${lang === 'es'
-                        ? 'Tu pago de 0,50€ ha sido procesado correctamente.'
-                        : 'Your payment of €0.50 has been processed successfully.'}
+                        ? 'Tu pago de 1,00€ ha sido procesado correctamente.'
+                        : 'Your payment of €1.00 has been processed successfully.'}
                     </p>
                     
                     <!-- IQ Score -->
