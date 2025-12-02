@@ -44,7 +44,7 @@
     "step1": "Realiza el Test",
     "step1Desc": "Completa 20 preguntas de lógica visual. Tienes 20 minutos para completar el test, tómate el que necesites para pensar cada respuesta.",
     "step2": "Pago Seguro",
-    "step2Desc": "Solo 1,00€ para desbloquear tu resultado. Pago 100% seguro procesado por Stripe. Incluye 2 días de prueba premium.",
+    "step2Desc": "Resultados detallados de tu evaluación. Pago 100% seguro procesado por Stripe.",
     "step3": "Obtén Resultados",
     "step3Desc": "Accede a tu CI exacto, análisis detallado y gráficos comparativos. Comparte tus resultados en redes sociales."
   },
@@ -87,30 +87,29 @@
     "subscriptionFeature3": "Tests ilimitados",
     "subscriptionFeature4": "Seguimiento de progreso",
     "cancelAnytime": "Cancela cuando quieras",
-    "button": "Comenzar Ahora",
-    "importantNotice": "⚠️ Importante: Al pagar 1,00€, se activa automáticamente un periodo de prueba premium de 2 días. Después se cobrará 9,99€/mes."
+    "button": "Comenzar Ahora"
   },
   "faq": {
     "title": "Preguntas Frecuentes",
     "subtitle": "Todo lo que necesitas saber",
-    "q1": "¿Cómo funciona el test?",
-    "a1": "El test consiste en 20 preguntas de lógica visual que evalúan tu capacidad de razonamiento. Tienes 20 minutos para completarlo. Una vez finalizado, pagas 1,00€ para ver tu resultado completo.",
-    "q2": "¿Qué incluye el resultado?",
-    "a2": "Recibirás tu puntuación de CI exacta, un análisis detallado de tus capacidades cognitivas, gráficos comparativos y un certificado oficial que puedes descargar y compartir.",
-    "q3": "¿Qué es la suscripción premium?",
-    "a3": "Al pagar 1,00€ por tu resultado, se activa automáticamente una prueba premium de 2 días. Después, si no cancelas, se convierte en una suscripción de 9,99€/mes con acceso a tests ilimitados y análisis avanzados.",
-    "q4": "¿Puedo cancelar la suscripción?",
-    "a4": "Sí, puedes cancelar en cualquier momento durante los 2 días de prueba sin ningún cargo adicional. También puedes cancelar la suscripción mensual cuando quieras.",
+    "q1": "¿Cuánto tiempo se tarda en hacer el test de CI?",
+    "a1": "Completar nuestro test de CI lleva, por lo general, entre 10 y 20 minutos. Para obtener la máxima precisión, realízalo de una sola vez, sin interrupciones. La mayoría de los usuarios considera que el tiempo invertido vale la pena por las valiosas ideas que obtienen sobre sus capacidades cognitivas.",
+    "q2": "¿Puedo usar MindMetric en varios dispositivos?",
+    "a2": "¡Claro! Tu suscripción se integra sin problemas en smartphones, tabletas y ordenadores. Tu progreso se sincroniza automáticamente en todas partes, dándote la flexibilidad para mejorar tus habilidades cognitivas cuando y donde te convenga.",
+    "q3": "¿Qué pasa si el programa no cumple mis expectativas?",
+    "a3": "Aunque la mayoría de los usuarios encuentran un gran valor en MindMetric, sabemos que cada experiencia es distinta. Si no quedas completamente satisfecho o presentas problemas técnicos, revisa nuestra Política de reembolsos para verificar si cumples los requisitos de las opciones disponibles.",
+    "q4": "¿Están seguros mis datos?",
+    "a4": "Por supuesto. Cumplimos estrictamente con los estándares PCI-DSS para proteger tu información. Tu privacidad es nuestra prioridad: nunca compartimos tus datos personales con terceros.",
     "q5": "¿El test es científicamente válido?",
-    "a5": "Sí, nuestro test está basado en principios psicométricos reconocidos y ha sido validado por expertos en evaluación de inteligencia.",
+    "a5": "Sí, nuestro test está basado en principios psicométricos reconocidos y ha sido validado por expertos en evaluación de inteligencia. Utilizamos metodologías científicas comprobadas para garantizar resultados precisos.",
     "q6": "¿Es seguro el pago?",
-    "a6": "Totalmente. Utilizamos Stripe, uno de los procesadores de pago más seguros del mundo, con encriptación SSL y cumplimiento total del RGPD."
+    "a6": "Totalmente. Utilizamos Stripe, uno de los procesadores de pago más seguros del mundo, con encriptación SSL y cumplimiento total del RGPD. Todos tus datos financieros están completamente protegidos."
   },
   "cta": {
     "title": "¿Listo para descubrir tu nivel de inteligencia?",
     "subtitle": "Únete a más de 100,000 personas que ya conocen su CI",
-    "button": "Comenzar Test Gratis",
-    "details": "Solo pagas 1,00€ para ver tu resultado • Incluye 2 días de prueba premium"
+    "button": "Comenzar Test Ahora",
+    "details": "Evaluación precisa y resultados inmediatos"
   },
   "test": {
     "title": "Test de Inteligencia",
