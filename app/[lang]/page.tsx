@@ -307,57 +307,47 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
               {/* Plan Quincenal */}
-              <div className="group relative bg-white rounded-3xl shadow-xl p-10 border border-gray-200 hover:border-[#07C59A] transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
-                <div className="mb-8">
-                  <h3 className="text-3xl font-black text-gray-900 mb-6 tracking-tight">SUSCRIPCIÓN<br/>QUINCENAL</h3>
-                  <div className="flex items-baseline gap-3 mb-3">
-                    <span className="text-6xl font-black text-gray-900 leading-none">€14.99</span>
-                    <div className="flex flex-col">
-                      <span className="text-gray-500 text-lg font-medium">*</span>
-                    </div>
+              <div className="group relative bg-white rounded-2xl shadow-xl p-8 border border-gray-200 hover:border-[#07C59A] transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
+                <div className="mb-6">
+                  <h3 className="text-xl font-bold text-gray-900 mb-4">Suscripción Quincenal</h3>
+                  <div className="flex items-baseline gap-2 mb-2">
+                    <span className="text-5xl font-black text-gray-900 leading-none">€14.99</span>
+                    <span className="text-gray-500 text-base font-medium">*</span>
                   </div>
-                  <p className="text-gray-500 font-medium text-base">/2 semanas</p>
+                  <p className="text-gray-500 text-sm">/2 semanas</p>
                 </div>
                 
-                <div className="space-y-5 mb-10">
-                  <div className="flex items-start gap-4 group/item">
-                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#07C59A]/10 flex items-center justify-center mt-0.5">
-                      <FaCheckCircle className="text-[#07C59A] text-sm" />
-                    </div>
-                    <span className="text-gray-700 leading-relaxed">Prueba de 7 días; luego se renueva automáticamente a un plan quincenal.</span>
+                <div className="space-y-3 mb-8">
+                  <div className="flex items-start gap-3">
+                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
+                    <span className="text-gray-700 text-sm">Prueba de 7 días; luego se renueva automáticamente a un plan quincenal.</span>
                   </div>
-                  <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#07C59A]/10 flex items-center justify-center mt-0.5">
-                      <FaCheckCircle className="text-[#07C59A] text-sm" />
-                    </div>
-                    <span className="text-gray-700 leading-relaxed">Certificado de CI personalizado</span>
+                  <div className="flex items-start gap-3">
+                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
+                    <span className="text-gray-700 text-sm">Certificado de CI personalizado</span>
                   </div>
-                  <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#07C59A]/10 flex items-center justify-center mt-0.5">
-                      <FaCheckCircle className="text-[#07C59A] text-sm" />
-                    </div>
-                    <span className="text-gray-700 leading-relaxed">Evaluación cognitiva integral</span>
+                  <div className="flex items-start gap-3">
+                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
+                    <span className="text-gray-700 text-sm">Evaluación cognitiva integral</span>
                   </div>
-                  <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#07C59A]/10 flex items-center justify-center mt-0.5">
-                      <FaCheckCircle className="text-[#07C59A] text-sm" />
-                    </div>
-                    <span className="text-gray-700 leading-relaxed">Acceso completo a herramientas de desarrollo</span>
+                  <div className="flex items-start gap-3">
+                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
+                    <span className="text-gray-700 text-sm">Acceso completo a herramientas de desarrollo</span>
                   </div>
                 </div>
 
-                <Link href={`/${lang}/test`} className="block w-full bg-[#113240] hover:bg-[#052547] text-white font-bold py-5 px-8 rounded-2xl text-center transition-all duration-300 text-lg shadow-lg hover:shadow-2xl group-hover:scale-[1.02]">
+                <Link href={`/${lang}/test`} className="block w-full bg-[#113240] hover:bg-[#052547] text-white font-bold py-4 px-6 rounded-xl text-center transition-all duration-300 shadow-lg hover:shadow-xl">
                   Empezar
                 </Link>
               </div>
 
               {/* Plan Mensual - Destacado */}
-              <div className="group relative bg-gradient-to-br from-[#113240] via-[#0d2838] to-[#052547] rounded-3xl shadow-2xl p-10 text-white overflow-hidden border-2 border-[#07C59A] transform hover:-translate-y-2 transition-all duration-300 hover:shadow-[0_20px_70px_rgba(7,197,154,0.3)]">
+              <div className="group relative bg-gradient-to-br from-[#113240] via-[#0d2838] to-[#052547] rounded-2xl shadow-2xl p-8 text-white overflow-hidden border-2 border-[#07C59A] transform hover:-translate-y-1 transition-all duration-300 hover:shadow-[0_20px_70px_rgba(7,197,154,0.3)]">
                 {/* Badge Recomendado */}
-                <div className="absolute -top-1 -right-1">
-                  <div className="bg-gradient-to-r from-[#07C59A] to-[#069e7b] text-white px-6 py-2 rounded-bl-2xl rounded-tr-2xl font-black text-sm tracking-wide shadow-lg">
+                <div className="absolute top-3 right-3">
+                  <div className="bg-[#07C59A] text-white px-4 py-1 rounded-full font-bold text-xs tracking-wide shadow-lg">
                     RECOMENDADO
                   </div>
                 </div>
@@ -366,45 +356,35 @@ export default function Home() {
                 <div className="absolute top-20 right-10 w-32 h-32 bg-[#07C59A] rounded-full opacity-10 blur-3xl"></div>
                 <div className="absolute bottom-10 left-10 w-40 h-40 bg-[#07C59A] rounded-full opacity-10 blur-3xl"></div>
                 
-                <div className="relative z-10 mb-8">
-                  <h3 className="text-3xl font-black mb-6 tracking-tight">EXCELENCIA<br/>MENSUAL</h3>
-                  <div className="flex items-baseline gap-3 mb-3">
-                    <span className="text-6xl font-black leading-none">€29.99</span>
-                    <div className="flex flex-col">
-                      <span className="text-white/70 text-lg font-medium">*</span>
-                    </div>
+                <div className="relative z-10 mb-6">
+                  <h3 className="text-xl font-bold mb-4">Excelencia Mensual</h3>
+                  <div className="flex items-baseline gap-2 mb-2">
+                    <span className="text-5xl font-black leading-none">€29.99</span>
+                    <span className="text-white/70 text-base font-medium">*</span>
                   </div>
-                  <p className="text-white/70 font-medium text-base">/mes</p>
+                  <p className="text-white/70 text-sm">/mes</p>
                 </div>
                 
-                <div className="relative z-10 space-y-5 mb-10">
-                  <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#07C59A] flex items-center justify-center mt-0.5 shadow-lg shadow-[#07C59A]/30">
-                      <FaCheckCircle className="text-white text-sm" />
-                    </div>
-                    <span className="leading-relaxed">Ahorro máximo para un crecimiento a largo plazo</span>
+                <div className="relative z-10 space-y-3 mb-8">
+                  <div className="flex items-start gap-3">
+                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
+                    <span className="text-sm">Ahorro máximo para un crecimiento a largo plazo</span>
                   </div>
-                  <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#07C59A] flex items-center justify-center mt-0.5 shadow-lg shadow-[#07C59A]/30">
-                      <FaCheckCircle className="text-white text-sm" />
-                    </div>
-                    <span className="leading-relaxed">Paquete completo de evaluación cognitiva</span>
+                  <div className="flex items-start gap-3">
+                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
+                    <span className="text-sm">Paquete completo de evaluación cognitiva</span>
                   </div>
-                  <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#07C59A] flex items-center justify-center mt-0.5 shadow-lg shadow-[#07C59A]/30">
-                      <FaCheckCircle className="text-white text-sm" />
-                    </div>
-                    <span className="leading-relaxed">Más de 20 horas de cursos dirigidos por expertos</span>
+                  <div className="flex items-start gap-3">
+                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
+                    <span className="text-sm">Más de 20 horas de cursos dirigidos por expertos</span>
                   </div>
-                  <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#07C59A] flex items-center justify-center mt-0.5 shadow-lg shadow-[#07C59A]/30">
-                      <FaCheckCircle className="text-white text-sm" />
-                    </div>
-                    <span className="leading-relaxed">Ruta de desarrollo personalizada</span>
+                  <div className="flex items-start gap-3">
+                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
+                    <span className="text-sm">Ruta de desarrollo personalizada</span>
                   </div>
                 </div>
 
-                <Link href={`/${lang}/test`} className="relative z-10 block w-full bg-[#07C59A] hover:bg-[#069e7b] text-white font-bold py-5 px-8 rounded-2xl text-center transition-all duration-300 text-lg shadow-2xl shadow-[#07C59A]/30 hover:shadow-[#07C59A]/50 hover:scale-[1.02]">
+                <Link href={`/${lang}/test`} className="relative z-10 block w-full bg-[#07C59A] hover:bg-[#069e7b] text-white font-bold py-4 px-6 rounded-xl text-center transition-all duration-300 shadow-2xl shadow-[#07C59A]/30 hover:shadow-[#07C59A]/50">
                   Empezar
                 </Link>
               </div>
