@@ -322,15 +322,19 @@ export default function Home() {
                 <div className="space-y-3 mb-8">
                   <div className="flex items-start gap-3">
                     <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
-                    <span className="text-gray-700 text-sm">Certificado de CI personalizado</span>
+                    <span className="text-gray-700 text-sm">Tests ilimitados de CI y personalidad</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
-                    <span className="text-gray-700 text-sm">Evaluación cognitiva integral</span>
+                    <span className="text-gray-700 text-sm">Certificado personalizado descargable</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
-                    <span className="text-gray-700 text-sm">Acceso completo a herramientas de desarrollo</span>
+                    <span className="text-gray-700 text-sm">Análisis detallado de tus resultados</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
+                    <span className="text-gray-700 text-sm">Seguimiento de tu evolución cognitiva</span>
                   </div>
                 </div>
 
@@ -364,19 +368,19 @@ export default function Home() {
                 <div className="relative z-10 space-y-3 mb-8">
                   <div className="flex items-start gap-3">
                     <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
-                    <span className="text-sm">Ahorro máximo para un crecimiento a largo plazo</span>
+                    <span className="text-sm">Ahorra hasta un 33% vs plan quincenal</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
-                    <span className="text-sm">Paquete completo de evaluación cognitiva</span>
+                    <span className="text-sm">6 tests psicométricos completos (CI, TDAH, Ansiedad, Depresión, Personalidad, Inteligencia Emocional)</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
-                    <span className="text-sm">Más de 20 horas de cursos dirigidos por expertos</span>
+                    <span className="text-sm">Dashboard avanzado con gráficos de evolución</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
-                    <span className="text-sm">Ruta de desarrollo personalizada</span>
+                    <span className="text-sm">Sistema de logros y recomendaciones personalizadas</span>
                   </div>
                 </div>
 
