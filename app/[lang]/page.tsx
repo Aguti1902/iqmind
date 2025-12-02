@@ -263,14 +263,14 @@ export default function Home() {
             </div>
 
             {/* Carrousel Container */}
-            <div className="relative">
-              <div className="overflow-hidden">
+            <div className="relative px-16">
+              <div className="overflow-hidden py-4">
                 <div 
                   className="flex transition-transform duration-500 ease-in-out"
                   style={{ transform: `translateX(-${currentTestimonial * (100 / 3)}%)` }}
                 >
                   {t?.testimonials?.reviews?.map((review: any, index: number) => (
-                    <div key={index} className="w-1/3 flex-shrink-0 px-2">
+                    <div key={index} className="w-1/3 flex-shrink-0 px-3">
                       <div className="bg-white rounded-2xl shadow-xl p-6 h-full border border-gray-100">
                         <div className="flex items-center mb-4">
                           <div className="w-12 h-12 bg-gradient-to-br from-[#07C59A] to-[#069e7b] rounded-full flex items-center justify-center text-white font-bold text-sm">
@@ -297,7 +297,7 @@ export default function Home() {
                   const maxIndex = Math.max(0, totalReviews - 3)
                   setCurrentTestimonial((prev) => (prev === 0 ? maxIndex : Math.max(0, prev - 3)))
                 }}
-                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white hover:bg-[#07C59A] text-gray-800 hover:text-white p-4 rounded-full shadow-lg transition-all duration-300 z-10"
+                className="absolute left-0 top-1/2 -translate-y-1/2 bg-white hover:bg-[#07C59A] text-gray-800 hover:text-white p-4 rounded-full shadow-lg transition-all duration-300 z-10"
                 aria-label="Anterior"
               >
                 <FaChevronLeft className="text-xl" />
@@ -308,7 +308,7 @@ export default function Home() {
                   const maxIndex = Math.max(0, totalReviews - 3)
                   setCurrentTestimonial((prev) => (prev >= maxIndex ? 0 : Math.min(maxIndex, prev + 3)))
                 }}
-                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-white hover:bg-[#07C59A] text-gray-800 hover:text-white p-4 rounded-full shadow-lg transition-all duration-300 z-10"
+                className="absolute right-0 top-1/2 -translate-y-1/2 bg-white hover:bg-[#07C59A] text-gray-800 hover:text-white p-4 rounded-full shadow-lg transition-all duration-300 z-10"
                 aria-label="Siguiente"
               >
                 <FaChevronRight className="text-xl" />
