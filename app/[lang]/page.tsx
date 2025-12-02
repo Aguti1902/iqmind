@@ -5,6 +5,7 @@ import Footer from '@/components/Footer'
 import Link from 'next/link'
 import { FaBrain, FaChartLine, FaCertificate, FaUserFriends, FaLock, FaCheckCircle } from 'react-icons/fa'
 import { useTranslations } from '@/hooks/useTranslations'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 
 export default function Home() {
   const { t, loading, lang } = useTranslations()
