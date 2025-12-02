@@ -12,11 +12,15 @@ export default function Home() {
   const { t, loading, lang } = useTranslations()
   const [currentTestimonial, setCurrentTestimonial] = useState(0)
 
-  // Auto-play carrousel
+  // Auto-play carrousel (avanza de 3 en 3)
   useEffect(() => {
     if (!t?.testimonials?.reviews || t?.testimonials?.reviews?.length === 0) return
     const timer = setInterval(() => {
-      setCurrentTestimonial((prev) => (prev === (t?.testimonials?.reviews?.length || 1) - 1 ? 0 : prev + 1))
+      setCurrentTestimonial((prev) => {
+        const totalReviews = t?.testimonials?.reviews?.length || 1
+        const maxIndex = Math.max(0, totalReviews - 3)
+        return prev >= maxIndex ? 0 : Math.min(maxIndex, prev + 3)
+      })
     }, 5000) // Cambia cada 5 segundos
     return () => clearInterval(timer)
   }, [t?.testimonials?.reviews])
@@ -263,21 +267,21 @@ export default function Home() {
               <div className="overflow-hidden">
                 <div 
                   className="flex transition-transform duration-500 ease-in-out"
-                  style={{ transform: `translateX(-${currentTestimonial * 100}%)` }}
+                  style={{ transform: `translateX(-${currentTestimonial * (100 / 3)}%)` }}
                 >
                   {t?.testimonials?.reviews?.map((review: any, index: number) => (
-                    <div key={index} className="w-full flex-shrink-0 px-4">
-                      <div className="bg-white rounded-2xl shadow-xl p-8 max-w-4xl mx-auto border border-gray-100">
-                        <div className="flex items-center mb-6">
-                          <div className="w-16 h-16 bg-gradient-to-br from-[#07C59A] to-[#069e7b] rounded-full flex items-center justify-center text-white font-bold text-xl">
+                    <div key={index} className="w-1/3 flex-shrink-0 px-2">
+                      <div className="bg-white rounded-2xl shadow-xl p-6 h-full border border-gray-100">
+                        <div className="flex items-center mb-4">
+                          <div className="w-12 h-12 bg-gradient-to-br from-[#07C59A] to-[#069e7b] rounded-full flex items-center justify-center text-white font-bold text-sm">
                             {review.initials}
                           </div>
-                          <div className="ml-4">
-                            <h4 className="font-bold text-lg text-gray-900">{review.name}</h4>
-                            <div className="text-yellow-400 text-xl">★★★★★</div>
+                          <div className="ml-3">
+                            <h4 className="font-bold text-base text-gray-900">{review.name}</h4>
+                            <div className="text-yellow-400 text-sm">★★★★★</div>
                           </div>
                         </div>
-                        <p className="text-gray-700 text-lg italic">
+                        <p className="text-gray-700 text-sm italic">
                           "{review.text}"
                         </p>
                       </div>
@@ -288,14 +292,22 @@ export default function Home() {
 
               {/* Navigation Arrows */}
               <button
-                onClick={() => setCurrentTestimonial((prev) => (prev === 0 ? (t?.testimonials?.reviews?.length || 1) - 1 : prev - 1))}
+                onClick={() => {
+                  const totalReviews = t?.testimonials?.reviews?.length || 1
+                  const maxIndex = Math.max(0, totalReviews - 3)
+                  setCurrentTestimonial((prev) => (prev === 0 ? maxIndex : Math.max(0, prev - 3)))
+                }}
                 className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white hover:bg-[#07C59A] text-gray-800 hover:text-white p-4 rounded-full shadow-lg transition-all duration-300 z-10"
                 aria-label="Anterior"
               >
                 <FaChevronLeft className="text-xl" />
               </button>
               <button
-                onClick={() => setCurrentTestimonial((prev) => (prev === (t?.testimonials?.reviews?.length || 1) - 1 ? 0 : prev + 1))}
+                onClick={() => {
+                  const totalReviews = t?.testimonials?.reviews?.length || 1
+                  const maxIndex = Math.max(0, totalReviews - 3)
+                  setCurrentTestimonial((prev) => (prev >= maxIndex ? 0 : Math.min(maxIndex, prev + 3)))
+                }}
                 className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-white hover:bg-[#07C59A] text-gray-800 hover:text-white p-4 rounded-full shadow-lg transition-all duration-300 z-10"
                 aria-label="Siguiente"
               >
@@ -304,16 +316,16 @@ export default function Home() {
 
               {/* Dots Indicator */}
               <div className="flex justify-center gap-2 mt-8">
-                {t?.testimonials?.reviews?.map((_: any, index: number) => (
+                {Array.from({ length: Math.ceil((t?.testimonials?.reviews?.length || 0) / 3) }).map((_, groupIndex) => (
                   <button
-                    key={index}
-                    onClick={() => setCurrentTestimonial(index)}
+                    key={groupIndex}
+                    onClick={() => setCurrentTestimonial(groupIndex * 3)}
                     className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                      index === currentTestimonial 
+                      Math.floor(currentTestimonial / 3) === groupIndex
                         ? 'bg-[#07C59A] w-8' 
                         : 'bg-gray-300 hover:bg-gray-400'
                     }`}
-                    aria-label={`Ir a reseña ${index + 1}`}
+                    aria-label={`Ir a grupo ${groupIndex + 1}`}
                   />
                 ))}
               </div>
