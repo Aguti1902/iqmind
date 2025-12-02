@@ -271,17 +271,17 @@ export default function Home() {
                 >
                   {t?.testimonials?.reviews?.map((review: any, index: number) => (
                     <div key={index} className="w-1/3 flex-shrink-0 px-3">
-                      <div className="bg-white rounded-2xl shadow-xl p-6 h-full border border-gray-100">
-                        <div className="flex items-center mb-4">
-                          <div className="w-12 h-12 bg-gradient-to-br from-[#07C59A] to-[#069e7b] rounded-full flex items-center justify-center text-white font-bold text-sm">
+                      <div className="bg-white rounded-2xl p-8 h-full border border-gray-200">
+                        <div className="flex items-center mb-6">
+                          <div className="w-14 h-14 bg-gradient-to-br from-[#07C59A] to-[#069e7b] rounded-full flex items-center justify-center text-white font-bold text-lg">
                             {review.initials}
                           </div>
-                          <div className="ml-3">
-                            <h4 className="font-bold text-base text-gray-900">{review.name}</h4>
-                            <div className="text-yellow-400 text-sm">★★★★★</div>
+                          <div className="ml-4">
+                            <h4 className="font-bold text-lg text-gray-900">{review.name}</h4>
+                            <div className="text-yellow-400 text-lg">★★★★★</div>
                           </div>
                         </div>
-                        <p className="text-gray-700 text-sm italic">
+                        <p className="text-gray-700 text-base italic leading-relaxed">
                           "{review.text}"
                         </p>
                       </div>
