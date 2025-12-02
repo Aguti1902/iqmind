@@ -58,10 +58,10 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // Crear Payment Intent de €0.50 para cobrar inmediatamente
+    // Crear Payment Intent de €1.00 para cobrar inmediatamente
     const paymentIntent = await stripe.paymentIntents.create({
       customer: customer.id,
-      amount: 50, // €0.50 en centavos
+      amount: 100, // €1.00 en centavos
       currency: 'eur',
       // Habilitar métodos automáticos para Apple Pay y Google Pay
       automatic_payment_methods: {

@@ -308,88 +308,85 @@ export default function Home() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-              {/* Plan Inicial */}
-              <div className="bg-white rounded-2xl shadow-xl p-8 border-2 border-[#07C59A]">
+              {/* Plan Quincenal */}
+              <div className="bg-white rounded-2xl shadow-xl p-8 border-2 border-gray-200 hover:border-[#07C59A] transition-all">
                 <div className="text-center mb-6">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">{t.pricing.initialPayment}</h3>
-                  <div className="flex items-baseline justify-center gap-2">
-                    <span className="text-5xl font-bold text-[#07C59A]">{t.pricing.initialPrice}</span>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-4">SUSCRIPCIÓN QUINCENAL</h3>
+                  <div className="flex items-baseline justify-center gap-2 mb-2">
+                    <span className="text-5xl font-bold text-gray-900">€14.99</span>
+                    <span className="text-gray-600">*</span>
                   </div>
-                  <p className="text-gray-600 mt-2">{t.pricing.initialDesc}</p>
-                  
-                  {/* Aviso importante */}
-                  <div className="mt-4 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded">
-                    <p className="text-sm text-gray-700">
-                      <strong>{t.notices.importantTitle}</strong> {t.notices.importantMessage}
-                    </p>
-                  </div>
+                  <p className="text-gray-500 text-sm">/2 semanas</p>
                 </div>
                 
                 <ul className="space-y-4 mb-8">
-                  <li className="flex items-center gap-3">
-                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0" />
-                    <span className="text-gray-700">{t.pricing.initialFeature1}</span>
+                  <li className="flex items-start gap-3">
+                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
+                    <span className="text-gray-700">Prueba de 7 días; luego se renueva automáticamente a un plan quincenal.</span>
                   </li>
-                  <li className="flex items-center gap-3">
-                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0" />
-                    <span className="text-gray-700">{t.pricing.initialFeature2}</span>
+                  <li className="flex items-start gap-3">
+                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
+                    <span className="text-gray-700">Certificado de CI personalizado</span>
                   </li>
-                  <li className="flex items-center gap-3">
-                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0" />
-                    <span className="text-gray-700">{t.pricing.initialFeature3}</span>
+                  <li className="flex items-start gap-3">
+                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
+                    <span className="text-gray-700">Evaluación cognitiva integral</span>
                   </li>
-                  <li className="flex items-center gap-3">
-                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0" />
-                    <span className="text-gray-700">{t.pricing.initialFeature4}</span>
+                  <li className="flex items-start gap-3">
+                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
+                    <span className="text-gray-700">Acceso completo a herramientas de desarrollo</span>
                   </li>
                 </ul>
 
-                <Link href={`/${lang}/test`} className="block w-full bg-[#07C59A] hover:bg-[#069e7b] text-white font-semibold py-4 px-6 rounded-lg text-center transition-all duration-200 shadow-lg hover:shadow-xl">
-                  {t.pricing.button}
+                <Link href={`/${lang}/test`} className="block w-full bg-[#113240] hover:bg-[#052547] text-white font-bold py-4 px-6 rounded-xl text-center transition-all duration-200 shadow-lg hover:shadow-xl">
+                  Empezar
                 </Link>
               </div>
 
-              {/* Plan Premium */}
-              <div className="bg-gradient-to-br from-[#113240] to-[#052547] rounded-2xl shadow-xl p-8 text-white relative overflow-hidden">
+              {/* Plan Mensual - Destacado */}
+              <div className="bg-gradient-to-br from-[#113240] to-[#052547] rounded-2xl shadow-2xl p-8 text-white relative overflow-hidden border-2 border-[#07C59A]">
+                <div className="absolute top-4 right-4 bg-[#07C59A] text-white px-3 py-1 rounded-full text-xs font-bold">
+                  RECOMENDADO
+                </div>
+                
                 <div className="text-center mb-6">
-                  <h3 className="text-2xl font-bold mb-2">{t.pricing.subscription}</h3>
-                  
-                  {/* Badge debajo del título */}
-                  <div className="inline-block bg-[#07C59A] text-white px-4 py-1 rounded-full text-sm font-semibold mb-3">
-                    {t.pricing.cancelAnytime}
+                  <h3 className="text-2xl font-bold mb-4">EXCELENCIA MENSUAL</h3>
+                  <div className="flex items-baseline justify-center gap-2 mb-2">
+                    <span className="text-5xl font-bold">€29.99</span>
+                    <span className="text-white/80">*</span>
                   </div>
-                  
-                  <div className="flex items-baseline justify-center gap-2">
-                    <span className="text-5xl font-bold">{t.pricing.subscriptionPrice}</span>
-                    <span className="text-xl opacity-80">{t.pricing.subscriptionPeriod}</span>
-                  </div>
-                  <p className="text-white/80 mt-2">{t.pricing.subscriptionDesc}</p>
+                  <p className="text-white/70 text-sm">/mes</p>
                 </div>
                 
                 <ul className="space-y-4 mb-8">
-                  <li className="flex items-center gap-3">
-                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0" />
-                    <span>{t.pricing.subscriptionFeature1}</span>
+                  <li className="flex items-start gap-3">
+                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
+                    <span>Ahorro máximo para un crecimiento a largo plazo</span>
                   </li>
-                  <li className="flex items-center gap-3">
-                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0" />
-                    <span>{t.pricing.subscriptionFeature2}</span>
+                  <li className="flex items-start gap-3">
+                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
+                    <span>Paquete completo de evaluación cognitiva</span>
                   </li>
-                  <li className="flex items-center gap-3">
-                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0" />
-                    <span>{t.pricing.subscriptionFeature3}</span>
+                  <li className="flex items-start gap-3">
+                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
+                    <span>Más de 20 horas de cursos dirigidos por expertos</span>
                   </li>
-                  <li className="flex items-center gap-3">
-                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0" />
-                    <span>{t.pricing.subscriptionFeature4}</span>
+                  <li className="flex items-start gap-3">
+                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
+                    <span>Ruta de desarrollo personalizada</span>
                   </li>
                 </ul>
 
-                <Link href={`/${lang}/test`} className="block w-full bg-white text-[#113240] hover:bg-gray-100 font-semibold py-4 px-6 rounded-lg text-center transition-all duration-200 shadow-lg hover:shadow-xl">
-                  {t.pricing.button}
+                <Link href={`/${lang}/test`} className="block w-full bg-[#07C59A] hover:bg-[#069e7b] text-white font-bold py-4 px-6 rounded-xl text-center transition-all duration-200 shadow-lg hover:shadow-xl">
+                  Empezar
                 </Link>
               </div>
             </div>
+
+            {/* Nota inferior */}
+            <p className="text-center text-sm text-gray-600 mt-8">
+              *Los precios pueden variar según tu país y las promociones actuales. Se te cobrará en tu moneda local.
+            </p>
           </div>
         </section>
 
