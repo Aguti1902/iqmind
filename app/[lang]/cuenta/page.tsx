@@ -786,8 +786,8 @@ export default function CuentaPage() {
           {/* Available Tests Section */}
           <div className="mb-8">
             <div className="bg-white rounded-xl shadow-md p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">{t.account.availableTests || 'Tests Disponibles'}</h2>
-              <p className="text-gray-600 mb-6">{t.account.availableTestsSubtitle || 'Realiza diferentes evaluaciones para conocerte mejor'}</p>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">{t?.account?.availableTests || 'Tests Disponibles'}</h2>
+              <p className="text-gray-600 mb-6">{t?.account?.availableTestsSubtitle || 'Realiza diferentes evaluaciones para conocerte mejor'}</p>
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {/* ADHD Test */}
@@ -800,11 +800,11 @@ export default function CuentaPage() {
                       A
                     </div>
                     <div>
-                      <h3 className="font-bold text-gray-900">{t.tests.adhd?.title || 'Test TDAH'}</h3>
-                      <p className="text-sm text-gray-600">{t.tests.adhd?.subtitle || 'DSM-5'}</p>
+                      <h3 className="font-bold text-gray-900">{t?.tests?.adhd?.title || 'Test TDAH'}</h3>
+                      <p className="text-sm text-gray-600">{t?.tests?.adhd?.subtitle || 'DSM-5'}</p>
                     </div>
                   </div>
-                  <p className="text-sm text-gray-700">{t.tests.adhd?.description || 'Evalúa síntomas de TDAH según criterios DSM-5'}</p>
+                  <p className="text-sm text-gray-700">{t?.tests?.adhd?.description || 'Evalúa síntomas de TDAH según criterios DSM-5'}</p>
                 </Link>
 
                 {/* Anxiety Test */}
@@ -817,11 +817,11 @@ export default function CuentaPage() {
                       😰
                     </div>
                     <div>
-                      <h3 className="font-bold text-gray-900">{t.tests.anxiety?.title || 'Test Ansiedad'}</h3>
-                      <p className="text-sm text-gray-600">{t.tests.anxiety?.subtitle || 'GAD-7'}</p>
+                      <h3 className="font-bold text-gray-900">{t?.tests?.anxiety?.title || 'Test Ansiedad'}</h3>
+                      <p className="text-sm text-gray-600">{t?.tests?.anxiety?.subtitle || 'GAD-7'}</p>
                     </div>
                   </div>
-                  <p className="text-sm text-gray-700">{t.tests.anxiety?.description || 'Mide niveles de ansiedad generalizada'}</p>
+                  <p className="text-sm text-gray-700">{t?.tests?.anxiety?.description || 'Mide niveles de ansiedad generalizada'}</p>
                 </Link>
 
                 {/* Depression Test */}
@@ -834,11 +834,11 @@ export default function CuentaPage() {
                       😔
                     </div>
                     <div>
-                      <h3 className="font-bold text-gray-900">{t.tests.depression?.title || 'Test Depresión'}</h3>
-                      <p className="text-sm text-gray-600">{t.tests.depression?.subtitle || 'PHQ-9'}</p>
+                      <h3 className="font-bold text-gray-900">{t?.tests?.depression?.title || 'Test Depresión'}</h3>
+                      <p className="text-sm text-gray-600">{t?.tests?.depression?.subtitle || 'PHQ-9'}</p>
                     </div>
                   </div>
-                  <p className="text-sm text-gray-700">{t.tests.depression?.description || 'Evalúa síntomas depresivos'}</p>
+                  <p className="text-sm text-gray-700">{t?.tests?.depression?.description || 'Evalúa síntomas depresivos'}</p>
                 </Link>
 
                 {/* Personality Test */}
@@ -851,11 +851,11 @@ export default function CuentaPage() {
                       👤
                     </div>
                     <div>
-                      <h3 className="font-bold text-gray-900">{t.tests.personality?.title || 'Test Personalidad'}</h3>
-                      <p className="text-sm text-gray-600">{t.tests.personality?.subtitle || 'Big Five'}</p>
+                      <h3 className="font-bold text-gray-900">{t?.tests?.personality?.title || 'Test Personalidad'}</h3>
+                      <p className="text-sm text-gray-600">{t?.tests?.personality?.subtitle || 'Big Five'}</p>
                     </div>
                   </div>
-                  <p className="text-sm text-gray-700">{t.tests.personality?.description || 'Descubre tu perfil de personalidad'}</p>
+                  <p className="text-sm text-gray-700">{t?.tests?.personality?.description || 'Descubre tu perfil de personalidad'}</p>
                 </Link>
 
                 {/* Emotional Intelligence Test */}
@@ -868,11 +868,11 @@ export default function CuentaPage() {
                       💚
                     </div>
                     <div>
-                      <h3 className="font-bold text-gray-900">{t.tests.eq?.title || 'Inteligencia Emocional'}</h3>
-                      <p className="text-sm text-gray-600">{t.tests.eq?.subtitle || 'EQ Test'}</p>
+                      <h3 className="font-bold text-gray-900">{t?.tests?.eq?.title || 'Inteligencia Emocional'}</h3>
+                      <p className="text-sm text-gray-600">{t?.tests?.eq?.subtitle || 'EQ Test'}</p>
                     </div>
                   </div>
-                  <p className="text-sm text-gray-700">{t.tests.eq?.description || 'Mide tu capacidad emocional'}</p>
+                  <p className="text-sm text-gray-700">{t?.tests?.eq?.description || 'Mide tu capacidad emocional'}</p>
                 </Link>
 
                 {/* IQ Test */}
@@ -885,11 +885,11 @@ export default function CuentaPage() {
                       <FaBrain className="text-xl" />
                     </div>
                     <div>
-                      <h3 className="font-bold text-gray-900">{t.account.iqTest || 'Test de CI'}</h3>
+                      <h3 className="font-bold text-gray-900">{t?.account?.iqTest || 'Test de CI'}</h3>
                       <p className="text-sm text-gray-600">IQ Test</p>
                     </div>
                   </div>
-                  <p className="text-sm text-gray-700">{t.account.iqTestDesc || 'Evalúa tu coeficiente intelectual'}</p>
+                  <p className="text-sm text-gray-700">{t?.account?.iqTestDesc || 'Evalúa tu coeficiente intelectual'}</p>
                 </Link>
               </div>
             </div>
