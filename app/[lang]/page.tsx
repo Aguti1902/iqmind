@@ -337,34 +337,24 @@ export default function Home() {
               {/* Plan Quincenal */}
               <div className="group relative bg-white rounded-2xl shadow-xl p-8 border border-gray-200 hover:border-[#07C59A] transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 flex flex-col">
                 <div className="mb-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">Suscripción Quincenal</h3>
+                  <h3 className="text-xl font-bold text-gray-900 mb-4">{t.pricing?.quincenal?.title}</h3>
                   <div className="flex items-baseline gap-1 mb-2">
-                    <span className="text-5xl font-bold text-gray-900 leading-none">€9.99</span>
-                    <span className="text-gray-500 text-lg font-normal ml-1">/2 semanas</span>
+                    <span className="text-5xl font-bold text-gray-900 leading-none">€{t.pricing?.quincenal?.price}</span>
+                    <span className="text-gray-500 text-lg font-normal ml-1">{t.pricing?.quincenal?.period}</span>
                   </div>
                 </div>
                 
                 <div className="space-y-3 mb-8 flex-1">
-                  <div className="flex items-start gap-3">
-                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
-                    <span className="text-gray-700 text-sm">Tests ilimitados de CI y personalidad</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
-                    <span className="text-gray-700 text-sm">Certificado personalizado descargable</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
-                    <span className="text-gray-700 text-sm">Análisis detallado de tus resultados</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
-                    <span className="text-gray-700 text-sm">Seguimiento de tu evolución cognitiva</span>
-                  </div>
+                  {t.pricing?.quincenal?.features?.map((feature: string, index: number) => (
+                    <div key={index} className="flex items-start gap-3">
+                      <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
+                      <span className="text-gray-700 text-sm">{feature}</span>
+                    </div>
+                  ))}
                 </div>
 
                 <Link href={`/${lang}/test`} className="block w-full bg-[#113240] hover:bg-[#052547] text-white font-bold py-4 px-6 rounded-xl text-center transition-all duration-300 shadow-lg hover:shadow-xl mt-auto">
-                  Empezar
+                  {t.pricing?.button}
                 </Link>
               </div>
 
@@ -373,7 +363,7 @@ export default function Home() {
                 {/* Badge Recomendado */}
                 <div className="absolute top-3 right-3">
                   <div className="bg-[#07C59A] text-white px-4 py-1 rounded-full font-bold text-xs tracking-wide shadow-lg">
-                    RECOMENDADO
+                    {t.pricing?.mensual?.badge}
                   </div>
                 </div>
 
@@ -382,41 +372,31 @@ export default function Home() {
                 <div className="absolute bottom-10 left-10 w-40 h-40 bg-[#07C59A] rounded-full opacity-10 blur-3xl"></div>
                 
                 <div className="relative z-10 mb-6">
-                  <h3 className="text-xl font-bold mb-4">Excelencia Mensual</h3>
+                  <h3 className="text-xl font-bold mb-4">{t.pricing?.mensual?.title}</h3>
                   <div className="flex items-baseline gap-1 mb-2">
-                    <span className="text-5xl font-bold leading-none">€19.99</span>
-                    <span className="text-white/70 text-lg font-normal ml-1">/mes</span>
+                    <span className="text-5xl font-bold leading-none">€{t.pricing?.mensual?.price}</span>
+                    <span className="text-white/70 text-lg font-normal ml-1">{t.pricing?.mensual?.period}</span>
                   </div>
                 </div>
                 
                 <div className="relative z-10 space-y-3 mb-8 flex-1">
-                  <div className="flex items-start gap-3">
-                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
-                    <span className="text-sm">Mejor relación precio/valor a largo plazo</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
-                    <span className="text-sm">6 tests psicométricos completos</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
-                    <span className="text-sm">Dashboard avanzado con gráficos de evolución</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
-                    <span className="text-sm">Sistema de logros y recomendaciones personalizadas</span>
-                  </div>
+                  {t.pricing?.mensual?.features?.map((feature: string, index: number) => (
+                    <div key={index} className="flex items-start gap-3">
+                      <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
+                      <span className="text-sm">{feature}</span>
+                    </div>
+                  ))}
                 </div>
 
                 <Link href={`/${lang}/test`} className="relative z-10 block w-full bg-[#07C59A] hover:bg-[#069e7b] text-white font-bold py-4 px-6 rounded-xl text-center transition-all duration-300 shadow-2xl shadow-[#07C59A]/30 hover:shadow-[#07C59A]/50 mt-auto">
-                  Empezar
+                  {t.pricing?.button}
                 </Link>
               </div>
             </div>
 
             {/* Nota inferior */}
             <p className="text-center text-sm text-gray-600 mt-8">
-              *Los precios pueden variar según tu país y las promociones actuales. Se te cobrará en tu moneda local.
+              {t.pricing?.note}
             </p>
           </div>
         </section>
@@ -496,17 +476,17 @@ export default function Home() {
           <div className="container-custom max-w-7xl">
             <div className="text-center mb-16">
               <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                Datos de interés
+                {t.interestData?.title}
               </h2>
               <p className="text-xl text-gray-600">
-                Promedios de CI basados en millones de tests realizados
+                {t.interestData?.subtitle}
               </p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12">
               {/* CI promedio por edad */}
               <div className="bg-white rounded-2xl shadow-xl p-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-6">CI promedio por edad</h3>
+                <h3 className="text-2xl font-bold text-gray-900 mb-6">{t.interestData?.ageChart}</h3>
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={[
                     { age: '< 18 años', iq: 95 },
@@ -544,7 +524,7 @@ export default function Home() {
 
               {/* CI promedio por país */}
               <div className="bg-white rounded-2xl shadow-xl p-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-6">CI promedio por país</h3>
+                <h3 className="text-2xl font-bold text-gray-900 mb-6">{t.interestData?.countryChart}</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {[
                     { country: 'China', flag: '🇨🇳', iq: 105 },
@@ -573,9 +553,7 @@ export default function Home() {
             {/* Nota informativa */}
             <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-lg max-w-4xl mx-auto">
               <p className="text-sm text-blue-800">
-                <strong>📊 Nota:</strong> Estos datos son promedios estadísticos basados en millones de tests de CI realizados a nivel mundial. 
-                El CI puede variar significativamente entre individuos y está influenciado por múltiples factores como la educación, 
-                el entorno socioeconómico y las oportunidades de desarrollo cognitivo.
+                <strong>📊 </strong>{t.interestData?.note}
               </p>
             </div>
           </div>
