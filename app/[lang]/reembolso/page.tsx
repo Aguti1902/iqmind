@@ -39,9 +39,9 @@ export default function ReembolsoPage() {
             <section className="mb-12">
               <h2 className="text-3xl font-bold text-gray-900 mb-6">7. POLÍTICA DE REEMBOLSO</h2>
 
-              {/* 7.1 Reembolsos del período de prueba ($1.00) */}
+              {/* 7.1 Reembolsos del período de prueba (0,50€) */}
               <div className="mb-10">
-                <h3 className="text-2xl font-semibold text-gray-900 mb-4">7.1 Reembolsos del período de prueba (1,00€)</h3>
+                <h3 className="text-2xl font-semibold text-gray-900 mb-4">7.1 Reembolsos del período de prueba (0,50€)</h3>
                 
                 <p className="text-gray-700 mb-4">
                   Puede optar a un reembolso completo dentro de los <strong>30 días posteriores a la compra</strong> si:
