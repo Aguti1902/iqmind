@@ -56,7 +56,7 @@ export default function TestsPage() {
       questions: 9,
       time: '3-5 min',
       route: '/tests/depression',
-      available: false
+      available: true
     },
     {
       id: 'eq',
@@ -68,7 +68,7 @@ export default function TestsPage() {
       questions: 33,
       time: '8-10 min',
       route: '/tests/eq',
-      available: false
+      available: true
     }
   ]
 
