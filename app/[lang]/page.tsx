@@ -520,7 +520,7 @@ export default function Home() {
               {/* CI promedio por país */}
               <div className="bg-white rounded-2xl shadow-xl p-8">
                 <h3 className="text-2xl font-bold text-gray-900 mb-6">CI promedio por país</h3>
-                <div className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {[
                     { country: 'China', flag: '🇨🇳', iq: 105 },
                     { country: 'Estonia', flag: '🇪🇪', iq: 100 },
@@ -528,15 +528,15 @@ export default function Home() {
                     { country: 'Australia', flag: '🇦🇺', iq: 99 },
                     { country: 'Canadá', flag: '🇨🇦', iq: 99 },
                     { country: 'EE. UU.', flag: '🇺🇸', iq: 97 },
-                    { country: 'Argentina', flag: '🇦🇷', iq: 86 },
-                    { country: 'India', flag: '🇮🇳', iq: 76 }
+                    { country: 'Ucrania', flag: '🇺🇦', iq: 92 },
+                    { country: 'Argentina', flag: '🇦🇷', iq: 86 }
                   ].map((item) => (
-                    <div key={item.country} className="flex items-center justify-between p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
-                      <div className="flex items-center gap-4">
-                        <span className="text-4xl">{item.flag}</span>
-                        <span className="font-semibold text-gray-900">{item.country}</span>
+                    <div key={item.country} className="flex items-center justify-between p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
+                      <div className="flex items-center gap-3">
+                        <span className="text-3xl">{item.flag}</span>
+                        <span className="font-semibold text-gray-900 text-sm">{item.country}</span>
                       </div>
-                      <div className="text-3xl font-bold text-[#07C59A]">
+                      <div className="text-2xl font-bold text-[#07C59A]">
                         {item.iq}
                       </div>
                     </div>
