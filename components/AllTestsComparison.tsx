@@ -1,6 +1,6 @@
 'use client'
 
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts'
 
 interface TestResult {
   name: string
@@ -141,7 +141,7 @@ export default function AllTestsComparison() {
             animationDuration={1000}
           >
             {testResults.map((entry, index) => (
-              <Bar key={`cell-${index}`} fill={entry.color} />
+              <Cell key={`cell-${index}`} fill={entry.color} />
             ))}
           </Bar>
         </BarChart>
