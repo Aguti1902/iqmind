@@ -14,12 +14,12 @@ export default function Home() {
 
   // Auto-play carrousel
   useEffect(() => {
-    if (!t.testimonials?.reviews) return
+    if (!t?.testimonials?.reviews || t?.testimonials?.reviews?.length === 0) return
     const timer = setInterval(() => {
-      setCurrentTestimonial((prev) => (prev === t.testimonials.reviews.length - 1 ? 0 : prev + 1))
+      setCurrentTestimonial((prev) => (prev === (t?.testimonials?.reviews?.length || 1) - 1 ? 0 : prev + 1))
     }, 5000) // Cambia cada 5 segundos
     return () => clearInterval(timer)
-  }, [t.testimonials?.reviews])
+  }, [t?.testimonials?.reviews])
 
   if (loading || !t) {
     return (
@@ -265,7 +265,7 @@ export default function Home() {
                   className="flex transition-transform duration-500 ease-in-out"
                   style={{ transform: `translateX(-${currentTestimonial * 100}%)` }}
                 >
-                  {t.testimonials.reviews?.map((review: any, index: number) => (
+                  {t?.testimonials?.reviews?.map((review: any, index: number) => (
                     <div key={index} className="w-full flex-shrink-0 px-4">
                       <div className="bg-white rounded-2xl shadow-xl p-8 max-w-4xl mx-auto border border-gray-100">
                         <div className="flex items-center mb-6">
@@ -288,14 +288,14 @@ export default function Home() {
 
               {/* Navigation Arrows */}
               <button
-                onClick={() => setCurrentTestimonial((prev) => (prev === 0 ? (t.testimonials.reviews?.length || 1) - 1 : prev - 1))}
+                onClick={() => setCurrentTestimonial((prev) => (prev === 0 ? (t?.testimonials?.reviews?.length || 1) - 1 : prev - 1))}
                 className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white hover:bg-[#07C59A] text-gray-800 hover:text-white p-4 rounded-full shadow-lg transition-all duration-300 z-10"
                 aria-label="Anterior"
               >
                 <FaChevronLeft className="text-xl" />
               </button>
               <button
-                onClick={() => setCurrentTestimonial((prev) => (prev === (t.testimonials.reviews?.length || 1) - 1 ? 0 : prev + 1))}
+                onClick={() => setCurrentTestimonial((prev) => (prev === (t?.testimonials?.reviews?.length || 1) - 1 ? 0 : prev + 1))}
                 className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-white hover:bg-[#07C59A] text-gray-800 hover:text-white p-4 rounded-full shadow-lg transition-all duration-300 z-10"
                 aria-label="Siguiente"
               >
@@ -304,7 +304,7 @@ export default function Home() {
 
               {/* Dots Indicator */}
               <div className="flex justify-center gap-2 mt-8">
-                {t.testimonials.reviews?.map((_: any, index: number) => (
+                {t?.testimonials?.reviews?.map((_: any, index: number) => (
                   <button
                     key={index}
                     onClick={() => setCurrentTestimonial(index)}
