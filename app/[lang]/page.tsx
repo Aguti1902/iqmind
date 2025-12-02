@@ -315,7 +315,6 @@ export default function Home() {
                   <div className="flex items-baseline gap-1 mb-2">
                     <span className="text-5xl font-bold text-gray-900 leading-none">€9.99</span>
                     <span className="text-gray-500 text-lg font-normal ml-1">/2 semanas</span>
-                    <span className="text-gray-500 text-base font-medium ml-1">*</span>
                   </div>
                 </div>
                 
@@ -361,7 +360,6 @@ export default function Home() {
                   <div className="flex items-baseline gap-1 mb-2">
                     <span className="text-5xl font-bold leading-none">€19.99</span>
                     <span className="text-white/70 text-lg font-normal ml-1">/mes</span>
-                    <span className="text-white/70 text-base font-medium ml-1">*</span>
                   </div>
                 </div>
                 
