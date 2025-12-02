@@ -52,7 +52,7 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
         return
       }
 
-      // Confirmar el pago de €1.00 con Stripe
+      // Confirmar el pago de €0.50 con Stripe
       const { error: confirmError, paymentIntent } = await stripe.confirmPayment({
         elements,
         confirmParams: {
@@ -67,8 +67,8 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
         return
       }
 
-      // Si llegamos aquí, el pago de €1.00 fue exitoso
-      console.log('✅ Pago de €1.00 exitoso:', paymentIntent?.id)
+      // Si llegamos aquí, el pago de €0.50 fue exitoso
+      console.log('✅ Pago de €0.50 exitoso:', paymentIntent?.id)
       console.log('📋 PaymentIntent completo:', paymentIntent)
       localStorage.setItem('paymentCompleted', 'true')
       localStorage.setItem('userEmail', email)
@@ -549,7 +549,7 @@ export default function CheckoutPage() {
                   <div className="space-y-3">
                     <div className="flex justify-between">
                       <span className="text-gray-700">{t.checkout.item}</span>
-                      <span className="font-semibold">1,00€</span>
+                      <span className="font-semibold">0,50€</span>
                     </div>
                     <div className="flex justify-between">
                       <div>
@@ -560,7 +560,7 @@ export default function CheckoutPage() {
                     </div>
                     <div className="border-t-2 pt-3 flex justify-between items-center">
                       <span className="text-lg font-bold text-gray-900">{t.checkout.total}</span>
-                      <span className="text-3xl font-bold text-[#07C59A]">1,00€</span>
+                      <span className="text-3xl font-bold text-[#07C59A]">0,50€</span>
                     </div>
                   </div>
                 </div>

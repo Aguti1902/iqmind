@@ -68,7 +68,7 @@ INSERT INTO site_config (key, value, description) VALUES
   -- Configuración de precios y suscripción
   ('subscription_price', '9.99', 'Precio de la suscripción mensual'),
   ('trial_days', '2', 'Días de prueba gratuita'),
-  ('initial_payment', '1.00', 'Pago inicial para acceder al resultado'),
+  ('initial_payment', '0.50', 'Pago inicial para acceder al resultado'),
   ('admin_emails', '', 'Emails de administradores separados por coma')
 ON CONFLICT (key) DO NOTHING;
 
