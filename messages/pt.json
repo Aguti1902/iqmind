@@ -65,29 +65,103 @@
   },
   "testimonials": {
     "title": "O que dizem os nossos utilizadores",
-    "subtitle": "Milhares de pessoas satisfeitas com os seus resultados"
+    "subtitle": "Milhares de pessoas satisfeitas com os seus resultados",
+    "reviews": [
+      {
+        "name": "Maria Garcia",
+        "initials": "MG",
+        "text": "Precisão incrível. A análise superou as minhas expectativas."
+      },
+      {
+        "name": "Juan Lopez",
+        "initials": "JL",
+        "text": "Processo rápido e resultados muito detalhados. Recomendo."
+      },
+      {
+        "name": "Ana Perez",
+        "initials": "AP",
+        "text": "Vale totalmente a pena. Certificado profissional."
+      },
+      {
+        "name": "Carlos Rodriguez",
+        "initials": "CR",
+        "text": "O teste mais completo que fiz. Muito preciso."
+      },
+      {
+        "name": "Laura Martinez",
+        "initials": "LM",
+        "text": "Ajudou-me a entender os meus pontos fortes. Ferramenta excelente."
+      },
+      {
+        "name": "Pedro Sanchez",
+        "initials": "PS",
+        "text": "Resultados instantâneos e análise muito profissional."
+      },
+      {
+        "name": "Isabel Torres",
+        "initials": "IT",
+        "text": "O melhor investimento para conhecer o meu potencial cognitivo."
+      },
+      {
+        "name": "Diego Ruiz",
+        "initials": "DR",
+        "text": "Teste cientificamente validado. Totalmente confiável."
+      },
+      {
+        "name": "Sofia Morales",
+        "initials": "SM",
+        "text": "Comparei com outros testes e este é o mais preciso."
+      },
+      {
+        "name": "Javier Hernandez",
+        "initials": "JH",
+        "text": "Perfeito para avaliar as minhas capacidades. Recomendo 100%."
+      },
+      {
+        "name": "Carmen Jimenez",
+        "initials": "CJ",
+        "text": "O certificado é muito profissional. Usei-o no meu currículo."
+      },
+      {
+        "name": "Miguel Diaz",
+        "initials": "MD",
+        "text": "Plataforma intuitiva e resultados muito detalhados."
+      },
+      {
+        "name": "Elena Vargas",
+        "initials": "EV",
+        "text": "Excelente relação qualidade-preço. Muito satisfeita."
+      }
+    ]
   },
   "pricing": {
     "title": "Preços Transparentes",
     "subtitle": "Simples, claro e sem surpresas",
-    "initialPayment": "Pagamento Inicial",
-    "initialPrice": "1,00€",
-    "initialDesc": "Para desbloquear o seu resultado do teste",
-    "initialFeature1": "Resultado completo de QI",
-    "initialFeature2": "Análise detalhada",
-    "initialFeature3": "Certificado descarregável",
-    "initialFeature4": "Acesso imediato",
-    "subscription": "Subscrição Premium",
-    "subscriptionPrice": "9,99€",
-    "subscriptionPeriod": "/mês",
-    "subscriptionDesc": "Acesso a funcionalidades avançadas (opcional)",
-    "subscriptionFeature1": "2 dias de teste grátis",
-    "subscriptionFeature2": "Análises comparativas",
-    "subscriptionFeature3": "Testes ilimitados",
-    "subscriptionFeature4": "Acompanhamento de progresso",
-    "cancelAnytime": "Cancele quando quiser",
-    "button": "Começar Agora",
-    "importantNotice": "⚠️ Importante: Ao pagar 1,00€, é ativado automaticamente um teste premium de 2 dias. Depois serão cobrados 9,99€/mês."
+    "quincenal": {
+      "title": "Assinatura Quinzenal",
+      "price": "9.99",
+      "period": "/2 semanas",
+      "features": [
+        "Testes de QI e personalidade ilimitados",
+        "Certificado personalizado para download",
+        "Análise detalhada dos seus resultados",
+        "Acompanhe a sua evolução cognitiva"
+      ]
+    },
+    "mensual": {
+      "title": "Excelência Mensal",
+      "price": "19.99",
+      "period": "/mês",
+      "badge": "RECOMENDADO",
+      "features": [
+        "Melhor relação qualidade-preço a longo prazo",
+        "6 testes psicométricos completos",
+        "Dashboard avançado com gráficos de evolução",
+        "Sistema de conquistas e recomendações personalizadas"
+      ]
+    },
+    "button": "Começar",
+    "note": "*Os preços podem variar de acordo com o seu país e promoções atuais. Será cobrado na sua moeda local."
   },
   "faq": {
     "title": "Perguntas Frequentes",
@@ -442,5 +516,12 @@
     "errorConnection": "Erro de conexão. Tente novamente.",
     "resetSent": "Um link de redefinição foi enviado para o seu email.",
     "resetError": "Erro ao enviar email de redefinição."
+  },
+  "interestData": {
+    "title": "Dados de interesse",
+    "subtitle": "Médias de QI baseadas em milhões de testes realizados",
+    "ageChart": "QI médio por idade",
+    "countryChart": "QI médio por país",
+    "note": "Nota: Estes dados são médias estatísticas baseadas em milhões de testes de QI realizados em todo o mundo. O QI pode variar significativamente entre indivíduos e é influenciado por múltiplos fatores como educação, ambiente socioeconômico e oportunidades de desenvolvimento cognitivo."
   }
 }

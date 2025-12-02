@@ -65,29 +65,58 @@
   },
   "testimonials": {
     "title": "Ce que disent nos utilisateurs",
-    "subtitle": "Des milliers de personnes satisfaites de leurs résultats"
+    "subtitle": "Des milliers de personnes satisfaites de leurs résultats",
+    "reviews": [
+      {"name": "Marie Garcia", "initials": "MG", "text": "Précision incroyable. L'analyse a dépassé mes attentes."},
+      {"name": "Jean Lopez", "initials": "JL", "text": "Processus rapide et résultats très détaillés. Je le recommande."},
+      {"name": "Anne Perez", "initials": "AP", "text": "Ça en vaut vraiment la peine. Certificat professionnel."},
+      {"name": "Charles Rodriguez", "initials": "CR", "text": "Le test le plus complet que j'ai fait. Très précis."},
+      {"name": "Laure Martinez", "initials": "LM", "text": "M'a aidé à comprendre mes forces. Excellent outil."},
+      {"name": "Pierre Sanchez", "initials": "PS", "text": "Résultats instantanés et analyse très professionnelle."},
+      {"name": "Isabelle Torres", "initials": "IT", "text": "Le meilleur investissement pour connaître mon potentiel cognitif."},
+      {"name": "Diego Ruiz", "initials": "DR", "text": "Test scientifiquement validé. Totalement fiable."},
+      {"name": "Sophie Morales", "initials": "SM", "text": "J'ai comparé avec d'autres tests et c'est le plus précis."},
+      {"name": "Xavier Hernandez", "initials": "JH", "text": "Parfait pour évaluer mes compétences. Je le recommande à 100%."},
+      {"name": "Carmen Jimenez", "initials": "CJ", "text": "Le certificat est très professionnel. Je l'ai utilisé pour mon CV."},
+      {"name": "Michel Diaz", "initials": "MD", "text": "Plateforme intuitive et résultats très détaillés."},
+      {"name": "Élène Vargas", "initials": "EV", "text": "Excellent rapport qualité-prix. Très satisfaite."}
+    ]
   },
   "pricing": {
     "title": "Tarifs Transparents",
     "subtitle": "Simple, clair et sans surprises",
-    "initialPayment": "Paiement Initial",
-    "initialPrice": "1,00 €",
-    "initialDesc": "Pour débloquer votre résultat de test",
-    "initialFeature1": "Résultat complet du QI",
-    "initialFeature2": "Analyse détaillée",
-    "initialFeature3": "Certificat téléchargeable",
-    "initialFeature4": "Accès immédiat",
-    "subscription": "Abonnement Premium",
-    "subscriptionPrice": "9,99 €",
-    "subscriptionPeriod": "/mois",
-    "subscriptionDesc": "Accès aux fonctionnalités avancées (optionnel)",
-    "subscriptionFeature1": "Essai gratuit de 2 jours",
-    "subscriptionFeature2": "Analyses comparatives",
-    "subscriptionFeature3": "Tests illimités",
-    "subscriptionFeature4": "Suivi des progrès",
-    "cancelAnytime": "Annulez quand vous voulez",
-    "button": "Commencer Maintenant",
-    "importantNotice": "⚠️ Important : En payant 1,00 €, un essai premium de 2 jours est automatiquement activé. Ensuite, 9,99 €/mois seront facturés."
+    "quincenal": {
+      "title": "Abonnement Bimensuel",
+      "price": "9.99",
+      "period": "/2 semaines",
+      "features": [
+        "Tests de QI et de personnalité illimités",
+        "Certificat personnalisé téléchargeable",
+        "Analyse détaillée de vos résultats",
+        "Suivi de votre évolution cognitive"
+      ]
+    },
+    "mensual": {
+      "title": "Excellence Mensuelle",
+      "price": "19.99",
+      "period": "/mois",
+      "badge": "RECOMMANDÉ",
+      "features": [
+        "Meilleur rapport qualité-prix à long terme",
+        "6 tests psychométriques complets",
+        "Tableau de bord avancé avec graphiques d'évolution",
+        "Système de réalisations et recommandations personnalisées"
+      ]
+    },
+    "button": "Commencer",
+    "note": "*Les prix peuvent varier selon votre pays et les promotions actuelles. Vous serez facturé dans votre devise locale."
+  },
+  "interestData": {
+    "title": "Données d'intérêt",
+    "subtitle": "Moyennes de QI basées sur des millions de tests effectués",
+    "ageChart": "QI moyen par âge",
+    "countryChart": "QI moyen par pays",
+    "note": "Note: Ces données sont des moyennes statistiques basées sur des millions de tests de QI réalisés dans le monde entier. Le QI peut varier considérablement entre les individus et est influencé par de multiples facteurs tels que l'éducation, l'environnement socio-économique et les opportunités de développement cognitif."
   },
   "faq": {
     "title": "Questions Fréquentes",

@@ -65,29 +65,103 @@
   },
   "testimonials": {
     "title": "Was unsere Benutzer sagen",
-    "subtitle": "Tausende zufriedene Menschen mit ihren Ergebnissen"
+    "subtitle": "Tausende zufriedene Menschen mit ihren Ergebnissen",
+    "reviews": [
+      {
+        "name": "Maria Garcia",
+        "initials": "MG",
+        "text": "Unglaubliche Genauigkeit. Die Analyse übertraf meine Erwartungen."
+      },
+      {
+        "name": "Juan Lopez",
+        "initials": "JL",
+        "text": "Schneller Prozess und sehr detaillierte Ergebnisse. Ich empfehle es."
+      },
+      {
+        "name": "Anna Perez",
+        "initials": "AP",
+        "text": "Lohnt sich total. Professionelles Zertifikat."
+      },
+      {
+        "name": "Carlos Rodriguez",
+        "initials": "CR",
+        "text": "Der vollständigste Test, den ich gemacht habe. Sehr genau."
+      },
+      {
+        "name": "Laura Martinez",
+        "initials": "LM",
+        "text": "Hat mir geholfen, meine Stärken zu verstehen. Ausgezeichnetes Tool."
+      },
+      {
+        "name": "Pedro Sanchez",
+        "initials": "PS",
+        "text": "Sofortige Ergebnisse und sehr professionelle Analyse."
+      },
+      {
+        "name": "Isabel Torres",
+        "initials": "IT",
+        "text": "Die beste Investition, um mein kognitives Potenzial zu kennen."
+      },
+      {
+        "name": "Diego Ruiz",
+        "initials": "DR",
+        "text": "Wissenschaftlich validierter Test. Völlig zuverlässig."
+      },
+      {
+        "name": "Sofia Morales",
+        "initials": "SM",
+        "text": "Ich habe mit anderen Tests verglichen und dieser ist der genaueste."
+      },
+      {
+        "name": "Javier Hernandez",
+        "initials": "JH",
+        "text": "Perfekt zur Bewertung meiner Fähigkeiten. Ich empfehle es zu 100%."
+      },
+      {
+        "name": "Carmen Jimenez",
+        "initials": "CJ",
+        "text": "Das Zertifikat ist sehr professionell. Ich habe es für meinen Lebenslauf verwendet."
+      },
+      {
+        "name": "Miguel Diaz",
+        "initials": "MD",
+        "text": "Intuitive Plattform und sehr detaillierte Ergebnisse."
+      },
+      {
+        "name": "Elena Vargas",
+        "initials": "EV",
+        "text": "Ausgezeichnetes Preis-Leistungs-Verhältnis. Sehr zufrieden."
+      }
+    ]
   },
   "pricing": {
     "title": "Transparente Preise",
     "subtitle": "Einfach, klar und ohne Überraschungen",
-    "initialPayment": "Anfangszahlung",
-    "initialPrice": "1,00€",
-    "initialDesc": "Um Ihr Testergebnis freizuschalten",
-    "initialFeature1": "Vollständiges IQ-Ergebnis",
-    "initialFeature2": "Detaillierte Analyse",
-    "initialFeature3": "Herunterladbares Zertifikat",
-    "initialFeature4": "Sofortiger Zugang",
-    "subscription": "Premium-Abonnement",
-    "subscriptionPrice": "9,99€",
-    "subscriptionPeriod": "/Monat",
-    "subscriptionDesc": "Zugang zu erweiterten Funktionen (optional)",
-    "subscriptionFeature1": "2-Tage-Gratistest",
-    "subscriptionFeature2": "Vergleichsanalysen",
-    "subscriptionFeature3": "Unbegrenzte Tests",
-    "subscriptionFeature4": "Fortschrittsverfolgung",
-    "cancelAnytime": "Jederzeit kündbar",
-    "button": "Jetzt Starten",
-    "importantNotice": "⚠️ Wichtig: Durch die Zahlung von 1,00€ wird automatisch eine 2-tägige Premium-Testversion aktiviert. Danach werden 9,99€/Monat berechnet."
+    "quincenal": {
+      "title": "Zweiwöchentliches Abonnement",
+      "price": "9.99",
+      "period": "/2 Wochen",
+      "features": [
+        "Unbegrenzte IQ- und Persönlichkeitstests",
+        "Herunterladbares personalisiertes Zertifikat",
+        "Detaillierte Analyse Ihrer Ergebnisse",
+        "Verfolgen Sie Ihre kognitive Entwicklung"
+      ]
+    },
+    "mensual": {
+      "title": "Monatliche Exzellenz",
+      "price": "19.99",
+      "period": "/Monat",
+      "badge": "EMPFOHLEN",
+      "features": [
+        "Bestes Preis-Leistungs-Verhältnis langfristig",
+        "6 vollständige psychometrische Tests",
+        "Erweitertes Dashboard mit Entwicklungsdiagrammen",
+        "Erfolgssystem und personalisierte Empfehlungen"
+      ]
+    },
+    "button": "Starten",
+    "note": "*Die Preise können je nach Land und aktuellen Aktionen variieren. Die Abrechnung erfolgt in Ihrer Landeswährung."
   },
   "faq": {
     "title": "Häufig Gestellte Fragen",
@@ -442,5 +516,12 @@
     "errorConnection": "Verbindungsfehler. Bitte versuchen Sie es erneut.",
     "resetSent": "Ein Zurücksetzungslink wurde an Ihre E-Mail gesendet.",
     "resetError": "Fehler beim Senden der Zurücksetzungs-E-Mail."
+  },
+  "interestData": {
+    "title": "Interessante Daten",
+    "subtitle": "IQ-Durchschnitte basierend auf Millionen durchgeführter Tests",
+    "ageChart": "Durchschnittlicher IQ nach Alter",
+    "countryChart": "Durchschnittlicher IQ nach Land",
+    "note": "Hinweis: Diese Daten sind statistische Durchschnittswerte, die auf Millionen von weltweit durchgeführten IQ-Tests basieren. Der IQ kann zwischen Einzelpersonen erheblich variieren und wird von mehreren Faktoren wie Bildung, sozioökonomischem Umfeld und kognitiven Entwicklungsmöglichkeiten beeinflusst."
   }
 }

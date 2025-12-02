@@ -65,29 +65,103 @@
   },
   "testimonials": {
     "title": "Vad våra användare säger",
-    "subtitle": "Tusentals nöjda personer med sina resultat"
+    "subtitle": "Tusentals nöjda personer med sina resultat",
+    "reviews": [
+      {
+        "name": "Maria Garcia",
+        "initials": "MG",
+        "text": "Otrolig precision. Analysen överträffade mina förväntningar."
+      },
+      {
+        "name": "Juan Lopez",
+        "initials": "JL",
+        "text": "Snabb process och mycket detaljerade resultat. Jag rekommenderar det."
+      },
+      {
+        "name": "Anna Perez",
+        "initials": "AP",
+        "text": "Helt värt det. Professionellt certifikat."
+      },
+      {
+        "name": "Carlos Rodriguez",
+        "initials": "CR",
+        "text": "Det mest kompletta testet jag har gjort. Mycket exakt."
+      },
+      {
+        "name": "Laura Martinez",
+        "initials": "LM",
+        "text": "Hjälpte mig förstå mina styrkor. Utmärkt verktyg."
+      },
+      {
+        "name": "Pedro Sanchez",
+        "initials": "PS",
+        "text": "Omedelbara resultat och mycket professionell analys."
+      },
+      {
+        "name": "Isabel Torres",
+        "initials": "IT",
+        "text": "Den bästa investeringen för att känna min kognitiva potential."
+      },
+      {
+        "name": "Diego Ruiz",
+        "initials": "DR",
+        "text": "Vetenskapligt validerat test. Helt pålitligt."
+      },
+      {
+        "name": "Sofia Morales",
+        "initials": "SM",
+        "text": "Jag jämförde med andra tester och detta är det mest exakta."
+      },
+      {
+        "name": "Javier Hernandez",
+        "initials": "JH",
+        "text": "Perfekt för att utvärdera mina förmågor. Jag rekommenderar det 100%."
+      },
+      {
+        "name": "Carmen Jimenez",
+        "initials": "CJ",
+        "text": "Certifikatet är mycket professionellt. Jag använde det för mitt CV."
+      },
+      {
+        "name": "Miguel Diaz",
+        "initials": "MD",
+        "text": "Intuitiv plattform och mycket detaljerade resultat."
+      },
+      {
+        "name": "Elena Vargas",
+        "initials": "EV",
+        "text": "Utmärkt värde för pengarna. Mycket nöjd."
+      }
+    ]
   },
   "pricing": {
     "title": "Transparenta Priser",
     "subtitle": "Enkelt, tydligt och utan överraskningar",
-    "initialPayment": "Initial Betalning",
-    "initialPrice": "1,00€",
-    "initialDesc": "För att låsa upp ditt testresultat",
-    "initialFeature1": "Komplett IQ-resultat",
-    "initialFeature2": "Detaljerad analys",
-    "initialFeature3": "Nedladdningsbart certifikat",
-    "initialFeature4": "Omedelbar åtkomst",
-    "subscription": "Premium-abonnemang",
-    "subscriptionPrice": "9,99€",
-    "subscriptionPeriod": "/månad",
-    "subscriptionDesc": "Åtkomst till avancerade funktioner (valfritt)",
-    "subscriptionFeature1": "2 dagars gratis provperiod",
-    "subscriptionFeature2": "Jämförande analyser",
-    "subscriptionFeature3": "Obegränsade test",
-    "subscriptionFeature4": "Framstegsspårning",
-    "cancelAnytime": "Avbryt när som helst",
-    "button": "Börja Nu",
-    "importantNotice": "⚠️ Viktigt: Genom att betala 1,00€ aktiveras automatiskt en 2-dagars premium-provperiod. Därefter debiteras 9,99€/månad."
+    "quincenal": {
+      "title": "Varannan vecka-prenumeration",
+      "price": "9.99",
+      "period": "/2 veckor",
+      "features": [
+        "Obegränsat IQ- och personlighetstester",
+        "Nedladdningsbart personligt certifikat",
+        "Detaljerad analys av dina resultat",
+        "Följ din kognitiva utveckling"
+      ]
+    },
+    "mensual": {
+      "title": "Månatlig excellens",
+      "price": "19.99",
+      "period": "/månad",
+      "badge": "REKOMMENDERAT",
+      "features": [
+        "Bästa värdet på lång sikt",
+        "6 kompletta psykometriska tester",
+        "Avancerad instrumentpanel med utvecklingsdiagram",
+        "Prestationssystem och personliga rekommendationer"
+      ]
+    },
+    "button": "Börja",
+    "note": "*Priserna kan variera beroende på ditt land och aktuella kampanjer. Du kommer att faktureras i din lokala valuta."
   },
   "faq": {
     "title": "Vanliga Frågor",
@@ -442,5 +516,12 @@
     "errorConnection": "Anslutningsfel. Försök igen.",
     "resetSent": "En återställningslänk har skickats till din e-post.",
     "resetError": "Fel vid skickande av återställningsmail."
+  },
+  "interestData": {
+    "title": "Intressanta data",
+    "subtitle": "IQ-genomsnitt baserat på miljontals genomförda tester",
+    "ageChart": "Genomsnittligt IQ efter ålder",
+    "countryChart": "Genomsnittligt IQ efter land",
+    "note": "Obs: Dessa data är statistiska genomsnitt baserade på miljontals IQ-tester som genomförts över hela världen. IQ kan variera avsevärt mellan individer och påverkas av flera faktorer såsom utbildning, socioekonomisk miljö och möjligheter till kognitiv utveckling."
   }
 }
