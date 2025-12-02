@@ -309,7 +309,7 @@ export default function Home() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
               {/* Plan Quincenal */}
-              <div className="group relative bg-white rounded-2xl shadow-xl p-8 border border-gray-200 hover:border-[#07C59A] transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
+              <div className="group relative bg-white rounded-2xl shadow-xl p-8 border border-gray-200 hover:border-[#07C59A] transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 flex flex-col">
                 <div className="mb-6">
                   <h3 className="text-xl font-bold text-gray-900 mb-4">Suscripción Quincenal</h3>
                   <div className="flex items-baseline gap-1 mb-2">
@@ -318,7 +318,7 @@ export default function Home() {
                   </div>
                 </div>
                 
-                <div className="space-y-3 mb-8">
+                <div className="space-y-3 mb-8 flex-1">
                   <div className="flex items-start gap-3">
                     <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
                     <span className="text-gray-700 text-sm">Tests ilimitados de CI y personalidad</span>
@@ -337,13 +337,13 @@ export default function Home() {
                   </div>
                 </div>
 
-                <Link href={`/${lang}/test`} className="block w-full bg-[#113240] hover:bg-[#052547] text-white font-bold py-4 px-6 rounded-xl text-center transition-all duration-300 shadow-lg hover:shadow-xl">
+                <Link href={`/${lang}/test`} className="block w-full bg-[#113240] hover:bg-[#052547] text-white font-bold py-4 px-6 rounded-xl text-center transition-all duration-300 shadow-lg hover:shadow-xl mt-auto">
                   Empezar
                 </Link>
               </div>
 
               {/* Plan Mensual - Destacado */}
-              <div className="group relative bg-gradient-to-br from-[#113240] via-[#0d2838] to-[#052547] rounded-2xl shadow-2xl p-8 text-white overflow-hidden border-2 border-[#07C59A] transform hover:-translate-y-1 transition-all duration-300 hover:shadow-[0_20px_70px_rgba(7,197,154,0.3)]">
+              <div className="group relative bg-gradient-to-br from-[#113240] via-[#0d2838] to-[#052547] rounded-2xl shadow-2xl p-8 text-white overflow-hidden border-2 border-[#07C59A] transform hover:-translate-y-1 transition-all duration-300 hover:shadow-[0_20px_70px_rgba(7,197,154,0.3)] flex flex-col">
                 {/* Badge Recomendado */}
                 <div className="absolute top-3 right-3">
                   <div className="bg-[#07C59A] text-white px-4 py-1 rounded-full font-bold text-xs tracking-wide shadow-lg">
@@ -363,7 +363,7 @@ export default function Home() {
                   </div>
                 </div>
                 
-                <div className="relative z-10 space-y-3 mb-8">
+                <div className="relative z-10 space-y-3 mb-8 flex-1">
                   <div className="flex items-start gap-3">
                     <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
                     <span className="text-sm">Ahorra hasta un 33% vs plan quincenal</span>
@@ -382,7 +382,7 @@ export default function Home() {
                   </div>
                 </div>
 
-                <Link href={`/${lang}/test`} className="relative z-10 block w-full bg-[#07C59A] hover:bg-[#069e7b] text-white font-bold py-4 px-6 rounded-xl text-center transition-all duration-300 shadow-2xl shadow-[#07C59A]/30 hover:shadow-[#07C59A]/50">
+                <Link href={`/${lang}/test`} className="relative z-10 block w-full bg-[#07C59A] hover:bg-[#069e7b] text-white font-bold py-4 px-6 rounded-xl text-center transition-all duration-300 shadow-2xl shadow-[#07C59A]/30 hover:shadow-[#07C59A]/50 mt-auto">
                   Empezar
                 </Link>
               </div>
