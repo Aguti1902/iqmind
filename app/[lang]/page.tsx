@@ -312,18 +312,14 @@ export default function Home() {
               <div className="group relative bg-white rounded-2xl shadow-xl p-8 border border-gray-200 hover:border-[#07C59A] transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
                 <div className="mb-6">
                   <h3 className="text-xl font-bold text-gray-900 mb-4">Suscripción Quincenal</h3>
-                  <div className="flex items-baseline gap-2 mb-2">
-                    <span className="text-5xl font-black text-gray-900 leading-none">€14.99</span>
-                    <span className="text-gray-500 text-base font-medium">*</span>
+                  <div className="flex items-baseline gap-1 mb-2">
+                    <span className="text-5xl font-bold text-gray-900 leading-none">€14.99</span>
+                    <span className="text-gray-500 text-lg font-normal ml-1">/2 semanas</span>
+                    <span className="text-gray-500 text-base font-medium ml-1">*</span>
                   </div>
-                  <p className="text-gray-500 text-sm">/2 semanas</p>
                 </div>
                 
                 <div className="space-y-3 mb-8">
-                  <div className="flex items-start gap-3">
-                    <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
-                    <span className="text-gray-700 text-sm">Prueba de 7 días; luego se renueva automáticamente a un plan quincenal.</span>
-                  </div>
                   <div className="flex items-start gap-3">
                     <FaCheckCircle className="text-[#07C59A] flex-shrink-0 mt-1" />
                     <span className="text-gray-700 text-sm">Certificado de CI personalizado</span>
@@ -358,11 +354,11 @@ export default function Home() {
                 
                 <div className="relative z-10 mb-6">
                   <h3 className="text-xl font-bold mb-4">Excelencia Mensual</h3>
-                  <div className="flex items-baseline gap-2 mb-2">
-                    <span className="text-5xl font-black leading-none">€29.99</span>
-                    <span className="text-white/70 text-base font-medium">*</span>
+                  <div className="flex items-baseline gap-1 mb-2">
+                    <span className="text-5xl font-bold leading-none">€29.99</span>
+                    <span className="text-white/70 text-lg font-normal ml-1">/mes</span>
+                    <span className="text-white/70 text-base font-medium ml-1">*</span>
                   </div>
-                  <p className="text-white/70 text-sm">/mes</p>
                 </div>
                 
                 <div className="relative z-10 space-y-3 mb-8">
