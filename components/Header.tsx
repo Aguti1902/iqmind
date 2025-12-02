@@ -29,7 +29,7 @@ export default function Header() {
             <Link href={`/${lang}/#testimonios`} className="text-gray-700 hover:text-[#07C59A] transition">
               {t.nav.testimonials}
             </Link>
-            <Link href={`/${lang}/cancelar-suscripcion`} className="text-gray-700 hover:text-[#07C59A] transition">
+            <Link href={`/${lang}/ayuda`} className="text-gray-700 hover:text-[#07C59A] transition">
               {t.nav.help}
             </Link>
             <LanguageSelector />
@@ -65,7 +65,7 @@ export default function Header() {
               {t.nav.testimonials}
             </Link>
             <Link
-              href={`/${lang}/cancelar-suscripcion`}
+              href={`/${lang}/ayuda`}
               className="block text-gray-700 hover:text-[#07C59A] transition"
               onClick={() => setIsMenuOpen(false)}
             >
