@@ -342,7 +342,7 @@ export default function CuentaPage() {
                 </span>
               </div>
               <div className="text-3xl font-bold text-gray-900 mb-1">
-                {stats.averageIQ}
+                {stats.averageIQ || stats.highestIQ || 0}
               </div>
               <p className="text-sm text-gray-600">{t.account.averageIQ}</p>
             </div>
@@ -786,6 +786,118 @@ export default function CuentaPage() {
           {/* Export Results */}
           <div className="mb-8">
             <ExportResults />
+          </div>
+
+          {/* Available Tests Section */}
+          <div className="mb-8">
+            <div className="bg-white rounded-xl shadow-md p-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">{t.account.availableTests || 'Tests Disponibles'}</h2>
+              <p className="text-gray-600 mb-6">{t.account.availableTestsSubtitle || 'Realiza diferentes evaluaciones para conocerte mejor'}</p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {/* ADHD Test */}
+                <Link
+                  href={`/${lang}/tests/adhd`}
+                  className="p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl hover:shadow-lg transition border-2 border-transparent hover:border-blue-300"
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center text-white text-2xl font-bold">
+                      A
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-gray-900">{t.tests.adhd?.title || 'Test TDAH'}</h3>
+                      <p className="text-sm text-gray-600">{t.tests.adhd?.subtitle || 'DSM-5'}</p>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-700">{t.tests.adhd?.description || 'Evalúa síntomas de TDAH según criterios DSM-5'}</p>
+                </Link>
+
+                {/* Anxiety Test */}
+                <Link
+                  href={`/${lang}/tests/anxiety`}
+                  className="p-6 bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-xl hover:shadow-lg transition border-2 border-transparent hover:border-yellow-300"
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-12 h-12 bg-yellow-500 rounded-lg flex items-center justify-center text-white text-2xl">
+                      😰
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-gray-900">{t.tests.anxiety?.title || 'Test Ansiedad'}</h3>
+                      <p className="text-sm text-gray-600">{t.tests.anxiety?.subtitle || 'GAD-7'}</p>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-700">{t.tests.anxiety?.description || 'Mide niveles de ansiedad generalizada'}</p>
+                </Link>
+
+                {/* Depression Test */}
+                <Link
+                  href={`/${lang}/tests/depression`}
+                  className="p-6 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl hover:shadow-lg transition border-2 border-transparent hover:border-purple-300"
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center text-white text-2xl">
+                      😔
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-gray-900">{t.tests.depression?.title || 'Test Depresión'}</h3>
+                      <p className="text-sm text-gray-600">{t.tests.depression?.subtitle || 'PHQ-9'}</p>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-700">{t.tests.depression?.description || 'Evalúa síntomas depresivos'}</p>
+                </Link>
+
+                {/* Personality Test */}
+                <Link
+                  href={`/${lang}/tests/personality`}
+                  className="p-6 bg-gradient-to-br from-pink-50 to-pink-100 rounded-xl hover:shadow-lg transition border-2 border-transparent hover:border-pink-300"
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-12 h-12 bg-pink-500 rounded-lg flex items-center justify-center text-white text-2xl">
+                      👤
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-gray-900">{t.tests.personality?.title || 'Test Personalidad'}</h3>
+                      <p className="text-sm text-gray-600">{t.tests.personality?.subtitle || 'Big Five'}</p>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-700">{t.tests.personality?.description || 'Descubre tu perfil de personalidad'}</p>
+                </Link>
+
+                {/* Emotional Intelligence Test */}
+                <Link
+                  href={`/${lang}/tests/eq`}
+                  className="p-6 bg-gradient-to-br from-green-50 to-green-100 rounded-xl hover:shadow-lg transition border-2 border-transparent hover:border-green-300"
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center text-white text-2xl">
+                      💚
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-gray-900">{t.tests.eq?.title || 'Inteligencia Emocional'}</h3>
+                      <p className="text-sm text-gray-600">{t.tests.eq?.subtitle || 'EQ Test'}</p>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-700">{t.tests.eq?.description || 'Mide tu capacidad emocional'}</p>
+                </Link>
+
+                {/* IQ Test */}
+                <Link
+                  href={`/${lang}/test`}
+                  className="p-6 bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl hover:shadow-lg transition border-2 border-transparent hover:border-orange-300"
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center text-white">
+                      <FaBrain className="text-xl" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-gray-900">{t.account.iqTest || 'Test de CI'}</h3>
+                      <p className="text-sm text-gray-600">IQ Test</p>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-700">{t.account.iqTestDesc || 'Evalúa tu coeficiente intelectual'}</p>
+                </Link>
+              </div>
+            </div>
           </div>
 
           {/* Quick Actions */}
