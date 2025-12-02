@@ -121,12 +121,9 @@ export default function ResultadoEstimadoPage() {
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="bg-white rounded-lg shadow-xl p-6 text-center max-w-md">
                   <FaLock className="text-3xl text-primary-600 mx-auto mb-3" />
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  <h3 className="text-xl font-bold text-gray-900">
                     {t.estimatedResult.unlockTitle}
                   </h3>
-                  <p className="text-gray-600 mb-4">
-                    {t.estimatedResult.priceLabel} <span className="text-2xl font-bold text-primary-600">{t.estimatedResult.price}</span>
-                  </p>
                 </div>
               </div>
             </div>

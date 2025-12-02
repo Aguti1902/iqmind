@@ -67,19 +67,71 @@
     "title": "Ce que disent nos utilisateurs",
     "subtitle": "Des milliers de personnes satisfaites de leurs résultats",
     "reviews": [
-      {"name": "Marie Garcia", "initials": "MG", "text": "Précision incroyable. L'analyse a dépassé mes attentes."},
-      {"name": "Jean Lopez", "initials": "JL", "text": "Processus rapide et résultats très détaillés. Je le recommande."},
-      {"name": "Anne Perez", "initials": "AP", "text": "Ça en vaut vraiment la peine. Certificat professionnel."},
-      {"name": "Charles Rodriguez", "initials": "CR", "text": "Le test le plus complet que j'ai fait. Très précis."},
-      {"name": "Laure Martinez", "initials": "LM", "text": "M'a aidé à comprendre mes forces. Excellent outil."},
-      {"name": "Pierre Sanchez", "initials": "PS", "text": "Résultats instantanés et analyse très professionnelle."},
-      {"name": "Isabelle Torres", "initials": "IT", "text": "Le meilleur investissement pour connaître mon potentiel cognitif."},
-      {"name": "Diego Ruiz", "initials": "DR", "text": "Test scientifiquement validé. Totalement fiable."},
-      {"name": "Sophie Morales", "initials": "SM", "text": "J'ai comparé avec d'autres tests et c'est le plus précis."},
-      {"name": "Xavier Hernandez", "initials": "JH", "text": "Parfait pour évaluer mes compétences. Je le recommande à 100%."},
-      {"name": "Carmen Jimenez", "initials": "CJ", "text": "Le certificat est très professionnel. Je l'ai utilisé pour mon CV."},
-      {"name": "Michel Diaz", "initials": "MD", "text": "Plateforme intuitive et résultats très détaillés."},
-      {"name": "Élène Vargas", "initials": "EV", "text": "Excellent rapport qualité-prix. Très satisfaite."}
+      {
+        "name": "Marie Garcia",
+        "initials": "MG",
+        "text": "Précision incroyable. L'analyse a dépassé mes attentes."
+      },
+      {
+        "name": "Jean Lopez",
+        "initials": "JL",
+        "text": "Processus rapide et résultats très détaillés. Je le recommande."
+      },
+      {
+        "name": "Anne Perez",
+        "initials": "AP",
+        "text": "Ça en vaut vraiment la peine. Certificat professionnel."
+      },
+      {
+        "name": "Charles Rodriguez",
+        "initials": "CR",
+        "text": "Le test le plus complet que j'ai fait. Très précis."
+      },
+      {
+        "name": "Laure Martinez",
+        "initials": "LM",
+        "text": "M'a aidé à comprendre mes forces. Excellent outil."
+      },
+      {
+        "name": "Pierre Sanchez",
+        "initials": "PS",
+        "text": "Résultats instantanés et analyse très professionnelle."
+      },
+      {
+        "name": "Isabelle Torres",
+        "initials": "IT",
+        "text": "Le meilleur investissement pour connaître mon potentiel cognitif."
+      },
+      {
+        "name": "Diego Ruiz",
+        "initials": "DR",
+        "text": "Test scientifiquement validé. Totalement fiable."
+      },
+      {
+        "name": "Sophie Morales",
+        "initials": "SM",
+        "text": "J'ai comparé avec d'autres tests et c'est le plus précis."
+      },
+      {
+        "name": "Xavier Hernandez",
+        "initials": "JH",
+        "text": "Parfait pour évaluer mes compétences. Je le recommande à 100%."
+      },
+      {
+        "name": "Carmen Jimenez",
+        "initials": "CJ",
+        "text": "Le certificat est très professionnel. Je l'ai utilisé pour mon CV."
+      },
+      {
+        "name": "Michel Diaz",
+        "initials": "MD",
+        "text": "Plateforme intuitive et résultats très détaillés."
+      },
+      {
+        "name": "Élène Vargas",
+        "initials": "EV",
+        "text": "Excellent rapport qualité-prix. Très satisfaite."
+      }
     ]
   },
   "pricing": {
@@ -198,14 +250,14 @@
     "subtitle": "Vous avez terminé le test avec succès",
     "estimatedIQ": "Votre QI Estimé",
     "unlockTitle": "Débloquez votre résultat complet",
-    "unlockSubtitle": "Pour seulement 1,00 € vous obtiendrez :",
+    "unlockSubtitle": "Accédez à votre évaluation complète:",
     "feature1": "Votre score de QI exact",
     "feature2": "Analyse détaillée personnalisée",
     "feature3": "Graphiques comparatifs",
     "feature4": "Certificat officiel téléchargeable",
-    "feature5": "Accès à l'essai premium de 2 jours",
-    "priceLabel": "Prix",
-    "price": "1,00 €",
+    "feature5": "Accès complet à tous les tests",
+    "priceLabel": "",
+    "price": "",
     "unlockButton": "Débloquer le Résultat",
     "securePayment": "Paiement 100% sécurisé avec Stripe",
     "emailPlaceholder": "Email",
@@ -220,8 +272,8 @@
     "trust1Desc": "Cryptage SSL",
     "trust2Title": "Accès Immédiat",
     "trust2Desc": "Résultats instantanés",
-    "trust3Title": "Annuler À Tout Moment",
-    "trust3Desc": "2 jours d'essai gratuit",
+    "trust3Title": "Annulez Quand Vous Voulez",
+    "trust3Desc": "Sans engagement",
     "mainTitle": "Découvrez votre",
     "mainTitleHighlight": "Capacité Intellectuelle!",
     "mainSubtitle": "Fournissez votre email pour accéder à votre évaluation complète de l'intelligence et profil mental personnalisé."
@@ -433,12 +485,12 @@
   },
   "notices": {
     "importantTitle": "⚠️ Important:",
-    "importantMessage": "En payant 1,00€, une période d'essai premium de 2 jours est automatiquement activée. Ensuite, 9,99€/mois seront facturés.",
+    "importantMessage": "En vous abonnant, vous obtenez un accès complet à tous les tests et fonctionnalités premium.",
     "infoTitle": "📋 Informations Importantes:",
-    "point1": "Le paiement de 1,00€ vous donne un accès immédiat à votre résultat complet",
-    "point2": "Un essai premium de 2 jours est automatiquement activé (valeur 9,99€/mois)",
-    "point3": "Vous pouvez annuler dans les 2 jours pour éviter les frais mensuels",
-    "point4": "Si vous n'annulez pas, 9,99€/mois vous seront facturés pour un accès premium continu",
+    "point1": "Accès immédiat à votre résultat complet de QI",
+    "point2": "Accès à tous les tests psychométriques disponibles",
+    "point3": "Vous pouvez annuler votre abonnement à tout moment",
+    "point4": "Tableau de bord avancé avec graphiques d'évolution et statistiques",
     "point5": "Consultez nos",
     "termsLink": "Conditions Générales",
     "moreInfo": "pour plus d'informations",
