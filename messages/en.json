@@ -65,29 +65,58 @@
   },
   "testimonials": {
     "title": "What our users say",
-    "subtitle": "Thousands of people satisfied with their results"
+    "subtitle": "Thousands of people satisfied with their results",
+    "reviews": [
+      {"name": "Mary Garcia", "initials": "MG", "text": "Incredible accuracy. The analysis exceeded my expectations."},
+      {"name": "John Lopez", "initials": "JL", "text": "Fast process and very detailed results. I recommend it."},
+      {"name": "Anna Perez", "initials": "AP", "text": "Totally worth it. Professional certificate."},
+      {"name": "Charles Rodriguez", "initials": "CR", "text": "The most complete test I've done. Very accurate."},
+      {"name": "Laura Martinez", "initials": "LM", "text": "It helped me understand my strengths. Excellent tool."},
+      {"name": "Peter Sanchez", "initials": "PS", "text": "Instant results and very professional analysis."},
+      {"name": "Isabel Torres", "initials": "IT", "text": "The best investment to know my cognitive potential."},
+      {"name": "Diego Ruiz", "initials": "DR", "text": "Scientifically validated test. Totally reliable."},
+      {"name": "Sophia Morales", "initials": "SM", "text": "I compared with other tests and this is the most accurate."},
+      {"name": "Xavier Hernandez", "initials": "JH", "text": "Perfect for evaluating my skills. I recommend it 100%."},
+      {"name": "Carmen Jimenez", "initials": "CJ", "text": "The certificate is very professional. I used it for my CV."},
+      {"name": "Michael Diaz", "initials": "MD", "text": "Intuitive platform and very detailed results."},
+      {"name": "Elena Vargas", "initials": "EV", "text": "Excellent value for money. Very satisfied."}
+    ]
   },
   "pricing": {
     "title": "Transparent Pricing",
     "subtitle": "Simple, clear and no surprises",
-    "initialPayment": "Initial Payment",
-    "initialPrice": "€1.00",
-    "initialDesc": "To unlock your test result",
-    "initialFeature1": "Complete IQ result",
-    "initialFeature2": "Detailed analysis",
-    "initialFeature3": "Downloadable certificate",
-    "initialFeature4": "Immediate access",
-    "subscription": "Premium Subscription",
-    "subscriptionPrice": "€9.99",
-    "subscriptionPeriod": "/month",
-    "subscriptionDesc": "Access to advanced features (optional)",
-    "subscriptionFeature1": "2-day free trial",
-    "subscriptionFeature2": "Comparative analysis",
-    "subscriptionFeature3": "Unlimited tests",
-    "subscriptionFeature4": "Progress tracking",
-    "cancelAnytime": "Cancel anytime",
-    "button": "Start Now",
-    "importantNotice": "⚠️ Important: By paying €1.00, a 2-day premium trial is automatically activated. After that, €9.99/month will be charged."
+    "quincenal": {
+      "title": "Bi-Weekly Subscription",
+      "price": "9.99",
+      "period": "/2 weeks",
+      "features": [
+        "Unlimited IQ and personality tests",
+        "Downloadable personalized certificate",
+        "Detailed analysis of your results",
+        "Track your cognitive evolution"
+      ]
+    },
+    "mensual": {
+      "title": "Monthly Excellence",
+      "price": "19.99",
+      "period": "/month",
+      "badge": "RECOMMENDED",
+      "features": [
+        "Best long-term value for money",
+        "6 complete psychometric tests",
+        "Advanced dashboard with evolution graphs",
+        "Achievement system and personalized recommendations"
+      ]
+    },
+    "button": "Start",
+    "note": "*Prices may vary depending on your country and current promotions. You will be charged in your local currency."
+  },
+  "interestData": {
+    "title": "Data of Interest",
+    "subtitle": "IQ averages based on millions of tests performed",
+    "ageChart": "Average IQ by age",
+    "countryChart": "Average IQ by country",
+    "note": "Note: These data are statistical averages based on millions of IQ tests performed worldwide. IQ can vary significantly between individuals and is influenced by multiple factors such as education, socioeconomic environment and cognitive development opportunities."
   },
   "faq": {
     "title": "Frequently Asked Questions",

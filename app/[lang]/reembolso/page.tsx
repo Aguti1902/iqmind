@@ -34,7 +34,7 @@ export default function ReembolsoPage() {
             <p className="text-gray-600 mb-6">
               <strong>Última actualización:</strong> {new Date().toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}
             </p>
-            
+
             {/* 7. POLÍTICA DE REEMBOLSO */}
             <section className="mb-12">
               <h2 className="text-3xl font-bold text-gray-900 mb-6">7. POLÍTICA DE REEMBOLSO</h2>
@@ -53,19 +53,19 @@ export default function ReembolsoPage() {
                       <span className="text-green-600 text-xl">✓</span>
                       <span>Usuario de prueba por primera vez</span>
                     </li>
-                    <li className="flex items-start gap-3">
+                  <li className="flex items-start gap-3">
                       <span className="text-green-600 text-xl">✓</span>
                       <span>No se realizan reembolsos de pruebas anteriores en ninguna cuenta</span>
-                    </li>
-                    <li className="flex items-start gap-3">
+                  </li>
+                  <li className="flex items-start gap-3">
                       <span className="text-green-600 text-xl">✓</span>
                       <span>No hay violaciones de los términos de servicio</span>
-                    </li>
-                    <li className="flex items-start gap-3">
+                  </li>
+                  <li className="flex items-start gap-3">
                       <span className="text-green-600 text-xl">✓</span>
                       <span>Solicitud presentada a través de canales oficiales</span>
-                    </li>
-                  </ul>
+                  </li>
+                </ul>
                 </div>
               </div>
 
@@ -86,8 +86,8 @@ export default function ReembolsoPage() {
                     </h4>
                     <p className="text-gray-700 text-sm">
                       Tiempo de inactividad documentado superior a 24 horas consecutivas. No causado por mantenimiento programado ni por causas de fuerza mayor.
-                    </p>
-                  </div>
+                </p>
+              </div>
 
                   {/* Problemas técnicos */}
                   <div className="bg-gray-50 rounded-lg p-6">
@@ -97,7 +97,7 @@ export default function ReembolsoPage() {
                     </h4>
                     <p className="text-gray-700 text-sm">
                       Errores de la plataforma que impiden el acceso a funciones principales. Deben reportarse dentro de los 30 días posteriores al cargo y ser verificados por nuestro equipo técnico.
-                    </p>
+              </p>
                   </div>
 
                   {/* Errores de facturación */}
@@ -109,7 +109,7 @@ export default function ReembolsoPage() {
                     <p className="text-gray-700 text-sm">
                       Cargos duplicados, monto incorrecto cobrado o transacciones no autorizadas.
                     </p>
-                  </div>
+              </div>
 
                   {/* Requisitos legales */}
                   <div className="bg-gray-50 rounded-lg p-6">
@@ -127,10 +127,10 @@ export default function ReembolsoPage() {
               {/* 7.3 Casos no reembolsables */}
               <div className="mb-10">
                 <h3 className="text-2xl font-semibold text-gray-900 mb-4">7.3 Casos no reembolsables</h3>
-                
+              
                 <p className="text-gray-700 mb-4">
                   Los siguientes productos no son elegibles explícitamente para reembolsos:
-                </p>
+              </p>
 
                 <div className="bg-red-50 border-l-4 border-red-500 p-6 rounded-r-lg">
                   <ul className="space-y-3 text-gray-700">
@@ -138,23 +138,23 @@ export default function ReembolsoPage() {
                       <span className="text-red-600 text-xl">✗</span>
                       <span>Tiempo de suscripción parcial/no utilizado después de la cancelación</span>
                     </li>
-                    <li className="flex items-start gap-3">
+                  <li className="flex items-start gap-3">
                       <span className="text-red-600 text-xl">✗</span>
                       <span>Rebajas de planes</span>
-                    </li>
-                    <li className="flex items-start gap-3">
+                  </li>
+                  <li className="flex items-start gap-3">
                       <span className="text-red-600 text-xl">✗</span>
                       <span>Función no disponible durante el mantenimiento</span>
-                    </li>
-                    <li className="flex items-start gap-3">
+                </li>
+                  <li className="flex items-start gap-3">
                       <span className="text-red-600 text-xl">✗</span>
                       <span>Cambio de opinión o ya no necesita el servicio</span>
-                    </li>
-                    <li className="flex items-start gap-3">
+                </li>
+                  <li className="flex items-start gap-3">
                       <span className="text-red-600 text-xl">✗</span>
                       <span>No cancelar antes de la renovación</span>
-                    </li>
-                  </ul>
+                </li>
+              </ul>
                 </div>
               </div>
 
@@ -165,25 +165,25 @@ export default function ReembolsoPage() {
                 <div className="bg-blue-50 rounded-lg p-6 mb-6">
                   <h4 className="font-bold text-gray-900 mb-4">7.4.1. Presentar una solicitud a través de:</h4>
                   <ul className="space-y-3 text-gray-700">
-                    <li className="flex items-start gap-3">
+                  <li className="flex items-start gap-3">
                       <span className="text-blue-600">•</span>
                       <span>Centro de ayuda</span>
-                    </li>
-                    <li className="flex items-start gap-3">
+                  </li>
+                  <li className="flex items-start gap-3">
                       <span className="text-blue-600">•</span>
                       <span>Portal de autoservicio</span>
-                    </li>
-                    <li className="flex items-start gap-3">
+                  </li>
+                  <li className="flex items-start gap-3">
                       <span className="text-blue-600">•</span>
-                      <div>
+                    <div>
                         <strong>Correo electrónico:</strong>{' '}
                         <a href="mailto:support@mindmetric.io" className="text-blue-600 underline hover:text-blue-800">
                           support@mindmetric.io
                         </a>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
+                    </div>
+                  </li>
+              </ul>
+              </div>
 
                 <div className="bg-gray-50 rounded-lg p-6 mb-6">
                   <h4 className="font-bold text-gray-900 mb-4">7.4.2 Incluir:</h4>
@@ -191,20 +191,20 @@ export default function ReembolsoPage() {
                     <li className="flex items-center gap-2">
                       <span className="text-[#07C59A]">✓</span>
                       <span>Correo electrónico de la cuenta</span>
-                    </li>
+                </li>
                     <li className="flex items-center gap-2">
                       <span className="text-[#07C59A]">✓</span>
                       <span>Detalles de la transacción</span>
-                    </li>
+                  </li>
                     <li className="flex items-center gap-2">
                       <span className="text-[#07C59A]">✓</span>
                       <span>Motivo del reembolso</span>
-                    </li>
+                  </li>
                     <li className="flex items-center gap-2">
                       <span className="text-[#07C59A]">✓</span>
                       <span>Documentación de apoyo</span>
-                    </li>
-                  </ul>
+                  </li>
+                </ul>
                 </div>
 
                 <div className="bg-[#07C59A]/10 border-l-4 border-[#07C59A] p-6 rounded-r-lg">
@@ -217,22 +217,22 @@ export default function ReembolsoPage() {
               {/* 7.5 Métodos de pago de reembolso */}
               <div className="mb-10">
                 <h3 className="text-2xl font-semibold text-gray-900 mb-4">7.5 Métodos de pago de reembolso</h3>
-                
+              
                 <div className="bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-r-lg">
                   <ul className="space-y-3 text-gray-700">
-                    <li>
+                <li>
                       Todos los reembolsos se procesarán <strong>únicamente al método de pago original</strong> utilizado para la compra.
-                    </li>
-                    <li>
+                </li>
+                <li>
                       No podemos procesar reembolsos a métodos de pago o cuentas alternativas.
-                    </li>
+                </li>
                     <li>
                       Para tarjetas vencidas o canceladas, el reembolso se procesará a la tarjeta original y su institución financiera se encargará de acreditar su cuenta.
-                    </li>
+                  </li>
                     <li>
                       La capacidad de recibir reembolsos por tarjetas vencidas o canceladas está sujeta a las políticas de su institución financiera.
-                    </li>
-                  </ul>
+                  </li>
+                </ul>
                 </div>
               </div>
 

@@ -66,28 +66,110 @@
   },
   "testimonials": {
     "title": "Lo que dicen nuestros usuarios",
-    "subtitle": "Miles de personas satisfechas con sus resultados"
+    "subtitle": "Miles de personas satisfechas con sus resultados",
+    "reviews": [
+      {
+        "name": "María García",
+        "initials": "MG",
+        "text": "Increíble precisión. El análisis superó mis expectativas."
+      },
+      {
+        "name": "Juan López",
+        "initials": "JL",
+        "text": "Proceso rápido y resultados muy detallados. Lo recomiendo."
+      },
+      {
+        "name": "Ana Pérez",
+        "initials": "AP",
+        "text": "Vale totalmente la pena. Certificado profesional."
+      },
+      {
+        "name": "Carlos Rodríguez",
+        "initials": "CR",
+        "text": "El test más completo que he hecho. Muy preciso."
+      },
+      {
+        "name": "Laura Martínez",
+        "initials": "LM",
+        "text": "Me ayudó a entender mis fortalezas. Excelente herramienta."
+      },
+      {
+        "name": "Pedro Sánchez",
+        "initials": "PS",
+        "text": "Resultados instantáneos y análisis muy profesional."
+      },
+      {
+        "name": "Isabel Torres",
+        "initials": "IT",
+        "text": "La mejor inversión para conocer mi potencial cognitivo."
+      },
+      {
+        "name": "Diego Ruiz",
+        "initials": "DR",
+        "text": "Test científicamente validado. Totalmente confiable."
+      },
+      {
+        "name": "Sofía Morales",
+        "initials": "SM",
+        "text": "Comparé con otros tests y este es el más preciso."
+      },
+      {
+        "name": "Javier Hernández",
+        "initials": "JH",
+        "text": "Perfecto para evaluar mis habilidades. Lo recomiendo 100%."
+      },
+      {
+        "name": "Carmen Jiménez",
+        "initials": "CJ",
+        "text": "El certificado es muy profesional. Lo usé para mi CV."
+      },
+      {
+        "name": "Miguel Ángel Díaz",
+        "initials": "MD",
+        "text": "Plataforma intuitiva y resultados muy detallados."
+      },
+      {
+        "name": "Elena Vargas",
+        "initials": "EV",
+        "text": "Excelente relación calidad-precio. Muy satisfecha."
+      }
+    ]
   },
   "pricing": {
     "title": "Precios Transparentes",
     "subtitle": "Simple, claro y sin sorpresas",
-    "initialPayment": "Pago Inicial",
-    "initialPrice": "1,00€",
-    "initialDesc": "Para desbloquear tu resultado del test",
-    "initialFeature1": "Resultado completo de CI",
-    "initialFeature2": "Análisis detallado",
-    "initialFeature3": "Certificado descargable",
-    "initialFeature4": "Acceso inmediato",
-    "subscription": "Suscripción Premium",
-    "subscriptionPrice": "9,99€",
-    "subscriptionPeriod": "/mes",
-    "subscriptionDesc": "Acceso a funciones avanzadas (opcional)",
-    "subscriptionFeature1": "2 días de prueba gratis",
-    "subscriptionFeature2": "Análisis comparativos",
-    "subscriptionFeature3": "Tests ilimitados",
-    "subscriptionFeature4": "Seguimiento de progreso",
-    "cancelAnytime": "Cancela cuando quieras",
-    "button": "Comenzar Ahora"
+    "quincenal": {
+      "title": "Suscripción Quincenal",
+      "price": "9.99",
+      "period": "/2 semanas",
+      "features": [
+        "Tests ilimitados de CI y personalidad",
+        "Certificado personalizado descargable",
+        "Análisis detallado de tus resultados",
+        "Seguimiento de tu evolución cognitiva"
+      ]
+    },
+    "mensual": {
+      "title": "Excelencia Mensual",
+      "price": "19.99",
+      "period": "/mes",
+      "badge": "RECOMENDADO",
+      "features": [
+        "Mejor relación precio/valor a largo plazo",
+        "6 tests psicométricos completos",
+        "Dashboard avanzado con gráficos de evolución",
+        "Sistema de logros y recomendaciones personalizadas"
+      ]
+    },
+    "button": "Empezar",
+    "note": "*Los precios pueden variar según tu país y las promociones actuales. Se te cobrará en tu moneda local."
+  },
+  "interestData": {
+    "title": "Datos de interés",
+    "subtitle": "Promedios de CI basados en millones de tests realizados",
+    "ageChart": "CI promedio por edad",
+    "countryChart": "CI promedio por país",
+    "note": "Nota: Estos datos son promedios estadísticos basados en millones de tests de CI realizados a nivel mundial. El CI puede variar significativamente entre individuos y está influenciado por múltiples factores como la educación, el entorno socioeconómico y las oportunidades de desarrollo cognitivo."
   },
   "faq": {
     "title": "Preguntas Frecuentes",

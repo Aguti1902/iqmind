@@ -1,14 +1,25 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import Link from 'next/link'
-import { FaBrain, FaChartLine, FaCertificate, FaUserFriends, FaLock, FaCheckCircle } from 'react-icons/fa'
+import { FaBrain, FaChartLine, FaCertificate, FaUserFriends, FaLock, FaCheckCircle, FaChevronLeft, FaChevronRight } from 'react-icons/fa'
 import { useTranslations } from '@/hooks/useTranslations'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 
 export default function Home() {
   const { t, loading, lang } = useTranslations()
+  const [currentTestimonial, setCurrentTestimonial] = useState(0)
+
+  // Auto-play carrousel
+  useEffect(() => {
+    if (!t.testimonials?.reviews) return
+    const timer = setInterval(() => {
+      setCurrentTestimonial((prev) => (prev === t.testimonials.reviews.length - 1 ? 0 : prev + 1))
+    }, 5000) // Cambia cada 5 segundos
+    return () => clearInterval(timer)
+  }, [t.testimonials?.reviews])
 
   if (loading || !t) {
     return (
@@ -235,9 +246,9 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Testimonios */}
+        {/* Testimonios - Carrousel */}
         <section id="testimonios" className="py-20 bg-white">
-          <div className="container-custom">
+          <div className="container-custom max-w-6xl">
             <div className="text-center mb-16">
               <h2 className="text-4xl font-bold text-gray-900 mb-4">
                 {t.testimonials.title}
@@ -247,50 +258,64 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="card">
-                <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 bg-[#e6f5f5] rounded-full flex items-center justify-center text-[#07C59A] font-bold">
-                    MG
-                  </div>
-                  <div className="ml-4">
-                    <h4 className="font-semibold">{t.checkout.testimonial1Name}</h4>
-                    <div className="text-yellow-400">★★★★★</div>
-                  </div>
+            {/* Carrousel Container */}
+            <div className="relative">
+              <div className="overflow-hidden">
+                <div 
+                  className="flex transition-transform duration-500 ease-in-out"
+                  style={{ transform: `translateX(-${currentTestimonial * 100}%)` }}
+                >
+                  {t.testimonials.reviews?.map((review: any, index: number) => (
+                    <div key={index} className="w-full flex-shrink-0 px-4">
+                      <div className="bg-white rounded-2xl shadow-xl p-8 max-w-4xl mx-auto border border-gray-100">
+                        <div className="flex items-center mb-6">
+                          <div className="w-16 h-16 bg-gradient-to-br from-[#07C59A] to-[#069e7b] rounded-full flex items-center justify-center text-white font-bold text-xl">
+                            {review.initials}
+                          </div>
+                          <div className="ml-4">
+                            <h4 className="font-bold text-lg text-gray-900">{review.name}</h4>
+                            <div className="text-yellow-400 text-xl">★★★★★</div>
+                          </div>
+                        </div>
+                        <p className="text-gray-700 text-lg italic">
+                          "{review.text}"
+                        </p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                <p className="text-gray-600">
-                  "{t.checkout.testimonial1Text}"
-                </p>
               </div>
 
-              <div className="card">
-                <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 bg-[#e6f5f5] rounded-full flex items-center justify-center text-[#07C59A] font-bold">
-                    JL
-                  </div>
-                  <div className="ml-4">
-                    <h4 className="font-semibold">{t.checkout.testimonial2Name}</h4>
-                    <div className="text-yellow-400">★★★★★</div>
-                  </div>
-                </div>
-                <p className="text-gray-600">
-                  "{t.checkout.testimonial2Text}"
-                </p>
-              </div>
+              {/* Navigation Arrows */}
+              <button
+                onClick={() => setCurrentTestimonial((prev) => (prev === 0 ? (t.testimonials.reviews?.length || 1) - 1 : prev - 1))}
+                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white hover:bg-[#07C59A] text-gray-800 hover:text-white p-4 rounded-full shadow-lg transition-all duration-300 z-10"
+                aria-label="Anterior"
+              >
+                <FaChevronLeft className="text-xl" />
+              </button>
+              <button
+                onClick={() => setCurrentTestimonial((prev) => (prev === (t.testimonials.reviews?.length || 1) - 1 ? 0 : prev + 1))}
+                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-white hover:bg-[#07C59A] text-gray-800 hover:text-white p-4 rounded-full shadow-lg transition-all duration-300 z-10"
+                aria-label="Siguiente"
+              >
+                <FaChevronRight className="text-xl" />
+              </button>
 
-              <div className="card">
-                <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 bg-[#e6f5f5] rounded-full flex items-center justify-center text-[#07C59A] font-bold">
-                    AP
-                  </div>
-                  <div className="ml-4">
-                    <h4 className="font-semibold">{t.checkout.testimonial3Name}</h4>
-                    <div className="text-yellow-400">★★★★★</div>
-                  </div>
-                </div>
-                <p className="text-gray-600">
-                  "{t.checkout.testimonial3Text}"
-                </p>
+              {/* Dots Indicator */}
+              <div className="flex justify-center gap-2 mt-8">
+                {t.testimonials.reviews?.map((_: any, index: number) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentTestimonial(index)}
+                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                      index === currentTestimonial 
+                        ? 'bg-[#07C59A] w-8' 
+                        : 'bg-gray-300 hover:bg-gray-400'
+                    }`}
+                    aria-label={`Ir a reseña ${index + 1}`}
+                  />
+                ))}
               </div>
             </div>
           </div>
