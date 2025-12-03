@@ -68,8 +68,9 @@ export async function POST(request: NextRequest) {
         enabled: true,
       },
       description: 'IQ Test Result Unlock',
+      receipt_email: email, // Email donde enviar el recibo
       metadata: {
-        email,
+        userEmail: email, // Guardar email en metadata también
         userIQ: userIQ || '',
         userName: userName || '',
         lang: lang || 'es',

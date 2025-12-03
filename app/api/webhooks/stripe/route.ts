@@ -33,8 +33,35 @@ export async function POST(req: NextRequest) {
         const paymentIntent = event.data.object as Stripe.PaymentIntent
         console.log('💰 Pago completado:', paymentIntent.id)
         
-        // El resultado ya se desbloquea en el frontend
-        // Aquí podrías enviar email de confirmación si quieres
+        // Obtener datos del metadata
+        const customerEmail = paymentIntent.receipt_email || paymentIntent.metadata?.userEmail
+        const userName = paymentIntent.metadata?.userName || 'Usuario'
+        const userIQ = parseInt(paymentIntent.metadata?.userIQ || '100')
+        const lang = paymentIntent.metadata?.lang || 'es'
+        
+        console.log('📧 Datos para email:', { customerEmail, userName, userIQ, lang })
+        
+        if (customerEmail) {
+          try {
+            // Enviar email de pago exitoso
+            const emailResult = await sendEmail(emailTemplates.paymentSuccess(
+              customerEmail,
+              userName,
+              userIQ,
+              lang
+            ))
+            
+            if (emailResult.success) {
+              console.log('✅ Email de pago exitoso enviado a:', customerEmail)
+            } else {
+              console.error('❌ Error enviando email:', emailResult.error)
+            }
+          } catch (emailError) {
+            console.error('❌ Excepción enviando email:', emailError)
+          }
+        } else {
+          console.warn('⚠️ No se pudo enviar email: falta customerEmail')
+        }
         
         break
       }
