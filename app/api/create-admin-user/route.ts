@@ -11,7 +11,7 @@ import bcrypt from 'bcryptjs'
  * - Email: admin@mindmetric.io
  * - Password: Admin2024!MindMetric
  */
-export async function POST() {
+async function createAdminUser() {
   try {
     // Credenciales del administrador
     const adminEmail = 'admin@mindmetric.io'
@@ -86,5 +86,14 @@ export async function POST() {
       error: error.message
     }, { status: 500 })
   }
+}
+
+// Soportar tanto GET como POST para facilitar el uso
+export async function GET() {
+  return createAdminUser()
+}
+
+export async function POST() {
+  return createAdminUser()
 }
 
