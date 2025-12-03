@@ -272,18 +272,6 @@ export default function ResultadoEstimadoPage() {
               <p className="text-sm text-gray-600">{t.estimatedResult.trust3Desc}</p>
             </div>
           </div>
-
-          {/* Important Notice */}
-          <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-6">
-            <h3 className="font-bold text-gray-900 mb-2">{t.notices.infoTitle}</h3>
-            <ul className="text-sm text-gray-700 space-y-2">
-              <li>• {t.notices.point1}</li>
-              <li>• {t.notices.point2}</li>
-              <li>• {t.notices.point3}</li>
-              <li>• {t.notices.point4}</li>
-              <li>• {t.notices.point5} <a href={`/${lang}/terminos`} className="text-primary-600 underline">{t.notices.termsLink}</a> {t.notices.moreInfo}</li>
-            </ul>
-          </div>
         </div>
       </div>
     </>
