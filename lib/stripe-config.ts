@@ -2,46 +2,72 @@ import { db } from './database-postgres'
 
 /**
  * Obtiene las credenciales de Stripe según el modo configurado (test o production)
- * Lee el modo de la base de datos y devuelve las variables de entorno correspondientes
+ * Intenta leer de la base de datos primero, si falla usa variables de entorno
  */
 export async function getStripeConfig() {
   try {
     console.log('🔍 [stripe-config] Iniciando getStripeConfig...')
     
-    // Obtener TODA la configuración desde la base de datos
-    const dbConfig = await db.getAllConfig()
-    const currentMode = dbConfig.stripe_mode || 'production'
-    console.log('📊 [stripe-config] Modo desde BD:', currentMode)
+    let config: any = {}
+    let currentMode = 'test'
     
-    const isTestMode = currentMode === 'test'
-    console.log('🔀 [stripe-config] isTestMode:', isTestMode)
-    
-    // Leer SIEMPRE de la base de datos (NO de variables de entorno)
-    const config = {
-      mode: currentMode,
-      publishableKey: isTestMode 
-        ? dbConfig.stripe_test_publishable_key
-        : dbConfig.stripe_live_publishable_key,
-      secretKey: isTestMode 
-        ? dbConfig.stripe_test_secret_key
-        : dbConfig.stripe_live_secret_key,
-      webhookSecret: isTestMode 
-        ? dbConfig.stripe_test_webhook_secret
-        : dbConfig.stripe_live_webhook_secret,
-      priceId: isTestMode 
-        ? dbConfig.stripe_test_price_id
-        : dbConfig.stripe_live_price_id,
+    // INTENTO 1: Leer desde la base de datos
+    try {
+      const dbConfig = await db.getAllConfig()
+      currentMode = dbConfig.stripe_mode || process.env.STRIPE_MODE || 'test'
+      console.log('📊 [stripe-config] Modo desde BD:', currentMode)
+      
+      const isTestMode = currentMode === 'test'
+      
+      config = {
+        mode: currentMode,
+        publishableKey: isTestMode 
+          ? dbConfig.stripe_test_publishable_key
+          : dbConfig.stripe_live_publishable_key,
+        secretKey: isTestMode 
+          ? dbConfig.stripe_test_secret_key
+          : dbConfig.stripe_live_secret_key,
+        webhookSecret: isTestMode 
+          ? dbConfig.stripe_test_webhook_secret
+          : dbConfig.stripe_live_webhook_secret,
+        priceId: isTestMode 
+          ? dbConfig.stripe_test_price_id
+          : dbConfig.stripe_live_price_id,
+      }
+      
+      if (config.publishableKey && config.secretKey) {
+        console.log('✅ [stripe-config] Credenciales encontradas en BD')
+      }
+    } catch (dbError: any) {
+      console.warn('⚠️ [stripe-config] No se pudo leer de BD:', dbError.message)
     }
     
-    console.log(`🔑 [stripe-config] Configuración desde BD:`)
+    // INTENTO 2: Fallback a variables de entorno
+    if (!config.publishableKey || !config.secretKey) {
+      console.log('🔄 [stripe-config] Usando variables de entorno como fallback')
+      currentMode = process.env.STRIPE_MODE || 'test'
+      
+      config = {
+        mode: currentMode,
+        publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
+        secretKey: process.env.STRIPE_SECRET_KEY,
+        webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
+        priceId: null, // No se usa en payment intent
+      }
+      
+      if (config.publishableKey && config.secretKey) {
+        console.log('✅ [stripe-config] Credenciales encontradas en variables de entorno')
+      }
+    }
+    
+    console.log(`🔑 [stripe-config] Configuración final:`)
     console.log(`   - Modo: ${currentMode.toUpperCase()}`)
     console.log(`   - PublishableKey: ${config.publishableKey?.substring(0, 20)}... (${config.publishableKey ? 'OK' : 'VACÍO'})`)
     console.log(`   - SecretKey: ${config.secretKey?.substring(0, 10)}... (${config.secretKey ? 'OK' : 'VACÍO'})`)
-    console.log(`   - PriceId: ${config.priceId || 'VACÍO'}`)
     
     if (!config.publishableKey || !config.secretKey) {
-      console.error('❌ [stripe-config] Faltan credenciales en la BD')
-      throw new Error('Credenciales de Stripe no configuradas en la base de datos')
+      console.error('❌ [stripe-config] Faltan credenciales en BD y variables de entorno')
+      throw new Error('Credenciales de Stripe no configuradas. Añade NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY y STRIPE_SECRET_KEY en Vercel')
     }
     
     return config
