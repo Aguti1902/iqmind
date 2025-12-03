@@ -14,8 +14,10 @@ interface Config {
   stripe_live_publishable_key: string
   stripe_live_secret_key: string
   stripe_live_webhook_secret: string
-  stripe_test_price_id: string
-  stripe_live_price_id: string
+  stripe_test_price_id_quincenal: string
+  stripe_test_price_id_mensual: string
+  stripe_live_price_id_quincenal: string
+  stripe_live_price_id_mensual: string
   // Pricing
   subscription_price: string
   trial_days: string
@@ -38,8 +40,10 @@ export default function AdminPage() {
     stripe_live_publishable_key: '',
     stripe_live_secret_key: '',
     stripe_live_webhook_secret: '',
-    stripe_test_price_id: '',
-    stripe_live_price_id: '',
+    stripe_test_price_id_quincenal: '',
+    stripe_test_price_id_mensual: '',
+    stripe_live_price_id_quincenal: '',
+    stripe_live_price_id_mensual: '',
     // Pricing
     subscription_price: '9.99',
     trial_days: '2',
@@ -378,15 +382,33 @@ export default function AdminPage() {
                       </div>
                       <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          Price ID (Test)
+                          Price ID Quincenal (Test) - €9.99 cada 2 semanas
                         </label>
                         <input
                           type="text"
-                          value={config.stripe_test_price_id}
-                          onChange={(e) => setConfig({...config, stripe_test_price_id: e.target.value})}
+                          value={config.stripe_test_price_id_quincenal}
+                          onChange={(e) => setConfig({...config, stripe_test_price_id_quincenal: e.target.value})}
                           placeholder="price_test_..."
                           className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#07C59A] focus:outline-none font-mono text-sm"
                         />
+                        <p className="text-xs text-gray-600 mt-1">
+                          💳 Plan quincenal (cada 2 semanas)
+                        </p>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                          Price ID Mensual (Test) - €19.99 al mes
+                        </label>
+                        <input
+                          type="text"
+                          value={config.stripe_test_price_id_mensual}
+                          onChange={(e) => setConfig({...config, stripe_test_price_id_mensual: e.target.value})}
+                          placeholder="price_test_..."
+                          className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#07C59A] focus:outline-none font-mono text-sm"
+                        />
+                        <p className="text-xs text-gray-600 mt-1">
+                          💳 Plan mensual
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -438,15 +460,33 @@ export default function AdminPage() {
                       </div>
                       <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          Price ID (Live)
+                          Price ID Quincenal (Live) - €9.99 cada 2 semanas
                         </label>
                         <input
                           type="text"
-                          value={config.stripe_live_price_id}
-                          onChange={(e) => setConfig({...config, stripe_live_price_id: e.target.value})}
+                          value={config.stripe_live_price_id_quincenal}
+                          onChange={(e) => setConfig({...config, stripe_live_price_id_quincenal: e.target.value})}
                           placeholder="price_live_..."
                           className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#07C59A] focus:outline-none font-mono text-sm"
                         />
+                        <p className="text-xs text-gray-600 mt-1">
+                          💳 Plan quincenal (cada 2 semanas)
+                        </p>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                          Price ID Mensual (Live) - €19.99 al mes
+                        </label>
+                        <input
+                          type="text"
+                          value={config.stripe_live_price_id_mensual}
+                          onChange={(e) => setConfig({...config, stripe_live_price_id_mensual: e.target.value})}
+                          placeholder="price_live_..."
+                          className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#07C59A] focus:outline-none font-mono text-sm"
+                        />
+                        <p className="text-xs text-gray-600 mt-1">
+                          💳 Plan mensual
+                        </p>
                       </div>
                     </div>
                   </div>
