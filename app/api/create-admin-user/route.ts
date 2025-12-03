@@ -52,7 +52,7 @@ export async function POST() {
 
     // 4. Añadir email a la lista de administradores
     const currentAdmins = await db.getConfigByKey('admin_emails')
-    const adminsList = currentAdmins?.value || ''
+    const adminsList = currentAdmins || ''
     
     // Añadir el nuevo admin si no está ya en la lista
     if (!adminsList.includes(adminEmail)) {
