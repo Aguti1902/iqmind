@@ -311,7 +311,29 @@ export default function CheckoutPage() {
       setEmailError('')
 
       try {
-        console.log('💳 Creando NUEVO Payment Intent...', { email, userIQ, userName, attempt: forceRefresh })
+        // Obtener datos completos del test desde localStorage
+        const testResultsStr = localStorage.getItem('testResults')
+        let testData: any = {}
+        
+        if (testResultsStr) {
+          try {
+            const testResults = JSON.parse(testResultsStr)
+            testData = {
+              answers: testResults.answers || [],
+              timeElapsed: testResults.timeElapsed || 0,
+              correctAnswers: testResults.correctAnswers || 0,
+              categoryScores: testResults.categoryScores || {},
+              completedAt: testResults.completedAt || new Date().toISOString(),
+            }
+            console.log('📊 Datos del test recuperados:', testData)
+          } catch (e) {
+            console.warn('⚠️ Error parseando testResults:', e)
+          }
+        } else {
+          console.warn('⚠️ No se encontraron testResults en localStorage')
+        }
+
+        console.log('💳 Creando NUEVO Payment Intent...', { email, userIQ, userName, hasTestData: !!testResultsStr, attempt: forceRefresh })
         const response = await fetch('/api/create-payment-intent', {
           method: 'POST',
           headers: {
@@ -322,6 +344,7 @@ export default function CheckoutPage() {
             userIQ,
             userName,
             lang,
+            testData, // ✅ Enviar datos completos del test
           }),
         })
 

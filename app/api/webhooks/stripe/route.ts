@@ -90,6 +90,35 @@ export async function POST(req: NextRequest) {
                 console.log('✅ Usuario creado:', newUser.email)
                 console.log('🔑 Contraseña generada:', password)
 
+                // Guardar resultado del test en la base de datos
+                console.log('📊 Guardando resultado del test...')
+                try {
+                  const testAnswers = paymentIntent.metadata?.testAnswers
+                  const testTimeElapsed = paymentIntent.metadata?.testTimeElapsed
+                  const testCorrectAnswers = paymentIntent.metadata?.testCorrectAnswers
+                  const testCategoryScores = paymentIntent.metadata?.testCategoryScores
+                  const testCompletedAt = paymentIntent.metadata?.testCompletedAt
+
+                  if (testAnswers && testTimeElapsed && testCorrectAnswers) {
+                    const testResult = await db.createTestResult({
+                      id: `test_${newUser.id}_${Date.now()}`,
+                      userId: newUser.id,
+                      iq: userIQ || 0,
+                      correctAnswers: parseInt(testCorrectAnswers),
+                      timeElapsed: parseInt(testTimeElapsed),
+                      answers: JSON.parse(testAnswers),
+                      categoryScores: testCategoryScores ? JSON.parse(testCategoryScores) : {},
+                      completedAt: testCompletedAt || new Date().toISOString(),
+                    })
+                    console.log('✅ Test result guardado:', testResult.id)
+                  } else {
+                    console.warn('⚠️ No se pudieron guardar los resultados del test: faltan datos')
+                  }
+                } catch (testError: any) {
+                  console.error('❌ Error guardando test result:', testError)
+                  console.error('❌ Stack:', testError.stack)
+                }
+
                 // Enviar email con credenciales
                 const credentialsEmailResult = await sendEmail(emailTemplates.loginCredentials(
                   customerEmail,

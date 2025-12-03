@@ -6,11 +6,12 @@ export const dynamic = 'force-dynamic'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { email, userIQ, userName, lang } = body
+    const { email, userIQ, userName, lang, testData } = body
 
     console.log('=== CREATE PAYMENT INTENT - INICIO ===')
     console.log('Email:', email)
     console.log('UserIQ:', userIQ)
+    console.log('Test Data:', testData ? 'Present ✅' : 'Missing ⚠️')
 
     if (!email) {
       return NextResponse.json(
@@ -74,6 +75,12 @@ export async function POST(request: NextRequest) {
         userIQ: userIQ || '',
         userName: userName || '',
         lang: lang || 'es',
+        // Guardar datos del test como JSON string (Stripe metadata solo acepta strings)
+        testAnswers: testData?.answers ? JSON.stringify(testData.answers) : '',
+        testTimeElapsed: testData?.timeElapsed?.toString() || '',
+        testCorrectAnswers: testData?.correctAnswers?.toString() || '',
+        testCategoryScores: testData?.categoryScores ? JSON.stringify(testData.categoryScores) : '',
+        testCompletedAt: testData?.completedAt || '',
       },
       // Configurar para guardar el método de pago para uso futuro
       setup_future_usage: 'off_session',
