@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { sendEmail, emailTemplates } from '@/lib/email-service'
+import { db } from '@/lib/database-postgres'
+import bcrypt from 'bcryptjs'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2023-10-16',
@@ -61,29 +63,51 @@ export async function POST(req: NextRequest) {
             console.log('👤 Creando usuario y enviando credenciales...')
             
             try {
-              const createUserResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'https://mindmetric.io'}/api/create-user-payment`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  email: customerEmail,
-                  userName,
-                  iq: userIQ,
-                  lang,
-                }),
-              })
-
-              const createUserData = await createUserResponse.json()
+              // Verificar si el usuario ya existe
+              const existingUser = await db.getUserByEmail(customerEmail)
               
-              if (createUserData.success) {
-                console.log('✅ Email 2/2 enviado: Credenciales a:', customerEmail)
-                console.log('🔑 Contraseña generada:', createUserData.credentials?.password)
-              } else if (createUserData.error === 'Usuario ya existe') {
-                console.log('ℹ️ Usuario ya existe, no se envía email de credenciales')
+              if (existingUser) {
+                console.log('ℹ️ Usuario ya existe, no se crea cuenta ni envía credenciales')
               } else {
-                console.error('❌ Error creando usuario:', createUserData.error)
+                // Generar contraseña aleatoria
+                const password = Math.random().toString(36).slice(-12) + 'Ab1!'
+                const hashedPassword = await bcrypt.hash(password, 10)
+                
+                // Calcular fecha de fin de trial (2 días desde ahora)
+                const trialEndDate = new Date()
+                trialEndDate.setDate(trialEndDate.getDate() + 2)
+                
+                // Crear usuario
+                const newUser = await db.createUser({
+                  email: customerEmail,
+                  password: hashedPassword,
+                  userName: userName || 'Usuario',
+                  iq: userIQ || 0,
+                  subscriptionStatus: 'trial',
+                  trialEndDate: trialEndDate.toISOString(),
+                })
+
+                console.log('✅ Usuario creado:', newUser.email)
+                console.log('🔑 Contraseña generada:', password)
+
+                // Enviar email con credenciales
+                const credentialsEmailResult = await sendEmail(emailTemplates.loginCredentials(
+                  customerEmail,
+                  userName,
+                  password,
+                  userIQ,
+                  lang
+                ))
+                
+                if (credentialsEmailResult.success) {
+                  console.log('✅ Email 2/2 enviado: Credenciales a:', customerEmail)
+                } else {
+                  console.error('❌ Error enviando email de credenciales:', credentialsEmailResult.error)
+                }
               }
-            } catch (userError) {
+            } catch (userError: any) {
               console.error('❌ Excepción creando usuario:', userError)
+              console.error('❌ Stack:', userError.stack)
             }
 
           } catch (emailError) {
