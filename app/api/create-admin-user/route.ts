@@ -60,7 +60,7 @@ export async function POST() {
         ? `${adminsList},${adminEmail}` 
         : adminEmail
 
-      await db.updateConfig('admin_emails', newAdminsList, 'system')
+      await db.setConfig('admin_emails', newAdminsList, 'system')
       console.log('✅ Email añadido a la lista de administradores')
     }
 
