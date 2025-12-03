@@ -134,7 +134,7 @@ export async function POST(request: NextRequest) {
                         © ${new Date().getFullYear()} MindMetric. ${t('allRightsReserved')}
                       </p>
                       <p style="color: #718096; font-size: 12px; margin: 0;">
-                        support@mindmetric.io
+                        info@mindmetric.io
                       </p>
                     </td>
                   </tr>

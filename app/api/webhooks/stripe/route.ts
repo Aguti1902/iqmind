@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
         
         if (customerEmail) {
           try {
-            // Enviar email de pago exitoso
+            // EMAIL 1: Enviar email de pago exitoso
             const emailResult = await sendEmail(emailTemplates.paymentSuccess(
               customerEmail,
               userName,
@@ -52,15 +52,45 @@ export async function POST(req: NextRequest) {
             ))
             
             if (emailResult.success) {
-              console.log('✅ Email de pago exitoso enviado a:', customerEmail)
+              console.log('✅ Email 1/2 enviado: Pago exitoso a:', customerEmail)
             } else {
-              console.error('❌ Error enviando email:', emailResult.error)
+              console.error('❌ Error enviando email de pago:', emailResult.error)
             }
+
+            // EMAIL 2: Crear usuario y enviar credenciales
+            console.log('👤 Creando usuario y enviando credenciales...')
+            
+            try {
+              const createUserResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'https://mindmetric.io'}/api/create-user-payment`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  email: customerEmail,
+                  userName,
+                  iq: userIQ,
+                  lang,
+                }),
+              })
+
+              const createUserData = await createUserResponse.json()
+              
+              if (createUserData.success) {
+                console.log('✅ Email 2/2 enviado: Credenciales a:', customerEmail)
+                console.log('🔑 Contraseña generada:', createUserData.credentials?.password)
+              } else if (createUserData.error === 'Usuario ya existe') {
+                console.log('ℹ️ Usuario ya existe, no se envía email de credenciales')
+              } else {
+                console.error('❌ Error creando usuario:', createUserData.error)
+              }
+            } catch (userError) {
+              console.error('❌ Excepción creando usuario:', userError)
+            }
+
           } catch (emailError) {
-            console.error('❌ Excepción enviando email:', emailError)
+            console.error('❌ Excepción en flujo de emails:', emailError)
           }
         } else {
-          console.warn('⚠️ No se pudo enviar email: falta customerEmail')
+          console.warn('⚠️ No se pudo enviar emails: falta customerEmail')
         }
         
         break

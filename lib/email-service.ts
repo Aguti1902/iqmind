@@ -68,7 +68,7 @@ export const emailTemplates = {
                 <!-- Header -->
                 <tr>
                   <td style="background: linear-gradient(135deg, #113240 0%, #07C59A 100%); padding: 40px 30px; text-align: center;">
-                    <img src="https://www.mindmetric.io/images/LOGO2BLANCO.png" alt="MindMetric" style="height: 40px; width: auto; margin: 0 auto; display: block;" />
+                    <img src="https://www.mindmetric.io/images/MINDMETRIC/Logo_blanco.png" alt="MindMetric" style="height: 40px; width: auto; margin: 0 auto; display: block;" />
                   </td>
                 </tr>
                 
@@ -158,7 +158,7 @@ export const emailTemplates = {
                 <!-- Header -->
                 <tr>
                   <td style="background: linear-gradient(135deg, #113240 0%, #07C59A 100%); padding: 40px 30px; text-align: center;">
-                    <img src="https://www.mindmetric.io/images/LOGO2BLANCO.png" alt="MindMetric" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
+                    <img src="https://www.mindmetric.io/images/MINDMETRIC/Logo_blanco.png" alt="MindMetric" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
                     <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">
                       🎁 ${lang === 'es' ? '¡Tu Resultado te Espera!' : 'Your Result Awaits!'}
                     </h1>
@@ -258,7 +258,7 @@ export const emailTemplates = {
                 <!-- Header -->
                 <tr>
                   <td style="background: linear-gradient(135deg, #113240 0%, #07C59A 100%); padding: 40px 30px; text-align: center;">
-                    <img src="https://www.mindmetric.io/images/LOGO2BLANCO.png" alt="MindMetric" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
+                    <img src="https://www.mindmetric.io/images/MINDMETRIC/Logo_blanco.png" alt="MindMetric" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
                     <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">
                       🎉 ${lang === 'es' ? '¡Pago Confirmado!' : 'Payment Confirmed!'}
                     </h1>
@@ -361,7 +361,7 @@ export const emailTemplates = {
                 <!-- Header -->
                 <tr>
                   <td style="background: linear-gradient(135deg, #113240 0%, #07C59A 100%); padding: 40px 30px; text-align: center;">
-                    <img src="https://www.mindmetric.io/images/LOGO2BLANCO.png" alt="MindMetric" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
+                    <img src="https://www.mindmetric.io/images/MINDMETRIC/Logo_blanco.png" alt="MindMetric" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
                     <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">
                       🚀 ${lang === 'es' ? '¡Premium Activado!' : 'Premium Activated!'}
                     </h1>
@@ -464,7 +464,7 @@ export const emailTemplates = {
                 <!-- Header -->
                 <tr>
                   <td style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); padding: 40px 30px; text-align: center;">
-                    <img src="https://www.mindmetric.io/images/LOGO2BLANCO.png" alt="MindMetric" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
+                    <img src="https://www.mindmetric.io/images/MINDMETRIC/Logo_blanco.png" alt="MindMetric" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
                     <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">
                       ⏰ ${lang === 'es' ? 'Trial Termina Mañana' : 'Trial Ends Tomorrow'}
                     </h1>
@@ -566,7 +566,7 @@ export const emailTemplates = {
                 <!-- Header -->
                 <tr>
                   <td style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 40px 30px; text-align: center;">
-                    <img src="https://www.mindmetric.io/images/LOGO2BLANCO.png" alt="MindMetric" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
+                    <img src="https://www.mindmetric.io/images/MINDMETRIC/Logo_blanco.png" alt="MindMetric" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
                     <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">
                       ✅ ${lang === 'es' ? '¡Suscripción Activada!' : 'Subscription Activated!'}
                     </h1>
@@ -663,7 +663,7 @@ export const emailTemplates = {
                 <!-- Header -->
                 <tr>
                   <td style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 40px 30px; text-align: center;">
-                    <img src="https://www.mindmetric.io/images/LOGO2BLANCO.png" alt="MindMetric" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
+                    <img src="https://www.mindmetric.io/images/MINDMETRIC/Logo_blanco.png" alt="MindMetric" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
                     <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">
                       ✅ ${lang === 'es' ? 'Pago Recibido' : 'Payment Received'}
                     </h1>
@@ -757,7 +757,7 @@ export const emailTemplates = {
                 <!-- Header -->
                 <tr>
                   <td style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); padding: 40px 30px; text-align: center;">
-                    <img src="https://www.mindmetric.io/images/LOGO2BLANCO.png" alt="MindMetric" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
+                    <img src="https://www.mindmetric.io/images/MINDMETRIC/Logo_blanco.png" alt="MindMetric" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
                     <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">
                       ⚠️ ${lang === 'es' ? 'Problema con el Pago' : 'Payment Issue'}
                     </h1>
@@ -863,7 +863,7 @@ export const emailTemplates = {
                 <!-- Header -->
                 <tr>
                   <td style="background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); padding: 40px 30px; text-align: center;">
-                    <img src="https://www.mindmetric.io/images/LOGO2BLANCO.png" alt="MindMetric" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
+                    <img src="https://www.mindmetric.io/images/MINDMETRIC/Logo_blanco.png" alt="MindMetric" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
                     <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">
                       ✅ ${lang === 'es' ? 'Suscripción Cancelada' : 'Subscription Cancelled'}
                     </h1>
@@ -919,6 +919,139 @@ export const emailTemplates = {
                       ${lang === 'es'
                         ? '¡Esperamos verte de nuevo pronto! 👋'
                         : 'We hope to see you again soon! 👋'}
+                    </p>
+                  </td>
+                </tr>
+                
+                <!-- Footer -->
+                <tr>
+                  <td style="background-color: #f7fafc; padding: 30px; text-align: center; border-top: 1px solid #e2e8f0;">
+                    <p style="color: #718096; font-size: 12px; margin: 0 0 10px 0;">
+                      © ${new Date().getFullYear()} MindMetric. ${lang === 'es' ? 'Todos los derechos reservados.' : 'All rights reserved.'}
+                    </p>
+                    <p style="color: #718096; font-size: 12px; margin: 0;">
+                      info@mindmetric.io
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </body>
+      </html>
+    `
+  }),
+
+  // 10. Credenciales de acceso (después del pago)
+  loginCredentials: (email: string, userName: string, password: string, iq: number, lang: string) => ({
+    to: email,
+    subject: lang === 'es'
+      ? `🎉 ¡Bienvenido a MindMetric! Tu CI: ${iq} - Acceso a tu cuenta`
+      : `🎉 Welcome to MindMetric! Your IQ: ${iq} - Account Access`,
+    html: `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>${lang === 'es' ? 'Credenciales de Acceso' : 'Login Credentials'}</title>
+      </head>
+      <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f5;">
+        <table role="presentation" style="width: 100%; border-collapse: collapse;">
+          <tr>
+            <td align="center" style="padding: 40px 20px;">
+              <table role="presentation" style="max-width: 600px; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                <!-- Header -->
+                <tr>
+                  <td style="background: linear-gradient(135deg, #113240 0%, #07C59A 100%); padding: 40px 30px; text-align: center;">
+                    <img src="https://www.mindmetric.io/images/MINDMETRIC/Logo_blanco.png" alt="MindMetric" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
+                    <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">
+                      🎉 ${lang === 'es' ? '¡Cuenta Creada!' : 'Account Created!'}
+                    </h1>
+                  </td>
+                </tr>
+                
+                <!-- Content -->
+                <tr>
+                  <td style="padding: 40px 30px;">
+                    <h2 style="color: #113240; margin: 0 0 20px 0; font-size: 24px; font-weight: 600;">
+                      ${lang === 'es' ? '¡Hola' : 'Hello'}, ${userName}! 👋
+                    </h2>
+                    
+                    <p style="color: #4a5568; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+                      ${lang === 'es'
+                        ? 'Tu cuenta en MindMetric ha sido creada exitosamente. Aquí están tus credenciales de acceso:'
+                        : 'Your MindMetric account has been created successfully. Here are your login credentials:'}
+                    </p>
+                    
+                    <!-- Credentials Box -->
+                    <div style="background-color: #f7fafc; border: 2px solid #07C59A; border-radius: 8px; padding: 20px; margin: 30px 0;">
+                      <h3 style="color: #07C59A; margin: 0 0 15px 0; font-size: 18px; font-weight: 600;">
+                        🔑 ${lang === 'es' ? 'Credenciales de Acceso' : 'Login Credentials'}
+                      </h3>
+                      <table style="width: 100%; border-collapse: collapse;">
+                        <tr>
+                          <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0;">
+                            <strong style="color: #2d3748;">${lang === 'es' ? 'Email:' : 'Email:'}</strong>
+                          </td>
+                          <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; text-align: right;">
+                            <code style="background-color: #edf2f7; padding: 4px 8px; border-radius: 4px; color: #2d3748; font-size: 14px;">${email}</code>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 10px 0;">
+                            <strong style="color: #2d3748;">${lang === 'es' ? 'Contraseña:' : 'Password:'}</strong>
+                          </td>
+                          <td style="padding: 10px 0; text-align: right;">
+                            <code style="background-color: #edf2f7; padding: 4px 8px; border-radius: 4px; color: #2d3748; font-size: 14px; font-weight: 600;">${password}</code>
+                          </td>
+                        </tr>
+                      </table>
+                    </div>
+                    
+                    <!-- IQ Score -->
+                    <div style="background: linear-gradient(135deg, #07C59A 0%, #113240 100%); border-radius: 16px; padding: 30px; margin: 30px 0; color: #ffffff; text-align: center;">
+                      <p style="margin: 0 0 10px 0; font-size: 14px; opacity: 0.9;">
+                        ${lang === 'es' ? 'Tu Coeficiente Intelectual' : 'Your Intelligence Quotient'}
+                      </p>
+                      <p style="margin: 0; font-size: 72px; font-weight: 700; line-height: 1;">
+                        ${iq}
+                      </p>
+                    </div>
+                    
+                    <div style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 30px 0; border-radius: 4px;">
+                      <p style="color: #856404; font-size: 14px; margin: 0; line-height: 1.6;">
+                        <strong>⚠️ ${lang === 'es' ? 'Importante:' : 'Important:'}</strong><br>
+                        ${lang === 'es'
+                          ? 'Por tu seguridad, te recomendamos cambiar tu contraseña después del primer inicio de sesión desde tu panel de cuenta.'
+                          : 'For your security, we recommend changing your password after your first login from your account panel.'}
+                      </p>
+                    </div>
+                    
+                    <div style="text-align: center; margin: 30px 0;">
+                      <a href="https://mindmetric.io/${lang}/login" style="display: inline-block; background: linear-gradient(135deg, #113240 0%, #07C59A 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 18px;">
+                        ${lang === 'es' ? '🔓 Acceder a Mi Dashboard' : '🔓 Access My Dashboard'}
+                      </a>
+                    </div>
+                    
+                    <div style="background-color: #e6f5f5; border-left: 4px solid #07C59A; padding: 20px; margin: 30px 0; border-radius: 4px;">
+                      <h3 style="color: #07C59A; margin: 0 0 15px 0; font-size: 18px; font-weight: 600;">
+                        ✨ ${lang === 'es' ? '¿Qué puedes hacer ahora?' : 'What can you do now?'}
+                      </h3>
+                      <ul style="color: #2d3748; margin: 0; padding-left: 20px; line-height: 1.8;">
+                        <li>${lang === 'es' ? 'Ver tu análisis completo de CI' : 'View your complete IQ analysis'}</li>
+                        <li>${lang === 'es' ? 'Descargar tu certificado oficial' : 'Download your official certificate'}</li>
+                        <li>${lang === 'es' ? 'Acceder a gráficos comparativos' : 'Access comparative charts'}</li>
+                        <li>${lang === 'es' ? 'Realizar tests adicionales (TDAH, Ansiedad, etc.)' : 'Take additional tests (ADHD, Anxiety, etc.)'}</li>
+                        <li>${lang === 'es' ? 'Gestionar tu suscripción premium' : 'Manage your premium subscription'}</li>
+                      </ul>
+                    </div>
+                    
+                    <p style="color: #718096; font-size: 14px; margin: 30px 0 0 0; line-height: 1.6;">
+                      ${lang === 'es'
+                        ? '¿Necesitas ayuda? Responde a este email y te ayudaremos encantados.'
+                        : 'Need help? Reply to this email and we\'ll be happy to help.'}
                     </p>
                   </td>
                 </tr>
