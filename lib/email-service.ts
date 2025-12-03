@@ -6,7 +6,7 @@ if (process.env.SENDGRID_API_KEY) {
   sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 }
 
-const FROM_EMAIL = 'support@mindmetric.io'
+const FROM_EMAIL = 'info@mindmetric.io'
 const FROM_NAME = 'MindMetric'
 
 export interface EmailOptions {
@@ -123,7 +123,7 @@ export const emailTemplates = {
                       © ${new Date().getFullYear()} MindMetric. ${lang === 'es' ? 'Todos los derechos reservados.' : 'All rights reserved.'}
                     </p>
                     <p style="color: #718096; font-size: 12px; margin: 0;">
-                      support@mindmetric.io
+                      info@mindmetric.io
                     </p>
                   </td>
                 </tr>
@@ -223,7 +223,7 @@ export const emailTemplates = {
                       © ${new Date().getFullYear()} MindMetric. ${lang === 'es' ? 'Todos los derechos reservados.' : 'All rights reserved.'}
                     </p>
                     <p style="color: #718096; font-size: 12px; margin: 0;">
-                      support@mindmetric.io
+                      info@mindmetric.io
                     </p>
                   </td>
                 </tr>
@@ -326,7 +326,7 @@ export const emailTemplates = {
                       © ${new Date().getFullYear()} MindMetric. ${lang === 'es' ? 'Todos los derechos reservados.' : 'All rights reserved.'}
                     </p>
                     <p style="color: #718096; font-size: 12px; margin: 0;">
-                      support@mindmetric.io
+                      info@mindmetric.io
                     </p>
                   </td>
                 </tr>
@@ -429,7 +429,7 @@ export const emailTemplates = {
                       © ${new Date().getFullYear()} MindMetric. ${lang === 'es' ? 'Todos los derechos reservados.' : 'All rights reserved.'}
                     </p>
                     <p style="color: #718096; font-size: 12px; margin: 0;">
-                      support@mindmetric.io
+                      info@mindmetric.io
                     </p>
                   </td>
                 </tr>
@@ -531,7 +531,7 @@ export const emailTemplates = {
                       © ${new Date().getFullYear()} MindMetric. ${lang === 'es' ? 'Todos los derechos reservados.' : 'All rights reserved.'}
                     </p>
                     <p style="color: #718096; font-size: 12px; margin: 0;">
-                      support@mindmetric.io
+                      info@mindmetric.io
                     </p>
                   </td>
                 </tr>
@@ -628,7 +628,7 @@ export const emailTemplates = {
                       © ${new Date().getFullYear()} MindMetric. ${lang === 'es' ? 'Todos los derechos reservados.' : 'All rights reserved.'}
                     </p>
                     <p style="color: #718096; font-size: 12px; margin: 0;">
-                      support@mindmetric.io
+                      info@mindmetric.io
                     </p>
                   </td>
                 </tr>
@@ -722,7 +722,7 @@ export const emailTemplates = {
                       © ${new Date().getFullYear()} MindMetric. ${lang === 'es' ? 'Todos los derechos reservados.' : 'All rights reserved.'}
                     </p>
                     <p style="color: #718096; font-size: 12px; margin: 0;">
-                      support@mindmetric.io
+                      info@mindmetric.io
                     </p>
                   </td>
                 </tr>
@@ -828,7 +828,7 @@ export const emailTemplates = {
                       © ${new Date().getFullYear()} MindMetric. ${lang === 'es' ? 'Todos los derechos reservados.' : 'All rights reserved.'}
                     </p>
                     <p style="color: #718096; font-size: 12px; margin: 0;">
-                      support@mindmetric.io
+                      info@mindmetric.io
                     </p>
                   </td>
                 </tr>
@@ -930,7 +930,7 @@ export const emailTemplates = {
                       © ${new Date().getFullYear()} MindMetric. ${lang === 'es' ? 'Todos los derechos reservados.' : 'All rights reserved.'}
                     </p>
                     <p style="color: #718096; font-size: 12px; margin: 0;">
-                      support@mindmetric.io
+                      info@mindmetric.io
                     </p>
                   </td>
                 </tr>
