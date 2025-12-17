@@ -35,6 +35,21 @@ export async function POST(req: NextRequest) {
         const paymentIntent = event.data.object as Stripe.PaymentIntent
         console.log('💰 Pago completado:', paymentIntent.id)
         
+        // DOBLE PAGO: Verificar si es el primer o segundo pago
+        const paymentPart = paymentIntent.metadata?.paymentPart
+        const totalParts = paymentIntent.metadata?.totalParts
+        
+        console.log(`💳 Pago ${paymentPart}/${totalParts} completado`)
+        
+        // Si es el primer pago (1/2), solo hacer log y esperar el segundo
+        if (paymentPart === '1' && totalParts === '2') {
+          console.log('⏳ Primer pago recibido. Esperando segundo pago...')
+          return NextResponse.json({ received: true, message: 'Waiting for second payment' })
+        }
+        
+        // Si es el segundo pago (2/2), procesar completamente
+        console.log('✅ Segundo pago recibido. Procesando creación de usuario y emails...')
+        
         // Obtener datos del metadata
         const customerEmail = paymentIntent.receipt_email || paymentIntent.metadata?.userEmail
         const userName = paymentIntent.metadata?.userName || 'Usuario'

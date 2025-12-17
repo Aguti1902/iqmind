@@ -52,7 +52,8 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
         return
       }
 
-      // Confirmar el pago de €0.50 con Stripe
+      // DOBLE PAGO: Confirmar primer pago de €0.50
+      console.log('💳 Procesando pago 1/2...')
       const { error: confirmError, paymentIntent } = await stripe.confirmPayment({
         elements,
         confirmParams: {
@@ -67,9 +68,41 @@ function CheckoutForm({ email, userName, userIQ, lang }: { email: string, userNa
         return
       }
 
-      // Si llegamos aquí, el pago de €0.50 fue exitoso
-      console.log('✅ Pago de €0.50 exitoso:', paymentIntent?.id)
-      console.log('📋 PaymentIntent completo:', paymentIntent)
+      console.log('✅ Pago 1/2 exitoso:', paymentIntent?.id)
+
+      // DOBLE PAGO: Confirmar segundo pago de €0.50 usando el mismo payment method
+      console.log('💳 Procesando pago 2/2...')
+      const clientSecret2 = localStorage.getItem('clientSecret2')
+      const paymentMethodId = paymentIntent?.payment_method
+
+      if (clientSecret2 && paymentMethodId) {
+        try {
+          const { error: confirmError2, paymentIntent: paymentIntent2 } = await stripe.confirmPayment({
+            clientSecret: clientSecret2,
+            confirmParams: {
+              payment_method: paymentMethodId as string,
+              return_url: `${window.location.origin}/${lang}/resultado`,
+            },
+            redirect: 'if_required',
+          })
+
+          if (confirmError2) {
+            console.error('❌ Error en pago 2/2:', confirmError2.message)
+            setErrorMessage('Pago parcial completado. Contacte soporte.')
+            setIsProcessing(false)
+            return
+          }
+
+          console.log('✅ Pago 2/2 exitoso:', paymentIntent2?.id)
+          console.log('🎉 Ambos pagos completados: Total €1.00')
+        } catch (error2: any) {
+          console.error('❌ Excepción en pago 2/2:', error2)
+          setErrorMessage('Error en el segundo pago. Contacte soporte.')
+          setIsProcessing(false)
+          return
+        }
+      }
+
       localStorage.setItem('paymentCompleted', 'true')
       localStorage.setItem('userEmail', email)
       
@@ -358,8 +391,14 @@ export default function CheckoutPage() {
           return
         }
 
-        console.log('✅ Client Secret recibido:', data.clientSecret?.substring(0, 20) + '...')
+        console.log('✅ Client Secrets recibidos:')
+        console.log('   💳 Pago 1:', data.clientSecret?.substring(0, 20) + '...')
+        console.log('   💳 Pago 2:', data.clientSecret2?.substring(0, 20) + '...')
         setClientSecret(data.clientSecret)
+        // Guardar el segundo client secret para procesarlo después
+        localStorage.setItem('clientSecret2', data.clientSecret2 || '')
+        localStorage.setItem('paymentIntentId1', data.paymentIntentId1 || '')
+        localStorage.setItem('paymentIntentId2', data.paymentIntentId2 || '')
         localStorage.setItem('userEmail', email)
       } catch (error) {
         console.error('❌ Error al inicializar el pago:', error)
