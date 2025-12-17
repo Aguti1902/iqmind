@@ -58,25 +58,25 @@ export default function ResultadoPage() {
 
     // Enviar evento de conversión a analytics
     if (typeof window !== 'undefined' && (window as any).gtag) {
-      // Evento de compra general
+      // Evento de compra general para Google Analytics
       ;(window as any).gtag('event', 'purchase', {
         transaction_id: localStorage.getItem('transactionId'),
-        value: 0.50,
+        value: 1.00,
         currency: 'EUR'
       })
       
-      // Evento de conversión específico para Google Ads
+      // Evento de conversión para Google Ads
       ;(window as any).gtag('event', 'conversion', {
         'send_to': 'AW-17232820139/qMCRCP_NnK4bEKvvn5lA',
-        'value': 1.0,
-        'currency': 'USD',
+        'value': 1.00,
+        'currency': 'EUR',
         'transaction_id': localStorage.getItem('transactionId') || ''
       })
     }
 
     if (typeof window !== 'undefined' && (window as any).fbq) {
       ;(window as any).fbq('track', 'Purchase', {
-        value: 0.50,
+        value: 1.00,
         currency: 'EUR'
       })
     }
