@@ -611,7 +611,7 @@ export default function CheckoutPage() {
                   <div className="space-y-3">
                     <div className="flex justify-between">
                       <span className="text-gray-700">{t.checkout.item}</span>
-                      <span className="font-semibold">0,50€</span>
+                      <span className="font-semibold">1,00€</span>
                     </div>
                     <div className="flex justify-between">
                       <div>
@@ -622,7 +622,7 @@ export default function CheckoutPage() {
                     </div>
                     <div className="border-t-2 pt-3 flex justify-between items-center">
                       <span className="text-lg font-bold text-gray-900">{t.checkout.total}</span>
-                      <span className="text-3xl font-bold text-[#07C59A]">0,50€</span>
+                      <span className="text-3xl font-bold text-[#07C59A]">1,00€</span>
                     </div>
                   </div>
                 </div>

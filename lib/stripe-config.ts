@@ -30,9 +30,10 @@ export async function getStripeConfig() {
         webhookSecret: isTestMode 
           ? dbConfig.stripe_test_webhook_secret
           : dbConfig.stripe_live_webhook_secret,
+        // Usar suscripción MENSUAL por defecto (19,99€/mes)
         priceId: isTestMode 
-          ? dbConfig.stripe_test_price_id
-          : dbConfig.stripe_live_price_id,
+          ? (dbConfig.stripe_test_price_id_mensual || dbConfig.stripe_test_price_id)
+          : (dbConfig.stripe_live_price_id_mensual || dbConfig.stripe_live_price_id),
       }
       
       if (config.publishableKey && config.secretKey) {
