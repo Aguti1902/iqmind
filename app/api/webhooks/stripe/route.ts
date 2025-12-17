@@ -73,9 +73,9 @@ export async function POST(req: NextRequest) {
                 const password = Math.random().toString(36).slice(-12) + 'Ab1!'
                 const hashedPassword = await bcrypt.hash(password, 10)
                 
-                // Calcular fecha de fin de trial (2 días desde ahora)
+                // Calcular fecha de fin de trial (30 días desde ahora)
                 const trialEndDate = new Date()
-                trialEndDate.setDate(trialEndDate.getDate() + 2)
+                trialEndDate.setDate(trialEndDate.getDate() + 30)
                 
                 // Crear usuario
                 const newUser = await db.createUser({
