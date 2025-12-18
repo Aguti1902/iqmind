@@ -90,6 +90,24 @@ export default function AdminPage() {
     }
   }
 
+  const exportCSV = () => {
+    if (!dashboardData) return
+    
+    const csv = [
+      ['ID', 'Email', 'Monto', 'Fecha', 'Estado'].join(','),
+      ...dashboardData.tables.recentTransactions.map((t: any) => 
+        [t.id, t.customer_email, t.amount, new Date(t.created).toLocaleDateString(), t.status].join(',')
+      )
+    ].join('\n')
+    
+    const blob = new Blob([csv], { type: 'text/csv' })
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'transacciones.csv'
+    a.click()
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -201,6 +219,59 @@ export default function AdminPage() {
                       <p className="text-4xl font-bold text-gray-900 mb-1">€{dashboardData.kpis.mrr.toFixed(2)}</p>
                       <p className="text-sm text-gray-600">Ingresos Mensuales Recurrentes</p>
                     </div>
+
+                    <div className="bg-gradient-to-br from-green-50 to-white border-2 border-green-200 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center">
+                          <FaDollarSign className="text-2xl text-white" />
+                        </div>
+                        <span className="text-sm font-semibold text-green-700 bg-green-100 px-3 py-1 rounded-full">
+                          Total
+                        </span>
+                      </div>
+                      <p className="text-4xl font-bold text-gray-900 mb-1">€{dashboardData.kpis.totalRevenue.toFixed(2)}</p>
+                      <p className="text-sm text-gray-600">Ingresos Totales</p>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-red-50 to-white border-2 border-red-200 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="w-12 h-12 bg-red-500 rounded-lg flex items-center justify-center">
+                          <FaTimesCircle className="text-2xl text-white" />
+                        </div>
+                        <span className="text-sm font-semibold text-red-700 bg-red-100 px-3 py-1 rounded-full">
+                          Este mes
+                        </span>
+                      </div>
+                      <p className="text-4xl font-bold text-gray-900 mb-1">{dashboardData.kpis.refundsThisMonth}</p>
+                      <p className="text-sm text-gray-600">Reembolsos Procesados</p>
+                      <p className="text-xs text-red-600 mt-1">Total: €{dashboardData.kpis.totalRefunded.toFixed(2)}</p>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-indigo-50 to-white border-2 border-indigo-200 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="w-12 h-12 bg-indigo-500 rounded-lg flex items-center justify-center">
+                          <FaChartLine className="text-2xl text-white" />
+                        </div>
+                        <span className="text-sm font-semibold text-indigo-700 bg-indigo-100 px-3 py-1 rounded-full">
+                          Conversión
+                        </span>
+                      </div>
+                      <p className="text-4xl font-bold text-gray-900 mb-1">{dashboardData.kpis.conversionRate.toFixed(1)}%</p>
+                      <p className="text-sm text-gray-600">Trial → Pago</p>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-cyan-50 to-white border-2 border-cyan-200 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="w-12 h-12 bg-cyan-500 rounded-lg flex items-center justify-center">
+                          <FaRobot className="text-2xl text-white" />
+                        </div>
+                        <span className="text-sm font-semibold text-cyan-700 bg-cyan-100 px-3 py-1 rounded-full">
+                          IA
+                        </span>
+                      </div>
+                      <p className="text-4xl font-bold text-gray-900 mb-1">{dashboardData.aiMetrics.cancelationsProcessed}</p>
+                      <p className="text-sm text-gray-600">Cancelaciones Automáticas</p>
+                    </div>
                   </div>
 
                   <div className="bg-white border-2 border-gray-200 rounded-xl p-6 shadow-lg">
@@ -214,11 +285,95 @@ export default function AdminPage() {
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="month" />
                           <YAxis />
-                          <Tooltip />
+                          <Tooltip 
+                            formatter={(value: number) => [`€${value.toFixed(2)}`, 'Ingresos']}
+                            labelStyle={{ color: '#000' }}
+                          />
                           <Legend />
                           <Bar dataKey="revenue" fill="#07C59A" name="Ingresos (€)" />
                         </BarChart>
                       </ResponsiveContainer>
+                    </div>
+                  </div>
+
+                  <div className="bg-white border-2 border-gray-200 rounded-xl p-6 shadow-lg">
+                    <div className="flex items-center justify-between mb-6">
+                      <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                        <FaCreditCard className="text-[#07C59A]" />
+                        Transacciones Recientes
+                      </h3>
+                      <button
+                        onClick={exportCSV}
+                        className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2 text-sm"
+                      >
+                        <FaDownload />
+                        Exportar CSV
+                      </button>
+                    </div>
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Monto</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                          {dashboardData.tables.recentTransactions.map((transaction: any) => (
+                            <tr key={transaction.id} className="hover:bg-gray-50">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-500">{transaction.id.substring(0, 20)}...</td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{transaction.customer_email}</td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-green-600">€{transaction.amount.toFixed(2)}</td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(transaction.created).toLocaleDateString('es-ES')}</td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                  {transaction.status}
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div className="bg-white border-2 border-gray-200 rounded-xl p-6 shadow-lg">
+                    <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                      <FaUsers className="text-[#07C59A]" />
+                      Suscripciones Activas (Top 10)
+                    </h3>
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plan</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Monto</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fin del Período</th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                          {dashboardData.tables.activeSubscriptions.map((subscription: any) => (
+                            <tr key={subscription.id} className="hover:bg-gray-50">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-500">{subscription.id.substring(0, 20)}...</td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                                  subscription.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
+                                }`}>
+                                  {subscription.status === 'trialing' ? 'Trial' : 'Activa'}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{subscription.plan}</td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">€{subscription.amount.toFixed(2)}</td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(subscription.current_period_end).toLocaleDateString('es-ES')}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
                   </div>
                 </div>
