@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
       apiVersion: '2023-10-16',
     })
 
-    // Buscar o crear customer
+    // Buscar o crear customer con información completa
     const customers = await stripe.customers.list({
       email,
       limit: 1,
@@ -52,12 +52,31 @@ export async function POST(request: NextRequest) {
     let customer
     if (customers.data.length > 0) {
       customer = customers.data[0]
+      // Actualizar customer con nueva información si es necesario
+      if (!customer.name && userName) {
+        customer = await stripe.customers.update(customer.id, {
+          name: userName,
+          metadata: {
+            userIQ: userIQ?.toString() || '',
+            lang: lang || 'es',
+            lastUpdated: new Date().toISOString(),
+          },
+        })
+      }
     } else {
       customer = await stripe.customers.create({
         email,
-        name: userName,
+        name: userName || email.split('@')[0], // Usar parte del email si no hay nombre
+        description: `Cliente MindMetric - IQ: ${userIQ || 'Pendiente'}`,
+        metadata: {
+          userIQ: userIQ?.toString() || '',
+          lang: lang || 'es',
+          createdAt: new Date().toISOString(),
+        },
       })
     }
+    
+    console.log('👤 Customer:', customer.id, '-', customer.name, '-', customer.email)
 
     // ESTRATEGIA DE DOBLE PAGO: Crear 2 Payment Intents de €0.50 cada uno
     // Total: €1.00 pero procesado como 2 transacciones separadas
@@ -83,12 +102,14 @@ export async function POST(request: NextRequest) {
       automatic_payment_methods: {
         enabled: true,
       },
-      description: 'IQ Test Result Unlock - Part 1/2',
+      description: `${userName || customer.name || email.split('@')[0]} - Desbloqueo Test IQ (1/2)`,
+      statement_descriptor: 'MindMetric IQ 1/2',
       receipt_email: email,
       metadata: {
         ...metadata,
         paymentPart: '1',
         totalParts: '2',
+        customerName: userName || customer.name || '',
       },
       setup_future_usage: 'off_session',
     })
@@ -101,13 +122,15 @@ export async function POST(request: NextRequest) {
       automatic_payment_methods: {
         enabled: true,
       },
-      description: 'IQ Test Result Unlock - Part 2/2',
+      description: `${userName || customer.name || email.split('@')[0]} - Desbloqueo Test IQ (2/2)`,
+      statement_descriptor: 'MindMetric IQ 2/2',
       receipt_email: email,
       metadata: {
         ...metadata,
         paymentPart: '2',
         totalParts: '2',
         linkedPayment: paymentIntent1.id, // Vincular ambos pagos
+        customerName: userName || customer.name || '',
       },
       setup_future_usage: 'off_session',
     })
