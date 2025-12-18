@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
         enabled: true,
       },
       description: `${userName || customer.name || email.split('@')[0]} - Desbloqueo Test IQ (1/2)`,
-      statement_descriptor: 'MindMetric IQ 1/2',
+      statement_descriptor_suffix: 'IQ Test 1/2',
       receipt_email: email,
       metadata: {
         ...metadata,
@@ -123,7 +123,7 @@ export async function POST(request: NextRequest) {
         enabled: true,
       },
       description: `${userName || customer.name || email.split('@')[0]} - Desbloqueo Test IQ (2/2)`,
-      statement_descriptor: 'MindMetric IQ 2/2',
+      statement_descriptor_suffix: 'IQ Test 2/2',
       receipt_email: email,
       metadata: {
         ...metadata,
