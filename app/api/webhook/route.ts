@@ -275,22 +275,24 @@ export async function POST(request: NextRequest) {
           userIQ: paymentIntent.metadata.userIQ,
         })
         
+        // Usar userEmail o email según lo que esté disponible en metadata
+        const userEmail = paymentIntent.metadata.userEmail || paymentIntent.metadata.email
+        const userIQ = paymentIntent.metadata.userIQ ? parseInt(paymentIntent.metadata.userIQ) : null
+
         // Enviar email de confirmación de pago
-        if (paymentIntent.metadata.email && paymentIntent.metadata.userIQ) {
+        if (userEmail && userIQ) {
           await sendEmailToUser('paymentSuccess', {
-            email: paymentIntent.metadata.email,
+            email: userEmail,
             userName: paymentIntent.metadata.userName || 'Usuario',
-            iq: parseInt(paymentIntent.metadata.userIQ),
+            iq: userIQ,
             lang: paymentIntent.metadata.lang || 'es'
           })
         }
         
         // IMPORTANTE: Guardar el test result inmediatamente después del pago
         // No esperar a que se cree la suscripción
-        if (paymentIntent.metadata.email && paymentIntent.metadata.userIQ) {
+        if (userEmail && userIQ) {
           try {
-            const userEmail = paymentIntent.metadata.email
-            const userIQ = parseInt(paymentIntent.metadata.userIQ)
             
             console.log('💾 [PAYMENT_INTENT] Guardando resultado del test para:', userEmail)
             
@@ -324,6 +326,106 @@ export async function POST(request: NextRequest) {
           } catch (testError) {
             console.error('❌ [PAYMENT_INTENT] Error guardando resultado del test:', testError)
           }
+        }
+
+        // 🚀 CREAR SUSCRIPCIÓN AUTOMÁTICAMENTE después del pago exitoso
+        try {
+          const customerId = paymentIntent.customer as string
+          const paymentMethodId = paymentIntent.payment_method as string
+
+          if (customerId && paymentMethodId) {
+            console.log('🔍 [PAYMENT_INTENT] Verificando si necesita crear suscripción...')
+            console.log('   Customer ID:', customerId)
+            console.log('   Payment Method ID:', paymentMethodId)
+
+            // Obtener configuración de Stripe
+            const stripeConfig = await getStripeConfig()
+            
+            if (!stripeConfig.priceId) {
+              console.warn('⚠️ [PAYMENT_INTENT] No hay priceId configurado, saltando creación de suscripción')
+            } else {
+              // Verificar si ya existe una suscripción activa para este customer
+              const existingSubscriptions = await stripe.subscriptions.list({
+                customer: customerId,
+                status: 'all',
+                limit: 10,
+              })
+
+              // Filtrar suscripciones activas o en trial
+              const activeSubscriptions = existingSubscriptions.data.filter(
+                sub => sub.status === 'active' || sub.status === 'trialing'
+              )
+
+              if (activeSubscriptions.length > 0) {
+                console.log('✅ [PAYMENT_INTENT] Ya existe una suscripción activa:', activeSubscriptions[0].id)
+              } else {
+                console.log('🚀 [PAYMENT_INTENT] Creando suscripción automáticamente...')
+
+                // Verificar si el payment method está attachado
+                const paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId)
+                if (!paymentMethod.customer) {
+                  console.log('🔗 [PAYMENT_INTENT] Attaching payment method to customer...')
+                  await stripe.paymentMethods.attach(paymentMethodId, {
+                    customer: customerId,
+                  })
+                }
+
+                // Establecer como método de pago por defecto
+                await stripe.customers.update(customerId, {
+                  invoice_settings: {
+                    default_payment_method: paymentMethodId,
+                  },
+                })
+
+                // Leer días de prueba desde la BD
+                const trialDaysStr = await db.getConfigByKey('trial_days')
+                const trialDays = trialDaysStr ? parseInt(trialDaysStr) : 2
+
+                // Los datos del test ya vienen directamente en metadata (testAnswers, testTimeElapsed, etc.)
+                console.log(`📅 [PAYMENT_INTENT] Creando suscripción con trial de ${trialDays} días...`)
+                console.log('   Price ID:', stripeConfig.priceId)
+                console.log('   User Email:', userEmail || paymentIntent.metadata.userEmail || paymentIntent.metadata.email)
+
+                const subscription = await stripe.subscriptions.create({
+                  customer: customerId,
+                  items: [
+                    {
+                      price: stripeConfig.priceId,
+                    },
+                  ],
+                  default_payment_method: paymentMethodId,
+                  payment_settings: {
+                    payment_method_types: ['card'],
+                    save_default_payment_method: 'on_subscription',
+                  },
+                  metadata: {
+                    userName: paymentIntent.metadata.userName || '',
+                    email: userEmail || paymentIntent.metadata.userEmail || paymentIntent.metadata.email || '',
+                    lang: paymentIntent.metadata.lang || 'es',
+                    initialPaymentIntentId: paymentIntent.id,
+                    userIQ: paymentIntent.metadata.userIQ || '',
+                    // Los datos del test ya vienen en metadata como strings separados
+                    testAnswers: paymentIntent.metadata.testAnswers || '',
+                    testTimeElapsed: paymentIntent.metadata.testTimeElapsed || '',
+                    testCorrectAnswers: paymentIntent.metadata.testCorrectAnswers || '',
+                    testCategoryScores: paymentIntent.metadata.testCategoryScores || '',
+                    createdVia: 'webhook_payment_intent_succeeded',
+                  },
+                  trial_period_days: trialDays,
+                })
+
+                console.log('✅ [PAYMENT_INTENT] Suscripción creada exitosamente:', subscription.id)
+                console.log('   Estado:', subscription.status)
+                console.log('   Trial end:', subscription.trial_end ? new Date(subscription.trial_end * 1000).toISOString() : 'N/A')
+              }
+            }
+          } else {
+            console.warn('⚠️ [PAYMENT_INTENT] No hay customerId o paymentMethodId, no se puede crear suscripción automática')
+          }
+        } catch (subscriptionError: any) {
+          console.error('❌ [PAYMENT_INTENT] Error creando suscripción automática:', subscriptionError)
+          console.error('   Error message:', subscriptionError.message)
+          // No bloqueamos el flujo, el pago ya fue exitoso
         }
         
         break
