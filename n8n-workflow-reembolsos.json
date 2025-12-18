@@ -173,7 +173,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Obtener datos del análisis de IA\nconst analisisIA = $('📝 Parsear Respuesta IA').item.json;\n\n// Obtener datos del cliente de Stripe\nconst stripeData = $input.item.json;\nconst customer = stripeData.data[0];\n\nif (!customer) {\n  return {\n    cumple_politica: false,\n    razon: \"Cliente no encontrado en Stripe\",\n    ...analisisIA\n  };\n}\n\n// Obtener todos los charges del cliente\nconst charges = customer.charges?.data || [];\nconst subscriptions = customer.subscriptions?.data || [];\n\n// Timestamps\nconst ahora = Math.floor(Date.now() / 1000);\nconst hace30Dias = ahora - (30 * 24 * 60 * 60);\n\n// Buscar el pago inicial de 1€ (dos cargos de 0.50€ = 50 centavos cada uno)\nconst pagosIniciales = charges.filter(charge => \n  charge.amount === 50 && \n  charge.status === 'succeeded'\n);\n\n// Buscar suscripción activa\nconst suscripcionActiva = subscriptions.find(sub => \n  sub.status === 'active' || sub.status === 'trialing'\n);\n\n// CASO 1: REEMBOLSO PAGO INICIAL (1€) - NO REEMBOLSABLE\nif (analisisIA.tipo_solicitud === \"REEMBOLSO_INICIAL\") {\n  // El pago inicial de 1€ NUNCA es reembolsable\n  return {\n    ...analisisIA,\n    cumple_politica: false,\n    razon: \"El pago inicial de 1€ NO es reembolsable - es contenido digital ya entregado (resultado del test)\",\n    customer_id: customer.id,\n    tipo: \"REEMBOLSO_INICIAL\",\n    accion_sugerida: \"Explicar política + ofrecer soporte técnico si hubo problemas con el test\"\n  };\n}\n\n// CASO 2: REEMBOLSO SUSCRIPCIÓN\nif (analisisIA.tipo_solicitud === \"REEMBOLSO_SUSCRIPCION\") {\n  // Buscar último cargo de suscripción (> 1€)\n  const ultimoCargo = charges\n    .filter(c => c.amount >= 999 && c.status === 'succeeded') // >= 9.99€\n    .sort((a, b) => b.created - a.created)[0];\n  \n  if (!ultimoCargo) {\n    return {\n      ...analisisIA,\n      cumple_politica: false,\n      razon: \"No se encontraron cargos de suscripción\",\n      customer_id: customer.id\n    };\n  }\n  \n  // Motivos válidos para reembolso de suscripción\n  const motivosValidos = [\n    \"indisponibilidad\",\n    \"problemas técnicos\",\n    \"error de facturación\",\n    \"cargo duplicado\",\n    \"no funciona\",\n    \"caída\",\n    \"down\",\n    \"bug\"\n  ];\n  \n  const motivoValido = motivosValidos.some(motivo => \n    analisisIA.motivo_solicitud.toLowerCase().includes(motivo)\n  );\n  \n  // Verificar si fue reportado dentro de 30 días\n  const dentroDeVentana = ultimoCargo.created > hace30Dias;\n  \n  if (motivoValido && dentroDeVentana) {\n    return {\n      ...analisisIA,\n      cumple_politica: true,\n      razon: `Motivo técnico válido: ${analisisIA.motivo_solicitud}`,\n      customer_id: customer.id,\n      charge_ids: [ultimoCargo.id],\n      subscription_id: suscripcionActiva?.id,\n      monto_total: ultimoCargo.amount,\n      tipo: \"REEMBOLSO_SUSCRIPCION\"\n    };\n  } else {\n    return {\n      ...analisisIA,\n      cumple_politica: false,\n      razon: !motivoValido \n        ? \"Motivo no cumple con política de reembolsos\" \n        : \"Reporte fuera de ventana de 30 días\",\n      customer_id: customer.id\n    };\n  }\n}\n\n// CASO 3: SOLO CANCELACIÓN (sin reembolso) - SIEMPRE PERMITIDA\nif (analisisIA.tipo_solicitud === \"CANCELACION\") {\n  return {\n    ...analisisIA,\n    cumple_politica: true, // SIEMPRE true para cancelaciones\n    razon: \"Solicitud de cancelación - siempre permitida\",\n    customer_id: customer.id,\n    subscription_id: suscripcionActiva?.id,\n    tipo: \"CANCELACION\",\n    solo_cancelar: true, // Flag importante: solo cancelar, NO reembolsar\n    accion: \"Cancelar suscripción sin reembolso\"\n  };\n}\n\n// DEFAULT: NO CUMPLE\nreturn {\n  ...analisisIA,\n  cumple_politica: false,\n  razon: \"No cumple con criterios de reembolso\",\n  customer_id: customer.id\n};"
+        "jsCode": "// Obtener datos del análisis de IA\nconst analisisIA = $('📝 Parsear Respuesta IA').item.json;\n\n// Obtener datos del cliente de Stripe\nconst stripeData = $input.item.json;\nconst customer = stripeData.data[0];\n\nif (!customer) {\n  return {\n    cumple_politica: false,\n    razon: \"Cliente no encontrado en Stripe\",\n    ...analisisIA\n  };\n}\n\n// Obtener todos los charges del cliente\nconst charges = customer.charges?.data || [];\nconst subscriptions = customer.subscriptions?.data || [];\n\n// Timestamps\nconst ahora = Math.floor(Date.now() / 1000);\nconst hace30Dias = ahora - (30 * 24 * 60 * 60);\n\n// Buscar el pago inicial de 1€ (dos cargos de 0.50€ = 50 centavos cada uno)\nconst pagosIniciales = charges.filter(charge => \n  charge.amount === 50 && \n  charge.status === 'succeeded'\n);\n\n// Buscar suscripción activa\nconst suscripcionActiva = subscriptions.find(sub => \n  sub.status === 'active' || sub.status === 'trialing'\n);\n\n// CASO 1: REEMBOLSO PAGO INICIAL (1€) - NO REEMBOLSABLE\nif (analisisIA.tipo_solicitud === \"REEMBOLSO_INICIAL\") {\n  // El pago inicial de 1€ NUNCA es reembolsable\n  return {\n    ...analisisIA,\n    cumple_politica: false,\n    razon: \"El pago inicial de 1€ NO es reembolsable - es contenido digital ya entregado (resultado del test)\",\n    customer_id: customer.id,\n    tipo: \"REEMBOLSO_INICIAL\",\n    accion_sugerida: \"Explicar política + ofrecer soporte técnico si hubo problemas con el test\"\n  };\n}\n\n// CASO 2: REEMBOLSO SUSCRIPCIÓN\nif (analisisIA.tipo_solicitud === \"REEMBOLSO_SUSCRIPCION\") {\n  // Buscar último cargo de suscripción (> 1€)\n  const ultimoCargo = charges\n    .filter(c => c.amount >= 999 && c.status === 'succeeded') // >= 9.99€\n    .sort((a, b) => b.created - a.created)[0];\n  \n  if (!ultimoCargo) {\n    return {\n      ...analisisIA,\n      cumple_politica: false,\n      razon: \"No se encontraron cargos de suscripción\",\n      customer_id: customer.id\n    };\n  }\n  \n  // Motivos válidos para reembolso de suscripción\n  const motivosValidos = [\n    \"indisponibilidad\",\n    \"problemas técnicos\",\n    \"error de facturación\",\n    \"cargo duplicado\",\n    \"no funciona\",\n    \"caída\",\n    \"down\",\n    \"bug\"\n  ];\n  \n  const motivoValido = motivosValidos.some(motivo => \n    analisisIA.motivo_solicitud.toLowerCase().includes(motivo)\n  );\n  \n  // Verificar si fue reportado dentro de 30 días\n  const dentroDeVentana = ultimoCargo.created > hace30Dias;\n  \n  if (motivoValido && dentroDeVentana) {\n    return {\n      ...analisisIA,\n      cumple_politica: true,\n      razon: `Motivo técnico válido: ${analisisIA.motivo_solicitud}`,\n      customer_id: customer.id,\n      charge_ids: [ultimoCargo.id],\n      subscription_id: suscripcionActiva?.id,\n      monto_total: ultimoCargo.amount,\n      tipo: \"REEMBOLSO_SUSCRIPCION\"\n    };\n  } else {\n    return {\n      ...analisisIA,\n      cumple_politica: false,\n      razon: !motivoValido \n        ? \"Motivo no cumple con política de reembolsos\" \n        : \"Reporte fuera de ventana de 30 días\",\n      customer_id: customer.id,\n      subscription_id: suscripcionActiva?.id, // Incluir para poder ofrecer cancelación\n      ofrecer_cancelacion: !!suscripcionActiva // Flag para saber si ofrecer cancelar\n    };\n  }\n}\n\n// CASO 3: SOLO CANCELACIÓN (sin reembolso) - SIEMPRE PERMITIDA\nif (analisisIA.tipo_solicitud === \"CANCELACION\") {\n  // Verificar si tiene suscripción activa\n  if (!suscripcionActiva) {\n    return {\n      ...analisisIA,\n      cumple_politica: false,\n      razon: \"No tiene suscripción activa para cancelar\",\n      customer_id: customer.id,\n      tipo: \"CANCELACION\"\n    };\n  }\n  \n  return {\n    ...analisisIA,\n    cumple_politica: true, // SIEMPRE true para cancelaciones\n    razon: \"Solicitud de cancelación - siempre permitida\",\n    customer_id: customer.id,\n    subscription_id: suscripcionActiva.id,\n    tipo: \"CANCELACION\",\n    solo_cancelar: true, // Flag importante: solo cancelar, NO reembolsar\n    accion: \"Cancelar suscripción sin reembolso\"\n  };\n}\n\n// DEFAULT: NO CUMPLE\nreturn {\n  ...analisisIA,\n  cumple_politica: false,\n  razon: \"No cumple con criterios de reembolso\",\n  customer_id: customer.id\n};"
         },
         "id": "node-evaluar-politica",
         "name": "⚖️ Evaluar Política de Reembolso",
@@ -200,13 +200,30 @@
       },
       {
         "parameters": {
+          "conditions": {
+            "boolean": [
+              {
+                "value1": "={{ $json.solo_cancelar }}",
+                "value2": true
+              }
+            ]
+          }
+        },
+        "id": "node-if-solo-cancelar",
+        "name": "🔀 ¿Es Solo Cancelación?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 1,
+        "position": [2240, 0]
+      },
+      {
+        "parameters": {
           "jsCode": "// Procesar reembolso de cada cargo\nconst data = $input.item.json;\nconst chargeIds = data.charge_ids || [];\n\n// Crear array de promesas de reembolso\nconst reembolsos = [];\n\nfor (const chargeId of chargeIds) {\n  reembolsos.push({\n    charge_id: chargeId,\n    customer_id: data.customer_id,\n    monto: data.tipo === \"REEMBOLSO_INICIAL\" ? 50 : data.monto_total,\n    email: data.email_cliente\n  });\n}\n\nreturn reembolsos.map(r => ({ json: r }));"
         },
         "id": "node-preparar-reembolsos",
         "name": "💳 Preparar Reembolsos",
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
-        "position": [2240, 0]
+        "position": [2440, -100]
       },
       {
         "parameters": {
@@ -245,7 +262,7 @@
         "name": "💰 Stripe: Crear Reembolso",
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4,
-        "position": [2440, 0],
+        "position": [2640, -100],
         "credentials": {
           "stripeApi": {
             "id": "3",
@@ -268,7 +285,7 @@
         "name": "🔀 ¿Tiene Suscripción Activa?",
         "type": "n8n-nodes-base.if",
         "typeVersion": 1,
-        "position": [2640, 0]
+        "position": [2840, -100]
       },
       {
         "parameters": {
@@ -291,7 +308,7 @@
         "name": "🚫 Stripe: Cancelar Suscripción",
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4,
-        "position": [2840, -100],
+        "position": [3040, -200],
         "credentials": {
           "stripeApi": {
             "id": "3",
@@ -312,7 +329,28 @@
         "name": "📤 Email: Reembolso Aprobado",
         "type": "n8n-nodes-base.emailSend",
         "typeVersion": 2,
-        "position": [3040, 0],
+        "position": [3240, -100],
+        "credentials": {
+          "smtp": {
+            "id": "4",
+            "name": "SendGrid SMTP"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "fromEmail": "support@mindmetric.io",
+          "toEmail": "={{ $('📝 Parsear Respuesta IA').item.json.email_cliente }}",
+          "subject": "=✅ Suscripción Cancelada - MindMetric",
+          "emailType": "html",
+          "message": "=<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <style>\n    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }\n    .container { max-width: 600px; margin: 0 auto; padding: 20px; }\n    .header { background: linear-gradient(135deg, #113240 0%, #052547 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }\n    .content { background: white; padding: 30px; border: 1px solid #e0e0e0; border-top: none; }\n    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 15px; margin: 20px 0; border-radius: 5px; }\n    .info-box { background: #e7f3ff; border-left: 4px solid #2196F3; padding: 15px; margin: 20px 0; border-radius: 5px; }\n    .footer { background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; border-radius: 0 0 10px 10px; }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <div class=\"header\">\n      <h1>✅ Suscripción Cancelada</h1>\n    </div>\n    <div class=\"content\">\n      <p>Hola,</p>\n      \n      <div class=\"success-box\">\n        <p><strong>✓ Tu suscripción ha sido cancelada exitosamente</strong></p>\n      </div>\n      \n      <p>{{ $('📝 Parsear Respuesta IA').item.json.respuesta_sugerida }}</p>\n      \n      <div class=\"info-box\">\n        <p><strong>Información importante:</strong></p>\n        <ul style=\"margin: 10px 0; padding-left: 20px;\">\n          <li>No habrá más cargos a tu tarjeta</li>\n          <li>Puedes seguir usando el servicio hasta el final del período actual</li>\n          <li>Tu cuenta permanecerá activa (sin acceso premium)</li>\n        </ul>\n      </div>\n      \n      <p>Si en el futuro deseas reactivar tu suscripción, estaremos encantados de ayudarte.</p>\n      \n      <p>¡Gracias por haber sido parte de MindMetric!</p>\n      \n      <p>Atentamente,<br><strong>Equipo de MindMetric</strong></p>\n    </div>\n    <div class=\"footer\">\n      <p>MindMetric | <a href=\"https://mindmetric.io\">mindmetric.io</a></p>\n      <p>Este es un email automático generado por nuestro sistema de IA.</p>\n    </div>\n  </div>\n</body>\n</html>",
+          "options": {}
+        },
+        "id": "node-email-cancelacion",
+        "name": "📤 Email: Cancelación Confirmada",
+        "type": "n8n-nodes-base.emailSend",
+        "typeVersion": 2,
+        "position": [3240, 100],
         "credentials": {
           "smtp": {
             "id": "4",
@@ -333,7 +371,7 @@
         "name": "📤 Email: Reembolso Denegado",
         "type": "n8n-nodes-base.emailSend",
         "typeVersion": 2,
-        "position": [3040, 200],
+        "position": [3240, 300],
         "credentials": {
           "smtp": {
             "id": "4",
@@ -502,7 +540,7 @@
         "main": [
           [
             {
-              "node": "💳 Preparar Reembolsos",
+              "node": "🔀 ¿Es Solo Cancelación?",
               "type": "main",
               "index": 0
             }
@@ -510,6 +548,24 @@
           [
             {
               "node": "📤 Email: Reembolso Denegado",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "🔀 ¿Es Solo Cancelación?": {
+        "main": [
+          [
+            {
+              "node": "🚫 Stripe: Cancelar Suscripción",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "💳 Preparar Reembolsos",
               "type": "main",
               "index": 0
             }
@@ -531,7 +587,7 @@
         "main": [
           [
             {
-              "node": "🔀 ¿Tiene Suscripción Activa?",
+              "node": "📤 Email: Reembolso Aprobado",
               "type": "main",
               "index": 0
             }
@@ -542,7 +598,7 @@
         "main": [
           [
             {
-              "node": "🚫 Stripe: Cancelar Suscripción",
+              "node": "📤 Email: Reembolso Aprobado",
               "type": "main",
               "index": 0
             }
@@ -560,12 +616,15 @@
         "main": [
           [
             {
-              "node": "📤 Email: Reembolso Aprobado",
+              "node": "📤 Email: Cancelación Confirmada",
               "type": "main",
               "index": 0
             }
           ]
         ]
+      },
+      "📤 Email: Cancelación Confirmada": {
+        "main": []
       }
     },
     "active": true,
