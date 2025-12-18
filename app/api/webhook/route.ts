@@ -434,6 +434,29 @@ export async function POST(request: NextRequest) {
                 console.log('✅ [PAYMENT_INTENT] Suscripción creada exitosamente:', subscription.id)
                 console.log('   Estado:', subscription.status)
                 console.log('   Trial end:', subscription.trial_end ? new Date(subscription.trial_end * 1000).toISOString() : 'N/A')
+
+                // 💾 GUARDAR subscription_id EN LA BASE DE DATOS
+                try {
+                  const subscriptionEmail = userEmail || paymentIntent.metadata.userEmail || paymentIntent.metadata.email
+                  if (subscriptionEmail) {
+                    const user = await db.getUserByEmail(subscriptionEmail)
+                    if (user) {
+                      await db.updateUserSubscription(
+                        user.id.toString(),
+                        subscription.id,
+                        subscription.status === 'trialing' ? 'trial' : (subscription.status as 'active' | 'cancelled' | 'expired'),
+                        subscription.trial_end ? new Date(subscription.trial_end * 1000) : undefined,
+                        subscription.current_period_end ? new Date(subscription.current_period_end * 1000) : undefined
+                      )
+                      console.log(`✅ [PAYMENT_INTENT] Subscription ID guardado en BD para usuario: ${subscriptionEmail}`)
+                    } else {
+                      console.warn(`⚠️ [PAYMENT_INTENT] Usuario no encontrado para guardar subscription_id: ${subscriptionEmail}`)
+                    }
+                  }
+                } catch (dbError: any) {
+                  console.error('❌ [PAYMENT_INTENT] Error guardando subscription_id en BD:', dbError.message)
+                  // No bloqueamos el flujo, la suscripción ya fue creada en Stripe
+                }
               }
             }
           } else {
@@ -503,6 +526,26 @@ export async function POST(request: NextRequest) {
                           trial_period_days: trialDays,
                         })
                         console.log('✅ [PAYMENT_INTENT] Suscripción creada exitosamente (retry):', subscription.id)
+                        
+                        // 💾 GUARDAR subscription_id EN LA BASE DE DATOS (retry)
+                        try {
+                          const subscriptionEmail = userEmail || paymentIntent.metadata.userEmail || paymentIntent.metadata.email
+                          if (subscriptionEmail) {
+                            const user = await db.getUserByEmail(subscriptionEmail)
+                            if (user) {
+                              await db.updateUserSubscription(
+                                user.id.toString(),
+                                subscription.id,
+                                subscription.status === 'trialing' ? 'trial' : (subscription.status as 'active' | 'cancelled' | 'expired'),
+                                subscription.trial_end ? new Date(subscription.trial_end * 1000) : undefined,
+                                subscription.current_period_end ? new Date(subscription.current_period_end * 1000) : undefined
+                              )
+                              console.log(`✅ [PAYMENT_INTENT] Subscription ID guardado en BD (retry) para usuario: ${subscriptionEmail}`)
+                            }
+                          }
+                        } catch (dbError: any) {
+                          console.error('❌ [PAYMENT_INTENT] Error guardando subscription_id en BD (retry):', dbError.message)
+                        }
                       }
                     }
                   }
