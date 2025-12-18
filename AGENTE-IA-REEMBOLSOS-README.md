@@ -42,7 +42,7 @@ En n8n, ve a **Settings → Credentials** y añade:
 
 #### 📧 Gmail IMAP
 - Nombre: `Gmail Refunds`
-- Email: `refunds@mindmetric.io`
+- Email: `support@mindmetric.io`
 - App Password: `xxxx xxxx xxxx xxxx`
 - Generar en: https://myaccount.google.com/apppasswords
 
@@ -86,7 +86,7 @@ node test-stripe-refund.js test@example.com
 
 ```bash
 1. En n8n, click en "Execute Workflow"
-2. Envía un email de prueba a refunds@mindmetric.io
+2. Envía un email de prueba a support@mindmetric.io
 3. Espera 1 minuto (el trigger revisa cada minuto)
 4. Verifica en "Executions" que funcionó
 ```
@@ -99,7 +99,7 @@ node test-stripe-refund.js test@example.com
 
 **Email de prueba:**
 ```
-Para: refunds@mindmetric.io
+Para: support@mindmetric.io
 Asunto: Solicitud de reembolso
 
 Hola,
@@ -125,7 +125,7 @@ Gracias.
 
 **Email de prueba:**
 ```
-Para: refunds@mindmetric.io
+Para: support@mindmetric.io
 Asunto: Reembolso
 
 Hola,
@@ -150,7 +150,7 @@ Devuélvanme el dinero.
 
 **Email de prueba:**
 ```
-Para: refunds@mindmetric.io
+Para: support@mindmetric.io
 Asunto: Web caída
 
 La web estuvo caída todo el fin de semana.
@@ -199,7 +199,7 @@ Settings → Credentials
 ### 2. Check de Workflow
 
 ```
-1. Envía email de prueba a refunds@mindmetric.io
+1. Envía email de prueba a support@mindmetric.io
 2. Espera 1-2 minutos
 3. Ve a "Executions" en n8n
 4. Verifica que todos los nodos se ejecutaron ✅
@@ -361,7 +361,7 @@ TESTING:
 PRODUCCIÓN:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 □ Cambiar a claves LIVE de Stripe
-□ Configurar email refunds@mindmetric.io
+□ Configurar email support@mindmetric.io
 □ Monitoreo activo (primera semana)
 □ Documentación para equipo
 □ Backup del workflow en JSON

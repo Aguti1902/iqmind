@@ -13,7 +13,7 @@
         "filters": {
           "from": "",
           "subject": "",
-          "to": "refunds@mindmetric.io"
+          "to": "support@mindmetric.io"
         },
         "format": "simple",
         "options": {}
@@ -26,7 +26,7 @@
       "credentials": {
         "imap": {
           "id": "1",
-          "name": "Gmail Refunds"
+          "name": "Gmail Support"
         }
       }
     },
@@ -291,7 +291,7 @@
       },
       {
         "parameters": {
-          "fromEmail": "refunds@mindmetric.io",
+          "fromEmail": "support@mindmetric.io",
           "toEmail": "={{ $('📝 Parsear Respuesta IA').item.json.email_cliente }}",
           "subject": "=Re: {{ $('📧 Gmail: Recibir Solicitud').item.json.subject }}",
           "emailType": "html",
@@ -312,7 +312,7 @@
       },
       {
         "parameters": {
-          "fromEmail": "refunds@mindmetric.io",
+          "fromEmail": "support@mindmetric.io",
           "toEmail": "={{ $('📝 Parsear Respuesta IA').item.json.email_cliente }}",
           "subject": "=Re: {{ $('📧 Gmail: Recibir Solicitud').item.json.subject }}",
           "emailType": "html",
@@ -333,7 +333,7 @@
       },
       {
         "parameters": {
-          "fromEmail": "refunds@mindmetric.io",
+          "fromEmail": "support@mindmetric.io",
           "toEmail": "={{ $('📧 Gmail: Recibir Solicitud').item.json.from }}",
           "subject": "=Re: {{ $('📧 Gmail: Recibir Solicitud').item.json.subject }}",
           "emailType": "html",
@@ -354,7 +354,7 @@
       },
       {
         "parameters": {
-          "fromEmail": "refunds@mindmetric.io",
+          "fromEmail": "support@mindmetric.io",
           "toEmail": "={{ $('📧 Gmail: Recibir Solicitud').item.json.from }}",
           "subject": "=Re: {{ $('📧 Gmail: Recibir Solicitud').item.json.subject }}",
           "emailType": "html",

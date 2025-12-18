@@ -29,7 +29,7 @@ Sistema completo de automatización para gestionar solicitudes de cancelación y
 └─────────────────────────────────────────────────────────────────┘
 
 1. 📧 RECEPCIÓN
-   └─ Email llega a: refunds@mindmetric.io
+   └─ Email llega a: support@mindmetric.io
    └─ n8n webhook detecta nuevo correo
 
 2. 🤖 ANÁLISIS IA
@@ -219,7 +219,7 @@ STRIPE_SECRET_KEY=sk_live_xxxxxxxxxxxxx
 SENDGRID_API_KEY=SG.xxxxxxxxxxxxx
 
 # Gmail (Para recibir correos)
-GMAIL_USER=refunds@mindmetric.io
+GMAIL_USER=support@mindmetric.io
 GMAIL_APP_PASSWORD=xxxx xxxx xxxx xxxx
 ```
 
@@ -349,7 +349,7 @@ Guarda esto en un archivo `workflow-reembolsos.json` e impórtalo en n8n:
         },
         "simple": false,
         "filters": {
-          "from": "refunds@mindmetric.io",
+          "from": "support@mindmetric.io",
           "subject": "",
           "labelIds": ["INBOX"]
         }
@@ -531,18 +531,21 @@ Solo reembolsable si:
 ### Paso 1: Crear Email Dedicado
 
 ```bash
-# Crear email en tu dominio
-refunds@mindmetric.io
+# Usar email de soporte existente
+support@mindmetric.io
 
-# O usar Gmail con alias
-iqlevel2025+refunds@gmail.com
+# Este email recibirá:
+# - Solicitudes de reembolso
+# - Quejas de clientes
+# - Cancelaciones
+# - Consultas generales
 ```
 
 ### Paso 2: Configurar Gmail en n8n
 
 1. En n8n, añade nodo "Gmail Trigger"
 2. Configura credenciales:
-   - Email: `refunds@mindmetric.io`
+   - Email: `support@mindmetric.io`
    - App Password: (generar en Google Account)
 
 #### Generar App Password de Gmail:
@@ -567,7 +570,7 @@ iqlevel2025+refunds@gmail.com
 # 3. En n8n, añade nodo "SendGrid"
 # 4. Configura:
 #    - API Key: (la que generaste)
-#    - From: refunds@mindmetric.io
+#    - From: support@mindmetric.io
 #    - To: {{ $json.email_cliente }}
 #    - Subject: "Re: Solicitud de Reembolso"
 #    - Content: {{ $json.respuesta_sugerida }}
@@ -727,7 +730,7 @@ Query Parameters:
 
 ```
 De: test@example.com
-Para: refunds@mindmetric.io
+Para: support@mindmetric.io
 Asunto: Reembolso por favor
 
 Hola,
@@ -754,7 +757,7 @@ Gracias.
 
 ```
 De: test2@example.com
-Para: refunds@mindmetric.io
+Para: support@mindmetric.io
 Asunto: Cancelar suscripción
 
 Hola,
@@ -780,7 +783,7 @@ Gracias.
 
 ```
 De: test3@example.com
-Para: refunds@mindmetric.io
+Para: support@mindmetric.io
 Asunto: Web caída
 
 Hola,
@@ -859,7 +862,7 @@ Crear en Airtable/Google Sheets:
 Nodo: **Slack**
 
 ```
-Channel: #reembolsos
+Channel: #soporte
 Message:
 🤖 Nuevo Reembolso Procesado
 
@@ -1004,7 +1007,7 @@ SETUP INICIAL:
 
 □ Cuenta de n8n creada
 □ Claves API obtenidas (OpenAI, Stripe, SendGrid)
-□ Email refunds@mindmetric.io creado
+□ Email support@mindmetric.io creado
 □ Gmail App Password generada
 
 CONFIGURACIÓN WORKFLOW:

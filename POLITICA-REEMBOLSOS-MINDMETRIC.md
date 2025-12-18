@@ -245,7 +245,7 @@ Las suscripciones **SÍ son reembolsables**, pero **SOLO en casos específicos**
 
 ### Paso 1: Evaluación Inicial
 
-1. **Cliente envía email a:** `refunds@mindmetric.io`
+1. **Cliente envía email a:** `support@mindmetric.io`
 2. **Agente de IA analiza solicitud** (< 5 minutos)
 3. **Clasifica tipo:** REEMBOLSO_INICIAL vs REEMBOLSO_SUSCRIPCION
 
