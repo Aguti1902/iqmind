@@ -63,13 +63,29 @@ Si el idioma detectado no está soportado, el sistema automáticamente usa ingl�
 | Tu suscripción ha sido cancelada exitosamente | Your subscription has been cancelled successfully |
 | No habrá más cargos | There will be no more charges |
 
-### 🔄 Cliente No Encontrado
+### ✅ Reembolso Denegado
 
-**Nota:** Este email actualmente solo está en español. Se recomienda actualizar a multiidioma.
+| Español | Inglés |
+|---------|--------|
+| Sobre tu Solicitud de Reembolso | About Your Refund Request |
+| Pago inicial (1€): NO es reembolsable | Initial payment (1€): NOT refundable |
+| Suscripciones: Solo por problemas técnicos | Subscriptions: Only for technical issues |
 
-### 🔄 Reembolso Denegado
+### ✅ Cliente No Encontrado
 
-**Nota:** Este email actualmente solo está en español. Se recomienda actualizar a multiidioma.
+| Español | Inglés |
+|---------|--------|
+| Información Adicional Requerida | Additional Information Required |
+| No encontramos tu cuenta con el email | We couldn't find your account with the email |
+| Por favor, responde proporcionando... | Please reply to this email providing... |
+
+### ✅ Respuesta Genérica
+
+| Español | Inglés |
+|---------|--------|
+| Gracias por Contactarnos | Thank You for Contacting Us |
+| Si tu consulta es sobre reembolsos... | If your inquiry is about refunds... |
+| Para reembolsos, incluye... | For refunds, include... |
 
 ---
 
@@ -117,21 +133,23 @@ Body: "Hello, your subscription has been cancelled..."
 
 ---
 
-## 📝 PRÓXIMOS PASOS PARA COMPLETAR
+## ✅ IMPLEMENTACIÓN COMPLETADA
 
-Para terminar la implementación multiidioma completa, se necesita:
+**Todos los emails ahora soportan multiidioma.**
 
-1. **Crear nodo preparador para "Cliente No Encontrado":**
-   - Traducir todos los textos a 6 idiomas
-   - Insertar antes del nodo de email
+### Nodos Preparadores Creados:
 
-2. **Crear nodo preparador para "Reembolso Denegado":**
-   - Traducir todos los textos a 6 idiomas
-   - Insertar antes del nodo de email
+1. ✅ **🌍 Preparar Email Reembolso**
+2. ✅ **🌍 Preparar Email Cancelación**
+3. ✅ **🌍 Preparar Email Denegado**
+4. ✅ **🌍 Preparar Email No Encontrado**
+5. ✅ **🌍 Preparar Email Genérico**
 
-3. **Actualizar "Respuesta Genérica":**
-   - Traducir a 6 idiomas
-   - Crear nodo preparador
+### Idiomas Actuales:
+
+- **Español** e **Inglés** implementados en todos los emails
+- **Fallback automático** a inglés para idiomas no soportados
+- **Fácil expansión** a más idiomas (solo añadir plantilla)
 
 ---
 
@@ -172,14 +190,16 @@ Para verificar que el idioma funciona correctamente:
 - [x] Prompt OpenAI actualizado con campo `idioma`
 - [x] Nodo "🌍 Preparar Email Reembolso" creado
 - [x] Nodo "🌍 Preparar Email Cancelación" creado
+- [x] Nodo "🌍 Preparar Email Denegado" creado
+- [x] Nodo "🌍 Preparar Email No Encontrado" creado
+- [x] Nodo "🌍 Preparar Email Genérico" creado
 - [x] Plantillas en español e inglés funcionando
-- [ ] Nodo "🌍 Preparar Email No Encontrado" pendiente
-- [ ] Nodo "🌍 Preparar Email Denegado" pendiente
+- [x] Todas las conexiones del workflow actualizadas
 - [ ] Testing con clientes reales en múltiples idiomas
 
 ---
 
 **Última actualización:** 18/12/2024  
-**Estado:** ✅ Parcialmente implementado (Reembolso y Cancelación)  
-**Próximo paso:** Completar emails restantes con soporte multiidioma
+**Estado:** ✅ **IMPLEMENTACIÓN COMPLETA**  
+**Próximo paso:** Testing en producción con clientes reales
 
