@@ -330,23 +330,31 @@ export async function POST(request: NextRequest) {
 
         // 🚀 CREAR SUSCRIPCIÓN AUTOMÁTICAMENTE después del pago exitoso
         try {
-          const customerId = paymentIntent.customer as string
+          // SIEMPRE recuperar el PaymentIntent completo con expand para obtener el payment_method
+          console.log('🔍 [PAYMENT_INTENT] Recuperando PaymentIntent completo para obtener payment_method...')
+          const fullPaymentIntent = await stripe.paymentIntents.retrieve(paymentIntent.id, {
+            expand: ['payment_method', 'latest_charge.payment_method']
+          })
           
-          // El payment_method puede no estar directamente en el webhook, necesitamos recuperarlo
+          const customerId = fullPaymentIntent.customer as string
           let paymentMethodId: string | null = null
           
-          // Intentar obtener el payment_method del PaymentIntent
-          if (paymentIntent.payment_method) {
-            paymentMethodId = paymentIntent.payment_method as string
-          } else if (paymentIntent.latest_charge) {
+          // Intentar obtener el payment_method del PaymentIntent expandido
+          if (fullPaymentIntent.payment_method) {
+            paymentMethodId = fullPaymentIntent.payment_method as string
+            console.log('✅ [PAYMENT_INTENT] PaymentMethod encontrado en PaymentIntent:', paymentMethodId)
+          } else if (fullPaymentIntent.latest_charge) {
             // Si no está en el payment intent, intentar obtenerlo del charge
             try {
-              const charge = await stripe.charges.retrieve(paymentIntent.latest_charge as string, {
+              const charge = await stripe.charges.retrieve(fullPaymentIntent.latest_charge as string, {
                 expand: ['payment_method']
               })
-              paymentMethodId = charge.payment_method as string
-            } catch (chargeError) {
-              console.warn('⚠️ [PAYMENT_INTENT] No se pudo obtener payment_method del charge:', chargeError)
+              if (charge.payment_method) {
+                paymentMethodId = charge.payment_method as string
+                console.log('✅ [PAYMENT_INTENT] PaymentMethod encontrado en charge:', paymentMethodId)
+              }
+            } catch (chargeError: any) {
+              console.warn('⚠️ [PAYMENT_INTENT] No se pudo obtener payment_method del charge:', chargeError.message)
             }
           }
 
@@ -461,98 +469,14 @@ export async function POST(request: NextRequest) {
             }
           } else {
             if (!customerId) {
-              console.warn('⚠️ [PAYMENT_INTENT] No hay customerId en el PaymentIntent')
-              console.log('   PaymentIntent customer:', paymentIntent.customer)
+              console.error('❌ [PAYMENT_INTENT] CRÍTICO: No hay customerId en el PaymentIntent')
+              console.log('   PaymentIntent customer:', fullPaymentIntent.customer)
             }
             if (!paymentMethodId) {
-              console.warn('⚠️ [PAYMENT_INTENT] No hay paymentMethodId disponible')
-              console.log('   PaymentIntent payment_method:', paymentIntent.payment_method)
-              console.log('   PaymentIntent latest_charge:', paymentIntent.latest_charge)
-              
-              // Intentar recuperar el PaymentIntent completo con expand
-              try {
-                console.log('🔍 [PAYMENT_INTENT] Intentando recuperar PaymentIntent completo...')
-                const fullPaymentIntent = await stripe.paymentIntents.retrieve(paymentIntent.id, {
-                  expand: ['payment_method', 'latest_charge.payment_method']
-                })
-                
-                if (fullPaymentIntent.payment_method) {
-                  paymentMethodId = fullPaymentIntent.payment_method as string
-                  console.log('✅ [PAYMENT_INTENT] PaymentMethod recuperado del PaymentIntent expandido:', paymentMethodId)
-                  
-                  // Ahora intentar crear la suscripción
-                  if (customerId && paymentMethodId) {
-                    // Reutilizar la lógica de creación de suscripción
-                    const stripeConfig = await getStripeConfig()
-                    if (stripeConfig.priceId) {
-                      const existingSubscriptions = await stripe.subscriptions.list({
-                        customer: customerId,
-                        status: 'all',
-                        limit: 10,
-                      })
-                      const activeSubscriptions = existingSubscriptions.data.filter(
-                        sub => sub.status === 'active' || sub.status === 'trialing'
-                      )
-                      if (activeSubscriptions.length === 0) {
-                        const paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId)
-                        if (!paymentMethod.customer) {
-                          await stripe.paymentMethods.attach(paymentMethodId, { customer: customerId })
-                        }
-                        await stripe.customers.update(customerId, {
-                          invoice_settings: { default_payment_method: paymentMethodId },
-                        })
-                        const trialDaysStr = await db.getConfigByKey('trial_days')
-                        const trialDays = trialDaysStr ? parseInt(trialDaysStr) : 30
-                        const subscription = await stripe.subscriptions.create({
-                          customer: customerId,
-                          items: [{ price: stripeConfig.priceId }],
-                          default_payment_method: paymentMethodId,
-                          payment_settings: {
-                            payment_method_types: ['card'],
-                            save_default_payment_method: 'on_subscription',
-                          },
-                          metadata: {
-                            userName: paymentIntent.metadata.userName || '',
-                            email: userEmail || paymentIntent.metadata.userEmail || paymentIntent.metadata.email || '',
-                            lang: paymentIntent.metadata.lang || 'es',
-                            initialPaymentIntentId: paymentIntent.id,
-                            userIQ: paymentIntent.metadata.userIQ || '',
-                            testAnswers: paymentIntent.metadata.testAnswers || '',
-                            testTimeElapsed: paymentIntent.metadata.testTimeElapsed || '',
-                            testCorrectAnswers: paymentIntent.metadata.testCorrectAnswers || '',
-                            testCategoryScores: paymentIntent.metadata.testCategoryScores || '',
-                            createdVia: 'webhook_payment_intent_succeeded_retry',
-                          },
-                          trial_period_days: trialDays,
-                        })
-                        console.log('✅ [PAYMENT_INTENT] Suscripción creada exitosamente (retry):', subscription.id)
-                        
-                        // 💾 GUARDAR subscription_id EN LA BASE DE DATOS (retry)
-                        try {
-                          const subscriptionEmail = userEmail || paymentIntent.metadata.userEmail || paymentIntent.metadata.email
-                          if (subscriptionEmail) {
-                            const user = await db.getUserByEmail(subscriptionEmail)
-                            if (user) {
-                              await db.updateUserSubscription(
-                                user.id.toString(),
-                                subscription.id,
-                                subscription.status === 'trialing' ? 'trial' : (subscription.status as 'active' | 'cancelled' | 'expired'),
-                                subscription.trial_end ? new Date(subscription.trial_end * 1000) : undefined,
-                                subscription.current_period_end ? new Date(subscription.current_period_end * 1000) : undefined
-                              )
-                              console.log(`✅ [PAYMENT_INTENT] Subscription ID guardado en BD (retry) para usuario: ${subscriptionEmail}`)
-                            }
-                          }
-                        } catch (dbError: any) {
-                          console.error('❌ [PAYMENT_INTENT] Error guardando subscription_id en BD (retry):', dbError.message)
-                        }
-                      }
-                    }
-                  }
-                }
-              } catch (retrieveError: any) {
-                console.error('❌ [PAYMENT_INTENT] Error recuperando PaymentIntent completo:', retrieveError.message)
-              }
+              console.error('❌ [PAYMENT_INTENT] CRÍTICO: No hay paymentMethodId disponible después de recuperar PaymentIntent completo')
+              console.log('   PaymentIntent payment_method:', fullPaymentIntent.payment_method)
+              console.log('   PaymentIntent latest_charge:', fullPaymentIntent.latest_charge)
+              console.log('   PaymentIntent status:', fullPaymentIntent.status)
             }
           }
         } catch (subscriptionError: any) {
