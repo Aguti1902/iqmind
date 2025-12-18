@@ -105,6 +105,53 @@ export async function POST(req: NextRequest) {
                 console.log('✅ Usuario creado:', newUser.email)
                 console.log('🔑 Contraseña generada:', password)
 
+                // Crear suscripción en Stripe con trial de 30 días
+                try {
+                  console.log('🎯 Creando suscripción en Stripe con trial...')
+                  
+                  // Obtener o crear customer en Stripe
+                  let stripeCustomerId = paymentIntent.customer as string
+                  
+                  // Si no hay customer asociado al payment, crearlo
+                  if (!stripeCustomerId) {
+                    const stripeCustomer = await stripe.customers.create({
+                      email: customerEmail,
+                      name: userName,
+                      metadata: {
+                        userId: newUser.id.toString(),
+                        lang: lang
+                      }
+                    })
+                    stripeCustomerId = stripeCustomer.id
+                    console.log('✅ Customer creado en Stripe:', stripeCustomerId)
+                  }
+                  
+                  // Obtener el price ID de la base de datos (suscripción mensual por defecto)
+                  const monthlyPriceId = await db.getConfigByKey('stripe_monthly_price_id')
+                  
+                  if (monthlyPriceId) {
+                    // Crear suscripción con trial de 30 días
+                    const subscription = await stripe.subscriptions.create({
+                      customer: stripeCustomerId,
+                      items: [{ price: monthlyPriceId }],
+                      trial_period_days: 30,
+                      metadata: {
+                        userId: newUser.id.toString(),
+                        userEmail: customerEmail,
+                        lang: lang
+                      }
+                    })
+                    
+                    console.log('✅ Suscripción creada en Stripe:', subscription.id)
+                    console.log('📅 Trial hasta:', new Date(subscription.trial_end! * 1000).toISOString())
+                  } else {
+                    console.error('❌ No se encontró stripe_monthly_price_id en la configuración')
+                  }
+                } catch (subscriptionError: any) {
+                  console.error('❌ Error creando suscripción en Stripe:', subscriptionError)
+                  console.error('❌ Stack:', subscriptionError.stack)
+                }
+
                 // Guardar resultado del test en la base de datos
                 console.log('📊 Guardando resultado del test...')
                 try {
