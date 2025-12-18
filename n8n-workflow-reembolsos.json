@@ -1,0 +1,561 @@
+{
+  "name": "🤖 Agente Reembolsos MindMetric",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {
+          "from": "",
+          "subject": "",
+          "to": "refunds@mindmetric.io"
+        },
+        "format": "simple",
+        "options": {}
+      },
+      "id": "node-gmail-trigger",
+      "name": "📧 Gmail: Recibir Solicitud",
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "credentials": {
+        "imap": {
+          "id": "1",
+          "name": "Gmail Refunds"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "prompt_sistema",
+              "value": "Eres un asistente de atención al cliente de MindMetric especializado en reembolsos.\n\nTu tarea es analizar correos de clientes y extraer información clave.\n\n---\n\n## INFORMACIÓN A EXTRAER:\n\nDebes responder ÚNICAMENTE con un JSON con esta estructura:\n\n{\n  \"email_cliente\": \"email@ejemplo.com\",\n  \"motivo_solicitud\": \"Descripción breve del motivo\",\n  \"tipo_solicitud\": \"REEMBOLSO_INICIAL | REEMBOLSO_SUSCRIPCION | CANCELACION | QUEJA | OTRO\",\n  \"emocion\": \"NEUTRAL | FRUSTRADO | ENOJADO | EDUCADO\",\n  \"cumple_politica\": true | false,\n  \"razon_cumplimiento\": \"Explicación de por qué cumple o no cumple\",\n  \"respuesta_sugerida\": \"Respuesta empática y profesional en español\"\n}\n\n---\n\n## POLÍTICA DE REEMBOLSOS DE MINDMETRIC:\n\n### ✅ REEMBOLSOS APROBADOS:\n\n**1. PAGO INICIAL (1€):**\n- ✅ Usuario nuevo (primera vez)\n- ✅ NO ha tenido reembolsos previos\n- ✅ Solicitud dentro de 30 días\n- ✅ NO violaciones de términos\n\n**2. SUSCRIPCIÓN (9.99€/19.99€):**\nSolo si:\n- ✅ Indisponibilidad > 24 horas (documentada)\n- ✅ Problemas técnicos verificables\n- ✅ Errores de facturación (doble cargo, monto incorrecto)\n- ✅ Requisito legal\n\n### ❌ REEMBOLSOS DENEGADOS:\n\n- ⛔ Cambio de opinión / \"Ya no lo necesito\"\n- ⛔ \"Olvidé cancelar antes de renovación\"\n- ⛔ Tiempo de suscripción no utilizado\n- ⛔ \"Es muy caro\"\n- ⛔ Mantenimiento programado\n\n---\n\n## INSTRUCCIONES FINALES:\n\n1. SIEMPRE responde con JSON válido\n2. SIEMPRE sé empático y profesional\n3. Si el email NO es sobre reembolso/cancelación, usa tipo \"OTRO\"\n4. Si falta información, marca cumple_politica como false\n5. La respuesta_sugerida debe ser en el idioma del email recibido"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node-prompt-sistema",
+      "name": "🧠 Prompt del Sistema",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [440, 300]
+    },
+    {
+      "parameters": {
+        "resource": "chat",
+        "operation": "create",
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4"
+        },
+        "messages": {
+          "values": [
+            {
+              "role": "system",
+              "content": "={{ $('🧠 Prompt del Sistema').item.json.prompt_sistema }}"
+            },
+            {
+              "role": "user",
+              "content": "=EMAIL DEL CLIENTE:\nDe: {{ $json.from }}\nAsunto: {{ $json.subject }}\n\nContenido:\n{{ $json.text }}"
+            }
+          ]
+        },
+        "options": {
+          "temperature": 0.3,
+          "maxTokens": 1000
+        }
+      },
+      "id": "node-openai-agent",
+      "name": "🤖 OpenAI: Analizar Solicitud",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [640, 300],
+      "credentials": {
+        "openAiApi": {
+          "id": "2",
+          "name": "OpenAI API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parsear respuesta de OpenAI\nconst response = $input.item.json.message?.content || $input.item.json.choices[0]?.message?.content;\n\nlet analisisIA;\ntry {\n  // Extraer JSON de la respuesta (puede venir con markdown)\n  const jsonMatch = response.match(/\\{[\\s\\S]*\\}/);\n  analisisIA = JSON.parse(jsonMatch[0]);\n} catch (error) {\n  return {\n    error: true,\n    mensaje: \"No se pudo parsear la respuesta de OpenAI\",\n    respuesta_raw: response\n  };\n}\n\n// Combinar con datos del email original\nconst emailOriginal = $('📧 Gmail: Recibir Solicitud').item.json;\n\nreturn {\n  ...analisisIA,\n  email_remitente: emailOriginal.from,\n  asunto_original: emailOriginal.subject,\n  fecha_recepcion: new Date().toISOString(),\n  email_completo: emailOriginal.text\n};"
+      },
+      "id": "node-parsear-ia",
+      "name": "📝 Parsear Respuesta IA",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [840, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.tipo_solicitud }}",
+              "operation": "notEquals",
+              "value2": "OTRO"
+            }
+          ]
+        }
+      },
+      "id": "node-if-es-reembolso",
+      "name": "🔀 ¿Es Solicitud de Reembolso?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1040, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://api.stripe.com/v1/customers/search",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "stripeApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "=email:'{{ $json.email_cliente }}'"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node-buscar-stripe",
+      "name": "🔍 Stripe: Buscar Cliente",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1240, 200],
+      "credentials": {
+        "stripeApi": {
+          "id": "3",
+          "name": "Stripe API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json.data.length }}",
+              "operation": "larger",
+              "value2": 0
+            }
+          ]
+        }
+      },
+      "id": "node-if-cliente-existe",
+      "name": "🔀 ¿Cliente Existe en Stripe?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1440, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtener datos del análisis de IA\nconst analisisIA = $('📝 Parsear Respuesta IA').item.json;\n\n// Obtener datos del cliente de Stripe\nconst stripeData = $input.item.json;\nconst customer = stripeData.data[0];\n\nif (!customer) {\n  return {\n    cumple_politica: false,\n    razon: \"Cliente no encontrado en Stripe\",\n    ...analisisIA\n  };\n}\n\n// Obtener todos los charges del cliente\nconst charges = customer.charges?.data || [];\nconst subscriptions = customer.subscriptions?.data || [];\n\n// Timestamps\nconst ahora = Math.floor(Date.now() / 1000);\nconst hace30Dias = ahora - (30 * 24 * 60 * 60);\n\n// Buscar el pago inicial de 1€ (dos cargos de 0.50€ = 50 centavos cada uno)\nconst pagosIniciales = charges.filter(charge => \n  charge.amount === 50 && \n  charge.status === 'succeeded'\n);\n\n// Buscar suscripción activa\nconst suscripcionActiva = subscriptions.find(sub => \n  sub.status === 'active' || sub.status === 'trialing'\n);\n\n// CASO 1: REEMBOLSO PAGO INICIAL (1€)\nif (analisisIA.tipo_solicitud === \"REEMBOLSO_INICIAL\" && pagosIniciales.length >= 2) {\n  // Tomar el primer pago inicial\n  const primerPago = pagosIniciales.sort((a, b) => a.created - b.created)[0];\n  \n  // Verificar ventana de 30 días\n  const dentroDeVentana = primerPago.created > hace30Dias;\n  \n  // Verificar reembolsos previos\n  const sinReembolsosPrevios = !charges.some(charge => charge.refunded);\n  \n  if (dentroDeVentana && sinReembolsosPrevios) {\n    return {\n      ...analisisIA,\n      cumple_politica: true,\n      razon: \"Pago inicial dentro de 30 días, sin reembolsos previos\",\n      customer_id: customer.id,\n      charge_ids: pagosIniciales.slice(0, 2).map(p => p.id), // Los dos pagos de 0.50€\n      monto_total: 100, // 1€ en centavos\n      tipo: \"REEMBOLSO_INICIAL\"\n    };\n  } else {\n    return {\n      ...analisisIA,\n      cumple_politica: false,\n      razon: dentroDeVentana ? \"Cliente ya tiene reembolsos previos\" : \"Fuera de ventana de 30 días\",\n      customer_id: customer.id\n    };\n  }\n}\n\n// CASO 2: REEMBOLSO SUSCRIPCIÓN\nif (analisisIA.tipo_solicitud === \"REEMBOLSO_SUSCRIPCION\") {\n  // Buscar último cargo de suscripción (> 1€)\n  const ultimoCargo = charges\n    .filter(c => c.amount >= 999 && c.status === 'succeeded') // >= 9.99€\n    .sort((a, b) => b.created - a.created)[0];\n  \n  if (!ultimoCargo) {\n    return {\n      ...analisisIA,\n      cumple_politica: false,\n      razon: \"No se encontraron cargos de suscripción\",\n      customer_id: customer.id\n    };\n  }\n  \n  // Motivos válidos para reembolso de suscripción\n  const motivosValidos = [\n    \"indisponibilidad\",\n    \"problemas técnicos\",\n    \"error de facturación\",\n    \"cargo duplicado\",\n    \"no funciona\",\n    \"caída\",\n    \"down\",\n    \"bug\"\n  ];\n  \n  const motivoValido = motivosValidos.some(motivo => \n    analisisIA.motivo_solicitud.toLowerCase().includes(motivo)\n  );\n  \n  // Verificar si fue reportado dentro de 30 días\n  const dentroDeVentana = ultimoCargo.created > hace30Dias;\n  \n  if (motivoValido && dentroDeVentana) {\n    return {\n      ...analisisIA,\n      cumple_politica: true,\n      razon: `Motivo técnico válido: ${analisisIA.motivo_solicitud}`,\n      customer_id: customer.id,\n      charge_ids: [ultimoCargo.id],\n      subscription_id: suscripcionActiva?.id,\n      monto_total: ultimoCargo.amount,\n      tipo: \"REEMBOLSO_SUSCRIPCION\"\n    };\n  } else {\n    return {\n      ...analisisIA,\n      cumple_politica: false,\n      razon: !motivoValido \n        ? \"Motivo no cumple con política de reembolsos\" \n        : \"Reporte fuera de ventana de 30 días\",\n      customer_id: customer.id\n    };\n  }\n}\n\n// CASO 3: SOLO CANCELACIÓN (sin reembolso)\nif (analisisIA.tipo_solicitud === \"CANCELACION\") {\n  return {\n    ...analisisIA,\n    cumple_politica: false,\n    razon: \"Solicitud de cancelación (sin reembolso)\",\n    customer_id: customer.id,\n    subscription_id: suscripcionActiva?.id,\n    solo_cancelar: true\n  };\n}\n\n// DEFAULT: NO CUMPLE\nreturn {\n  ...analisisIA,\n  cumple_politica: false,\n  razon: \"No cumple con criterios de reembolso\",\n  customer_id: customer.id\n};"
+        },
+        "id": "node-evaluar-politica",
+        "name": "⚖️ Evaluar Política de Reembolso",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [1640, 100]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "boolean": [
+              {
+                "value1": "={{ $json.cumple_politica }}",
+                "value2": true
+              }
+            ]
+          }
+        },
+        "id": "node-if-cumple-politica",
+        "name": "🔀 ¿Cumple Política?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 1,
+        "position": [1840, 100]
+      },
+      {
+        "parameters": {
+          "jsCode": "// Procesar reembolso de cada cargo\nconst data = $input.item.json;\nconst chargeIds = data.charge_ids || [];\n\n// Crear array de promesas de reembolso\nconst reembolsos = [];\n\nfor (const chargeId of chargeIds) {\n  reembolsos.push({\n    charge_id: chargeId,\n    customer_id: data.customer_id,\n    monto: data.tipo === \"REEMBOLSO_INICIAL\" ? 50 : data.monto_total,\n    email: data.email_cliente\n  });\n}\n\nreturn reembolsos.map(r => ({ json: r }));"
+        },
+        "id": "node-preparar-reembolsos",
+        "name": "💳 Preparar Reembolsos",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [2040, 0]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.stripe.com/v1/refunds",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "stripeApi",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "charge",
+                "value": "={{ $json.charge_id }}"
+              },
+              {
+                "name": "amount",
+                "value": "={{ $json.monto }}"
+              },
+              {
+                "name": "reason",
+                "value": "requested_by_customer"
+              },
+              {
+                "name": "metadata[email]",
+                "value": "={{ $json.email }}"
+              },
+              {
+                "name": "metadata[procesado_por]",
+                "value": "n8n-agente-ia"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "node-crear-reembolso",
+        "name": "💰 Stripe: Crear Reembolso",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4,
+        "position": [2240, 0],
+        "credentials": {
+          "stripeApi": {
+            "id": "3",
+            "name": "Stripe API"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "string": [
+              {
+                "value1": "={{ $('⚖️ Evaluar Política de Reembolso').item.json.subscription_id }}",
+                "operation": "isNotEmpty"
+              }
+            ]
+          }
+        },
+        "id": "node-if-tiene-suscripcion",
+        "name": "🔀 ¿Tiene Suscripción Activa?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 1,
+        "position": [2440, 0]
+      },
+      {
+        "parameters": {
+          "method": "DELETE",
+          "url": "=https://api.stripe.com/v1/subscriptions/{{ $('⚖️ Evaluar Política de Reembolso').item.json.subscription_id }}",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "stripeApi",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "invoice_now",
+                "value": "false"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "node-cancelar-suscripcion",
+        "name": "🚫 Stripe: Cancelar Suscripción",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4,
+        "position": [2640, -100],
+        "credentials": {
+          "stripeApi": {
+            "id": "3",
+            "name": "Stripe API"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "fromEmail": "refunds@mindmetric.io",
+          "toEmail": "={{ $('📝 Parsear Respuesta IA').item.json.email_cliente }}",
+          "subject": "=Re: {{ $('📧 Gmail: Recibir Solicitud').item.json.subject }}",
+          "emailType": "html",
+          "message": "=<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <style>\n    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }\n    .container { max-width: 600px; margin: 0 auto; padding: 20px; }\n    .header { background: linear-gradient(135deg, #113240 0%, #052547 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }\n    .content { background: white; padding: 30px; border: 1px solid #e0e0e0; border-top: none; }\n    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 15px; margin: 20px 0; border-radius: 5px; }\n    .footer { background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; border-radius: 0 0 10px 10px; }\n    .button { display: inline-block; background: #07C59A; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin: 20px 0; }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <div class=\"header\">\n      <h1>✅ Reembolso Procesado</h1>\n    </div>\n    <div class=\"content\">\n      <p>Hola,</p>\n      \n      <div class=\"success-box\">\n        <p><strong>✓ Tu reembolso ha sido procesado exitosamente</strong></p>\n      </div>\n      \n      <p>{{ $('📝 Parsear Respuesta IA').item.json.respuesta_sugerida }}</p>\n      \n      <p><strong>Detalles del reembolso:</strong></p>\n      <ul>\n        <li><strong>Monto:</strong> {{ $('⚖️ Evaluar Política de Reembolso').item.json.monto_total / 100 }}€</li>\n        <li><strong>Método:</strong> {{ $('⚖️ Evaluar Política de Reembolso').item.json.tipo === 'REEMBOLSO_INICIAL' ? 'Pago inicial' : 'Suscripción' }}</li>\n        <li><strong>Tiempo estimado:</strong> 3-5 días hábiles</li>\n      </ul>\n      \n      <p>El reembolso se procesará al mismo método de pago que utilizaste originalmente.</p>\n      \n      <p>Si tienes alguna pregunta, no dudes en contactarnos.</p>\n      \n      <p>Gracias por tu comprensión.</p>\n      \n      <p>Atentamente,<br><strong>Equipo de MindMetric</strong></p>\n    </div>\n    <div class=\"footer\">\n      <p>MindMetric | <a href=\"https://mindmetric.io\">mindmetric.io</a></p>\n      <p>Este es un email automático generado por nuestro sistema de IA.</p>\n    </div>\n  </div>\n</body>\n</html>",
+          "options": {}
+        },
+        "id": "node-email-reembolso-aprobado",
+        "name": "📤 Email: Reembolso Aprobado",
+        "type": "n8n-nodes-base.emailSend",
+        "typeVersion": 2,
+        "position": [2840, 0],
+        "credentials": {
+          "smtp": {
+            "id": "4",
+            "name": "SendGrid SMTP"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "fromEmail": "refunds@mindmetric.io",
+          "toEmail": "={{ $('📝 Parsear Respuesta IA').item.json.email_cliente }}",
+          "subject": "=Re: {{ $('📧 Gmail: Recibir Solicitud').item.json.subject }}",
+          "emailType": "html",
+          "message": "=<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <style>\n    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }\n    .container { max-width: 600px; margin: 0 auto; padding: 20px; }\n    .header { background: linear-gradient(135deg, #113240 0%, #052547 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }\n    .content { background: white; padding: 30px; border: 1px solid #e0e0e0; border-top: none; }\n    .info-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 5px; }\n    .footer { background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; border-radius: 0 0 10px 10px; }\n    .button { display: inline-block; background: #07C59A; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin: 20px 0; }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <div class=\"header\">\n      <h1>📋 Sobre tu Solicitud</h1>\n    </div>\n    <div class=\"content\">\n      <p>Hola,</p>\n      \n      <p>{{ $('📝 Parsear Respuesta IA').item.json.respuesta_sugerida }}</p>\n      \n      <div class=\"info-box\">\n        <p><strong>Razón:</strong> {{ $('⚖️ Evaluar Política de Reembolso').item.json.razon }}</p>\n      </div>\n      \n      <p><strong>Nuestra política de reembolsos establece que:</strong></p>\n      <ul>\n        <li>Pago inicial (1€): Reembolsable dentro de 30 días (primera vez)</li>\n        <li>Suscripciones: Solo por problemas técnicos documentados o errores de facturación</li>\n        <li>Cambio de opinión o no cancelar antes de renovación: No reembolsable</li>\n      </ul>\n      \n      {{ $('⚖️ Evaluar Política de Reembolso').item.json.solo_cancelar ? '<p><strong>✅ Hemos cancelado tu suscripción</strong> para evitar futuros cargos. Puedes seguir usando el servicio hasta el final del período actual.</p>' : '' }}\n      \n      <p>Si crees que hay un error o tienes información adicional, por favor responde a este correo.</p>\n      \n      <a href=\"https://mindmetric.io/es/reembolso\" class=\"button\" style=\"color: white;\">Ver Política Completa</a>\n      \n      <p>Gracias por tu comprensión.</p>\n      \n      <p>Atentamente,<br><strong>Equipo de MindMetric</strong></p>\n    </div>\n    <div class=\"footer\">\n      <p>MindMetric | <a href=\"https://mindmetric.io\">mindmetric.io</a></p>\n      <p>Este es un email automático generado por nuestro sistema de IA.</p>\n    </div>\n  </div>\n</body>\n</html>",
+          "options": {}
+        },
+        "id": "node-email-reembolso-denegado",
+        "name": "📤 Email: Reembolso Denegado",
+        "type": "n8n-nodes-base.emailSend",
+        "typeVersion": 2,
+        "position": [2840, 200],
+        "credentials": {
+          "smtp": {
+            "id": "4",
+            "name": "SendGrid SMTP"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "fromEmail": "refunds@mindmetric.io",
+          "toEmail": "={{ $('📧 Gmail: Recibir Solicitud').item.json.from }}",
+          "subject": "=Re: {{ $('📧 Gmail: Recibir Solicitud').item.json.subject }}",
+          "emailType": "html",
+          "message": "=<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <style>\n    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }\n    .container { max-width: 600px; margin: 0 auto; padding: 20px; }\n    .header { background: linear-gradient(135deg, #113240 0%, #052547 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }\n    .content { background: white; padding: 30px; border: 1px solid #e0e0e0; border-top: none; }\n    .warning-box { background: #f8d7da; border-left: 4px solid #dc3545; padding: 15px; margin: 20px 0; border-radius: 5px; }\n    .footer { background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; border-radius: 0 0 10px 10px; }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <div class=\"header\">\n      <h1>❌ Cliente No Encontrado</h1>\n    </div>\n    <div class=\"content\">\n      <p>Hola,</p>\n      \n      <div class=\"warning-box\">\n        <p><strong>No encontramos tu cuenta en nuestro sistema.</strong></p>\n      </div>\n      \n      <p>Para procesar tu solicitud, necesitamos que verifiques la siguiente información:</p>\n      <ul>\n        <li>¿Usaste este mismo email para registrarte?</li>\n        <li>¿El pago fue procesado correctamente?</li>\n        <li>¿Tienes el recibo de Stripe?</li>\n      </ul>\n      \n      <p>Por favor, responde a este correo con:</p>\n      <ol>\n        <li>El email usado en el pago</li>\n        <li>Fecha aproximada del pago</li>\n        <li>Captura del recibo (si la tienes)</li>\n      </ol>\n      \n      <p>Te ayudaremos a resolver esto lo antes posible.</p>\n      \n      <p>Atentamente,<br><strong>Equipo de MindMetric</strong></p>\n    </div>\n    <div class=\"footer\">\n      <p>MindMetric | <a href=\"https://mindmetric.io\">mindmetric.io</a></p>\n      <p>support@mindmetric.io</p>\n    </div>\n  </div>\n</body>\n</html>",
+          "options": {}
+        },
+        "id": "node-email-no-encontrado",
+        "name": "📤 Email: Cliente No Encontrado",
+        "type": "n8n-nodes-base.emailSend",
+        "typeVersion": 2,
+        "position": [1640, 300],
+        "credentials": {
+          "smtp": {
+            "id": "4",
+            "name": "SendGrid SMTP"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "fromEmail": "refunds@mindmetric.io",
+          "toEmail": "={{ $('📧 Gmail: Recibir Solicitud').item.json.from }}",
+          "subject": "=Re: {{ $('📧 Gmail: Recibir Solicitud').item.json.subject }}",
+          "emailType": "html",
+          "message": "=<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <style>\n    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }\n    .container { max-width: 600px; margin: 0 auto; padding: 20px; }\n    .header { background: linear-gradient(135deg, #113240 0%, #052547 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }\n    .content { background: white; padding: 30px; border: 1px solid #e0e0e0; border-top: none; }\n    .footer { background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; border-radius: 0 0 10px 10px; }\n    .button { display: inline-block; background: #07C59A; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin: 20px 0; }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <div class=\"header\">\n      <h1>👋 Gracias por Contactarnos</h1>\n    </div>\n    <div class=\"content\">\n      <p>Hola,</p>\n      \n      <p>{{ $('📝 Parsear Respuesta IA').item.json.respuesta_sugerida }}</p>\n      \n      <p>Si tu consulta es sobre reembolsos o cancelaciones, por favor especifícalo claramente en tu respuesta.</p>\n      \n      <p><strong>Para reembolsos, incluye:</strong></p>\n      <ul>\n        <li>Email usado en el pago</li>\n        <li>Fecha del pago</li>\n        <li>Motivo del reembolso</li>\n      </ul>\n      \n      <a href=\"https://mindmetric.io/es/contacto\" class=\"button\" style=\"color: white;\">Formulario de Contacto</a>\n      \n      <p>Atentamente,<br><strong>Equipo de MindMetric</strong></p>\n    </div>\n    <div class=\"footer\">\n      <p>MindMetric | <a href=\"https://mindmetric.io\">mindmetric.io</a></p>\n      <p>support@mindmetric.io</p>\n    </div>\n  </div>\n</body>\n</html>",
+          "options": {}
+        },
+        "id": "node-email-generico",
+        "name": "📤 Email: Respuesta Genérica",
+        "type": "n8n-nodes-base.emailSend",
+        "typeVersion": 2,
+        "position": [1240, 400],
+        "credentials": {
+          "smtp": {
+            "id": "4",
+            "name": "SendGrid SMTP"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "📧 Gmail: Recibir Solicitud": {
+        "main": [
+          [
+            {
+              "node": "🧠 Prompt del Sistema",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "🧠 Prompt del Sistema": {
+        "main": [
+          [
+            {
+              "node": "🤖 OpenAI: Analizar Solicitud",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "🤖 OpenAI: Analizar Solicitud": {
+        "main": [
+          [
+            {
+              "node": "📝 Parsear Respuesta IA",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "📝 Parsear Respuesta IA": {
+        "main": [
+          [
+            {
+              "node": "🔀 ¿Es Solicitud de Reembolso?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "🔀 ¿Es Solicitud de Reembolso?": {
+        "main": [
+          [
+            {
+              "node": "🔍 Stripe: Buscar Cliente",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "📤 Email: Respuesta Genérica",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "🔍 Stripe: Buscar Cliente": {
+        "main": [
+          [
+            {
+              "node": "🔀 ¿Cliente Existe en Stripe?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "🔀 ¿Cliente Existe en Stripe?": {
+        "main": [
+          [
+            {
+              "node": "⚖️ Evaluar Política de Reembolso",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "📤 Email: Cliente No Encontrado",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "⚖️ Evaluar Política de Reembolso": {
+        "main": [
+          [
+            {
+              "node": "🔀 ¿Cumple Política?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "🔀 ¿Cumple Política?": {
+        "main": [
+          [
+            {
+              "node": "💳 Preparar Reembolsos",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "📤 Email: Reembolso Denegado",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "💳 Preparar Reembolsos": {
+        "main": [
+          [
+            {
+              "node": "💰 Stripe: Crear Reembolso",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "💰 Stripe: Crear Reembolso": {
+        "main": [
+          [
+            {
+              "node": "🔀 ¿Tiene Suscripción Activa?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "🔀 ¿Tiene Suscripción Activa?": {
+        "main": [
+          [
+            {
+              "node": "🚫 Stripe: Cancelar Suscripción",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "📤 Email: Reembolso Aprobado",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "🚫 Stripe: Cancelar Suscripción": {
+        "main": [
+          [
+            {
+              "node": "📤 Email: Reembolso Aprobado",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "active": true,
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "versionId": "1",
+    "id": "mindmetric-refunds-agent",
+    "meta": {
+      "instanceId": "mindmetric-production"
+    },
+    "tags": []
+  }
+
