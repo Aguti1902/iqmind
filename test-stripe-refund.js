@@ -169,36 +169,25 @@ function evaluarPolitica(customer, charges, subscriptions) {
     s.status === 'active' || s.status === 'trialing'
   );
   
-  // EVALUACIÓN: PAGO INICIAL (1€)
+  // EVALUACIÓN: PAGO INICIAL (1€) - NO REEMBOLSABLE
   if (pagosIniciales.length >= 2) {
     const primerPago = pagosIniciales.sort((a, b) => a.created - b.created)[0];
-    const dentroDeVentana = primerPago.created > hace30Dias;
-    const sinReembolsosPrevios = !charges.some(c => c.refunded);
     const diasDesdeCompra = Math.floor((ahora - primerPago.created) / (24 * 60 * 60));
     
     console.log(`\n📋 PAGO INICIAL (1€):`);
     console.log(`   - Pagos de 0.50€ encontrados: ${pagosIniciales.length}`);
     console.log(`   - Primer pago hace: ${diasDesdeCompra} días`);
-    console.log(`   - Dentro de ventana 30 días: ${dentroDeVentana ? '✅ SÍ' : '❌ NO'}`);
-    console.log(`   - Sin reembolsos previos: ${sinReembolsosPrevios ? '✅ SÍ' : '❌ NO'}`);
+    console.log(`   - ❌ POLÍTICA: El pago inicial de 1€ NO es reembolsable`);
+    console.log(`   - Razón: Contenido digital ya entregado (resultado del test)`);
+    console.log(`   - Acción: Explicar política + ofrecer soporte técnico`);
     
-    if (dentroDeVentana && sinReembolsosPrevios) {
-      return {
-        cumple: true,
-        tipo: 'REEMBOLSO_INICIAL',
-        razon: 'Pago inicial dentro de 30 días, sin reembolsos previos',
-        charge_ids: pagosIniciales.slice(0, 2).map(p => p.id),
-        monto_total: 100 // 1€ en centavos
-      };
-    } else {
-      return {
-        cumple: false,
-        tipo: 'REEMBOLSO_INICIAL',
-        razon: dentroDeVentana 
-          ? 'Cliente ya tiene reembolsos previos'
-          : `Fuera de ventana de 30 días (pasaron ${diasDesdeCompra} días)`
-      };
-    }
+    // El pago inicial NUNCA es reembolsable
+    return {
+      cumple: false,
+      tipo: 'REEMBOLSO_INICIAL',
+      razon: 'El pago inicial de 1€ NO es reembolsable - es contenido digital ya entregado (resultado del test)',
+      accion_sugerida: 'Explicar política de forma empática + ofrecer soporte técnico si hubo problemas con el test'
+    };
   }
   
   // EVALUACIÓN: SUSCRIPCIÓN

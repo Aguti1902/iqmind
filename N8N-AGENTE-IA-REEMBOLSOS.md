@@ -66,46 +66,51 @@ Sistema completo de automatización para gestionar solicitudes de cancelación y
 
 Esta es la política que el agente de IA usará para tomar decisiones:
 
-### ✅ CASOS REEMBOLSABLES
+### ❌ PAGO INICIAL NO REEMBOLSABLE
 
 #### 1. **Pago Inicial de 1€** (Desbloqueo de resultado)
 
-**CRITERIOS:**
-- ✅ Usuario de prueba por PRIMERA vez
-- ✅ NO ha tenido reembolsos anteriores
-- ✅ Solicitud dentro de 30 días desde la compra
-- ✅ NO hay violaciones de términos de servicio
-- ✅ Solicitud por canales oficiales
+**⛔ NO ES REEMBOLSABLE BAJO NINGUNA CIRCUNSTANCIA**
 
-**ACCIÓN:**
-- Reembolso COMPLETO de 1€
-- NO cancelar suscripción (aún está en trial)
-- Email: "Reembolso procesado exitosamente"
+**RAZÓN:**
+- Es un pago único de acceso a contenido digital ya entregado
+- El usuario ya recibió su resultado del test de CI
+- Similar a compra de contenido digital (no reversible)
+
+**ACCIÓN ANTE SOLICITUD:**
+- Explicar que el pago de 1€ NO es reembolsable
+- Email: "Lamentamos no poder procesar reembolso del pago inicial"
+- Ofrecer: Soporte técnico si hubo problemas con el test
+- Alternativa: Descuento en suscripción futura (opcional)
 
 ---
 
-#### 2. **Suscripción Regular** (9.99€ quincenal o 19.99€ mensual)
+#### 2. **Suscripción Regular** (9.99€ quincenal o 19.99€ mensual) - **SÍ REEMBOLSABLE**
 
-**SOLO REEMBOLSABLE SI:**
+**✅ REEMBOLSABLE SOLO SI:**
 
 ##### A) **Indisponibilidad del Servicio**
-- ❌ Tiempo de inactividad > 24 horas consecutivas
-- ❌ NO causado por mantenimiento programado
-- ❌ NO por fuerza mayor
-- ✅ REQUIERE: Documentación de soporte técnico
+- ✅ Tiempo de inactividad > 24 horas consecutivas
+- ✅ NO causado por mantenimiento programado
+- ✅ NO por fuerza mayor
+- ✅ REQUIERE: Documentación del tiempo de inactividad
 
-##### B) **Problemas Técnicos**
-- ❌ Error impide acceso a funciones principales
+##### B) **Problemas Técnicos Verificables**
+- ✅ Error impide acceso a funciones principales del dashboard
 - ✅ Reportado dentro de 30 días del cargo
 - ✅ REQUIERE: Verificación del equipo técnico
+- ✅ EJEMPLOS: No puede acceder a resultados, errores constantes, funciones no cargan
 
 ##### C) **Errores de Facturación**
-- ✅ Cargos duplicados
-- ✅ Monto incorrecto
-- ✅ Transacciones no autorizadas
+- ✅ Cargos duplicados (mismo monto, mismo día)
+- ✅ Monto incorrecto cobrado (diferente al plan contratado)
+- ✅ Transacciones no autorizadas (fraude)
+- ✅ Cobro tras cancelación procesada
 
 ##### D) **Requisitos Legales**
-- ✅ Según ley local del cliente
+- ✅ Derecho de desistimiento según ley local (14 días en UE)
+- ✅ Protección del consumidor
+- ✅ Orden judicial
 
 **ACCIÓN SI CUMPLE:**
 - Reembolso del último cargo de suscripción
@@ -116,30 +121,48 @@ Esta es la política que el agente de IA usará para tomar decisiones:
 
 ### ❌ CASOS NO REEMBOLSABLES
 
-**RECHAZAR SI:**
+**⛔ RECHAZAR REEMBOLSO SI:**
 
-1. ⛔ Tiempo de suscripción no utilizado tras cancelación
-   - *"Ya cancelé pero quiero mi dinero de los días que quedan"*
+1. ⛔ **Pago Inicial de 1€**
+   - *"Pagué 1€ pero no me gustó el resultado"*
+   - *"Quiero mi dinero de vuelta del test"*
+   - **NO ES REEMBOLSABLE - Contenido digital ya entregado**
 
-2. ⛔ Cambio de opinión
+2. ⛔ **Tiempo de suscripción no utilizado tras cancelación**
+   - *"Cancelé pero quedan 15 días, quiero reembolso proporcional"*
+   - **Política:** Mantiene acceso hasta fin del período pagado
+
+3. ⛔ **Cambio de opinión**
    - *"Ya no necesito el servicio"*
    - *"Era muy caro"*
    - *"No me gustó"*
+   - *"Encontré una alternativa mejor"*
 
-3. ⛔ No cancelar antes de renovación
-   - *"Olvidé cancelar y se renovó"*
-   - *"No sabía que se renovaba automáticamente"*
+4. ⛔ **Olvidó cancelar antes de renovación**
+   - *"Olvidé cancelar y se renovó automáticamente"*
+   - *"No sabía que se renovaba"*
+   - **Responsabilidad del usuario gestionar suscripción**
 
-4. ⛔ Rebaja de planes
-   - *"Quiero cambiar a plan más barato y reembolso de diferencia"*
+5. ⛔ **Rebaja de planes o cambios**
+   - *"Cambié a plan más barato, quiero reembolso de diferencia"*
+   - *"Quiero bajar de plan y recuperar dinero"*
 
-5. ⛔ Mantenimiento programado
+6. ⛔ **Mantenimiento programado o breve**
    - *"No pude acceder ayer por 2 horas"*
+   - *"Hubo mantenimiento el fin de semana"*
+   - **Solo > 24 horas y NO programado**
 
-**ACCIÓN:**
+7. ⛔ **Insatisfacción con resultados**
+   - *"El training no me funcionó"*
+   - *"No mejoró mi CI"*
+   - **Servicio de entretenimiento educativo, sin garantías**
+
+**ACCIÓN ANTE RECHAZO:**
 - NO procesar reembolso
-- Ofrecer cancelación de suscripción (sin reembolso)
-- Email: Explicación empática + alternativas
+- Explicar política claramente
+- Ofrecer cancelación inmediata (sin reembolso)
+- Ofrecer soporte técnico si hay problemas reales
+- Email: Explicación empática pero firme
 
 ---
 
@@ -413,28 +436,32 @@ Debes responder ÚNICAMENTE con un JSON con esta estructura:
 
 ## POLÍTICA DE REEMBOLSOS DE MINDMETRIC:
 
-### ✅ REEMBOLSOS APROBADOS:
+### ⛔ NO REEMBOLSABLE:
 
 **1. PAGO INICIAL (1€):**
-- ✅ Usuario nuevo (primera vez)
-- ✅ NO ha tenido reembolsos previos
-- ✅ Solicitud dentro de 30 días
-- ✅ NO violaciones de términos
+- ⛔ NO es reembolsable bajo NINGUNA circunstancia
+- Razón: Contenido digital ya entregado (resultado del test)
+- Acción: Explicar política + ofrecer soporte técnico
+
+### ✅ REEMBOLSOS APROBADOS (SOLO SUSCRIPCIONES):
 
 **2. SUSCRIPCIÓN (9.99€/19.99€):**
-Solo si:
-- ✅ Indisponibilidad > 24 horas (documentada)
-- ✅ Problemas técnicos verificables
-- ✅ Errores de facturación (doble cargo, monto incorrecto)
-- ✅ Requisito legal
+Solo reembolsable si:
+- ✅ Indisponibilidad > 24 horas consecutivas (documentada, NO mantenimiento)
+- ✅ Problemas técnicos verificables (error impide acceso a funciones)
+- ✅ Errores de facturación (doble cargo, monto incorrecto, no autorizado)
+- ✅ Requisito legal (derecho de desistimiento, orden judicial)
 
 ### ❌ REEMBOLSOS DENEGADOS:
 
+- ⛔ Pago inicial de 1€ (por cualquier motivo)
 - ⛔ Cambio de opinión / "Ya no lo necesito"
 - ⛔ "Olvidé cancelar antes de renovación"
-- ⛔ Tiempo de suscripción no utilizado
-- ⛔ "Es muy caro"
-- ⛔ Mantenimiento programado
+- ⛔ Tiempo de suscripción no utilizado tras cancelación
+- ⛔ "Es muy caro" / "No me gustó"
+- ⛔ Mantenimiento programado o breve (< 24 horas)
+- ⛔ Rebaja de planes o cambios
+- ⛔ Insatisfacción con resultados del training
 
 ---
 
@@ -449,9 +476,9 @@ Solo si:
   "motivo_solicitud": "No satisfecho con el test tras pago inicial",
   "tipo_solicitud": "REEMBOLSO_INICIAL",
   "emocion": "EDUCADO",
-  "cumple_politica": true,
-  "razon_cumplimiento": "Pago inicial de 1€ hace 3 días, dentro de 30 días",
-  "respuesta_sugerida": "Hola, lamentamos que la experiencia no cumpliera tus expectativas. Hemos procesado el reembolso de 1€ a tu método de pago original. Los fondos aparecerán en 3-5 días hábiles. ¡Gracias por probar MindMetric!"
+  "cumple_politica": false,
+  "razon_cumplimiento": "El pago inicial de 1€ NO es reembolsable según nuestra política - es contenido digital ya entregado",
+  "respuesta_sugerida": "Hola, gracias por contactarnos. Lamentamos que no quedaste satisfecho con el test. Sin embargo, según nuestra política de reembolsos, el pago inicial de 1€ para desbloquear el resultado del test no es reembolsable, ya que es una compra de contenido digital que ya has recibido. Si experimentaste problemas técnicos con el test, estaremos encantados de ayudarte. ¿Podemos asistirte en algo más?"
 }
 
 ---
@@ -466,8 +493,8 @@ Solo si:
   "tipo_solicitud": "REEMBOLSO_SUSCRIPCION",
   "emocion": "EDUCADO",
   "cumple_politica": false,
-  "razon_cumplimiento": "Según nuestra política, 'olvidar cancelar antes de renovación' no es elegible para reembolso",
-  "respuesta_sugerida": "Hola, entendemos tu situación. Sin embargo, según nuestra política de reembolsos, las renovaciones automáticas no son reembolsables si no se cancelaron previamente. Hemos procedido a cancelar tu suscripción para evitar futuros cargos. Puedes seguir usando el servicio hasta el final del período pagado. Si hubo un error técnico o de facturación, por favor házmelo saber."
+  "razon_cumplimiento": "'Olvidar cancelar antes de renovación' no es elegible para reembolso según nuestra política",
+  "respuesta_sugerida": "Hola, entendemos tu situación. Sin embargo, según nuestra política de reembolsos, las renovaciones automáticas no son reembolsables si no se cancelaron antes de la fecha de renovación. Es responsabilidad del usuario gestionar su suscripción. Hemos procedido a cancelar tu suscripción para evitar futuros cargos. Puedes seguir usando el servicio hasta el final del período ya pagado. Gracias por tu comprensión."
 }
 
 ---

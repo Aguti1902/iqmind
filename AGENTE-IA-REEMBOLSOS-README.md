@@ -95,7 +95,7 @@ node test-stripe-refund.js test@example.com
 
 ## 📧 CASOS DE PRUEBA
 
-### ✅ Caso 1: Reembolso VÁLIDO (Pago Inicial)
+### ❌ Caso 1: Reembolso NO VÁLIDO (Pago Inicial)
 
 **Email de prueba:**
 ```
@@ -114,13 +114,14 @@ Gracias.
 
 **Resultado esperado:**
 - ✅ IA detecta: REEMBOLSO_INICIAL
-- ✅ Evalúa: cumple_politica = true
-- ✅ Crea reembolso en Stripe
-- ✅ Envía email confirmando
+- ❌ Evalúa: cumple_politica = false
+- ❌ NO crea reembolso
+- ✅ Envía email explicando que pago inicial NO es reembolsable
+- ✅ Ofrece soporte técnico si hubo problemas
 
 ---
 
-### ❌ Caso 2: Reembolso NO VÁLIDO (Cambio de opinión)
+### ❌ Caso 2: Reembolso NO VÁLIDO (Olvidó cancelar)
 
 **Email de prueba:**
 ```
@@ -137,10 +138,11 @@ Devuélvanme el dinero.
 
 **Resultado esperado:**
 - ✅ IA detecta: REEMBOLSO_SUSCRIPCION
-- ❌ Evalúa: cumple_politica = false
+- ❌ Evalúa: cumple_politica = false (olvidar cancelar NO es motivo válido)
 - ❌ NO crea reembolso
 - ✅ Envía email explicando política
-- ✅ Ofrece cancelación sin reembolso
+- ✅ Ofrece cancelación inmediata sin reembolso
+- ✅ Mantiene acceso hasta fin del período pagado
 
 ---
 
