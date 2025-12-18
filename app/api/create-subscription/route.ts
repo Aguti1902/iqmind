@@ -113,7 +113,7 @@ export async function POST(request: NextRequest) {
     // El pago de €0.50 ya fue procesado por el PaymentIntent
     // Leer días de prueba desde la BD
     const trialDaysStr = await db.getConfigByKey('trial_days')
-    const trialDays = trialDaysStr ? parseInt(trialDaysStr) : 2
+    const trialDays = trialDaysStr ? parseInt(trialDaysStr) : 30
     
     console.log(`🚀 Creando suscripción con trial de ${trialDays} días...`)
     console.log('Price ID:', stripeConfig.priceId)

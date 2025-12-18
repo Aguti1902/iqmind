@@ -379,7 +379,7 @@ export async function POST(request: NextRequest) {
 
                 // Leer días de prueba desde la BD
                 const trialDaysStr = await db.getConfigByKey('trial_days')
-                const trialDays = trialDaysStr ? parseInt(trialDaysStr) : 2
+                const trialDays = trialDaysStr ? parseInt(trialDaysStr) : 30
 
                 // Los datos del test ya vienen directamente en metadata (testAnswers, testTimeElapsed, etc.)
                 console.log(`📅 [PAYMENT_INTENT] Creando suscripción con trial de ${trialDays} días...`)

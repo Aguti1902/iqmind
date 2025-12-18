@@ -125,7 +125,7 @@ export async function POST(request: NextRequest) {
 
     console.log('📋 Metadata para suscripción:', metadata)
 
-    // 5. Crear la suscripción con trial de 2 días
+    // 5. Crear la suscripción con trial de 30 días
     console.log('🚀 Creando suscripción...')
     
     const subscription = await stripe.subscriptions.create({
@@ -141,7 +141,7 @@ export async function POST(request: NextRequest) {
         save_default_payment_method: 'on_subscription',
       },
       metadata,
-      trial_period_days: 2,
+      trial_period_days: 30,
     })
 
     console.log('✅ Suscripción creada:', subscription.id)
