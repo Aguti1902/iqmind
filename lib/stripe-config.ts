@@ -43,7 +43,7 @@ export async function getStripeConfig() {
       console.warn('⚠️ [stripe-config] No se pudo leer de BD:', dbError.message)
     }
     
-    // INTENTO 2: Fallback a variables de entorno
+    // INTENTO 2: Fallback a variables de entorno (si faltan credenciales)
     if (!config.publishableKey || !config.secretKey) {
       console.log('🔄 [stripe-config] Usando variables de entorno como fallback')
       currentMode = process.env.STRIPE_MODE || 'test'
@@ -53,7 +53,8 @@ export async function getStripeConfig() {
         publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
         secretKey: process.env.STRIPE_SECRET_KEY,
         webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
-        priceId: null, // No se usa en payment intent
+        // Leer priceId desde variables de entorno (prioridad: mensual)
+        priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_MENSUAL || process.env.STRIPE_PRICE_ID,
       }
       
       if (config.publishableKey && config.secretKey) {
@@ -61,14 +62,28 @@ export async function getStripeConfig() {
       }
     }
     
+    // INTENTO 3: Si el priceId sigue siendo null, intentar leerlo de variables de entorno
+    if (!config.priceId) {
+      console.log('🔄 [stripe-config] PriceId no encontrado en BD, intentando variables de entorno...')
+      config.priceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_MENSUAL || process.env.STRIPE_PRICE_ID
+      if (config.priceId) {
+        console.log('✅ [stripe-config] PriceId encontrado en variables de entorno')
+      }
+    }
+    
     console.log(`🔑 [stripe-config] Configuración final:`)
     console.log(`   - Modo: ${currentMode.toUpperCase()}`)
     console.log(`   - PublishableKey: ${config.publishableKey?.substring(0, 20)}... (${config.publishableKey ? 'OK' : 'VACÍO'})`)
     console.log(`   - SecretKey: ${config.secretKey?.substring(0, 10)}... (${config.secretKey ? 'OK' : 'VACÍO'})`)
+    console.log(`   - PriceId: ${config.priceId?.substring(0, 20)}... (${config.priceId ? 'OK' : 'VACÍO - CRÍTICO'})`)
     
     if (!config.publishableKey || !config.secretKey) {
       console.error('❌ [stripe-config] Faltan credenciales en BD y variables de entorno')
       throw new Error('Credenciales de Stripe no configuradas. Añade NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY y STRIPE_SECRET_KEY en Vercel')
+    }
+    
+    if (!config.priceId) {
+      console.warn('⚠️ [stripe-config] PriceId no configurado. Las suscripciones NO se crearán sin él.')
     }
     
     return config
