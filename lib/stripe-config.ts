@@ -34,6 +34,10 @@ export async function getStripeConfig() {
         priceId: isTestMode 
           ? (dbConfig.stripe_test_price_id_mensual || dbConfig.stripe_test_price_id)
           : (dbConfig.stripe_live_price_id_mensual || dbConfig.stripe_live_price_id),
+        // También leer el quincenal
+        priceIdQuincenal: isTestMode 
+          ? dbConfig.stripe_test_price_id_quincenal
+          : dbConfig.stripe_live_price_id_quincenal,
       }
       
       if (config.publishableKey && config.secretKey) {
@@ -55,6 +59,8 @@ export async function getStripeConfig() {
         webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
         // Leer priceId desde variables de entorno (prioridad: mensual)
         priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_MENSUAL || process.env.STRIPE_PRICE_ID,
+        // También leer el quincenal desde variables de entorno
+        priceIdQuincenal: process.env.NEXT_PUBLIC_STRIPE_PRICE_QUINCENAL,
       }
       
       if (config.publishableKey && config.secretKey) {
@@ -71,11 +77,20 @@ export async function getStripeConfig() {
       }
     }
     
+    // INTENTO 4: Si el priceIdQuincenal no está configurado, intentar leerlo de variables de entorno
+    if (!config.priceIdQuincenal) {
+      config.priceIdQuincenal = process.env.NEXT_PUBLIC_STRIPE_PRICE_QUINCENAL
+      if (config.priceIdQuincenal) {
+        console.log('✅ [stripe-config] PriceIdQuincenal encontrado en variables de entorno')
+      }
+    }
+    
     console.log(`🔑 [stripe-config] Configuración final:`)
     console.log(`   - Modo: ${currentMode.toUpperCase()}`)
     console.log(`   - PublishableKey: ${config.publishableKey?.substring(0, 20)}... (${config.publishableKey ? 'OK' : 'VACÍO'})`)
     console.log(`   - SecretKey: ${config.secretKey?.substring(0, 10)}... (${config.secretKey ? 'OK' : 'VACÍO'})`)
-    console.log(`   - PriceId: ${config.priceId?.substring(0, 20)}... (${config.priceId ? 'OK' : 'VACÍO - CRÍTICO'})`)
+    console.log(`   - PriceId (Mensual): ${config.priceId?.substring(0, 20)}... (${config.priceId ? 'OK' : 'VACÍO - CRÍTICO'})`)
+    console.log(`   - PriceIdQuincenal: ${config.priceIdQuincenal?.substring(0, 20)}... (${config.priceIdQuincenal ? 'OK' : 'VACÍO'})`)
     
     if (!config.publishableKey || !config.secretKey) {
       console.error('❌ [stripe-config] Faltan credenciales en BD y variables de entorno')
