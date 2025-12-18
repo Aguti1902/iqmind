@@ -533,5 +533,84 @@ export const db = {
     
     const emailList = adminEmails.split(',').map(e => e.trim().toLowerCase())
     return emailList.includes(email.toLowerCase())
+  },
+
+  // ============================================
+  // LOGS DEL AGENTE IA
+  // ============================================
+
+  createAiAgentLog: async (logData: {
+    requestType: string
+    customerEmail: string
+    paymentEmail?: string
+    language?: string
+    requestReason?: string
+    aiDecision: string
+    stripeCustomerId?: string
+    stripeSubscriptionId?: string
+    stripeRefundId?: string
+    amountRefunded?: number
+    processingTime?: number
+    errorMessage?: string
+    rawRequest?: any
+    rawResponse?: any
+  }): Promise<any> => {
+    const result = await getPool().query(
+      `INSERT INTO ai_agent_logs (
+        request_type, customer_email, payment_email, language,
+        request_reason, ai_decision, stripe_customer_id, stripe_subscription_id,
+        stripe_refund_id, amount_refunded, processing_time, error_message,
+        raw_request, raw_response, created_at
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, NOW())
+      RETURNING *`,
+      [
+        logData.requestType,
+        logData.customerEmail,
+        logData.paymentEmail || null,
+        logData.language || null,
+        logData.requestReason || null,
+        logData.aiDecision,
+        logData.stripeCustomerId || null,
+        logData.stripeSubscriptionId || null,
+        logData.stripeRefundId || null,
+        logData.amountRefunded || null,
+        logData.processingTime || null,
+        logData.errorMessage || null,
+        logData.rawRequest ? JSON.stringify(logData.rawRequest) : null,
+        logData.rawResponse ? JSON.stringify(logData.rawResponse) : null
+      ]
+    )
+    
+    return result.rows[0]
+  },
+
+  getAiAgentLogs: async (limit: number = 50, offset: number = 0): Promise<any[]> => {
+    const result = await getPool().query(
+      `SELECT * FROM ai_agent_logs 
+       ORDER BY created_at DESC 
+       LIMIT $1 OFFSET $2`,
+      [limit, offset]
+    )
+    
+    return result.rows
+  },
+
+  getAiAgentStats: async (startDate?: Date): Promise<any> => {
+    const start = startDate || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) // Default: last 30 days
+    
+    const result = await getPool().query(
+      `SELECT 
+        COUNT(*) as total_requests,
+        COUNT(CASE WHEN request_type = 'refund' AND ai_decision = 'approved' THEN 1 END) as refunds_approved,
+        COUNT(CASE WHEN request_type = 'refund' AND ai_decision = 'denied' THEN 1 END) as refunds_denied,
+        COUNT(CASE WHEN request_type = 'cancellation' AND ai_decision = 'cancelled' THEN 1 END) as cancellations_processed,
+        AVG(processing_time) as avg_processing_time,
+        SUM(amount_refunded) as total_refunded
+       FROM ai_agent_logs 
+       WHERE created_at >= $1`,
+      [start.toISOString()]
+    )
+    
+    return result.rows[0]
   }
 }

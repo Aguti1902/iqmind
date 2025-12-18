@@ -72,6 +72,26 @@ INSERT INTO site_config (key, value, description) VALUES
   ('admin_emails', '', 'Emails de administradores separados por coma')
 ON CONFLICT (key) DO NOTHING;
 
+-- Tabla de logs del agente IA (reembolsos y cancelaciones)
+CREATE TABLE IF NOT EXISTS ai_agent_logs (
+  id SERIAL PRIMARY KEY,
+  request_type VARCHAR(50) NOT NULL, -- 'refund', 'cancellation', 'generic'
+  customer_email VARCHAR(255) NOT NULL,
+  payment_email VARCHAR(255),
+  language VARCHAR(10),
+  request_reason TEXT,
+  ai_decision VARCHAR(50), -- 'approved', 'denied', 'cancelled', 'not_found'
+  stripe_customer_id VARCHAR(255),
+  stripe_subscription_id VARCHAR(255),
+  stripe_refund_id VARCHAR(255),
+  amount_refunded DECIMAL(10, 2),
+  processing_time INTEGER, -- milliseconds
+  error_message TEXT,
+  raw_request JSONB,
+  raw_response JSONB,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Índices para mejorar performance
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_test_results_user_id ON test_results(user_id);
@@ -79,4 +99,7 @@ CREATE INDEX IF NOT EXISTS idx_test_results_completed_at ON test_results(complet
 CREATE INDEX IF NOT EXISTS idx_password_resets_token ON password_resets(token);
 CREATE INDEX IF NOT EXISTS idx_password_resets_email ON password_resets(email);
 CREATE INDEX IF NOT EXISTS idx_site_config_key ON site_config(key);
+CREATE INDEX IF NOT EXISTS idx_ai_agent_logs_customer_email ON ai_agent_logs(customer_email);
+CREATE INDEX IF NOT EXISTS idx_ai_agent_logs_request_type ON ai_agent_logs(request_type);
+CREATE INDEX IF NOT EXISTS idx_ai_agent_logs_created_at ON ai_agent_logs(created_at);
 
