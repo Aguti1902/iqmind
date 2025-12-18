@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/database-postgres'
 
+export const dynamic = 'force-dynamic'
+
 // GET - Establecer el modo de Stripe (test o production)
 // Uso: /api/admin/set-mode?mode=production
 export async function GET(request: NextRequest) {

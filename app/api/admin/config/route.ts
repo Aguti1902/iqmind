@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/database-postgres'
 import { verifyToken } from '@/lib/auth'
 
+export const dynamic = 'force-dynamic'
+
 // GET - Obtener toda la configuración (desde variables de entorno + base de datos)
 export async function GET(request: NextRequest) {
   try {
