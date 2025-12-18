@@ -36,7 +36,7 @@
           "string": [
             {
               "name": "prompt_sistema",
-              "value": "Eres un asistente de atención al cliente de MindMetric especializado en reembolsos.\n\nTu tarea es analizar correos de clientes y extraer información clave.\n\n---\n\n## INFORMACIÓN A EXTRAER:\n\nDebes responder ÚNICAMENTE con un JSON con esta estructura:\n\n{\n  \"email_cliente\": \"email@ejemplo.com\",\n  \"email_pago\": \"email usado en el pago (si es diferente o se menciona)\",\n  \"motivo_solicitud\": \"Descripción breve del motivo\",\n  \"tipo_solicitud\": \"REEMBOLSO_INICIAL | REEMBOLSO_SUSCRIPCION | CANCELACION | QUEJA | OTRO\",\n  \"emocion\": \"NEUTRAL | FRUSTRADO | ENOJADO | EDUCADO\",\n  \"cumple_politica\": true | false,\n  \"razon_cumplimiento\": \"Explicación de por qué cumple o no cumple\",\n  \"respuesta_sugerida\": \"Respuesta empática y profesional en español\",\n  \"datos_pedido\": {\n    \"fecha_pago\": \"fecha mencionada del pago (formato: YYYY-MM-DD)\",\n    \"monto\": \"monto del pago mencionado\",\n    \"ultimos_4_digitos\": \"últimos 4 dígitos de tarjeta si se mencionan\",\n    \"transaction_id\": \"ID de transacción si se menciona\",\n    \"nombre_titular\": \"nombre del titular de la tarjeta si se menciona\"\n  }\n}\n\nIMPORTANTE:\n- Si el cliente menciona \"pagué con otro email\", extráelo en email_pago\n- Si menciona \"mi email de pago es...\", extráelo en email_pago\n- Busca CUALQUIER dato del pedido que mencione (fecha, monto, tarjeta, etc.)\n- Si no menciona datos_pedido, deja los campos vacíos o null\n\n---\n\n## POLÍTICA DE REEMBOLSOS DE MINDMETRIC:\n\n### ⛔ NO REEMBOLSABLE:\n\n**1. PAGO INICIAL (1€):**\n- ⛔ NO es reembolsable bajo NINGUNA circunstancia\n- Razón: Contenido digital ya entregado (resultado del test)\n- SIEMPRE marca cumple_politica como FALSE si solicitan reembolso del pago inicial\n\n### ✅ REEMBOLSOS APROBADOS (SOLO SUSCRIPCIONES):\n\n**2. SUSCRIPCIÓN (9.99€/19.99€):**\nSolo reembolsable si:\n- ✅ Indisponibilidad > 24 horas consecutivas (documentada, NO mantenimiento)\n- ✅ Problemas técnicos verificables (error impide acceso a funciones)\n- ✅ Errores de facturación (doble cargo, monto incorrecto, no autorizado)\n- ✅ Requisito legal (derecho de desistimiento, orden judicial)\n\n### ❌ REEMBOLSOS DENEGADOS:\n\n- ⛔ Pago inicial de 1€ (por cualquier motivo)\n- ⛔ Cambio de opinión / \"Ya no lo necesito\"\n- ⛔ \"Olvidé cancelar antes de renovación\"\n- ⛔ Tiempo de suscripción no utilizado tras cancelación\n- ⛔ \"Es muy caro\" / \"No me gustó\"\n- ⛔ Mantenimiento programado o breve (< 24 horas)\n- ⛔ Rebaja de planes o cambios\n- ⛔ Insatisfacción con resultados del training\n\n### 🔄 CANCELACIONES (Sin Reembolso):\n\n✅ SIEMPRE PERMITIDAS:\n- \"Quiero cancelar mi suscripción\"\n- \"Por favor cancelen mi plan\"\n- \"Dar de baja mi cuenta\"\n- \"No quiero que me cobren más\"\n\nACCIÓN:\n- Marca cumple_politica = true\n- tipo_solicitud = \"CANCELACION\"\n- Cancelar suscripción en Stripe\n- NO generar reembolso\n- Email: Confirmación con fecha de fin de acceso\n\n---\n\n## INSTRUCCIONES FINALES:\n\n1. SIEMPRE responde con JSON válido\n2. SIEMPRE sé empático y profesional\n3. IMPORTANTE: Pago inicial 1€ NUNCA es reembolsable (cumple_politica = false)\n4. Solo suscripciones pueden ser reembolsables (y solo en casos específicos)\n5. Si el email NO es sobre reembolso/cancelación, usa tipo \"OTRO\"\n6. Si falta información, marca cumple_politica como false\n7. La respuesta_sugerida debe ser en el idioma del email recibido"
+              "value": "Eres un asistente de atención al cliente de MindMetric especializado en reembolsos.\n\nTu tarea es analizar correos de clientes y extraer información clave.\n\n---\n\n## INFORMACIÓN A EXTRAER:\n\nDebes responder ÚNICAMENTE con un JSON con esta estructura:\n\n{\n  \"idioma\": \"es | en | fr | de | it | pt | other\",\n  \"email_cliente\": \"email@ejemplo.com\",\n  \"email_pago\": \"email usado en el pago (si es diferente o se menciona)\",\n  \"motivo_solicitud\": \"Descripción breve del motivo\",\n  \"tipo_solicitud\": \"REEMBOLSO_INICIAL | REEMBOLSO_SUSCRIPCION | CANCELACION | QUEJA | OTRO\",\n  \"emocion\": \"NEUTRAL | FRUSTRADO | ENOJADO | EDUCADO\",\n  \"cumple_politica\": true | false,\n  \"razon_cumplimiento\": \"Explicación de por qué cumple o no cumple\",\n  \"respuesta_sugerida\": \"Respuesta empática y profesional en EL MISMO IDIOMA del email\",\n  \"datos_pedido\": {\n    \"fecha_pago\": \"fecha mencionada del pago (formato: YYYY-MM-DD)\",\n    \"monto\": \"monto del pago mencionado\",\n    \"ultimos_4_digitos\": \"últimos 4 dígitos de tarjeta si se mencionan\",\n    \"transaction_id\": \"ID de transacción si se menciona\",\n    \"nombre_titular\": \"nombre del titular de la tarjeta si se menciona\"\n  }\n}\n\nIMPORTANTE:\n- Si el cliente menciona \"pagué con otro email\", extráelo en email_pago\n- Si menciona \"mi email de pago es...\", extráelo en email_pago\n- Busca CUALQUIER dato del pedido que mencione (fecha, monto, tarjeta, etc.)\n- Si no menciona datos_pedido, deja los campos vacíos o null\n\n---\n\n## POLÍTICA DE REEMBOLSOS DE MINDMETRIC:\n\n### ⛔ NO REEMBOLSABLE:\n\n**1. PAGO INICIAL (1€):**\n- ⛔ NO es reembolsable bajo NINGUNA circunstancia\n- Razón: Contenido digital ya entregado (resultado del test)\n- SIEMPRE marca cumple_politica como FALSE si solicitan reembolso del pago inicial\n\n### ✅ REEMBOLSOS APROBADOS (SOLO SUSCRIPCIONES):\n\n**2. SUSCRIPCIÓN (9.99€/19.99€):**\nSolo reembolsable si:\n- ✅ Indisponibilidad > 24 horas consecutivas (documentada, NO mantenimiento)\n- ✅ Problemas técnicos verificables (error impide acceso a funciones)\n- ✅ Errores de facturación (doble cargo, monto incorrecto, no autorizado)\n- ✅ Requisito legal (derecho de desistimiento, orden judicial)\n\n### ❌ REEMBOLSOS DENEGADOS:\n\n- ⛔ Pago inicial de 1€ (por cualquier motivo)\n- ⛔ Cambio de opinión / \"Ya no lo necesito\"\n- ⛔ \"Olvidé cancelar antes de renovación\"\n- ⛔ Tiempo de suscripción no utilizado tras cancelación\n- ⛔ \"Es muy caro\" / \"No me gustó\"\n- ⛔ Mantenimiento programado o breve (< 24 horas)\n- ⛔ Rebaja de planes o cambios\n- ⛔ Insatisfacción con resultados del training\n\n### 🔄 CANCELACIONES (Sin Reembolso):\n\n✅ SIEMPRE PERMITIDAS:\n- \"Quiero cancelar mi suscripción\"\n- \"Por favor cancelen mi plan\"\n- \"Dar de baja mi cuenta\"\n- \"No quiero que me cobren más\"\n\nACCIÓN:\n- Marca cumple_politica = true\n- tipo_solicitud = \"CANCELACION\"\n- Cancelar suscripción en Stripe\n- NO generar reembolso\n- Email: Confirmación con fecha de fin de acceso\n\n---\n\n## INSTRUCCIONES FINALES:\n\n1. **IDIOMA:** DETECTA el idioma del email y responde en ese mismo idioma\n   - Español: \"idioma\": \"es\"\n   - Inglés: \"idioma\": \"en\"\n   - Francés: \"idioma\": \"fr\"\n   - Alemán: \"idioma\": \"de\"\n   - Italiano: \"idioma\": \"it\"\n   - Portugués: \"idioma\": \"pt\"\n   - Si no puedes detectar: \"idioma\": \"en\" (inglés por defecto)\n\n2. SIEMPRE responde con JSON válido\n3. SIEMPRE sé empático y profesional\n4. IMPORTANTE: Pago inicial 1€ NUNCA es reembolsable (cumple_politica = false)\n5. Solo suscripciones pueden ser reembolsables (y solo en casos específicos)\n6. Si el email NO es sobre reembolso/cancelación, usa tipo \"OTRO\"\n7. Si falta información, marca cumple_politica como false\n8. La respuesta_sugerida DEBE estar en el MISMO IDIOMA que el email del cliente"
             }
           ]
         },
@@ -318,18 +318,38 @@
       },
       {
         "parameters": {
+          "jsCode": "// Obtener datos\nconst analisisIA = $('📝 Parsear Respuesta IA').item.json;\nconst evaluacion = $('⚖️ Evaluar Política de Reembolso').item.json;\nconst idioma = analisisIA.idioma || 'en';\n\n// Plantillas por idioma\nconst plantillas = {\n  es: {\n    subject: 'Reembolso Procesado - MindMetric',\n    title: '✅ Reembolso Procesado',\n    greeting: 'Hola,',\n    success: '✓ Tu reembolso ha sido procesado exitosamente',\n    details_title: 'Detalles del reembolso:',\n    amount: 'Monto:',\n    method: 'Método:',\n    time: 'Tiempo estimado:',\n    time_value: '3-5 días hábiles',\n    payment_method: 'Pago inicial',\n    subscription_method: 'Suscripción',\n    info: 'El reembolso se procesará al mismo método de pago que utilizaste originalmente.',\n    questions: 'Si tienes alguna pregunta, no dudes en contactarnos.',\n    thanks: 'Gracias por tu comprensión.',\n    signature: 'Atentamente,<br><strong>Equipo de MindMetric</strong>',\n    footer: 'Este es un email automático generado por nuestro sistema de IA.'\n  },\n  en: {\n    subject: 'Refund Processed - MindMetric',\n    title: '✅ Refund Processed',\n    greeting: 'Hello,',\n    success: '✓ Your refund has been processed successfully',\n    details_title: 'Refund details:',\n    amount: 'Amount:',\n    method: 'Method:',\n    time: 'Estimated time:',\n    time_value: '3-5 business days',\n    payment_method: 'Initial payment',\n    subscription_method: 'Subscription',\n    info: 'The refund will be processed to the same payment method you originally used.',\n    questions: 'If you have any questions, please don\\'t hesitate to contact us.',\n    thanks: 'Thank you for your understanding.',\n    signature: 'Best regards,<br><strong>MindMetric Team</strong>',\n    footer: 'This is an automated email generated by our AI system.'\n  }\n};\n\nconst t = plantillas[idioma] || plantillas.en;\n\nconst monto = evaluacion.monto_total / 100;\nconst metodo = evaluacion.tipo === 'REEMBOLSO_INICIAL' ? t.payment_method : t.subscription_method;\n\nconst email_body = `<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <style>\n    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }\n    .container { max-width: 600px; margin: 0 auto; padding: 20px; }\n    .header { background: linear-gradient(135deg, #113240 0%, #052547 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }\n    .content { background: white; padding: 30px; border: 1px solid #e0e0e0; border-top: none; }\n    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 15px; margin: 20px 0; border-radius: 5px; }\n    .footer { background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; border-radius: 0 0 10px 10px; }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <div class=\"header\">\n      <h1>${t.title}</h1>\n    </div>\n    <div class=\"content\">\n      <p>${t.greeting}</p>\n      \n      <div class=\"success-box\">\n        <p><strong>${t.success}</strong></p>\n      </div>\n      \n      <p>${analisisIA.respuesta_sugerida}</p>\n      \n      <p><strong>${t.details_title}</strong></p>\n      <ul>\n        <li><strong>${t.amount}</strong> ${monto}€</li>\n        <li><strong>${t.method}</strong> ${metodo}</li>\n        <li><strong>${t.time}</strong> ${t.time_value}</li>\n      </ul>\n      \n      <p>${t.info}</p>\n      \n      <p>${t.questions}</p>\n      \n      <p>${t.thanks}</p>\n      \n      <p>${t.signature}</p>\n    </div>\n    <div class=\"footer\">\n      <p>MindMetric | <a href=\"https://mindmetric.io\">mindmetric.io</a></p>\n      <p>${t.footer}</p>\n    </div>\n  </div>\n</body>\n</html>`;\n\nreturn {\n  ...analisisIA,\n  ...evaluacion,\n  email_subject: t.subject,\n  email_body: email_body\n};"
+        },
+        "id": "node-preparar-email-reembolso",
+        "name": "🌍 Preparar Email Reembolso",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [3240, -100]
+      },
+      {
+        "parameters": {
+          "jsCode": "// Obtener datos\nconst analisisIA = $('📝 Parsear Respuesta IA').item.json;\nconst idioma = analisisIA.idioma || 'en';\n\n// Plantillas por idioma\nconst plantillas = {\n  es: {\n    subject: '✅ Suscripción Cancelada - MindMetric',\n    title: '✅ Suscripción Cancelada',\n    greeting: 'Hola,',\n    success: '✓ Tu suscripción ha sido cancelada exitosamente',\n    info_title: 'Información importante:',\n    info_1: 'No habrá más cargos a tu tarjeta',\n    info_2: 'Puedes seguir usando el servicio hasta el final del período actual',\n    info_3: 'Tu cuenta permanecerá activa (sin acceso premium)',\n    reactivate: 'Si en el futuro deseas reactivar tu suscripción, estaremos encantados de ayudarte.',\n    goodbye: '¡Gracias por haber sido parte de MindMetric!',\n    signature: 'Atentamente,<br><strong>Equipo de MindMetric</strong>',\n    footer: 'Este es un email automático generado por nuestro sistema de IA.'\n  },\n  en: {\n    subject: '✅ Subscription Cancelled - MindMetric',\n    title: '✅ Subscription Cancelled',\n    greeting: 'Hello,',\n    success: '✓ Your subscription has been cancelled successfully',\n    info_title: 'Important information:',\n    info_1: 'There will be no more charges to your card',\n    info_2: 'You can continue using the service until the end of your current period',\n    info_3: 'Your account will remain active (without premium access)',\n    reactivate: 'If you wish to reactivate your subscription in the future, we\\'ll be happy to help.',\n    goodbye: 'Thank you for being part of MindMetric!',\n    signature: 'Best regards,<br><strong>MindMetric Team</strong>',\n    footer: 'This is an automated email generated by our AI system.'\n  }\n};\n\nconst t = plantillas[idioma] || plantillas.en;\n\nconst email_body = `<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <style>\n    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }\n    .container { max-width: 600px; margin: 0 auto; padding: 20px; }\n    .header { background: linear-gradient(135deg, #113240 0%, #052547 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }\n    .content { background: white; padding: 30px; border: 1px solid #e0e0e0; border-top: none; }\n    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 15px; margin: 20px 0; border-radius: 5px; }\n    .info-box { background: #e7f3ff; border-left: 4px solid #2196F3; padding: 15px; margin: 20px 0; border-radius: 5px; }\n    .footer { background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; border-radius: 0 0 10px 10px; }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <div class=\"header\">\n      <h1>${t.title}</h1>\n    </div>\n    <div class=\"content\">\n      <p>${t.greeting}</p>\n      \n      <div class=\"success-box\">\n        <p><strong>${t.success}</strong></p>\n      </div>\n      \n      <p>${analisisIA.respuesta_sugerida}</p>\n      \n      <div class=\"info-box\">\n        <p><strong>${t.info_title}</strong></p>\n        <ul style=\"margin: 10px 0; padding-left: 20px;\">\n          <li>${t.info_1}</li>\n          <li>${t.info_2}</li>\n          <li>${t.info_3}</li>\n        </ul>\n      </div>\n      \n      <p>${t.reactivate}</p>\n      \n      <p>${t.goodbye}</p>\n      \n      <p>${t.signature}</p>\n    </div>\n    <div class=\"footer\">\n      <p>MindMetric | <a href=\"https://mindmetric.io\">mindmetric.io</a></p>\n      <p>${t.footer}</p>\n    </div>\n  </div>\n</body>\n</html>`;\n\nreturn {\n  ...analisisIA,\n  email_subject: t.subject,\n  email_body: email_body\n};"
+        },
+        "id": "node-preparar-email-cancelacion",
+        "name": "🌍 Preparar Email Cancelación",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [3240, 100]
+      },
+      {
+        "parameters": {
           "fromEmail": "support@mindmetric.io",
           "toEmail": "={{ $('📝 Parsear Respuesta IA').item.json.email_cliente }}",
-          "subject": "=Re: {{ $('📧 Gmail: Recibir Solicitud').item.json.subject }}",
+          "subject": "={{ $json.email_subject }}",
           "emailType": "html",
-          "message": "=<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <style>\n    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }\n    .container { max-width: 600px; margin: 0 auto; padding: 20px; }\n    .header { background: linear-gradient(135deg, #113240 0%, #052547 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }\n    .content { background: white; padding: 30px; border: 1px solid #e0e0e0; border-top: none; }\n    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 15px; margin: 20px 0; border-radius: 5px; }\n    .footer { background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; border-radius: 0 0 10px 10px; }\n    .button { display: inline-block; background: #07C59A; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin: 20px 0; }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <div class=\"header\">\n      <h1>✅ Reembolso Procesado</h1>\n    </div>\n    <div class=\"content\">\n      <p>Hola,</p>\n      \n      <div class=\"success-box\">\n        <p><strong>✓ Tu reembolso ha sido procesado exitosamente</strong></p>\n      </div>\n      \n      <p>{{ $('📝 Parsear Respuesta IA').item.json.respuesta_sugerida }}</p>\n      \n      <p><strong>Detalles del reembolso:</strong></p>\n      <ul>\n        <li><strong>Monto:</strong> {{ $('⚖️ Evaluar Política de Reembolso').item.json.monto_total / 100 }}€</li>\n        <li><strong>Método:</strong> {{ $('⚖️ Evaluar Política de Reembolso').item.json.tipo === 'REEMBOLSO_INICIAL' ? 'Pago inicial' : 'Suscripción' }}</li>\n        <li><strong>Tiempo estimado:</strong> 3-5 días hábiles</li>\n      </ul>\n      \n      <p>El reembolso se procesará al mismo método de pago que utilizaste originalmente.</p>\n      \n      <p>Si tienes alguna pregunta, no dudes en contactarnos.</p>\n      \n      <p>Gracias por tu comprensión.</p>\n      \n      <p>Atentamente,<br><strong>Equipo de MindMetric</strong></p>\n    </div>\n    <div class=\"footer\">\n      <p>MindMetric | <a href=\"https://mindmetric.io\">mindmetric.io</a></p>\n      <p>Este es un email automático generado por nuestro sistema de IA.</p>\n    </div>\n  </div>\n</body>\n</html>",
+          "message": "={{ $json.email_body }}",
           "options": {}
         },
         "id": "node-email-reembolso-aprobado",
         "name": "📤 Email: Reembolso Aprobado",
         "type": "n8n-nodes-base.emailSend",
         "typeVersion": 2,
-        "position": [3240, -100],
+        "position": [3440, -100],
         "credentials": {
           "smtp": {
             "id": "4",
@@ -341,16 +361,16 @@
         "parameters": {
           "fromEmail": "support@mindmetric.io",
           "toEmail": "={{ $('📝 Parsear Respuesta IA').item.json.email_cliente }}",
-          "subject": "=✅ Suscripción Cancelada - MindMetric",
+          "subject": "={{ $json.email_subject }}",
           "emailType": "html",
-          "message": "=<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <style>\n    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }\n    .container { max-width: 600px; margin: 0 auto; padding: 20px; }\n    .header { background: linear-gradient(135deg, #113240 0%, #052547 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }\n    .content { background: white; padding: 30px; border: 1px solid #e0e0e0; border-top: none; }\n    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 15px; margin: 20px 0; border-radius: 5px; }\n    .info-box { background: #e7f3ff; border-left: 4px solid #2196F3; padding: 15px; margin: 20px 0; border-radius: 5px; }\n    .footer { background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; border-radius: 0 0 10px 10px; }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <div class=\"header\">\n      <h1>✅ Suscripción Cancelada</h1>\n    </div>\n    <div class=\"content\">\n      <p>Hola,</p>\n      \n      <div class=\"success-box\">\n        <p><strong>✓ Tu suscripción ha sido cancelada exitosamente</strong></p>\n      </div>\n      \n      <p>{{ $('📝 Parsear Respuesta IA').item.json.respuesta_sugerida }}</p>\n      \n      <div class=\"info-box\">\n        <p><strong>Información importante:</strong></p>\n        <ul style=\"margin: 10px 0; padding-left: 20px;\">\n          <li>No habrá más cargos a tu tarjeta</li>\n          <li>Puedes seguir usando el servicio hasta el final del período actual</li>\n          <li>Tu cuenta permanecerá activa (sin acceso premium)</li>\n        </ul>\n      </div>\n      \n      <p>Si en el futuro deseas reactivar tu suscripción, estaremos encantados de ayudarte.</p>\n      \n      <p>¡Gracias por haber sido parte de MindMetric!</p>\n      \n      <p>Atentamente,<br><strong>Equipo de MindMetric</strong></p>\n    </div>\n    <div class=\"footer\">\n      <p>MindMetric | <a href=\"https://mindmetric.io\">mindmetric.io</a></p>\n      <p>Este es un email automático generado por nuestro sistema de IA.</p>\n    </div>\n  </div>\n</body>\n</html>",
+          "message": "={{ $json.email_body }}",
           "options": {}
         },
         "id": "node-email-cancelacion",
         "name": "📤 Email: Cancelación Confirmada",
         "type": "n8n-nodes-base.emailSend",
         "typeVersion": 2,
-        "position": [3240, 100],
+        "position": [3440, 100],
         "credentials": {
           "smtp": {
             "id": "4",
@@ -587,6 +607,17 @@
         "main": [
           [
             {
+              "node": "🌍 Preparar Email Reembolso",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "🌍 Preparar Email Reembolso": {
+        "main": [
+          [
+            {
               "node": "📤 Email: Reembolso Aprobado",
               "type": "main",
               "index": 0
@@ -616,6 +647,17 @@
         "main": [
           [
             {
+              "node": "🌍 Preparar Email Cancelación",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "🌍 Preparar Email Cancelación": {
+        "main": [
+          [
+            {
               "node": "📤 Email: Cancelación Confirmada",
               "type": "main",
               "index": 0
@@ -624,6 +666,9 @@
         ]
       },
       "📤 Email: Cancelación Confirmada": {
+        "main": []
+      },
+      "📤 Email: Reembolso Aprobado": {
         "main": []
       }
     },
