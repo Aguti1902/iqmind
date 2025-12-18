@@ -14,25 +14,55 @@ interface DashboardData {
 export default function DashboardTab() {
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)
+  const [lastUpdate, setLastUpdate] = useState<Date>(new Date())
+  const [secondsSinceUpdate, setSecondsSinceUpdate] = useState(0)
 
+  // Auto-refresh cada 60 segundos
   useEffect(() => {
     loadDashboardData()
+    
+    const refreshInterval = setInterval(() => {
+      console.log('🔄 Auto-actualizando dashboard...')
+      loadDashboardData()
+    }, 60000) // 60 segundos
+
+    return () => clearInterval(refreshInterval)
   }, [])
+
+  // Contador de tiempo desde última actualización
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const now = new Date()
+      const diff = Math.floor((now.getTime() - lastUpdate.getTime()) / 1000)
+      setSecondsSinceUpdate(diff)
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [lastUpdate])
 
   const loadDashboardData = async () => {
     setLoading(true)
     try {
-      const response = await fetch('/api/admin/dashboard')
+      const response = await fetch('/api/admin/dashboard?_=' + Date.now()) // Cache buster
       const data = await response.json()
       
       if (data.success && data.data) {
         setDashboardData(data.data)
+        setLastUpdate(new Date())
+        setSecondsSinceUpdate(0)
+        console.log('✅ Dashboard actualizado:', new Date().toLocaleTimeString())
       }
     } catch (error) {
       console.error('Error cargando dashboard:', error)
     } finally {
       setLoading(false)
     }
+  }
+
+  const formatTimeSince = (seconds: number) => {
+    if (seconds < 60) return `hace ${seconds}s`
+    const minutes = Math.floor(seconds / 60)
+    return `hace ${minutes}m`
   }
 
   if (loading) {
@@ -61,13 +91,18 @@ export default function DashboardTab() {
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
           <p className="text-gray-600 mt-1">Resumen general de tu negocio</p>
+          <p className="text-sm text-gray-500 mt-1 flex items-center gap-2">
+            <span className="inline-block w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+            Última actualización: {formatTimeSince(secondsSinceUpdate)} • Auto-refresh cada 60s
+          </p>
         </div>
         <button
           onClick={loadDashboardData}
-          className="px-4 py-2 bg-[#07C59A] text-white rounded-lg hover:bg-[#069e7b] transition-colors flex items-center gap-2"
+          disabled={loading}
+          className="px-4 py-2 bg-[#07C59A] text-white rounded-lg hover:bg-[#069e7b] transition-colors flex items-center gap-2 disabled:opacity-50"
         >
           <FaSync className={loading ? 'animate-spin' : ''} />
-          Actualizar
+          Actualizar Ahora
         </button>
       </div>
 

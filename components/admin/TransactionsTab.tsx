@@ -12,10 +12,34 @@ export default function TransactionsTab() {
   const [refundModal, setRefundModal] = useState<{show: boolean, transaction: any}>({show: false, transaction: null})
   const [refundAmount, setRefundAmount] = useState('')
   const [refundReason, setRefundReason] = useState('requested_by_customer')
+  const [lastUpdate, setLastUpdate] = useState<Date>(new Date())
+  const [secondsSinceUpdate, setSecondsSinceUpdate] = useState(0)
 
+  // Auto-refresh cada 60 segundos
+  useEffect(() => {
+    const refreshInterval = setInterval(() => {
+      console.log('🔄 Auto-actualizando transacciones...')
+      loadTransactions()
+    }, 60000)
+
+    return () => clearInterval(refreshInterval)
+  }, [search, statusFilter])
+
+  // Cargar cuando cambian filtros
   useEffect(() => {
     loadTransactions()
   }, [search, statusFilter])
+
+  // Contador de tiempo desde última actualización
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const now = new Date()
+      const diff = Math.floor((now.getTime() - lastUpdate.getTime()) / 1000)
+      setSecondsSinceUpdate(diff)
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [lastUpdate])
 
   const loadTransactions = async () => {
     setLoading(true)
@@ -23,18 +47,28 @@ export default function TransactionsTab() {
       const params = new URLSearchParams()
       if (search) params.append('search', search)
       if (statusFilter !== 'all') params.append('status', statusFilter)
+      params.append('_', Date.now().toString()) // Cache buster
       
       const response = await fetch(`/api/admin/transactions?${params}`)
       const data = await response.json()
       
       if (data.success) {
         setTransactions(data.data)
+        setLastUpdate(new Date())
+        setSecondsSinceUpdate(0)
+        console.log('✅ Transacciones actualizadas:', new Date().toLocaleTimeString())
       }
     } catch (error) {
       console.error('Error loading transactions:', error)
     } finally {
       setLoading(false)
     }
+  }
+
+  const formatTimeSince = (seconds: number) => {
+    if (seconds < 60) return `hace ${seconds}s`
+    const minutes = Math.floor(seconds / 60)
+    return `hace ${minutes}m`
   }
 
   const openRefundModal = (transaction: any) => {
@@ -110,13 +144,18 @@ export default function TransactionsTab() {
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Transacciones</h1>
           <p className="text-gray-600 mt-1">Gestiona pagos y reembolsos</p>
+          <p className="text-sm text-gray-500 mt-1 flex items-center gap-2">
+            <span className="inline-block w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+            Última actualización: {formatTimeSince(secondsSinceUpdate)} • Auto-refresh cada 60s
+          </p>
         </div>
         <button
           onClick={loadTransactions}
-          className="px-4 py-2 bg-[#07C59A] text-white rounded-lg hover:bg-[#069e7b] transition-colors flex items-center gap-2"
+          disabled={loading}
+          className="px-4 py-2 bg-[#07C59A] text-white rounded-lg hover:bg-[#069e7b] transition-colors flex items-center gap-2 disabled:opacity-50"
         >
           <FaSync className={loading ? 'animate-spin' : ''} />
-          Actualizar
+          Actualizar Ahora
         </button>
       </div>
 

@@ -9,10 +9,34 @@ export default function SubscriptionsTab() {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [cancelingId, setCancelingId] = useState<string | null>(null)
+  const [lastUpdate, setLastUpdate] = useState<Date>(new Date())
+  const [secondsSinceUpdate, setSecondsSinceUpdate] = useState(0)
 
+  // Auto-refresh cada 60 segundos
+  useEffect(() => {
+    const refreshInterval = setInterval(() => {
+      console.log('🔄 Auto-actualizando suscripciones...')
+      loadSubscriptions()
+    }, 60000)
+
+    return () => clearInterval(refreshInterval)
+  }, [search, statusFilter])
+
+  // Cargar cuando cambian filtros
   useEffect(() => {
     loadSubscriptions()
   }, [search, statusFilter])
+
+  // Contador de tiempo desde última actualización
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const now = new Date()
+      const diff = Math.floor((now.getTime() - lastUpdate.getTime()) / 1000)
+      setSecondsSinceUpdate(diff)
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [lastUpdate])
 
   const loadSubscriptions = async () => {
     setLoading(true)
@@ -20,18 +44,28 @@ export default function SubscriptionsTab() {
       const params = new URLSearchParams()
       if (search) params.append('search', search)
       if (statusFilter !== 'all') params.append('status', statusFilter)
+      params.append('_', Date.now().toString()) // Cache buster
       
       const response = await fetch(`/api/admin/subscriptions?${params}`)
       const data = await response.json()
       
       if (data.success) {
         setSubscriptions(data.data)
+        setLastUpdate(new Date())
+        setSecondsSinceUpdate(0)
+        console.log('✅ Suscripciones actualizadas:', new Date().toLocaleTimeString())
       }
     } catch (error) {
       console.error('Error loading subscriptions:', error)
     } finally {
       setLoading(false)
     }
+  }
+
+  const formatTimeSince = (seconds: number) => {
+    if (seconds < 60) return `hace ${seconds}s`
+    const minutes = Math.floor(seconds / 60)
+    return `hace ${minutes}m`
   }
 
   const handleCancelSubscription = async (id: string) => {
@@ -85,13 +119,18 @@ export default function SubscriptionsTab() {
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Suscripciones</h1>
           <p className="text-gray-600 mt-1">Gestiona todas las suscripciones activas</p>
+          <p className="text-sm text-gray-500 mt-1 flex items-center gap-2">
+            <span className="inline-block w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+            Última actualización: {formatTimeSince(secondsSinceUpdate)} • Auto-refresh cada 60s
+          </p>
         </div>
         <button
           onClick={loadSubscriptions}
-          className="px-4 py-2 bg-[#07C59A] text-white rounded-lg hover:bg-[#069e7b] transition-colors flex items-center gap-2"
+          disabled={loading}
+          className="px-4 py-2 bg-[#07C59A] text-white rounded-lg hover:bg-[#069e7b] transition-colors flex items-center gap-2 disabled:opacity-50"
         >
           <FaSync className={loading ? 'animate-spin' : ''} />
-          Actualizar
+          Actualizar Ahora
         </button>
       </div>
 
