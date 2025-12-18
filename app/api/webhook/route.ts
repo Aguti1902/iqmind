@@ -598,6 +598,27 @@ export async function POST(request: NextRequest) {
           customerEmail = subscriptionCreated.customer.email
         }
         
+        // 💾 GUARDAR subscription_id EN LA BASE DE DATOS (como respaldo)
+        if (customerEmail) {
+          try {
+            const user = await db.getUserByEmail(customerEmail)
+            if (user) {
+              await db.updateUserSubscription(
+                user.id.toString(),
+                subscriptionCreated.id,
+                subscriptionCreated.status === 'trialing' ? 'trial' : (subscriptionCreated.status as 'active' | 'cancelled' | 'expired'),
+                subscriptionCreated.trial_end ? new Date(subscriptionCreated.trial_end * 1000) : undefined,
+                subscriptionCreated.current_period_end ? new Date(subscriptionCreated.current_period_end * 1000) : undefined
+              )
+              console.log(`✅ [SUBSCRIPTION_CREATED] Subscription ID guardado en BD para usuario: ${customerEmail}`)
+            } else {
+              console.warn(`⚠️ [SUBSCRIPTION_CREATED] Usuario no encontrado para guardar subscription_id: ${customerEmail}`)
+            }
+          } catch (dbError: any) {
+            console.error('❌ [SUBSCRIPTION_CREATED] Error guardando subscription_id en BD:', dbError.message)
+          }
+        }
+        
         // No enviar email de bienvenida al trial aquí
         // El email principal con credenciales se envía en payment_intent.succeeded
         
