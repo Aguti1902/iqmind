@@ -115,16 +115,35 @@ export async function GET() {
       ? (canceledThisMonth.length / totalActiveAtStart) * 100
       : 0
     
-    // TRANSACCIONES RECIENTES (últimas 20)
-    const recentTransactions = successfulCharges.slice(0, 20).map(charge => ({
-      id: charge.id,
-      amount: charge.amount / 100,
-      currency: charge.currency.toUpperCase(),
-      status: charge.status,
-      customer_email: charge.billing_details?.email || 'N/A',
-      created: new Date(charge.created * 1000).toISOString(),
-      description: charge.description || 'Pago inicial'
-    }))
+    // TRANSACCIONES RECIENTES (últimas 20) - Expandir customer para obtener email
+    const recentTransactionsWithEmails = await Promise.all(
+      successfulCharges.slice(0, 20).map(async (charge) => {
+        let customerEmail = charge.billing_details?.email || charge.receipt_email || 'N/A'
+        
+        // Si no tenemos email, intentar obtenerlo del customer
+        if (customerEmail === 'N/A' && charge.customer) {
+          try {
+            const customer = await stripe.customers.retrieve(charge.customer as string)
+            if ('email' in customer && customer.email) {
+              customerEmail = customer.email
+            }
+          } catch (error) {
+            console.error('Error retrieving customer:', error)
+          }
+        }
+        
+        return {
+          id: charge.id,
+          amount: charge.amount / 100,
+          currency: charge.currency.toUpperCase(),
+          status: charge.status,
+          customer_email: customerEmail,
+          customer_id: charge.customer,
+          created: new Date(charge.created * 1000).toISOString(),
+          description: charge.description || 'Pago inicial'
+        }
+      })
+    )
     
     // MÉTRICAS DEL AGENTE IA (de la base de datos o logs)
     // Aquí podrías integrar con logs de n8n si los guardas en tu BD
@@ -157,7 +176,7 @@ export async function GET() {
         },
         // Tablas
         tables: {
-          recentTransactions,
+          recentTransactions: recentTransactionsWithEmails,
           activeSubscriptions: activeSubscriptions.slice(0, 10).map(sub => ({
             id: sub.id,
             customer_id: sub.customer,
