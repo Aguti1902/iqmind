@@ -13,21 +13,43 @@ export async function GET() {
     const twelveMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 12, 1)
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
     
-    // SUSCRIPCIONES
-    const subscriptions = await stripe.subscriptions.list({
-      limit: 100,
-      status: 'all',
-    })
+    // SUSCRIPCIONES - Obtener TODAS con paginación (ordenadas por fecha descendente)
+    let allSubscriptions: Stripe.Subscription[] = []
+    let subscriptionsHasMore = true
+    let subscriptionsStartingAfter: string | undefined = undefined
     
-    const activeSubscriptions = subscriptions.data.filter(
+    while (subscriptionsHasMore) {
+      const subscriptionsResponse = await stripe.subscriptions.list({
+        limit: 100,
+        status: 'all',
+        ...(subscriptionsStartingAfter && { starting_after: subscriptionsStartingAfter }),
+      })
+      
+      allSubscriptions = allSubscriptions.concat(subscriptionsResponse.data)
+      subscriptionsHasMore = subscriptionsResponse.has_more
+      
+      if (subscriptionsResponse.data.length > 0) {
+        subscriptionsStartingAfter = subscriptionsResponse.data[subscriptionsResponse.data.length - 1].id
+      }
+      
+      // Limitar a 1000 suscripciones para evitar timeouts
+      if (allSubscriptions.length >= 1000) {
+        break
+      }
+    }
+    
+    // Ordenar suscripciones por fecha descendente (más recientes primero)
+    allSubscriptions.sort((a, b) => b.created - a.created)
+    
+    const activeSubscriptions = allSubscriptions.filter(
       sub => sub.status === 'active'
     )
     
-    const trialingSubscriptions = subscriptions.data.filter(
+    const trialingSubscriptions = allSubscriptions.filter(
       sub => sub.status === 'trialing'
     )
     
-    const canceledThisMonth = subscriptions.data.filter(
+    const canceledThisMonth = allSubscriptions.filter(
       sub => sub.canceled_at && 
       new Date(sub.canceled_at * 1000) >= startOfMonth
     )
@@ -45,32 +67,83 @@ export async function GET() {
       })
     })
     
-    // PAGOS
-    const charges = await stripe.charges.list({
-      limit: 100,
-      created: {
-        gte: Math.floor(twelveMonthsAgo.getTime() / 1000),
-      },
-    })
+    // PAGOS - Obtener las más recientes primero (sin filtro inicial para asegurar todas las recientes)
+    // Stripe ordena por defecto por fecha descendente
+    let allCharges: Stripe.Charge[] = []
+    let chargesHasMore = true
+    let chargesStartingAfter: string | undefined = undefined
+    const chargesCreatedGte = Math.floor(twelveMonthsAgo.getTime() / 1000)
+    const maxChargesToFetch = 2000 // Obtener más para asegurar que tenemos todas las recientes
     
-    const successfulCharges = charges.data.filter(
+    // Obtener transacciones recientes (las primeras páginas siempre son las más recientes)
+    while (chargesHasMore && allCharges.length < maxChargesToFetch) {
+      const chargesResponse = await stripe.charges.list({
+        limit: 100,
+        ...(chargesStartingAfter && { starting_after: chargesStartingAfter }),
+      })
+      
+      allCharges = allCharges.concat(chargesResponse.data)
+      chargesHasMore = chargesResponse.has_more
+      
+      if (chargesResponse.data.length > 0) {
+        chargesStartingAfter = chargesResponse.data[chargesResponse.data.length - 1].id
+        
+        // Si la última transacción es más antigua que nuestro rango, parar
+        const lastChargeDate = chargesResponse.data[chargesResponse.data.length - 1].created
+        if (lastChargeDate < chargesCreatedGte) {
+          break
+        }
+      }
+    }
+    
+    // Ordenar por fecha descendente (más recientes primero) - asegurar orden correcto
+    allCharges.sort((a, b) => b.created - a.created)
+    
+    // Para cálculos históricos, usar solo las del último año
+    // Pero para transacciones recientes en la tabla, usar todas las obtenidas
+    const chargesForHistory = allCharges.filter(charge => charge.created >= chargesCreatedGte)
+    
+    // Para ingresos totales, usar todas las transacciones obtenidas (no solo del último año)
+    // para incluir todas las recientes
+    const successfulCharges = allCharges.filter(
       charge => charge.status === 'succeeded'
     )
     
+    // Para total revenue, usar todas las transacciones exitosas obtenidas
     const totalRevenue = successfulCharges.reduce(
       (sum, charge) => sum + charge.amount,
       0
     ) / 100
     
-    // REEMBOLSOS
-    const refunds = await stripe.refunds.list({
-      limit: 100,
-      created: {
-        gte: Math.floor(twelveMonthsAgo.getTime() / 1000),
-      },
-    })
+    // REEMBOLSOS - Obtener TODOS con paginación
+    let allRefunds: Stripe.Refund[] = []
+    let refundsHasMore = true
+    let refundsStartingAfter: string | undefined = undefined
+    const refundsCreatedGte = Math.floor(twelveMonthsAgo.getTime() / 1000)
     
-    const successfulRefunds = refunds.data.filter(
+    while (refundsHasMore) {
+      const refundsResponse = await stripe.refunds.list({
+        limit: 100,
+        created: {
+          gte: refundsCreatedGte,
+        },
+        ...(refundsStartingAfter && { starting_after: refundsStartingAfter }),
+      })
+      
+      allRefunds = allRefunds.concat(refundsResponse.data)
+      refundsHasMore = refundsResponse.has_more
+      
+      if (refundsResponse.data.length > 0) {
+        refundsStartingAfter = refundsResponse.data[refundsResponse.data.length - 1].id
+      }
+      
+      // Limitar a 1000 refunds para evitar timeouts
+      if (allRefunds.length >= 1000) {
+        break
+      }
+    }
+    
+    const successfulRefunds = allRefunds.filter(
       refund => refund.status === 'succeeded'
     )
     
@@ -90,7 +163,7 @@ export async function GET() {
       const monthStart = Math.floor(monthDate.getTime() / 1000)
       const monthEnd = Math.floor(new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 0).getTime() / 1000)
       
-      const monthCharges = charges.data.filter(
+      const monthCharges = chargesForHistory.filter(
         charge => charge.created >= monthStart && charge.created <= monthEnd && charge.status === 'succeeded'
       )
       

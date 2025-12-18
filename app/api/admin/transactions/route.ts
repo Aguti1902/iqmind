@@ -10,18 +10,41 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url)
     const search = searchParams.get('search') || ''
     const status = searchParams.get('status') || 'all'
-    const limit = parseInt(searchParams.get('limit') || '100')
+    const requestedLimit = parseInt(searchParams.get('limit') || '100')
+    const actualLimit = Math.min(requestedLimit, 1000) // Máximo 1000 para evitar timeouts
     
-    // Obtener charges
-    const charges = await stripe.charges.list({
-      limit,
-      expand: ['data.customer'],
-    })
+    // Obtener charges con paginación si es necesario
+    let allCharges: Stripe.Charge[] = []
+    let chargesHasMore = true
+    let chargesStartingAfter: string | undefined = undefined
+    
+    while (chargesHasMore && allCharges.length < actualLimit) {
+      const chargesResponse = await stripe.charges.list({
+        limit: Math.min(100, actualLimit - allCharges.length),
+        expand: ['data.customer'],
+        ...(chargesStartingAfter && { starting_after: chargesStartingAfter }),
+      })
+      
+      allCharges = allCharges.concat(chargesResponse.data)
+      chargesHasMore = chargesResponse.has_more
+      
+      if (chargesResponse.data.length > 0) {
+        chargesStartingAfter = chargesResponse.data[chargesResponse.data.length - 1].id
+      }
+      
+      // Si ya tenemos suficientes, parar
+      if (allCharges.length >= actualLimit) {
+        break
+      }
+    }
+    
+    // Ordenar por fecha descendente (más recientes primero) - Stripe ya lo hace por defecto pero asegurémonos
+    allCharges.sort((a, b) => b.created - a.created)
     
     // Filtrar por estado si es necesario
-    let filteredCharges = charges.data
+    let filteredCharges = allCharges
     if (status !== 'all') {
-      filteredCharges = charges.data.filter(charge => charge.status === status)
+      filteredCharges = allCharges.filter(charge => charge.status === status)
     }
     
     // Obtener emails de customers para búsqueda
@@ -79,7 +102,7 @@ export async function GET(req: NextRequest) {
       success: true,
       data: filteredTransactions,
       total: filteredTransactions.length,
-      has_more: charges.has_more,
+      has_more: allCharges.length >= actualLimit && chargesHasMore,
     })
     
   } catch (error: any) {

@@ -10,17 +10,37 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url)
     const search = searchParams.get('search') || ''
     const status = searchParams.get('status') || 'all'
-    const limit = parseInt(searchParams.get('limit') || '100')
+    const requestedLimit = parseInt(searchParams.get('limit') || '100')
+    const actualLimit = Math.min(requestedLimit, 1000) // Máximo 1000 para evitar timeouts
     
-    // Obtener suscripciones
-    const subscriptions = await stripe.subscriptions.list({
-      limit,
-      status: status === 'all' ? undefined : (status as any),
-      expand: ['data.customer'],
-    })
+    // Obtener suscripciones con paginación si es necesario
+    let allSubscriptions: Stripe.Subscription[] = []
+    let subscriptionsHasMore = true
+    let subscriptionsStartingAfter: string | undefined = undefined
+    
+    while (subscriptionsHasMore && allSubscriptions.length < actualLimit) {
+      const subscriptionsResponse = await stripe.subscriptions.list({
+        limit: Math.min(100, actualLimit - allSubscriptions.length),
+        status: status === 'all' ? undefined : (status as any),
+        expand: ['data.customer'],
+        ...(subscriptionsStartingAfter && { starting_after: subscriptionsStartingAfter }),
+      })
+      
+      allSubscriptions = allSubscriptions.concat(subscriptionsResponse.data)
+      subscriptionsHasMore = subscriptionsResponse.has_more
+      
+      if (subscriptionsResponse.data.length > 0) {
+        subscriptionsStartingAfter = subscriptionsResponse.data[subscriptionsResponse.data.length - 1].id
+      }
+      
+      // Si ya tenemos suficientes, parar
+      if (allSubscriptions.length >= actualLimit) {
+        break
+      }
+    }
     
     // Filtrar por búsqueda si existe
-    let filteredSubs = subscriptions.data
+    let filteredSubs = allSubscriptions
     if (search) {
       filteredSubs = subscriptions.data.filter(sub => {
         const customer = sub.customer as Stripe.Customer
@@ -61,7 +81,7 @@ export async function GET(req: NextRequest) {
       success: true,
       data: formattedSubs,
       total: filteredSubs.length,
-      has_more: subscriptions.has_more,
+      has_more: allSubscriptions.length >= actualLimit && subscriptionsHasMore,
     })
     
   } catch (error: any) {
