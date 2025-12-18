@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { sendEmail, emailTemplates } from '@/lib/email-service'
 import { db } from '@/lib/database-postgres'
+import { getStripeConfig } from '@/lib/stripe-config'
 import bcrypt from 'bcryptjs'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -126,8 +127,16 @@ export async function POST(req: NextRequest) {
                     console.log('✅ Customer creado en Stripe:', stripeCustomerId)
                   }
                   
-                  // Obtener el price ID de la base de datos (suscripción mensual por defecto)
-                  const monthlyPriceId = await db.getConfigByKey('stripe_monthly_price_id')
+                  // Obtener configuración de Stripe para el price ID correcto
+                  const stripeConfig = await getStripeConfig()
+                  const monthlyPriceId = stripeConfig.mode === 'test' 
+                    ? stripeConfig.stripe_test_price_id_mensual 
+                    : stripeConfig.stripe_live_price_id_mensual
+                  
+                  console.log('📋 Stripe Config:', {
+                    mode: stripeConfig.mode,
+                    priceId: monthlyPriceId?.substring(0, 20) + '...'
+                  })
                   
                   if (monthlyPriceId) {
                     // Crear suscripción con trial de 30 días
@@ -142,13 +151,24 @@ export async function POST(req: NextRequest) {
                       }
                     })
                     
+                    // Actualizar usuario con info de suscripción
+                    await db.updateUserSubscription(
+                      newUser.id.toString(),
+                      subscription.id,
+                      'trial',
+                      new Date(subscription.trial_end! * 1000),
+                      new Date(subscription.current_period_end * 1000)
+                    )
+                    
                     console.log('✅ Suscripción creada en Stripe:', subscription.id)
+                    console.log('✅ Status:', subscription.status)
                     console.log('📅 Trial hasta:', new Date(subscription.trial_end! * 1000).toISOString())
                   } else {
-                    console.error('❌ No se encontró stripe_monthly_price_id en la configuración')
+                    console.error('❌ No se encontró Price ID mensual en la configuración')
+                    console.error('❌ Mode:', stripeConfig.mode)
                   }
                 } catch (subscriptionError: any) {
-                  console.error('❌ Error creando suscripción en Stripe:', subscriptionError)
+                  console.error('❌ Error creando suscripción en Stripe:', subscriptionError.message)
                   console.error('❌ Stack:', subscriptionError.stack)
                 }
 
