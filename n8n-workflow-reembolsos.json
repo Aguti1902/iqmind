@@ -36,7 +36,7 @@
           "string": [
             {
               "name": "prompt_sistema",
-              "value": "Eres un asistente de atención al cliente de MindMetric especializado en reembolsos.\n\nTu tarea es analizar correos de clientes y extraer información clave.\n\n---\n\n## INFORMACIÓN A EXTRAER:\n\nDebes responder ÚNICAMENTE con un JSON con esta estructura:\n\n{\n  \"email_cliente\": \"email@ejemplo.com\",\n  \"motivo_solicitud\": \"Descripción breve del motivo\",\n  \"tipo_solicitud\": \"REEMBOLSO_INICIAL | REEMBOLSO_SUSCRIPCION | CANCELACION | QUEJA | OTRO\",\n  \"emocion\": \"NEUTRAL | FRUSTRADO | ENOJADO | EDUCADO\",\n  \"cumple_politica\": true | false,\n  \"razon_cumplimiento\": \"Explicación de por qué cumple o no cumple\",\n  \"respuesta_sugerida\": \"Respuesta empática y profesional en español\"\n}\n\n---\n\n## POLÍTICA DE REEMBOLSOS DE MINDMETRIC:\n\n### ⛔ NO REEMBOLSABLE:\n\n**1. PAGO INICIAL (1€):**\n- ⛔ NO es reembolsable bajo NINGUNA circunstancia\n- Razón: Contenido digital ya entregado (resultado del test)\n- SIEMPRE marca cumple_politica como FALSE si solicitan reembolso del pago inicial\n\n### ✅ REEMBOLSOS APROBADOS (SOLO SUSCRIPCIONES):\n\n**2. SUSCRIPCIÓN (9.99€/19.99€):**\nSolo reembolsable si:\n- ✅ Indisponibilidad > 24 horas consecutivas (documentada, NO mantenimiento)\n- ✅ Problemas técnicos verificables (error impide acceso a funciones)\n- ✅ Errores de facturación (doble cargo, monto incorrecto, no autorizado)\n- ✅ Requisito legal (derecho de desistimiento, orden judicial)\n\n### ❌ REEMBOLSOS DENEGADOS:\n\n- ⛔ Pago inicial de 1€ (por cualquier motivo)\n- ⛔ Cambio de opinión / \"Ya no lo necesito\"\n- ⛔ \"Olvidé cancelar antes de renovación\"\n- ⛔ Tiempo de suscripción no utilizado tras cancelación\n- ⛔ \"Es muy caro\" / \"No me gustó\"\n- ⛔ Mantenimiento programado o breve (< 24 horas)\n- ⛔ Rebaja de planes o cambios\n- ⛔ Insatisfacción con resultados del training\n\n### 🔄 CANCELACIONES (Sin Reembolso):\n\n✅ SIEMPRE PERMITIDAS:\n- \"Quiero cancelar mi suscripción\"\n- \"Por favor cancelen mi plan\"\n- \"Dar de baja mi cuenta\"\n- \"No quiero que me cobren más\"\n\nACCIÓN:\n- Marca cumple_politica = true\n- tipo_solicitud = \"CANCELACION\"\n- Cancelar suscripción en Stripe\n- NO generar reembolso\n- Email: Confirmación con fecha de fin de acceso\n\n---\n\n## INSTRUCCIONES FINALES:\n\n1. SIEMPRE responde con JSON válido\n2. SIEMPRE sé empático y profesional\n3. IMPORTANTE: Pago inicial 1€ NUNCA es reembolsable (cumple_politica = false)\n4. Solo suscripciones pueden ser reembolsables (y solo en casos específicos)\n5. Si el email NO es sobre reembolso/cancelación, usa tipo \"OTRO\"\n6. Si falta información, marca cumple_politica como false\n7. La respuesta_sugerida debe ser en el idioma del email recibido"
+              "value": "Eres un asistente de atención al cliente de MindMetric especializado en reembolsos.\n\nTu tarea es analizar correos de clientes y extraer información clave.\n\n---\n\n## INFORMACIÓN A EXTRAER:\n\nDebes responder ÚNICAMENTE con un JSON con esta estructura:\n\n{\n  \"email_cliente\": \"email@ejemplo.com\",\n  \"email_pago\": \"email usado en el pago (si es diferente o se menciona)\",\n  \"motivo_solicitud\": \"Descripción breve del motivo\",\n  \"tipo_solicitud\": \"REEMBOLSO_INICIAL | REEMBOLSO_SUSCRIPCION | CANCELACION | QUEJA | OTRO\",\n  \"emocion\": \"NEUTRAL | FRUSTRADO | ENOJADO | EDUCADO\",\n  \"cumple_politica\": true | false,\n  \"razon_cumplimiento\": \"Explicación de por qué cumple o no cumple\",\n  \"respuesta_sugerida\": \"Respuesta empática y profesional en español\",\n  \"datos_pedido\": {\n    \"fecha_pago\": \"fecha mencionada del pago (formato: YYYY-MM-DD)\",\n    \"monto\": \"monto del pago mencionado\",\n    \"ultimos_4_digitos\": \"últimos 4 dígitos de tarjeta si se mencionan\",\n    \"transaction_id\": \"ID de transacción si se menciona\",\n    \"nombre_titular\": \"nombre del titular de la tarjeta si se menciona\"\n  }\n}\n\nIMPORTANTE:\n- Si el cliente menciona \"pagué con otro email\", extráelo en email_pago\n- Si menciona \"mi email de pago es...\", extráelo en email_pago\n- Busca CUALQUIER dato del pedido que mencione (fecha, monto, tarjeta, etc.)\n- Si no menciona datos_pedido, deja los campos vacíos o null\n\n---\n\n## POLÍTICA DE REEMBOLSOS DE MINDMETRIC:\n\n### ⛔ NO REEMBOLSABLE:\n\n**1. PAGO INICIAL (1€):**\n- ⛔ NO es reembolsable bajo NINGUNA circunstancia\n- Razón: Contenido digital ya entregado (resultado del test)\n- SIEMPRE marca cumple_politica como FALSE si solicitan reembolso del pago inicial\n\n### ✅ REEMBOLSOS APROBADOS (SOLO SUSCRIPCIONES):\n\n**2. SUSCRIPCIÓN (9.99€/19.99€):**\nSolo reembolsable si:\n- ✅ Indisponibilidad > 24 horas consecutivas (documentada, NO mantenimiento)\n- ✅ Problemas técnicos verificables (error impide acceso a funciones)\n- ✅ Errores de facturación (doble cargo, monto incorrecto, no autorizado)\n- ✅ Requisito legal (derecho de desistimiento, orden judicial)\n\n### ❌ REEMBOLSOS DENEGADOS:\n\n- ⛔ Pago inicial de 1€ (por cualquier motivo)\n- ⛔ Cambio de opinión / \"Ya no lo necesito\"\n- ⛔ \"Olvidé cancelar antes de renovación\"\n- ⛔ Tiempo de suscripción no utilizado tras cancelación\n- ⛔ \"Es muy caro\" / \"No me gustó\"\n- ⛔ Mantenimiento programado o breve (< 24 horas)\n- ⛔ Rebaja de planes o cambios\n- ⛔ Insatisfacción con resultados del training\n\n### 🔄 CANCELACIONES (Sin Reembolso):\n\n✅ SIEMPRE PERMITIDAS:\n- \"Quiero cancelar mi suscripción\"\n- \"Por favor cancelen mi plan\"\n- \"Dar de baja mi cuenta\"\n- \"No quiero que me cobren más\"\n\nACCIÓN:\n- Marca cumple_politica = true\n- tipo_solicitud = \"CANCELACION\"\n- Cancelar suscripción en Stripe\n- NO generar reembolso\n- Email: Confirmación con fecha de fin de acceso\n\n---\n\n## INSTRUCCIONES FINALES:\n\n1. SIEMPRE responde con JSON válido\n2. SIEMPRE sé empático y profesional\n3. IMPORTANTE: Pago inicial 1€ NUNCA es reembolsable (cumple_politica = false)\n4. Solo suscripciones pueden ser reembolsables (y solo en casos específicos)\n5. Si el email NO es sobre reembolso/cancelación, usa tipo \"OTRO\"\n6. Si falta información, marca cumple_politica como false\n7. La respuesta_sugerida debe ser en el idioma del email recibido"
             }
           ]
         },
@@ -116,6 +116,16 @@
     },
     {
       "parameters": {
+        "jsCode": "// Obtener datos del análisis de IA\nconst analisisIA = $input.item.json;\n\n// Determinar qué email usar para la búsqueda\nlet emailBusqueda = analisisIA.email_cliente;\n\n// Si el cliente mencionó un email de pago diferente, usarlo\nif (analisisIA.email_pago && analisisIA.email_pago !== analisisIA.email_cliente) {\n  emailBusqueda = analisisIA.email_pago;\n  console.log(`Cliente escribió desde ${analisisIA.email_cliente} pero mencionó email de pago: ${emailBusqueda}`);\n}\n\n// Construir query de búsqueda en Stripe\nconst query = `email:'${emailBusqueda}'`;\n\nreturn {\n  email_busqueda: emailBusqueda,\n  query_stripe: query,\n  tiene_datos_adicionales: !!(analisisIA.datos_pedido?.fecha_pago || analisisIA.datos_pedido?.monto || analisisIA.datos_pedido?.ultimos_4_digitos),\n  ...analisisIA\n};"
+      },
+      "id": "node-preparar-busqueda",
+      "name": "🔧 Preparar Búsqueda Cliente",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1240, 200]
+    },
+    {
+      "parameters": {
         "method": "GET",
         "url": "https://api.stripe.com/v1/customers/search",
         "authentication": "predefinedCredentialType",
@@ -125,7 +135,7 @@
           "parameters": [
             {
               "name": "query",
-              "value": "=email:'{{ $json.email_cliente }}'"
+              "value": "={{ $json.query_stripe }}"
             }
           ]
         },
@@ -135,7 +145,7 @@
       "name": "🔍 Stripe: Buscar Cliente",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
-      "position": [1240, 200],
+      "position": [1440, 200],
       "credentials": {
         "stripeApi": {
           "id": "3",
@@ -159,7 +169,7 @@
       "name": "🔀 ¿Cliente Existe en Stripe?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 1,
-      "position": [1440, 200]
+      "position": [1640, 200]
     },
     {
       "parameters": {
@@ -169,7 +179,7 @@
         "name": "⚖️ Evaluar Política de Reembolso",
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
-        "position": [1640, 100]
+        "position": [1840, 100]
       },
       {
         "parameters": {
@@ -186,7 +196,7 @@
         "name": "🔀 ¿Cumple Política?",
         "type": "n8n-nodes-base.if",
         "typeVersion": 1,
-        "position": [1840, 100]
+        "position": [2040, 100]
       },
       {
         "parameters": {
@@ -196,7 +206,7 @@
         "name": "💳 Preparar Reembolsos",
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
-        "position": [2040, 0]
+        "position": [2240, 0]
       },
       {
         "parameters": {
@@ -235,7 +245,7 @@
         "name": "💰 Stripe: Crear Reembolso",
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4,
-        "position": [2240, 0],
+        "position": [2440, 0],
         "credentials": {
           "stripeApi": {
             "id": "3",
@@ -258,7 +268,7 @@
         "name": "🔀 ¿Tiene Suscripción Activa?",
         "type": "n8n-nodes-base.if",
         "typeVersion": 1,
-        "position": [2440, 0]
+        "position": [2640, 0]
       },
       {
         "parameters": {
@@ -281,7 +291,7 @@
         "name": "🚫 Stripe: Cancelar Suscripción",
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4,
-        "position": [2640, -100],
+        "position": [2840, -100],
         "credentials": {
           "stripeApi": {
             "id": "3",
@@ -302,7 +312,7 @@
         "name": "📤 Email: Reembolso Aprobado",
         "type": "n8n-nodes-base.emailSend",
         "typeVersion": 2,
-        "position": [2840, 0],
+        "position": [3040, 0],
         "credentials": {
           "smtp": {
             "id": "4",
@@ -323,7 +333,7 @@
         "name": "📤 Email: Reembolso Denegado",
         "type": "n8n-nodes-base.emailSend",
         "typeVersion": 2,
-        "position": [2840, 200],
+        "position": [3040, 200],
         "credentials": {
           "smtp": {
             "id": "4",
@@ -337,14 +347,14 @@
           "toEmail": "={{ $('📧 Gmail: Recibir Solicitud').item.json.from }}",
           "subject": "=Re: {{ $('📧 Gmail: Recibir Solicitud').item.json.subject }}",
           "emailType": "html",
-          "message": "=<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <style>\n    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }\n    .container { max-width: 600px; margin: 0 auto; padding: 20px; }\n    .header { background: linear-gradient(135deg, #113240 0%, #052547 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }\n    .content { background: white; padding: 30px; border: 1px solid #e0e0e0; border-top: none; }\n    .warning-box { background: #f8d7da; border-left: 4px solid #dc3545; padding: 15px; margin: 20px 0; border-radius: 5px; }\n    .footer { background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; border-radius: 0 0 10px 10px; }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <div class=\"header\">\n      <h1>❌ Cliente No Encontrado</h1>\n    </div>\n    <div class=\"content\">\n      <p>Hola,</p>\n      \n      <div class=\"warning-box\">\n        <p><strong>No encontramos tu cuenta en nuestro sistema.</strong></p>\n      </div>\n      \n      <p>Para procesar tu solicitud, necesitamos que verifiques la siguiente información:</p>\n      <ul>\n        <li>¿Usaste este mismo email para registrarte?</li>\n        <li>¿El pago fue procesado correctamente?</li>\n        <li>¿Tienes el recibo de Stripe?</li>\n      </ul>\n      \n      <p>Por favor, responde a este correo con:</p>\n      <ol>\n        <li>El email usado en el pago</li>\n        <li>Fecha aproximada del pago</li>\n        <li>Captura del recibo (si la tienes)</li>\n      </ol>\n      \n      <p>Te ayudaremos a resolver esto lo antes posible.</p>\n      \n      <p>Atentamente,<br><strong>Equipo de MindMetric</strong></p>\n    </div>\n    <div class=\"footer\">\n      <p>MindMetric | <a href=\"https://mindmetric.io\">mindmetric.io</a></p>\n      <p>support@mindmetric.io</p>\n    </div>\n  </div>\n</body>\n</html>",
+          "message": "=<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <style>\n    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }\n    .container { max-width: 600px; margin: 0 auto; padding: 20px; }\n    .header { background: linear-gradient(135deg, #113240 0%, #052547 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }\n    .content { background: white; padding: 30px; border: 1px solid #e0e0e0; border-top: none; }\n    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 5px; }\n    .info-box { background: #e7f3ff; border-left: 4px solid #2196F3; padding: 15px; margin: 20px 0; border-radius: 5px; }\n    .footer { background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; border-radius: 0 0 10px 10px; }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <div class=\"header\">\n      <h1>🔍 Información Adicional Requerida</h1>\n    </div>\n    <div class=\"content\">\n      <p>Hola,</p>\n      \n      <div class=\"warning-box\">\n        <p><strong>⚠️ No encontramos tu cuenta con el email: {{ $('🔧 Preparar Búsqueda Cliente').item.json.email_busqueda }}</strong></p>\n      </div>\n      \n      <p>Para procesar tu solicitud, necesitamos verificar algunos datos de tu pedido.</p>\n      \n      <div class=\"info-box\">\n        <p><strong>📋 Por favor, responde a este correo proporcionando:</strong></p>\n        <ol style=\"margin: 10px 0; padding-left: 20px;\">\n          <li><strong>Email usado en el pago</strong> (si es diferente a {{ $('📧 Gmail: Recibir Solicitud').item.json.from }})</li>\n          <li><strong>Fecha aproximada del pago</strong> (día/mes/año)</li>\n          <li><strong>Monto del pago</strong> (1€, 9.99€ o 19.99€)</li>\n          <li><strong>Últimos 4 dígitos de la tarjeta</strong> usada</li>\n          <li><strong>Nombre del titular</strong> de la tarjeta (opcional)</li>\n        </ol>\n      </div>\n      \n      <p><strong>💡 También puedes adjuntar:</strong></p>\n      <ul>\n        <li>Captura del recibo de Stripe</li>\n        <li>Email de confirmación de pago</li>\n        <li>Extracto bancario (ocultando datos sensibles)</li>\n      </ul>\n      \n      <p>Con esta información podremos localizar tu pedido y procesar tu solicitud rápidamente.</p>\n      \n      <p><strong>Nota:</strong> Si escribiste desde un email diferente al de tu compra, es normal que no te encontremos. Simplemente proporciona el email correcto y te ayudaremos.</p>\n      \n      <p>Atentamente,<br><strong>Equipo de MindMetric</strong></p>\n    </div>\n    <div class=\"footer\">\n      <p>MindMetric | <a href=\"https://mindmetric.io\">mindmetric.io</a></p>\n      <p>support@mindmetric.io</p>\n      <p style=\"margin-top: 10px; font-size: 11px; color: #999;\">Responde a este correo con la información solicitada</p>\n    </div>\n  </div>\n</body>\n</html>",
           "options": {}
         },
         "id": "node-email-no-encontrado",
         "name": "📤 Email: Cliente No Encontrado",
         "type": "n8n-nodes-base.emailSend",
         "typeVersion": 2,
-        "position": [1640, 300],
+        "position": [1840, 300],
         "credentials": {
           "smtp": {
             "id": "4",
@@ -423,7 +433,7 @@
         "main": [
           [
             {
-              "node": "🔍 Stripe: Buscar Cliente",
+              "node": "🔧 Preparar Búsqueda Cliente",
               "type": "main",
               "index": 0
             }
@@ -431,6 +441,17 @@
           [
             {
               "node": "📤 Email: Respuesta Genérica",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "🔧 Preparar Búsqueda Cliente": {
+        "main": [
+          [
+            {
+              "node": "🔍 Stripe: Buscar Cliente",
               "type": "main",
               "index": 0
             }
