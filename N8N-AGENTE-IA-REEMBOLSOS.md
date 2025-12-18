@@ -62,9 +62,26 @@ Sistema completo de automatización para gestionar solicitudes de cancelación y
 
 ---
 
-## 📜 POLÍTICA DE REEMBOLSOS (PARA IA)
+## 📜 POLÍTICA DE REEMBOLSOS Y CANCELACIONES (PARA IA)
 
 Esta es la política que el agente de IA usará para tomar decisiones:
+
+### 🔄 IMPORTANTE: CANCELACIÓN vs REEMBOLSO
+
+```
+CANCELACIÓN:
+- Cliente quiere terminar suscripción
+- NO pide dinero de vuelta
+- SIEMPRE permitida
+- Sin penalización
+- Mantiene acceso hasta fin de período
+
+REEMBOLSO:
+- Cliente quiere dinero de vuelta
+- Requiere evaluación de política
+- Solo en casos específicos
+- Puede incluir cancelación
+```
 
 ### ❌ PAGO INICIAL NO REEMBOLSABLE
 
@@ -119,6 +136,48 @@ Esta es la política que el agente de IA usará para tomar decisiones:
 
 ---
 
+### 🔄 CANCELACIONES (Sin Reembolso)
+
+#### **Cancelación Simple - SIEMPRE PERMITIDA**
+
+**Criterios:**
+- ✅ Cliente solo quiere terminar la suscripción
+- ✅ NO solicita reembolso
+- ✅ Sin preguntas ni requisitos
+- ✅ Procesamiento inmediato
+
+**ACCIÓN:**
+- Cancelar suscripción en Stripe inmediatamente
+- Cliente mantiene acceso hasta fin del período pagado
+- Email: Confirmación de cancelación con fecha de fin de acceso
+- NO se genera reembolso
+- NO se requiere evaluación de política
+
+**Ejemplos de Cancelación:**
+```
+✅ "Quiero cancelar mi suscripción"
+✅ "Por favor cancelen mi plan"
+✅ "Dar de baja mi cuenta"
+✅ "No quiero que me cobren más"
+✅ "Terminar mi suscripción"
+```
+
+**Email de Respuesta:**
+```
+✅ Confirmación de Cancelación
+
+Su suscripción ha sido cancelada exitosamente.
+
+Detalles:
+• Fecha de cancelación: [HOY]
+• Acceso hasta: [FIN DE PERÍODO]
+• No habrá más cargos
+
+Puede seguir usando el servicio hasta el [FECHA].
+```
+
+---
+
 ### ❌ CASOS NO REEMBOLSABLES
 
 **⛔ RECHAZAR REEMBOLSO SI:**
@@ -127,40 +186,47 @@ Esta es la política que el agente de IA usará para tomar decisiones:
    - *"Pagué 1€ pero no me gustó el resultado"*
    - *"Quiero mi dinero de vuelta del test"*
    - **NO ES REEMBOLSABLE - Contenido digital ya entregado**
+   - **Acción:** Explicar política + ofrecer soporte
 
 2. ⛔ **Tiempo de suscripción no utilizado tras cancelación**
    - *"Cancelé pero quedan 15 días, quiero reembolso proporcional"*
    - **Política:** Mantiene acceso hasta fin del período pagado
+   - **Acción:** Explicar que el acceso continúa hasta [FECHA]
 
 3. ⛔ **Cambio de opinión**
    - *"Ya no necesito el servicio"*
    - *"Era muy caro"*
    - *"No me gustó"*
    - *"Encontré una alternativa mejor"*
+   - **Acción:** Ofrecer cancelación inmediata (sin reembolso)
 
 4. ⛔ **Olvidó cancelar antes de renovación**
    - *"Olvidé cancelar y se renovó automáticamente"*
    - *"No sabía que se renovaba"*
    - **Responsabilidad del usuario gestionar suscripción**
+   - **Acción:** Cancelar ahora para evitar futuros cargos
 
 5. ⛔ **Rebaja de planes o cambios**
    - *"Cambié a plan más barato, quiero reembolso de diferencia"*
    - *"Quiero bajar de plan y recuperar dinero"*
+   - **Acción:** Explicar que el cambio aplica en siguiente ciclo
 
 6. ⛔ **Mantenimiento programado o breve**
    - *"No pude acceder ayer por 2 horas"*
    - *"Hubo mantenimiento el fin de semana"*
    - **Solo > 24 horas y NO programado**
+   - **Acción:** Explicar política + ofrecer cancelación si desea
 
 7. ⛔ **Insatisfacción con resultados**
    - *"El training no me funcionó"*
    - *"No mejoró mi CI"*
    - **Servicio de entretenimiento educativo, sin garantías**
+   - **Acción:** Ofrecer cancelación + soporte técnico
 
-**ACCIÓN ANTE RECHAZO:**
+**ACCIÓN ANTE RECHAZO DE REEMBOLSO:**
 - NO procesar reembolso
 - Explicar política claramente
-- Ofrecer cancelación inmediata (sin reembolso)
+- **SIEMPRE ofrecer cancelación inmediata** (sin reembolso)
 - Ofrecer soporte técnico si hay problemas reales
 - Email: Explicación empática pero firme
 
@@ -495,6 +561,22 @@ Solo reembolsable si:
   "cumple_politica": false,
   "razon_cumplimiento": "'Olvidar cancelar antes de renovación' no es elegible para reembolso según nuestra política",
   "respuesta_sugerida": "Hola, entendemos tu situación. Sin embargo, según nuestra política de reembolsos, las renovaciones automáticas no son reembolsables si no se cancelaron antes de la fecha de renovación. Es responsabilidad del usuario gestionar su suscripción. Hemos procedido a cancelar tu suscripción para evitar futuros cargos. Puedes seguir usando el servicio hasta el final del período ya pagado. Gracias por tu comprensión."
+}
+
+---
+
+**Email 4:**
+"Quiero cancelar mi suscripción, por favor."
+
+**Respuesta:**
+{
+  "email_cliente": "extraer_del_email",
+  "motivo_solicitud": "Solicitud de cancelación sin reembolso",
+  "tipo_solicitud": "CANCELACION",
+  "emocion": "EDUCADO",
+  "cumple_politica": true,
+  "razon_cumplimiento": "Solicitud de cancelación - siempre permitida",
+  "respuesta_sugerida": "Hola, hemos procesado tu solicitud de cancelación. Tu suscripción ha sido cancelada exitosamente y no habrá más cargos. Puedes seguir disfrutando del servicio hasta el final del período actual que ya has pagado. Si en el futuro deseas reactivar tu cuenta, estaremos encantados de ayudarte. ¡Gracias por haber sido parte de MindMetric!"
 }
 
 ---

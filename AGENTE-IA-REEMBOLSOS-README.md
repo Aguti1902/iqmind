@@ -146,7 +146,33 @@ Devuélvanme el dinero.
 
 ---
 
-### ✅ Caso 3: Reembolso VÁLIDO (Problema Técnico)
+### 🔄 Caso 3: Cancelación Simple (Sin Reembolso)
+
+**Email de prueba:**
+```
+Para: support@mindmetric.io
+Asunto: Cancelar suscripción
+
+Hola,
+
+Quiero cancelar mi suscripción.
+
+No quiero que me cobren más.
+
+Gracias.
+```
+
+**Resultado esperado:**
+- ✅ IA detecta: CANCELACION
+- ✅ Evalúa: cumple_politica = true (siempre permitida)
+- 🚫 Cancela suscripción en Stripe
+- ❌ NO crea reembolso
+- ✅ Envía email confirmando cancelación
+- ✅ Informa fecha de fin de acceso
+
+---
+
+### ✅ Caso 4: Reembolso VÁLIDO (Problema Técnico)
 
 **Email de prueba:**
 ```

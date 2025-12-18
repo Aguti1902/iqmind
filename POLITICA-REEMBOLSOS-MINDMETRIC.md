@@ -14,12 +14,131 @@
 ║                                                          ║
 ║  ✅ SUSCRIPCIONES: SÍ REEMBOLSABLES (casos específicos)  ║
 ║                                                          ║
+║  🔄 CANCELACIONES: SIEMPRE PERMITIDAS (sin reembolso)    ║
+║                                                          ║
 ╚══════════════════════════════════════════════════════════╝
 ```
 
 ---
 
-## ⛔ 1. PAGO INICIAL (1€) - NO REEMBOLSABLE
+## 🔄 CANCELACIÓN vs REEMBOLSO
+
+### Diferencias Importantes
+
+```
+CANCELACIÓN:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✓ Cliente solo quiere terminar la suscripción
+✓ NO solicita dinero de vuelta
+✓ SIEMPRE permitida (sin excepciones)
+✓ Sin penalización
+✓ Procesamiento inmediato
+✓ Mantiene acceso hasta fin de período pagado
+✓ No habrá más cargos futuros
+
+REEMBOLSO:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✓ Cliente quiere dinero de vuelta
+✓ Requiere evaluación de política
+✓ Solo en casos específicos
+✓ Puede incluir cancelación de suscripción
+✓ Procesamiento condicional
+```
+
+---
+
+## 🔄 1. CANCELACIONES (Sin Reembolso) - SIEMPRE PERMITIDAS
+
+### Descripción
+
+Las cancelaciones de suscripción **SIEMPRE están permitidas**, sin preguntas ni requisitos. Es el derecho básico del usuario.
+
+### Criterios
+
+```
+✅ SIEMPRE PERMITIDA si:
+   - Cliente solo quiere terminar la suscripción
+   - NO solicita reembolso
+   - Comunicación por canal oficial (support@mindmetric.io)
+```
+
+### Proceso de Cancelación
+
+```
+1. Cliente solicita cancelación
+   ↓
+2. Sistema cancela suscripción inmediatamente en Stripe
+   ↓
+3. Cliente recibe confirmación por email
+   ↓
+4. Cliente mantiene acceso hasta fin del período pagado
+   ↓
+5. No habrá más cargos futuros
+```
+
+### ✅ Ejemplos de Solicitudes de Cancelación
+
+```
+✅ "Quiero cancelar mi suscripción"
+✅ "Por favor cancelen mi plan"
+✅ "Dar de baja mi cuenta"
+✅ "No quiero que me cobren más"
+✅ "Terminar mi suscripción"
+✅ "Quiero darme de baja"
+✅ "Cancelar renovación automática"
+```
+
+### 📧 Email de Confirmación de Cancelación
+
+```
+Asunto: ✅ Suscripción Cancelada
+
+Hola [Nombre],
+
+Tu suscripción ha sido cancelada exitosamente.
+
+DETALLES:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+• Plan: [PLAN] (9.99€ o 19.99€)
+• Fecha de cancelación: [HOY]
+• Acceso hasta: [FIN DE PERÍODO]
+• Último cargo: [FECHA ÚLTIMO CARGO]
+• Próximo cargo: Ninguno ✓
+
+IMPORTANTE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+• Puedes seguir usando el servicio hasta el [FECHA]
+• No habrá más cargos a tu tarjeta
+• Tu cuenta permanecerá activa (sin acceso premium)
+
+Si en el futuro deseas reactivar tu suscripción, 
+puedes hacerlo fácilmente desde tu cuenta.
+
+¡Gracias por haber sido parte de MindMetric!
+
+Atentamente,
+Equipo de MindMetric
+```
+
+### ⚠️ Importante: NO HAY REEMBOLSO
+
+```
+La cancelación NO incluye reembolso del tiempo no utilizado.
+
+Ejemplo:
+- Cliente pagó 19.99€ el 1 de enero
+- Cancela el 15 de enero
+- Quedan 16 días del período
+
+Resultado:
+✓ Cancelación procesada
+✓ Mantiene acceso hasta 31 de enero
+✗ NO hay reembolso de los 16 días no usados
+```
+
+---
+
+## ⛔ 2. PAGO INICIAL (1€) - NO REEMBOLSABLE
 
 ### Descripción
 
