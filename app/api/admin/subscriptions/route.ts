@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
     let subscriptionsStartingAfter: string | undefined = undefined
     
     while (subscriptionsHasMore && allSubscriptions.length < actualLimit) {
-      const subscriptionsResponse = await stripe.subscriptions.list({
+      const subscriptionsResponse: Stripe.Response<Stripe.ApiList<Stripe.Subscription>> = await stripe.subscriptions.list({
         limit: Math.min(100, actualLimit - allSubscriptions.length),
         status: status === 'all' ? undefined : (status as any),
         expand: ['data.customer'],
@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
     // Filtrar por búsqueda si existe
     let filteredSubs = allSubscriptions
     if (search) {
-      filteredSubs = subscriptions.data.filter(sub => {
+      filteredSubs = allSubscriptions.filter(sub => {
         const customer = sub.customer as Stripe.Customer
         const email = customer.email || ''
         const customerId = typeof sub.customer === 'string' ? sub.customer : customer.id
