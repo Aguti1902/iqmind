@@ -78,9 +78,8 @@ export async function POST(request: NextRequest) {
     
     console.log('👤 Customer:', customer.id, '-', customer.name, '-', customer.email)
 
-    // ESTRATEGIA DE DOBLE PAGO: Crear 2 Payment Intents de €0.50 cada uno
-    // Total: €1.00 pero procesado como 2 transacciones separadas
-    // Beneficios: Más ventas en Stripe + Menor tasa de disputas
+    // PAGO ÚNICO: Un solo Payment Intent de €1.00
+    // Esto cumple con las políticas de Stripe al requerir consentimiento explícito del cliente
     
     const metadata = {
       userEmail: email,
@@ -94,57 +93,32 @@ export async function POST(request: NextRequest) {
       testCompletedAt: testData?.completedAt || '',
     }
 
-    // Primer pago de €0.50
-    const paymentIntent1 = await stripe.paymentIntents.create({
+    // Pago único de €1.00
+    const paymentIntent = await stripe.paymentIntents.create({
       customer: customer.id,
-      amount: 50, // €0.50 en centavos
+      amount: 100, // €1.00 en centavos
       currency: 'eur',
       automatic_payment_methods: {
         enabled: true,
       },
-      description: `${userName || customer.name || email.split('@')[0]} - Desbloqueo Test IQ (1/2)`,
-      statement_descriptor_suffix: 'IQ Test 1/2',
+      description: `${userName || customer.name || email.split('@')[0]} - Desbloqueo Test IQ`,
+      statement_descriptor_suffix: 'IQ Test',
       receipt_email: email,
       metadata: {
         ...metadata,
-        paymentPart: '1',
-        totalParts: '2',
         customerName: userName || customer.name || '',
       },
       setup_future_usage: 'off_session',
     })
 
-    // Segundo pago de €0.50
-    const paymentIntent2 = await stripe.paymentIntents.create({
-      customer: customer.id,
-      amount: 50, // €0.50 en centavos
-      currency: 'eur',
-      automatic_payment_methods: {
-        enabled: true,
-      },
-      description: `${userName || customer.name || email.split('@')[0]} - Desbloqueo Test IQ (2/2)`,
-      statement_descriptor_suffix: 'IQ Test 2/2',
-      receipt_email: email,
-      metadata: {
-        ...metadata,
-        paymentPart: '2',
-        totalParts: '2',
-        linkedPayment: paymentIntent1.id, // Vincular ambos pagos
-        customerName: userName || customer.name || '',
-      },
-      setup_future_usage: 'off_session',
-    })
-
-    console.log('✅ Dos Payment Intents creados:')
-    console.log('   💳 Pago 1:', paymentIntent1.id)
-    console.log('   💳 Pago 2:', paymentIntent2.id)
+    console.log('✅ Payment Intent creado:')
+    console.log('   💳 Pago:', paymentIntent.id)
+    console.log('   💰 Monto: €1.00')
 
     return NextResponse.json({
-      clientSecret: paymentIntent1.client_secret,
-      clientSecret2: paymentIntent2.client_secret,
+      clientSecret: paymentIntent.client_secret,
       customerId: customer.id,
-      paymentIntentId1: paymentIntent1.id,
-      paymentIntentId2: paymentIntent2.id,
+      paymentIntentId: paymentIntent.id,
     })
 
   } catch (error: any) {
