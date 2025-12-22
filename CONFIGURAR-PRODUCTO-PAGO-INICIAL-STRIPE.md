@@ -145,7 +145,7 @@ ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
 ### 4. Verificar que se Creó la Suscripción
 1. Ve a: **Subscriptions** en Stripe Dashboard
 2. Deberías ver una nueva suscripción en estado **"Trialing"**
-3. Trial end date: 30 días desde ahora
+3. Trial end date: 15 días desde ahora
 4. Customer: El mismo del pago anterior
 
 ---

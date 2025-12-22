@@ -11,7 +11,7 @@ Para que la aplicación funcione correctamente, necesitas configurar los siguien
 ### 1. `payment_intent.succeeded`
 **¿Qué hace?**
 - Se dispara cuando un cliente completa exitosamente el pago de €1
-- Crea automáticamente la suscripción con trial de 30 días
+- Crea automáticamente la suscripción con trial de 15 días
 - Envía email de bienvenida con credenciales de acceso
 - Guarda el resultado del test en la base de datos
 

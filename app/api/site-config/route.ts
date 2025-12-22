@@ -12,7 +12,7 @@ export async function GET() {
     const publicConfig = {
       payment_provider: 'stripe', // Siempre Stripe
       payment_mode: config.payment_mode || 'test',
-      trial_days: parseInt(config.trial_days || '30'),
+      trial_days: parseInt(config.trial_days || '15'),
       subscription_price: parseFloat(config.subscription_price || '9.99'),
       initial_payment: parseFloat(config.initial_payment || '0.50'),
       stripe_mode: config.stripe_mode || 'production' // Mantener por compatibilidad
@@ -33,7 +33,7 @@ export async function GET() {
       config: {
         payment_provider: 'stripe',
         payment_mode: 'test',
-        trial_days: 30,
+        trial_days: 15,
         subscription_price: 9.99,
         initial_payment: 0.50,
         stripe_mode: 'production'

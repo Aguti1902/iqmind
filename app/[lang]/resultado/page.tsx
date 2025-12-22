@@ -60,14 +60,14 @@ export default function ResultadoPage() {
       // Evento de compra general para Google Analytics
       ;(window as any).gtag('event', 'purchase', {
         transaction_id: localStorage.getItem('transactionId'),
-        value: 1.00,
+        value: 0.50,
         currency: 'EUR'
       })
       
       // Evento de conversión para Google Ads
       ;(window as any).gtag('event', 'conversion', {
         'send_to': 'AW-17232820139/qMCRCP_NnK4bEKvvn5lA',
-        'value': 1.00,
+        'value': 0.50,
         'currency': 'EUR',
         'transaction_id': localStorage.getItem('transactionId') || ''
       })
@@ -75,7 +75,7 @@ export default function ResultadoPage() {
 
     if (typeof window !== 'undefined' && (window as any).fbq) {
       ;(window as any).fbq('track', 'Purchase', {
-        value: 1.00,
+        value: 0.50,
         currency: 'EUR'
       })
     }

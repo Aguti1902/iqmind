@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
 
     // 2. Verificar días de trial
     const trialDaysStr = await db.getConfigByKey('trial_days')
-    const trialDays = trialDaysStr ? parseInt(trialDaysStr) : 30
+    const trialDays = trialDaysStr ? parseInt(trialDaysStr) : 15
     results.checks.trial_days = {
       value: trialDays,
       source: trialDaysStr ? 'database' : 'default'

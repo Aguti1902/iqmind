@@ -123,7 +123,7 @@ export async function POST(request: NextRequest) {
 
     // 7. Obtener trial days
     const trialDaysStr = await db.getConfigByKey('trial_days')
-    const trialDays = trialDaysStr ? parseInt(trialDaysStr) : 30
+    const trialDays = trialDaysStr ? parseInt(trialDaysStr) : 15
 
     // 8. Crear suscripción
     results.steps.push(`Creando suscripción con trial de ${trialDays} días...`)
