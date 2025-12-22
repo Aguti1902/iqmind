@@ -78,8 +78,9 @@ export async function POST(request: NextRequest) {
     
     console.log('👤 Customer:', customer.id, '-', customer.name, '-', customer.email)
 
-    // PAGO ÚNICO: Un solo Payment Intent de €1.00
+    // PAGO ÚNICO: Un solo Payment Intent de €0.50
     // Esto cumple con las políticas de Stripe al requerir consentimiento explícito del cliente
+    // Con descripción clara para evitar disputas
     
     const metadata = {
       userEmail: email,
@@ -93,27 +94,30 @@ export async function POST(request: NextRequest) {
       testCompletedAt: testData?.completedAt || '',
     }
 
-    // Pago único de €1.00
+    // Pago único de €0.50 para desbloquear resultado del test
     const paymentIntent = await stripe.paymentIntents.create({
       customer: customer.id,
-      amount: 100, // €1.00 en centavos
+      amount: 50, // €0.50 en centavos
       currency: 'eur',
       automatic_payment_methods: {
         enabled: true,
       },
-      description: `${userName || customer.name || email.split('@')[0]} - Desbloqueo Test IQ`,
-      statement_descriptor_suffix: 'IQ Test',
+      description: `Desbloqueo Resultado Test IQ - ${userName || customer.name || email.split('@')[0]}`,
+      statement_descriptor_suffix: 'Test IQ', // Aparece en el extracto bancario
       receipt_email: email,
       metadata: {
         ...metadata,
         customerName: userName || customer.name || '',
+        product: 'IQ Test Result Unlock',
+        purpose: 'Desbloquear resultado del test de inteligencia',
       },
       setup_future_usage: 'off_session',
     })
 
     console.log('✅ Payment Intent creado:')
     console.log('   💳 Pago:', paymentIntent.id)
-    console.log('   💰 Monto: €1.00')
+    console.log('   💰 Monto: €0.50')
+    console.log('   📝 Descripción: Desbloqueo Resultado Test IQ')
 
     return NextResponse.json({
       clientSecret: paymentIntent.client_secret,

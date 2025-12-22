@@ -29,26 +29,22 @@
 
 ## 2. Productos y Precios en Stripe
 
-### 2.1 Crear el Pago Inicial (€1.00)
+### 2.1 Crear el Pago Inicial (Trial de €0.50)
 
-Este es un pago único para desbloquear el resultado del test y activar el trial de 30 días.
+Este es un pago único para desbloquear el resultado del test.
 
 **No necesitas crear producto en Stripe** - El código actual usa `PaymentIntent` directamente:
 
 ```typescript
 // Ya está implementado en: app/api/create-payment-intent/route.ts
 const paymentIntent = await stripe.paymentIntents.create({
-  amount: 100, // €1.00 en céntimos
+  amount: 50, // €0.50 en céntimos
   currency: 'eur',
   automatic_payment_methods: {
     enabled: true,
   },
-  description: 'Desbloqueo Test IQ',
-  setup_future_usage: 'off_session', // Guarda el método de pago para la suscripción
 })
 ```
-
-**✅ SEGURO Y CONFORME:** El cliente autoriza explícitamente este único pago de €1.00, cumpliendo con las políticas de Stripe.
 
 ### 2.2 Crear Productos de Suscripción
 
@@ -99,7 +95,7 @@ Tu aplicación ya tiene un webhook implementado en `app/api/webhooks/stripe/rout
 
 | Evento | Descripción | Acción en tu App |
 |--------|-------------|------------------|
-| `payment_intent.succeeded` | Pago de €1.00 completado | Desbloquear resultado del test + crear suscripción con trial |
+| `payment_intent.succeeded` | Pago de €0.50 completado | Desbloquear resultado del test |
 | `checkout.session.completed` | Suscripción creada exitosamente | Activar cuenta premium |
 | `customer.subscription.updated` | Cambio en suscripción | Actualizar estado en BD |
 | `customer.subscription.deleted` | Usuario cancela suscripción | Desactivar acceso premium |
@@ -198,16 +194,16 @@ Si despliegas en Vercel:
 
 ## 5. Flujo de Pagos
 
-### 5.1 Flujo del Trial (€1.00)
+### 5.1 Flujo del Trial (€0.50)
 
 ```mermaid
 Usuario completa test
       ↓
-Ve resultado borroso + botón "Desbloquear por €1.00"
+Ve resultado borroso + botón "Desbloquear por €0.50"
       ↓
 Click → /checkout
       ↓
-API: create-payment-intent (crea PaymentIntent de €1.00)
+API: create-payment-intent (crea PaymentIntent de €0.50)
       ↓
 Usuario ingresa tarjeta en Stripe Elements
       ↓
@@ -500,7 +496,7 @@ Antes de lanzar a producción, verifica:
 - [ ] Todas las variables de email configuradas
 
 ### 9.3 Testing
-- [ ] Pago de €1.00 funciona
+- [ ] Pago de €0.50 funciona
 - [ ] Suscripción quincenal se crea correctamente
 - [ ] Suscripción mensual se crea correctamente
 - [ ] Cancelación funciona
@@ -567,7 +563,7 @@ export async function POST(req: NextRequest) {
 
   try {
     switch (event.type) {
-      // 💳 Pago de €1.00 completado (desbloquear resultado + crear suscripción)
+      // 💳 Pago de €0.50 completado (desbloquear resultado)
       case 'payment_intent.succeeded': {
         const paymentIntent = event.data.object as Stripe.PaymentIntent
         console.log('💰 Pago completado:', paymentIntent.id)
