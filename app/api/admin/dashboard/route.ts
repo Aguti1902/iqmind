@@ -22,8 +22,8 @@ export async function GET() {
     
     while (subscriptionsHasMore) {
       const subscriptionsResponse: Stripe.Response<Stripe.ApiList<Stripe.Subscription>> = await stripe.subscriptions.list({
-        limit: 100,
-        status: 'all',
+      limit: 100,
+      status: 'all',
         ...(subscriptionsStartingAfter && { starting_after: subscriptionsStartingAfter }),
       })
       
@@ -80,7 +80,7 @@ export async function GET() {
     // Obtener transacciones recientes (las primeras páginas siempre son las más recientes)
     while (chargesHasMore && allCharges.length < maxChargesToFetch) {
       const chargesResponse: Stripe.Response<Stripe.ApiList<Stripe.Charge>> = await stripe.charges.list({
-        limit: 100,
+      limit: 100,
         ...(chargesStartingAfter && { starting_after: chargesStartingAfter }),
       })
       
@@ -125,8 +125,8 @@ export async function GET() {
     
     while (refundsHasMore) {
       const refundsResponse: Stripe.Response<Stripe.ApiList<Stripe.Refund>> = await stripe.refunds.list({
-        limit: 100,
-        created: {
+      limit: 100,
+      created: {
           gte: refundsCreatedGte,
         },
         ...(refundsStartingAfter && { starting_after: refundsStartingAfter }),

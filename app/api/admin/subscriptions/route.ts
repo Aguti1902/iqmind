@@ -23,8 +23,8 @@ export async function GET(req: NextRequest) {
     while (subscriptionsHasMore && allSubscriptions.length < actualLimit) {
       const subscriptionsResponse: Stripe.Response<Stripe.ApiList<Stripe.Subscription>> = await stripe.subscriptions.list({
         limit: Math.min(100, actualLimit - allSubscriptions.length),
-        status: status === 'all' ? undefined : (status as any),
-        expand: ['data.customer'],
+      status: status === 'all' ? undefined : (status as any),
+      expand: ['data.customer'],
         ...(subscriptionsStartingAfter && { starting_after: subscriptionsStartingAfter }),
       })
       

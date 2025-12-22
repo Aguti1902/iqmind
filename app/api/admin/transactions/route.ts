@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
     while (chargesHasMore && allCharges.length < actualLimit) {
       const chargesResponse: Stripe.Response<Stripe.ApiList<Stripe.Charge>> = await stripe.charges.list({
         limit: Math.min(100, actualLimit - allCharges.length),
-        expand: ['data.customer'],
+      expand: ['data.customer'],
         ...(chargesStartingAfter && { starting_after: chargesStartingAfter }),
       })
       
