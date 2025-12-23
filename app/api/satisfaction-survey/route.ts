@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
     const surveys = await db.getSatisfactionSurveys()
     const totalSurveys = surveys.length
     const averageScore = surveys.length > 0
-      ? (surveys.reduce((sum: number, s: any) => sum + s.score, 0) / surveys.length).toFixed(2)
+      ? parseFloat((surveys.reduce((sum: number, s: any) => sum + s.score, 0) / surveys.length).toFixed(2))
       : 0
 
     // Distribución por puntuación
@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
       surveys,
       stats: {
         total: totalSurveys,
-        average: parseFloat(averageScore),
+        average: averageScore,
         distribution,
         nps: {
           score: nps,
