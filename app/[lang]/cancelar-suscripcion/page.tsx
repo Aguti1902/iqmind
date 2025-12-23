@@ -6,6 +6,7 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import { useTranslations } from '@/hooks/useTranslations'
 import { FaUserCircle, FaEnvelope, FaTimesCircle } from 'react-icons/fa'
+import SubscriptionCancelFlow from '@/components/SubscriptionCancelFlow'
 
 export default function CancelarSuscripcionPage() {
   const { t, loading, lang } = useTranslations()
@@ -18,9 +19,23 @@ export default function CancelarSuscripcionPage() {
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [error, setError] = useState('')
   const [endDate, setEndDate] = useState('')
+  const [showCancelFlow, setShowCancelFlow] = useState(false)
+  const [cancelFlowSuccess, setCancelFlowSuccess] = useState(false)
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Validar que los campos estén completos
+    if (!formData.email || !formData.fullName) {
+      setError('Por favor completa todos los campos requeridos')
+      return
+    }
+    
+    // En lugar de cancelar directamente, mostrar el flujo de retención
+    setShowCancelFlow(true)
+  }
+
+  const handleConfirmCancel = async () => {
     setIsSubmitting(true)
     setError('')
 
@@ -47,17 +62,59 @@ export default function CancelarSuscripcionPage() {
 
       // Guardar la fecha de finalización
       setEndDate(data.endDate)
-      setIsSubmitted(true)
+      setCancelFlowSuccess(true)
       setIsSubmitting(false)
 
       // Limpiar localStorage
       localStorage.removeItem('paymentCompleted')
       localStorage.removeItem('subscriptionId')
 
+      // El modal manejará la redirección a Trustpilot
+
     } catch (error) {
       console.error('Error al cancelar suscripción:', error)
       setError('Error al procesar la solicitud. Por favor, intenta de nuevo.')
       setIsSubmitting(false)
+    }
+  }
+
+  const handleAcceptDiscount = async () => {
+    try {
+      const response = await fetch('/api/apply-retention-discount', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          discountPercent: 50,
+          durationMonths: 3
+        })
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        // Cerrar el modal y mostrar mensaje de éxito
+        setShowCancelFlow(false)
+        setIsSubmitted(true)
+        setEndDate('') // No hay fecha de cancelación porque mantuvieron la suscripción
+      } else {
+        setError(data.error || 'Error al aplicar el descuento')
+      }
+    } catch (error) {
+      console.error('Error aplicando descuento:', error)
+      setError('Error de conexión. Por favor intenta de nuevo.')
+    }
+  }
+
+  const handleCloseCancelFlow = () => {
+    setShowCancelFlow(false)
+    setCancelFlowSuccess(false)
+    
+    // Si la cancelación fue exitosa, marcar como submitted
+    if (cancelFlowSuccess) {
+      setIsSubmitted(true)
     }
   }
 
@@ -84,34 +141,51 @@ export default function CancelarSuscripcionPage() {
   }
 
   if (isSubmitted) {
+    // Si endDate está vacío, significa que aceptaron el descuento
+    const acceptedDiscount = !endDate
+    
     return (
       <>
         <Header />
         <div className="min-h-screen bg-gradient-to-br from-primary-50 to-white py-20">
           <div className="container-custom max-w-2xl">
             <div className="bg-white rounded-2xl shadow-2xl p-12 text-center">
-              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <FaTimesCircle className="text-4xl text-green-600" />
+              <div className={`w-20 h-20 ${acceptedDiscount ? 'bg-green-100' : 'bg-blue-100'} rounded-full flex items-center justify-center mx-auto mb-6`}>
+                <FaTimesCircle className={`text-4xl ${acceptedDiscount ? 'text-green-600' : 'text-blue-600'}`} />
               </div>
               
               <h1 className="text-3xl font-bold text-gray-900 mb-4">
-                {t.cancel.successTitle}
+                {acceptedDiscount ? '¡Genial! Descuento Aplicado' : t.cancel.successTitle}
               </h1>
               
               <p className="text-xl text-gray-600 mb-8">
-                {t.cancel.successMessage}
+                {acceptedDiscount 
+                  ? 'Has aceptado el descuento del 50% durante 3 meses. ¡Gracias por quedarte con nosotros!' 
+                  : t.cancel.successMessage
+                }
               </p>
 
-              <div className="bg-blue-50 border-l-4 border-blue-500 p-6 mb-8 text-left">
-                <p className="text-gray-700 mb-2">
-                  <strong>{t.cancel.successInfo}</strong>
-                </p>
-                {endDate && (
-                  <p className="text-gray-700">
-                    <strong>Fecha de finalización de tu suscripción:</strong> {endDate}
+              {acceptedDiscount ? (
+                <div className="bg-green-50 border-l-4 border-green-500 p-6 mb-8 text-left">
+                  <p className="text-gray-700 mb-2">
+                    <strong>🎉 Tu descuento ha sido aplicado</strong>
                   </p>
-                )}
-              </div>
+                  <p className="text-gray-700">
+                    A partir de tu próxima factura, disfrutarás de un 50% de descuento durante 3 meses.
+                  </p>
+                </div>
+              ) : (
+                <div className="bg-blue-50 border-l-4 border-blue-500 p-6 mb-8 text-left">
+                  <p className="text-gray-700 mb-2">
+                    <strong>{t.cancel.successInfo}</strong>
+                  </p>
+                  {endDate && (
+                    <p className="text-gray-700">
+                      <strong>Fecha de finalización de tu suscripción:</strong> {endDate}
+                    </p>
+                  )}
+                </div>
+              )}
 
               <a
                 href={`/${lang}`}
@@ -264,6 +338,17 @@ export default function CancelarSuscripcionPage() {
       </div>
 
       <Footer />
+
+      {/* Modal de flujo de cancelación con upsell */}
+      <SubscriptionCancelFlow
+        isOpen={showCancelFlow}
+        onClose={handleCloseCancelFlow}
+        onConfirm={handleConfirmCancel}
+        onAcceptDiscount={handleAcceptDiscount}
+        loading={isSubmitting}
+        success={cancelFlowSuccess}
+        error={error}
+      />
     </>
   )
 }

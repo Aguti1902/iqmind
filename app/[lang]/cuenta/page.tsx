@@ -9,7 +9,7 @@ import { FaUser, FaEnvelope, FaCrown, FaCalendar, FaBrain, FaTrophy, FaChartLine
 import { useTranslations } from '@/hooks/useTranslations'
 import { getTestHistory, getTestStatistics, getEvolutionData } from '@/lib/test-history'
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
-import SubscriptionModal from '@/components/SubscriptionModal'
+import SubscriptionCancelFlow from '@/components/SubscriptionCancelFlow'
 import AchievementBadges from '@/components/AchievementBadges'
 import AllTestsComparison from '@/components/AllTestsComparison'
 
@@ -44,6 +44,7 @@ export default function CuentaPage() {
   const [subscriptionLoading, setSubscriptionLoading] = useState(false)
   const [subscriptionSuccess, setSubscriptionSuccess] = useState(false)
   const [subscriptionError, setSubscriptionError] = useState('')
+  const [applyingDiscount, setApplyingDiscount] = useState(false)
 
   useEffect(() => {
     const loadUserData = async () => {
@@ -192,6 +193,41 @@ export default function CuentaPage() {
     setShowSubscriptionModal(true)
     setSubscriptionSuccess(false)
     setSubscriptionError('')
+  }
+
+  const handleAcceptDiscount = async () => {
+    setApplyingDiscount(true)
+    
+    try {
+      const token = localStorage.getItem('auth_token')
+      const response = await fetch('/api/apply-retention-discount', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` })
+        },
+        body: JSON.stringify({
+          email: userData.email,
+          discountPercent: 50,
+          durationMonths: 3
+        })
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        // Mostrar mensaje de éxito
+        alert('¡Descuento aplicado! Tu próxima factura tendrá un 50% de descuento durante 3 meses.')
+        setShowSubscriptionModal(false)
+      } else {
+        alert(data.error || 'Error al aplicar el descuento. Por favor contacta con soporte.')
+      }
+    } catch (error) {
+      console.error('Error aplicando descuento:', error)
+      alert('Error de conexión. Por favor intenta de nuevo.')
+    } finally {
+      setApplyingDiscount(false)
+    }
   }
 
   const handleConfirmCancel = async () => {
@@ -930,12 +966,13 @@ export default function CuentaPage() {
         </div>
       </div>
 
-      {/* Subscription Modal */}
-      <SubscriptionModal
+      {/* Subscription Cancel Flow */}
+      <SubscriptionCancelFlow
         isOpen={showSubscriptionModal}
         onClose={handleCloseModal}
         onConfirm={handleConfirmCancel}
-        loading={subscriptionLoading}
+        onAcceptDiscount={handleAcceptDiscount}
+        loading={subscriptionLoading || applyingDiscount}
         success={subscriptionSuccess}
         error={subscriptionError}
       />
