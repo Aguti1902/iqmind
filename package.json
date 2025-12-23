@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "verify-stripe": "node verify-stripe-setup.js",
-    "update-trial": "node update-trial-days.js"
+    "update-trial": "node update-trial-days.js",
+    "create-test-user": "node create-test-user.js"
   },
   "dependencies": {
     "@sendgrid/mail": "^8.1.6",

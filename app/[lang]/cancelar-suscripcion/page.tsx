@@ -16,11 +16,7 @@ export default function CancelarSuscripcionPage() {
     email: '',
     reason: ''
   })
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isSubmitted, setIsSubmitted] = useState(false)
   const [error, setError] = useState('')
-  const [endDate, setEndDate] = useState('')
-  // Estados del modal eliminados - ahora son páginas
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -40,106 +36,7 @@ export default function CancelarSuscripcionPage() {
     router.push(`/${lang}/cancelar-suscripcion/oferta`)
   }
 
-  // Funciones del modal eliminadas - ahora en páginas separadas
-  
-  const handleConfirmCancel_OLD = async () => {
-    setIsSubmitting(true)
-    setError('')
-
-    try {
-      // Llamar a la API para cancelar la suscripción en Stripe
-      const response = await fetch('/api/cancel-subscription', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          fullName: formData.fullName,
-        }),
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        setError(data.error || 'Error al cancelar la suscripción')
-        setIsSubmitting(false)
-        return
-      }
-
-      // Guardar la fecha de finalización
-      const cancelDate = data.subscription?.currentPeriodEnd 
-        ? new Date(data.subscription.currentPeriodEnd * 1000).toLocaleDateString('es-ES')
-        : new Date().toLocaleDateString('es-ES')
-      
-      setEndDate(cancelDate)
-      setCancelFlowSuccess(true)
-      setUserAcceptedDiscount(false) // Explícitamente marcamos que NO aceptó descuento
-      setIsSubmitting(false)
-
-      // Limpiar localStorage
-      localStorage.removeItem('paymentCompleted')
-      localStorage.removeItem('subscriptionId')
-
-      // El modal manejará la redirección a Trustpilot
-
-    } catch (error) {
-      console.error('Error al cancelar suscripción:', error)
-      setError('Error al procesar la solicitud. Por favor, intenta de nuevo.')
-      setIsSubmitting(false)
-    }
-  }
-
-  const handleAcceptDiscount = async () => {
-    try {
-      const response = await fetch('/api/apply-retention-discount', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          discountPercent: 50,
-          durationMonths: 3
-        })
-      })
-
-      const data = await response.json()
-
-      if (response.ok) {
-        // Cerrar el modal y mostrar mensaje de éxito
-        setShowCancelFlow(false)
-        setIsSubmitted(true)
-        setEndDate('') // No hay fecha de cancelación porque mantuvieron la suscripción
-        setUserAcceptedDiscount(true) // Explícitamente marcamos que SÍ aceptó descuento
-      } else {
-        setError(data.error || 'Error al aplicar el descuento')
-      }
-    } catch (error) {
-      console.error('Error aplicando descuento:', error)
-      setError('Error de conexión. Por favor intenta de nuevo.')
-    }
-  }
-
-  const handleCloseCancelFlow = () => {
-    setShowCancelFlow(false)
-    
-    // Si la cancelación fue exitosa (y NO aceptó descuento), marcar como submitted
-    // Solo mostrar la página de éxito si realmente canceló
-    if (cancelFlowSuccess && !userAcceptedDiscount) {
-      // Esperar un momento antes de mostrar la página para que el modal termine de cerrarse
-      setTimeout(() => {
-        setIsSubmitted(true)
-        setCancelFlowSuccess(false)
-      }, 300)
-    } else if (userAcceptedDiscount) {
-      // Si aceptó el descuento, ya está manejado en handleAcceptDiscount
-      setCancelFlowSuccess(false)
-    } else {
-      // Si cerró el modal sin hacer nada, solo resetear
-      setCancelFlowSuccess(false)
-    }
-  }
+  // Todas las funciones del modal han sido movidas a páginas separadas
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
@@ -163,66 +60,7 @@ export default function CancelarSuscripcionPage() {
     )
   }
 
-  if (isSubmitted) {
-    // Usar la variable explícita para determinar si aceptó el descuento
-    const acceptedDiscount = userAcceptedDiscount
-    
-    return (
-      <>
-        <Header />
-        <div className="min-h-screen bg-gradient-to-br from-primary-50 to-white py-20">
-          <div className="container-custom max-w-2xl">
-            <div className="bg-white rounded-2xl shadow-2xl p-12 text-center">
-              <div className={`w-20 h-20 ${acceptedDiscount ? 'bg-green-100' : 'bg-blue-100'} rounded-full flex items-center justify-center mx-auto mb-6`}>
-                <FaTimesCircle className={`text-4xl ${acceptedDiscount ? 'text-green-600' : 'text-blue-600'}`} />
-              </div>
-              
-              <h1 className="text-3xl font-bold text-gray-900 mb-4">
-                {acceptedDiscount ? '¡Genial! Descuento Aplicado' : t.cancel.successTitle}
-              </h1>
-              
-              <p className="text-xl text-gray-600 mb-8">
-                {acceptedDiscount 
-                  ? 'Has aceptado el descuento del 50% durante 3 meses. ¡Gracias por quedarte con nosotros!' 
-                  : t.cancel.successMessage
-                }
-              </p>
-
-              {acceptedDiscount ? (
-                <div className="bg-green-50 border-l-4 border-green-500 p-6 mb-8 text-left">
-                  <p className="text-gray-700 mb-2">
-                    <strong>🎉 Tu descuento ha sido aplicado</strong>
-                  </p>
-                  <p className="text-gray-700">
-                    A partir de tu próxima factura, disfrutarás de un 50% de descuento durante 3 meses.
-                  </p>
-                </div>
-              ) : (
-                <div className="bg-blue-50 border-l-4 border-blue-500 p-6 mb-8 text-left">
-                  <p className="text-gray-700 mb-2">
-                    <strong>{t.cancel.successInfo}</strong>
-                  </p>
-                  {endDate && (
-                    <p className="text-gray-700">
-                      <strong>Fecha de finalización de tu suscripción:</strong> {endDate}
-                    </p>
-                  )}
-                </div>
-              )}
-
-              <a
-                href={`/${lang}`}
-                className="inline-block bg-[#07C59A] hover:bg-[#069e7b] text-white font-semibold py-3 px-8 rounded-lg transition-all duration-200"
-              >
-                {t.cancel.backHome}
-              </a>
-            </div>
-          </div>
-        </div>
-        <Footer />
-      </>
-    )
-  }
+  // Ya no hay página de submitted aquí - todo son páginas independientes
 
   return (
     <>
