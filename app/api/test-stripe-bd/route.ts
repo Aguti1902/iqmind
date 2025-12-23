@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { db } from '@/lib/database-postgres'
 import Stripe from 'stripe'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   try {
     console.log('🧪 TEST: Leyendo credenciales TEST de la BD...')

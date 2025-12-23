@@ -1,14 +1,13 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, Suspense } from 'react'
 import { useRouter, useParams, useSearchParams } from 'next/navigation'
-
-export const dynamic = 'force-dynamic'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import { FaCheckCircle, FaTag, FaHome } from 'react-icons/fa'
 
-export default function ExitoCancelacionPage() {
+// Componente que usa useSearchParams envuelto en Suspense
+function ExitoContent() {
   const router = useRouter()
   const { lang } = useParams()
   const searchParams = useSearchParams()
@@ -148,6 +147,22 @@ export default function ExitoCancelacionPage() {
 
       <Footer />
     </>
+  )
+}
+
+// Componente principal con Suspense
+export default function ExitoCancelacionPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#07C59A] mx-auto mb-4"></div>
+          <p className="text-gray-600">Cargando...</p>
+        </div>
+      </div>
+    }>
+      <ExitoContent />
+    </Suspense>
   )
 }
 

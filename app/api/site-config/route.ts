@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { db } from '@/lib/database-postgres'
 
+export const dynamic = 'force-dynamic'
+
 // GET - Obtener configuración pública del sitio (precios, días de prueba, etc)
 export async function GET() {
   try {

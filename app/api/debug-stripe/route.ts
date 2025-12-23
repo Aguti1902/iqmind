@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { getStripeConfig } from '@/lib/stripe-config'
 import Stripe from 'stripe'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   try {
     console.log('🔍 INICIANDO DEBUG DE STRIPE...')

@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { db } from '@/lib/database-postgres'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   try {
     console.log('🔍 Debug: Leyendo configuración actual de la BD...')

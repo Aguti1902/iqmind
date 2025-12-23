@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { db } from '@/lib/database-postgres'
 
+export const dynamic = 'force-dynamic'
+
 /**
  * Migración para añadir campos de Price IDs separados para planes quincenal y mensual
  */
