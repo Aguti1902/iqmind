@@ -612,5 +612,27 @@ export const db = {
     )
     
     return result.rows[0]
+  },
+
+  // ============================================
+  // ENCUESTAS DE SATISFACCIÓN
+  // ============================================
+
+  createSatisfactionSurvey: async (email: string, score: number, timestamp: string): Promise<void> => {
+    await getPool().query(
+      `INSERT INTO satisfaction_surveys (email, score, timestamp, created_at)
+       VALUES ($1, $2, $3, NOW())`,
+      [email, score, timestamp]
+    )
+  },
+
+  getSatisfactionSurveys: async (): Promise<any[]> => {
+    const result = await getPool().query(
+      `SELECT id, email, score, timestamp, created_at
+       FROM satisfaction_surveys
+       ORDER BY created_at DESC
+       LIMIT 1000`
+    )
+    return result.rows
   }
 }

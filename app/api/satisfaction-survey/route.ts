@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 export const dynamic = 'force-dynamic'
-import { getDatabase } from '@/lib/database-postgres'
+import { db } from '@/lib/database-postgres'
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,13 +14,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const db = await getDatabase()
-
     // Guardar la encuesta en la base de datos
-    await db.query(`
-      INSERT INTO satisfaction_surveys (email, score, timestamp, created_at)
-      VALUES ($1, $2, $3, NOW())
-    `, [email, score, timestamp])
+    await db.createSatisfactionSurvey(email, score, timestamp)
 
     console.log('✅ Encuesta guardada:', { email, score })
 
@@ -42,23 +37,8 @@ export async function POST(request: NextRequest) {
 // GET para obtener todas las encuestas (admin)
 export async function GET(request: NextRequest) {
   try {
-    const db = await getDatabase()
-
-    // Obtener todas las encuestas ordenadas por fecha
-    const result = await db.query(`
-      SELECT 
-        id,
-        email,
-        score,
-        timestamp,
-        created_at
-      FROM satisfaction_surveys
-      ORDER BY created_at DESC
-      LIMIT 1000
-    `)
-
-    // Calcular estadísticas
-    const surveys = result.rows
+    // Obtener todas las encuestas
+    const surveys = await db.getSatisfactionSurveys()
     const totalSurveys = surveys.length
     const averageScore = surveys.length > 0
       ? (surveys.reduce((sum: number, s: any) => sum + s.score, 0) / surveys.length).toFixed(2)

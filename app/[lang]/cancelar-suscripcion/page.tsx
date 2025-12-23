@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import { useTranslations } from '@/hooks/useTranslations'
@@ -10,6 +10,7 @@ import { FaUserCircle, FaEnvelope, FaTimesCircle } from 'react-icons/fa'
 
 export default function CancelarSuscripcionPage() {
   const { t, loading, lang } = useTranslations()
+  const router = useRouter()
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
