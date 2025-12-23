@@ -6,7 +6,7 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import { useTranslations } from '@/hooks/useTranslations'
 import { FaUserCircle, FaEnvelope, FaTimesCircle } from 'react-icons/fa'
-import SubscriptionCancelFlow from '@/components/SubscriptionCancelFlow'
+// Modal ya no se usa - ahora son páginas independientes
 
 export default function CancelarSuscripcionPage() {
   const { t, loading, lang } = useTranslations()
@@ -19,9 +19,7 @@ export default function CancelarSuscripcionPage() {
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [error, setError] = useState('')
   const [endDate, setEndDate] = useState('')
-  const [showCancelFlow, setShowCancelFlow] = useState(false)
-  const [cancelFlowSuccess, setCancelFlowSuccess] = useState(false)
-  const [userAcceptedDiscount, setUserAcceptedDiscount] = useState(false)
+  // Estados del modal eliminados - ahora son páginas
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -32,11 +30,18 @@ export default function CancelarSuscripcionPage() {
       return
     }
     
-    // En lugar de cancelar directamente, mostrar el flujo de retención
-    setShowCancelFlow(true)
+    // Guardar datos en localStorage para el flujo de páginas
+    localStorage.setItem('cancelEmail', formData.email)
+    localStorage.setItem('cancelName', formData.fullName)
+    localStorage.setItem('cancelReason', formData.reason)
+    
+    // Redirigir a la página de oferta
+    router.push(`/${lang}/cancelar-suscripcion/oferta`)
   }
 
-  const handleConfirmCancel = async () => {
+  // Funciones del modal eliminadas - ahora en páginas separadas
+  
+  const handleConfirmCancel_OLD = async () => {
     setIsSubmitting(true)
     setError('')
 
@@ -355,17 +360,6 @@ export default function CancelarSuscripcionPage() {
       </div>
 
       <Footer />
-
-      {/* Modal de flujo de cancelación con upsell */}
-      <SubscriptionCancelFlow
-        isOpen={showCancelFlow}
-        onClose={handleCloseCancelFlow}
-        onConfirm={handleConfirmCancel}
-        onAcceptDiscount={handleAcceptDiscount}
-        loading={isSubmitting}
-        success={cancelFlowSuccess}
-        error={error}
-      />
     </>
   )
 }
