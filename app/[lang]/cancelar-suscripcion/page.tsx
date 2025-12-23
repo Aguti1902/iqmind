@@ -21,6 +21,7 @@ export default function CancelarSuscripcionPage() {
   const [endDate, setEndDate] = useState('')
   const [showCancelFlow, setShowCancelFlow] = useState(false)
   const [cancelFlowSuccess, setCancelFlowSuccess] = useState(false)
+  const [userAcceptedDiscount, setUserAcceptedDiscount] = useState(false)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -61,8 +62,13 @@ export default function CancelarSuscripcionPage() {
       }
 
       // Guardar la fecha de finalización
-      setEndDate(data.endDate)
+      const cancelDate = data.subscription?.currentPeriodEnd 
+        ? new Date(data.subscription.currentPeriodEnd * 1000).toLocaleDateString('es-ES')
+        : new Date().toLocaleDateString('es-ES')
+      
+      setEndDate(cancelDate)
       setCancelFlowSuccess(true)
+      setUserAcceptedDiscount(false) // Explícitamente marcamos que NO aceptó descuento
       setIsSubmitting(false)
 
       // Limpiar localStorage
@@ -99,6 +105,7 @@ export default function CancelarSuscripcionPage() {
         setShowCancelFlow(false)
         setIsSubmitted(true)
         setEndDate('') // No hay fecha de cancelación porque mantuvieron la suscripción
+        setUserAcceptedDiscount(true) // Explícitamente marcamos que SÍ aceptó descuento
       } else {
         setError(data.error || 'Error al aplicar el descuento')
       }
@@ -110,11 +117,21 @@ export default function CancelarSuscripcionPage() {
 
   const handleCloseCancelFlow = () => {
     setShowCancelFlow(false)
-    setCancelFlowSuccess(false)
     
-    // Si la cancelación fue exitosa, marcar como submitted
-    if (cancelFlowSuccess) {
-      setIsSubmitted(true)
+    // Si la cancelación fue exitosa (y NO aceptó descuento), marcar como submitted
+    // Solo mostrar la página de éxito si realmente canceló
+    if (cancelFlowSuccess && !userAcceptedDiscount) {
+      // Esperar un momento antes de mostrar la página para que el modal termine de cerrarse
+      setTimeout(() => {
+        setIsSubmitted(true)
+        setCancelFlowSuccess(false)
+      }, 300)
+    } else if (userAcceptedDiscount) {
+      // Si aceptó el descuento, ya está manejado en handleAcceptDiscount
+      setCancelFlowSuccess(false)
+    } else {
+      // Si cerró el modal sin hacer nada, solo resetear
+      setCancelFlowSuccess(false)
     }
   }
 
@@ -141,8 +158,8 @@ export default function CancelarSuscripcionPage() {
   }
 
   if (isSubmitted) {
-    // Si endDate está vacío, significa que aceptaron el descuento
-    const acceptedDiscount = !endDate
+    // Usar la variable explícita para determinar si aceptó el descuento
+    const acceptedDiscount = userAcceptedDiscount
     
     return (
       <>
