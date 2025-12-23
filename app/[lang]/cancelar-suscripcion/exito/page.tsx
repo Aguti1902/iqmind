@@ -2,6 +2,8 @@
 
 import { useEffect } from 'react'
 import { useRouter, useParams, useSearchParams } from 'next/navigation'
+
+export const dynamic = 'force-dynamic'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import { FaCheckCircle, FaTag, FaHome } from 'react-icons/fa'
