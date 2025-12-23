@@ -48,141 +48,144 @@ export default function GraciasCancelacionPage() {
     <>
       <Header />
       
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-12 md:py-20">
-        <div className="container-custom max-w-4xl">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-6 md:py-10">
+        <div className="container-custom max-w-6xl px-4">
           
-          {/* Card Principal */}
-          <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 text-center">
+          {/* Card Principal con Grid */}
+          <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
             
-            {/* Icono de éxito */}
-            <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <FaCheckCircle className="text-5xl text-green-600" />
-            </div>
-
-            {/* Título */}
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              Suscripción Cancelada
-            </h1>
-
-            <p className="text-xl text-gray-600 mb-8">
-              Lamentamos verte partir, pero respetamos tu decisión
-            </p>
-
-            {/* Información importante */}
-            <div className="bg-blue-50 border-2 border-blue-300 rounded-2xl p-6 mb-8 text-left max-w-2xl mx-auto">
-              <h3 className="font-bold text-blue-900 text-lg mb-3">
-                ℹ️ Información importante:
-              </h3>
-              <ul className="space-y-2 text-blue-800">
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-600 mt-1">•</span>
-                  <span>Tu suscripción seguirá activa hasta el final del período de facturación actual</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-600 mt-1">•</span>
-                  <span>No se realizarán más cobros después de esa fecha</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-600 mt-1">•</span>
-                  <span>Tu historial se mantendrá por 30 días por si decides volver</span>
-                </li>
-              </ul>
-            </div>
-
-            {/* Separador */}
-            <div className="border-t-2 border-gray-200 my-8"></div>
-
-            {/* Sección Trustpilot */}
-            <div className="bg-[#07C59A]/10 border-2 border-[#07C59A] rounded-2xl p-8 mb-8">
-              <FaHeart className="text-4xl text-[#07C59A] mx-auto mb-4" />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-6">
               
-              <h2 className="text-3xl font-bold text-[#113240] mb-4">
-                Tu opinión es muy importante para nosotros
-              </h2>
-              
-              <p className="text-lg text-gray-700 mb-6">
-                Nos encantaría saber qué podemos mejorar. ¿Nos dejas una reseña en Trustpilot?
-                Tu feedback nos ayuda a crear un mejor servicio para futuros usuarios.
-              </p>
+              {/* COLUMNA IZQUIERDA: Confirmación */}
+              <div className="text-center lg:text-left space-y-4">
+                
+                {/* Icono y título */}
+                <div>
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto lg:mx-0 mb-3">
+                    <FaCheckCircle className="text-3xl text-green-600" />
+                  </div>
 
-              {/* Logo Trustpilot */}
-              <div className="bg-white rounded-xl p-6 mb-6 max-w-md mx-auto border border-[#07C59A]/30">
-                <img 
-                  src="https://cdn.trustpilot.net/brand-assets/4.1.0/logo-black.svg" 
-                  alt="Trustpilot" 
-                  className="h-10 mx-auto mb-3"
-                />
-                <p className="text-sm text-gray-600">
-                  Redirigiendo automáticamente en{' '}
-                  <span className="font-bold text-2xl text-[#07C59A]">{countdown}</span>{' '}
-                  segundos...
-                </p>
-                <div className="mt-4 bg-[#07C59A]/20 h-2 rounded-full overflow-hidden">
-                  <div 
-                    className="bg-[#07C59A] h-full transition-all duration-1000"
-                    style={{ width: `${((10 - countdown) / 10) * 100}%` }}
-                  ></div>
+                  <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+                    Suscripción Cancelada
+                  </h1>
+
+                  <p className="text-sm md:text-base text-gray-600 mb-4">
+                    Lamentamos verte partir, pero respetamos tu decisión
+                  </p>
                 </div>
+
+                {/* Información importante */}
+                <div className="bg-blue-50 border border-blue-300 rounded-xl p-4 text-left">
+                  <h3 className="font-bold text-blue-900 text-sm mb-2 flex items-center gap-2">
+                    ℹ️ Información importante:
+                  </h3>
+                  <ul className="space-y-1.5 text-blue-800 text-xs">
+                    <li className="flex items-start gap-2">
+                      <span className="text-blue-600 mt-0.5">•</span>
+                      <span>Tu suscripción seguirá activa hasta el final del período actual</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-blue-600 mt-0.5">•</span>
+                      <span>No se realizarán más cobros después</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-blue-600 mt-0.5">•</span>
+                      <span>Tu historial se mantendrá por 30 días</span>
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Mensaje de vuelta */}
+                <div className="bg-gradient-to-br from-[#07C59A]/10 to-[#07C59A]/5 border border-[#07C59A]/30 rounded-xl p-4 text-center">
+                  <p className="text-gray-700 text-xs mb-2">
+                    ¿Cambiaste de opinión? Siempre puedes volver
+                  </p>
+                  <a 
+                    href={`/${lang}/pricing`}
+                    className="text-[#07C59A] hover:text-[#069e7b] font-semibold underline text-sm"
+                  >
+                    Ver planes disponibles →
+                  </a>
+                </div>
+
+                {/* Testimonio compacto */}
+                <div className="bg-white border border-gray-200 rounded-lg p-3 text-left">
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="text-yellow-400 text-sm">⭐⭐⭐⭐⭐</div>
+                    <p className="text-xs font-semibold text-gray-800">Carlos M.</p>
+                  </div>
+                  <p className="text-xs text-gray-600 italic">
+                    "Volví después de 2 meses. Ojalá no hubiera cancelado."
+                  </p>
+                </div>
+
               </div>
 
-              {/* Botones */}
-              <div className="space-y-3">
-                <button
-                  onClick={handleRedirectToTrustpilot}
-                  disabled={redirecting}
-                  className="w-full max-w-md mx-auto bg-gradient-to-r from-[#113240] to-[#1a4a5e] hover:from-[#1a4a5e] hover:to-[#113240] text-white py-4 px-8 rounded-xl font-bold text-lg transition shadow-lg hover:shadow-xl disabled:opacity-50 flex items-center justify-center gap-3"
-                >
-                  {redirecting ? (
-                    <>
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                      Redirigiendo...
-                    </>
-                  ) : (
-                    <>
-                      <FaStar className="text-[#07C59A]" />
-                      Dejar Reseña en Trustpilot
-                    </>
-                  )}
-                </button>
-
-                <button
-                  onClick={handleGoHome}
-                  className="text-gray-600 hover:text-gray-800 font-medium transition"
-                >
-                  Ir al inicio sin dejar reseña
-                </button>
-              </div>
-            </div>
-
-            {/* Mensaje final */}
-            <div className="text-center">
-              <p className="text-gray-600 mb-4">
-                ¿Cambiaste de opinión? Siempre puedes volver
-              </p>
-              <a 
-                href={`/${lang}/pricing`}
-                className="text-[#07C59A] hover:text-[#069e7b] font-semibold underline text-lg"
-              >
-                Ver planes disponibles →
-              </a>
-            </div>
-
-          </div>
-
-          {/* Testimonios de usuarios satisfechos */}
-          <div className="mt-12 text-center">
-            <p className="text-gray-500 text-sm mb-4">
-              Lo que otros usuarios dicen sobre MindMetric:
-            </p>
-            <div className="flex justify-center gap-4">
-              <div className="bg-white rounded-lg shadow-md p-4 max-w-xs">
-                <div className="text-yellow-400 mb-2">⭐⭐⭐⭐⭐</div>
-                <p className="text-sm text-gray-600 italic">
-                  "Volví después de 2 meses. Ojalá no hubiera cancelado."
+              {/* COLUMNA DERECHA: Trustpilot */}
+              <div className="bg-[#07C59A]/10 border-2 border-[#07C59A] rounded-xl p-6 flex flex-col justify-center">
+                
+                <FaHeart className="text-3xl text-[#07C59A] mx-auto mb-3" />
+                
+                <h2 className="text-xl md:text-2xl font-bold text-[#113240] mb-3 text-center">
+                  Tu opinión es muy importante
+                </h2>
+                
+                <p className="text-sm text-gray-700 mb-4 text-center">
+                  ¿Nos dejas una reseña en Trustpilot? Tu feedback nos ayuda a mejorar.
                 </p>
-                <p className="text-xs text-gray-500 mt-2">- Carlos M.</p>
+
+                {/* Logo Trustpilot */}
+                <div className="bg-white rounded-xl p-4 mb-4 border border-[#07C59A]/30">
+                  <img 
+                    src="https://cdn.trustpilot.net/brand-assets/4.1.0/logo-black.svg" 
+                    alt="Trustpilot" 
+                    className="h-8 mx-auto mb-2"
+                  />
+                  <p className="text-xs text-gray-600 text-center">
+                    Redirigiendo en{' '}
+                    <span className="font-bold text-xl text-[#07C59A]">{countdown}</span>{' '}
+                    segundos...
+                  </p>
+                  <div className="mt-3 bg-[#07C59A]/20 h-1.5 rounded-full overflow-hidden">
+                    <div 
+                      className="bg-[#07C59A] h-full transition-all duration-1000"
+                      style={{ width: `${((10 - countdown) / 10) * 100}%` }}
+                    ></div>
+                  </div>
+                </div>
+
+                {/* Botones */}
+                <div className="space-y-2">
+                  <button
+                    onClick={handleRedirectToTrustpilot}
+                    disabled={redirecting}
+                    className="w-full bg-gradient-to-r from-[#113240] to-[#1a4a5e] hover:from-[#1a4a5e] hover:to-[#113240] text-white py-3 px-6 rounded-xl font-bold text-sm md:text-base transition shadow-lg hover:shadow-xl disabled:opacity-50 flex items-center justify-center gap-2"
+                  >
+                    {redirecting ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                        Redirigiendo...
+                      </>
+                    ) : (
+                      <>
+                        <FaStar className="text-[#07C59A]" />
+                        Dejar Reseña en Trustpilot
+                      </>
+                    )}
+                  </button>
+
+                  <button
+                    onClick={handleGoHome}
+                    className="w-full text-gray-600 hover:text-gray-800 font-medium text-xs transition"
+                  >
+                    Ir al inicio sin dejar reseña
+                  </button>
+                </div>
+
               </div>
+
             </div>
+
           </div>
 
         </div>

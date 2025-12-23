@@ -79,38 +79,38 @@ export default function EncuestaSatisfaccionPage() {
     <>
       <Header />
       
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-12 md:py-20">
-        <div className="container-custom max-w-4xl">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-6 md:py-10">
+        <div className="container-custom max-w-5xl px-4">
           
-          {/* Notificación */}
-          <div className="bg-blue-100 border border-blue-300 text-blue-800 text-center py-3 px-6 rounded-xl mb-8">
-            <p className="font-medium">Se ha cancelado tu suscripción.</p>
+          {/* Notificación compacta */}
+          <div className="bg-blue-100 border border-blue-300 text-blue-800 text-center py-2 px-4 rounded-lg mb-4">
+            <p className="font-medium text-sm">Se ha cancelado tu suscripción.</p>
           </div>
 
           {/* Card Principal */}
-          <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12">
+          <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8">
             
-            {/* Título */}
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 text-center mb-4">
+            {/* Título compacto */}
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 text-center mb-2">
               Qué pena que te nos vayas
             </h1>
             
-            <p className="text-xl text-gray-600 text-center mb-12">
+            <p className="text-sm md:text-base text-gray-600 text-center mb-6">
               En una escala del 0 al 10, ¿cuál es tu grado de satisfacción con MindMetric?
             </p>
 
-            {/* Escala de Satisfacción */}
-            <div className="border-2 border-gray-300 rounded-2xl p-8 md:p-12 mb-8">
-              <div className="flex flex-wrap justify-center gap-2 md:gap-3 mb-6">
+            {/* Escala de Satisfacción - Compacta */}
+            <div className="border-2 border-gray-300 rounded-xl p-4 md:p-6 mb-6">
+              <div className="flex flex-wrap justify-center gap-2 mb-4">
                 {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((score) => (
                   <button
                     key={score}
                     onClick={() => handleScoreSelect(score)}
                     className={`
-                      w-14 h-14 md:w-16 md:h-16 rounded-xl border-2 flex items-center justify-center
-                      text-2xl md:text-3xl font-bold transition-all transform hover:scale-110
+                      w-10 h-10 md:w-12 md:h-12 rounded-lg border-2 flex items-center justify-center
+                      text-lg md:text-xl font-bold transition-all transform hover:scale-110
                       ${selectedScore === score 
-                        ? `${getScoreSelectedColor(score)} scale-110 shadow-lg ring-4 ring-${score <= 2 ? 'red' : score <= 4 ? 'orange' : score <= 6 ? 'yellow' : score <= 8 ? 'lime' : 'green'}-400`
+                        ? `${getScoreSelectedColor(score)} scale-110 shadow-md ring-2 ring-${score <= 2 ? 'red' : score <= 4 ? 'orange' : score <= 6 ? 'yellow' : score <= 8 ? 'lime' : 'green'}-400`
                         : getScoreColor(score)
                       }
                     `}
@@ -120,22 +120,22 @@ export default function EncuestaSatisfaccionPage() {
                 ))}
               </div>
 
-              <div className="flex justify-between text-sm text-gray-600 font-medium">
+              <div className="flex justify-between text-xs text-gray-600 font-medium">
                 <span>Gran insatisfacción</span>
                 <span>Gran satisfacción</span>
               </div>
             </div>
 
-            {/* Botones */}
-            <div className="space-y-4">
+            {/* Botones compactos */}
+            <div className="space-y-3">
               <button
                 onClick={handleContinue}
                 disabled={submitting || selectedScore === null}
-                className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white py-5 px-8 rounded-xl font-bold text-xl transition shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white py-3 md:py-4 px-6 rounded-xl font-bold text-base md:text-lg transition shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {submitting ? (
-                  <div className="flex items-center justify-center gap-3">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                     Enviando...
                   </div>
                 ) : (
@@ -146,26 +146,22 @@ export default function EncuestaSatisfaccionPage() {
               <button
                 onClick={handleSkip}
                 disabled={submitting}
-                className="w-full text-[#07C59A] hover:text-[#069e7b] font-semibold text-lg transition disabled:opacity-50"
+                className="w-full text-[#07C59A] hover:text-[#069e7b] font-semibold text-sm md:text-base transition disabled:opacity-50"
               >
                 Omitir
               </button>
             </div>
 
-            {/* Mensaje de agradecimiento */}
-            <div className="mt-8 text-center">
-              <p className="text-gray-600 text-sm">
-                💙 Tu opinión nos ayuda a mejorar el servicio para futuros usuarios
+            {/* Mensajes de agradecimiento compactos */}
+            <div className="mt-6 text-center space-y-2">
+              <p className="text-gray-600 text-xs">
+                💙 Tu opinión nos ayuda a mejorar el servicio
+              </p>
+              <p className="text-gray-500 text-xs">
+                Tus respuestas son anónimas
               </p>
             </div>
 
-          </div>
-
-          {/* Nota final */}
-          <div className="mt-8 text-center">
-            <p className="text-gray-500 text-sm">
-              Tus respuestas son anónimas y solo se usan para mejorar nuestro servicio
-            </p>
           </div>
 
         </div>

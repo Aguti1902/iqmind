@@ -60,162 +60,175 @@ export default function OfertaCancelacionPage() {
     <>
       <Header />
       
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-12 md:py-20">
-        <div className="container-custom max-w-5xl">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-6 md:py-10">
+        <div className="container-custom max-w-7xl px-4">
           
           {/* Banner OFERTA LIMITADA */}
-          <div className="bg-gradient-to-r from-red-600 to-red-500 text-white text-center py-3 px-4 rounded-xl mb-8 shadow-lg animate-pulse">
-            <p className="text-base md:text-lg font-bold tracking-wide">
+          <div className="bg-gradient-to-r from-red-600 to-red-500 text-white text-center py-2 px-4 rounded-lg mb-4 shadow-lg animate-pulse">
+            <p className="text-sm md:text-base font-bold tracking-wide">
               ⚡ ¡OFERTA LIMITADA SOLO HOY! ⚡
             </p>
           </div>
 
-          {/* Header Principal */}
-          <div className="bg-gradient-to-r from-[#113240] to-[#1a4a5e] rounded-t-3xl p-8 md:p-12 text-white text-center">
-            <div className="w-24 h-24 bg-[#07C59A] rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl">
-              <FaCrown className="text-5xl text-yellow-300" />
-            </div>
-            <h1 className="text-3xl md:text-4xl font-bold mb-4">
-              ¡Espera! Tenemos una oferta especial para ti
-            </h1>
-            <p className="text-lg opacity-90">
-              No queremos que te vayas sin ofrecerte lo mejor
-            </p>
-          </div>
-
-          {/* Card Principal */}
-          <div className="bg-white rounded-b-3xl shadow-2xl p-8 md:p-12">
+          {/* Header Principal + Contenido */}
+          <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
             
-            {/* Oferta Destacada */}
-            <div className="bg-gradient-to-br from-[#07C59A]/10 to-[#07C59A]/20 border-3 border-[#07C59A] rounded-2xl p-8 mb-8">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-16 h-16 bg-[#07C59A] rounded-full flex items-center justify-center shadow-lg">
-                  <FaTag className="text-3xl text-white" />
-                </div>
-                <div>
-                  <h2 className="text-3xl font-bold text-[#113240]">
-                    50% de descuento
-                  </h2>
-                  <p className="text-lg text-gray-700">
-                    Por los próximos 3 meses
-                  </p>
-                </div>
+            {/* Header compacto */}
+            <div className="bg-gradient-to-r from-[#113240] to-[#1a4a5e] px-6 py-6 text-white text-center">
+              <div className="w-16 h-16 bg-[#07C59A] rounded-full flex items-center justify-center mx-auto mb-3 shadow-xl">
+                <FaCrown className="text-3xl text-yellow-300" />
               </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                <div className="text-center p-6 bg-white rounded-xl border-2 border-[#07C59A]/30 shadow-md">
-                  <p className="text-sm text-gray-600 mb-2">Plan Quincenal</p>
-                  <p className="text-3xl font-bold text-[#113240]">
-                    <span className="line-through text-gray-400 text-xl">9,99€</span>
-                  </p>
-                  <p className="text-4xl font-bold text-[#07C59A] mt-2">4,99€</p>
-                  <p className="text-xs text-gray-500 mt-2">cada 2 semanas</p>
-                </div>
-                <div className="text-center p-6 bg-white rounded-xl border-2 border-[#07C59A]/30 shadow-md">
-                  <p className="text-sm text-gray-600 mb-2">Plan Mensual</p>
-                  <p className="text-3xl font-bold text-[#113240]">
-                    <span className="line-through text-gray-400 text-xl">19,99€</span>
-                  </p>
-                  <p className="text-4xl font-bold text-[#07C59A] mt-2">9,99€</p>
-                  <p className="text-xs text-gray-500 mt-2">al mes</p>
-                </div>
-              </div>
-
-              <div className="bg-[#113240] rounded-xl p-4 text-center">
-                <p className="text-white font-semibold">
-                  💎 Mantén todos tus beneficios premium por solo la mitad del precio
-                </p>
-              </div>
+              <h1 className="text-2xl md:text-3xl font-bold mb-2">
+                ¡Espera! Tenemos una oferta especial para ti
+              </h1>
+              <p className="text-sm md:text-base opacity-90">
+                No queremos que te vayas sin ofrecerte lo mejor
+              </p>
             </div>
 
-            {/* Beneficios que perderá */}
-            <div className="bg-red-50 border-2 border-red-300 rounded-2xl p-6 mb-8">
-              <h3 className="font-bold text-red-800 mb-4 flex items-center gap-3 text-xl">
-                <FaExclamationTriangle className="text-2xl" />
-                Si cancelas ahora perderás:
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex items-start gap-3">
-                  <span className="text-red-600 font-bold text-xl mt-1">✗</span>
-                  <span className="text-red-700">Tests ilimitados de CI, personalidad y habilidades</span>
-                </div>
-                <div className="flex items-start gap-3">
-                  <span className="text-red-600 font-bold text-xl mt-1">✗</span>
-                  <span className="text-red-700">Análisis detallado y seguimiento de evolución</span>
-                </div>
-                <div className="flex items-start gap-3">
-                  <span className="text-red-600 font-bold text-xl mt-1">✗</span>
-                  <span className="text-red-700">Certificados oficiales descargables</span>
-                </div>
-                <div className="flex items-start gap-3">
-                  <span className="text-red-600 font-bold text-xl mt-1">✗</span>
-                  <span className="text-red-700">Dashboard avanzado con gráficos de progreso</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Botones de Acción */}
-            <div className="space-y-4">
-              <button
-                onClick={handleAcceptDiscount}
-                disabled={loading}
-                className="w-full bg-gradient-to-r from-[#07C59A] to-[#069e7b] hover:from-[#069e7b] hover:to-[#058f6e] text-white py-5 px-8 rounded-xl font-bold text-xl transition shadow-xl hover:shadow-2xl flex items-center justify-center gap-3 transform hover:scale-105 disabled:opacity-50"
-              >
-                {loading ? (
-                  <>
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
-                    Aplicando descuento...
-                  </>
-                ) : (
-                  <>
-                    <FaStar className="text-yellow-300 text-2xl" />
-                    ¡Quiero el 50% de descuento!
-                    <FaStar className="text-yellow-300 text-2xl" />
-                  </>
-                )}
-              </button>
+            {/* Contenido en Grid 2 Columnas */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-6">
               
-              <button
-                onClick={handleRejectOffer}
-                disabled={loading}
-                className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-4 px-8 rounded-xl font-semibold text-lg transition disabled:opacity-50 flex items-center justify-center gap-2"
-              >
-                No gracias, continuar con la cancelación
-                <FaArrowRight />
-              </button>
+              {/* COLUMNA IZQUIERDA: Oferta y Precios */}
+              <div className="space-y-4">
+                
+                {/* Oferta Destacada */}
+                <div className="bg-gradient-to-br from-[#07C59A]/10 to-[#07C59A]/20 border-2 border-[#07C59A] rounded-xl p-4">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-12 h-12 bg-[#07C59A] rounded-full flex items-center justify-center shadow-lg flex-shrink-0">
+                      <FaTag className="text-2xl text-white" />
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-bold text-[#113240]">
+                        50% de descuento
+                      </h2>
+                      <p className="text-sm text-gray-700">
+                        Por los próximos 3 meses
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3 mb-3">
+                    <div className="text-center p-3 bg-white rounded-lg border border-[#07C59A]/30 shadow-sm">
+                      <p className="text-xs text-gray-600 mb-1">Plan Quincenal</p>
+                      <p className="text-lg font-bold text-[#113240]">
+                        <span className="line-through text-gray-400 text-sm">9,99€</span>
+                      </p>
+                      <p className="text-2xl font-bold text-[#07C59A]">4,99€</p>
+                      <p className="text-xs text-gray-500 mt-1">cada 2 semanas</p>
+                    </div>
+                    <div className="text-center p-3 bg-white rounded-lg border border-[#07C59A]/30 shadow-sm">
+                      <p className="text-xs text-gray-600 mb-1">Plan Mensual</p>
+                      <p className="text-lg font-bold text-[#113240]">
+                        <span className="line-through text-gray-400 text-sm">19,99€</span>
+                      </p>
+                      <p className="text-2xl font-bold text-[#07C59A]">9,99€</p>
+                      <p className="text-xs text-gray-500 mt-1">al mes</p>
+                    </div>
+                  </div>
+
+                  <div className="bg-[#113240] rounded-lg p-2 text-center">
+                    <p className="text-white text-sm font-semibold">
+                      💎 Mantén todos tus beneficios premium
+                    </p>
+                  </div>
+                </div>
+
+                {/* Testimonios compactos */}
+                <div className="space-y-2">
+                  <div className="bg-white rounded-lg border border-gray-200 p-3">
+                    <div className="flex items-center gap-2 mb-1">
+                      <div className="text-yellow-400 text-sm">⭐⭐⭐⭐⭐</div>
+                      <p className="text-xs font-semibold text-gray-800">María G.</p>
+                    </div>
+                    <p className="text-xs text-gray-600 italic">
+                      "El mejor precio que he visto. Vale totalmente la pena."
+                    </p>
+                  </div>
+                  <div className="bg-white rounded-lg border border-gray-200 p-3">
+                    <div className="flex items-center gap-2 mb-1">
+                      <div className="text-yellow-400 text-sm">⭐⭐⭐⭐⭐</div>
+                      <p className="text-xs font-semibold text-gray-800">Juan L.</p>
+                    </div>
+                    <p className="text-xs text-gray-600 italic">
+                      "Estaba a punto de cancelar, pero esta oferta me convenció."
+                    </p>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* COLUMNA DERECHA: Advertencia y Botones */}
+              <div className="space-y-4">
+                
+                {/* Beneficios que perderá */}
+                <div className="bg-red-50 border-2 border-red-300 rounded-xl p-4">
+                  <h3 className="font-bold text-red-800 mb-3 flex items-center gap-2 text-base">
+                    <FaExclamationTriangle className="text-lg" />
+                    Si cancelas ahora perderás:
+                  </h3>
+                  <div className="space-y-2">
+                    <div className="flex items-start gap-2">
+                      <span className="text-red-600 font-bold text-lg mt-0.5">✗</span>
+                      <span className="text-red-700 text-sm">Tests ilimitados de CI, personalidad y habilidades</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="text-red-600 font-bold text-lg mt-0.5">✗</span>
+                      <span className="text-red-700 text-sm">Análisis detallado y seguimiento de evolución</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="text-red-600 font-bold text-lg mt-0.5">✗</span>
+                      <span className="text-red-700 text-sm">Certificados oficiales descargables</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="text-red-600 font-bold text-lg mt-0.5">✗</span>
+                      <span className="text-red-700 text-sm">Dashboard avanzado con gráficos de progreso</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Botones de Acción */}
+                <div className="space-y-3">
+                  <button
+                    onClick={handleAcceptDiscount}
+                    disabled={loading}
+                    className="w-full bg-gradient-to-r from-[#07C59A] to-[#069e7b] hover:from-[#069e7b] hover:to-[#058f6e] text-white py-4 px-6 rounded-xl font-bold text-base md:text-lg transition shadow-lg hover:shadow-xl flex items-center justify-center gap-2 disabled:opacity-50"
+                  >
+                    {loading ? (
+                      <>
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                        Aplicando...
+                      </>
+                    ) : (
+                      <>
+                        <FaStar className="text-yellow-300 text-lg" />
+                        ¡Quiero el 50% de descuento!
+                        <FaStar className="text-yellow-300 text-lg" />
+                      </>
+                    )}
+                  </button>
+                  
+                  <button
+                    onClick={handleRejectOffer}
+                    disabled={loading}
+                    className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 px-6 rounded-xl font-semibold text-sm md:text-base transition disabled:opacity-50 flex items-center justify-center gap-2"
+                  >
+                    No gracias, continuar con la cancelación
+                    <FaArrowRight />
+                  </button>
+                </div>
+
+                {/* Nota informativa */}
+                <div className="text-center">
+                  <p className="text-xs text-[#113240] bg-[#07C59A]/10 py-2 px-4 rounded-lg inline-block">
+                    🔒 El descuento se aplicará automáticamente
+                  </p>
+                </div>
+
+              </div>
+
             </div>
 
-            {/* Nota informativa */}
-            <div className="mt-6 text-center">
-              <p className="text-sm text-[#113240] bg-[#07C59A]/10 py-3 px-6 rounded-xl inline-block">
-                🔒 El descuento se aplicará automáticamente en tu próxima factura
-              </p>
-            </div>
-          </div>
-
-          {/* Testimonios rápidos */}
-          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white rounded-xl shadow-md p-6 text-center">
-              <div className="text-4xl mb-3">⭐⭐⭐⭐⭐</div>
-              <p className="text-gray-600 text-sm italic">
-                "El mejor precio que he visto. Vale totalmente la pena."
-              </p>
-              <p className="text-gray-800 font-semibold mt-2">- María G.</p>
-            </div>
-            <div className="bg-white rounded-xl shadow-md p-6 text-center">
-              <div className="text-4xl mb-3">⭐⭐⭐⭐⭐</div>
-              <p className="text-gray-600 text-sm italic">
-                "Estaba a punto de cancelar, pero esta oferta me convenció."
-              </p>
-              <p className="text-gray-800 font-semibold mt-2">- Juan L.</p>
-            </div>
-            <div className="bg-white rounded-xl shadow-md p-6 text-center">
-              <div className="text-4xl mb-3">⭐⭐⭐⭐⭐</div>
-              <p className="text-gray-600 text-sm italic">
-                "Increíble. Me ahorro 30€ en 3 meses. ¡Gracias!"
-              </p>
-              <p className="text-gray-800 font-semibold mt-2">- Ana P.</p>
-            </div>
           </div>
 
         </div>
