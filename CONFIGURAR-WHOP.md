@@ -28,7 +28,7 @@ MindMetric ha migrado de **Stripe a Whop** como pasarela de pago.
    - **Description:** Acceso completo a todos los tests psicológicos (IQ, Personalidad, TDAH, Ansiedad, Depresión, EQ)
    - **Price:** €9.99/mes (o el precio que prefieras)
    - **Trial:** 2 días
-   - **Initial Payment:** €0.50
+   - **Initial Payment:** €1.00 (mínimo de Whop)
    - **Billing:** Monthly (Mensual)
 4. Guarda el **Plan ID** (lo necesitarás para las variables de entorno)
 
@@ -39,7 +39,7 @@ MindMetric ha migrado de **Stripe a Whop** como pasarela de pago.
    - **Name:** MindMetric Premium - Plan Quincenal
    - **Price:** €5.99/quincena
    - **Trial:** 2 días
-   - **Initial Payment:** €0.50
+   - **Initial Payment:** €1.00 (mínimo de Whop)
    - **Billing:** Bi-weekly (Quincenal)
 3. Guarda el **Plan ID**
 
@@ -158,7 +158,7 @@ Cuando estés listo para aceptar pagos reales:
    ↓
 4. Usuario es redirigido a Whop checkout
    ↓
-5. Usuario paga €0.50
+5. Usuario paga €1.00
    ↓
 6. Whop activa membresía con trial de 2 días
    ↓
@@ -176,7 +176,7 @@ Cuando estés listo para aceptar pagos reales:
 ## 🎯 MODELO DE NEGOCIO
 
 ### Actual:
-- **Pago inicial:** €0.50
+- **Pago inicial:** €1.00
 - **Trial:** 2 días gratis
 - **Después del trial:** €9.99/mes (o el precio que configures)
 - **Cancelación:** En cualquier momento
@@ -265,7 +265,7 @@ DATABASE_URL=postgresql://... ✅
 
 ### Base de datos:
 - ✅ `trial_days` actualizado de 15 a **2 días**
-- ✅ `initial_payment` mantenido en **€0.50**
+- ✅ `initial_payment` mantenido en **€1.00**
 
 ---
 

@@ -83,8 +83,8 @@ export function getWhopUrls() {
  * Configuración de la suscripción
  */
 export const SUBSCRIPTION_CONFIG = {
-  trialDays: 2, // ⚡ ACTUALIZADO: 2 días de trial
-  initialPayment: 0.50, // €0.50 pago inicial
+  trialDays: 2, // ⚡ 2 días de trial
+  initialPayment: 1.00, // €1.00 pago inicial (mínimo de Whop)
   currency: 'EUR',
   interval: 'month', // Intervalo de la suscripción
 }

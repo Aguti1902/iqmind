@@ -99,7 +99,7 @@ Documentación:
    - **Name:** MindMetric Premium - Plan Mensual
    - **Price:** €9.99/mes (o tu precio)
    - **Trial:** 2 días
-   - **Initial Payment:** €0.50
+   - **Initial Payment:** €1.00
 4. **IMPORTANTE:** Guarda el **Plan ID** (ej: `plan_xxxxxxxxx`)
 
 ### PASO 2: Obtener API Key
@@ -186,7 +186,7 @@ Click en "Desbloquear Resultado"
     ↓
 Redirige a Whop Checkout
     ↓
-Usuario paga €0.50
+Usuario paga €1.00
     ↓
 Whop activa membresía (trial 2 días)
     ↓
@@ -223,7 +223,7 @@ Incluye:
 
 **Precio:** €9.99/mes  
 **Trial:** 2 días  
-**Pago Inicial:** €0.50  
+**Pago Inicial:** €1.00  
 **Billing:** Monthly (Mensual)
 
 ---
@@ -307,7 +307,7 @@ Antes de ir a producción, verifica:
 **Fecha de migración:** 7 de Enero de 2026  
 **Versión:** 2.0.0 - Whop Integration  
 **Trial:** 2 días  
-**Pago inicial:** €0.50
+**Pago inicial:** €1.00
 
 **¿Preguntas?** Revisa `CONFIGURAR-WHOP.md` para más detalles.
 

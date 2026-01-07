@@ -215,7 +215,7 @@ export default function CheckoutWhop() {
                     <FaCheckCircle className="text-green-500 text-xl mt-1 flex-shrink-0" />
                     <div>
                       <h4 className="font-semibold text-gray-900">Prueba gratis 2 días</h4>
-                      <p className="text-sm text-gray-600">Solo €0.50 para comenzar</p>
+                      <p className="text-sm text-gray-600">Solo €1.00 para comenzar</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
