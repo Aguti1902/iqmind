@@ -29,16 +29,23 @@ export async function POST(request: NextRequest) {
     // Obtener configuración de Whop
     const config = await getWhopConfig()
     const urls = getWhopUrls()
-    const client = await getWhopClient()
 
     console.log('🔑 Plan ID:', config.planId)
     console.log('🏢 Company ID:', config.companyId)
 
-    // Crear checkout en Whop
-    // Nota: Whop maneja la creación de membresías automáticamente
-    // cuando el usuario completa el pago
+    // NOTA IMPORTANTE: Whop requiere que primero crees un producto en su dashboard
+    // La URL correcta depende de cómo hayas configurado tu producto
     
-    const checkoutUrl = `https://whop.com/checkout/${config.planId}?email=${encodeURIComponent(email)}`
+    // Opción 1: URL directa al plan (si el plan está público)
+    let checkoutUrl = `https://whop.com/${config.companyId}/${config.planId}`
+    
+    // Opción 2: Si tienes un enlace de afiliado o checkout personalizado
+    // checkoutUrl = `https://whop.com/buy/${config.planId}`
+    
+    // Añadir email como parámetro si está disponible
+    if (email) {
+      checkoutUrl += `?email=${encodeURIComponent(email)}`
+    }
 
     console.log('✅ [create-checkout] URL de checkout generada:', checkoutUrl)
 
