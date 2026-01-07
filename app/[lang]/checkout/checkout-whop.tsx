@@ -6,6 +6,7 @@ import MinimalHeader from '@/components/MinimalHeader'
 import Footer from '@/components/Footer'
 import { FaLock, FaCheckCircle, FaBrain, FaCertificate, FaChartLine, FaUsers, FaSpinner } from 'react-icons/fa'
 import { useTranslations } from '@/hooks/useTranslations'
+import { WhopCheckoutEmbed } from '@whop/checkout/react'
 
 export default function CheckoutWhop() {
   const router = useRouter()
@@ -16,7 +17,7 @@ export default function CheckoutWhop() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
   const [testType, setTestType] = useState<string>('iq')
-  const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null)
+  const [planId, setPlanId] = useState<string | null>(null)
 
   // Configuración de mensajes según el tipo de test
   const testConfig: any = {
@@ -87,31 +88,16 @@ export default function CheckoutWhop() {
           console.log('ℹ️ No hay IQ (test no es de CI, es normal)')
         }
 
-        // Crear checkout en Whop
-        console.log('🛒 Creando checkout en Whop...')
-        const response = await fetch('/api/whop/create-checkout', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email: storedEmail,
-            userName: storedUserName,
-            testType: savedTestType,
-          }),
-        })
-
-        const data = await response.json()
-
-        if (data.error) {
-          throw new Error(data.error)
+        // Obtener el Plan ID de Whop desde las variables de entorno
+        const whopPlanId = process.env.NEXT_PUBLIC_WHOP_PLAN_ID
+        
+        if (!whopPlanId) {
+          throw new Error('Plan ID de Whop no configurado')
         }
 
-        console.log('✅ Checkout creado:', data.checkoutUrl)
-        setCheckoutUrl(data.checkoutUrl)
+        console.log('✅ Plan ID obtenido:', whopPlanId)
+        setPlanId(whopPlanId)
         setIsLoading(false)
-
-        // NO redirigir automáticamente - mostrar en iframe
 
       } catch (error: any) {
         console.error('❌ Error en checkout:', error)
@@ -185,58 +171,35 @@ export default function CheckoutWhop() {
                 <p className="text-gray-600 mb-2">Conectando con Whop</p>
                 <p className="text-sm text-gray-500">Por favor, espera un momento</p>
               </div>
-            ) : checkoutUrl ? (
-              <div className="py-8 text-center">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                  Completa tu pago
+            ) : planId ? (
+              <div className="py-8">
+                <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+                  Completa tu pago seguro
                 </h2>
-                <p className="text-gray-600 mb-6">
-                  Haz clic en el botón para abrir el checkout seguro de Whop
-                </p>
                 
-                {/* Botón para abrir popup de Whop */}
-                <button
-                  onClick={() => {
-                    // Abrir popup centrado
-                    const width = 600
-                    const height = 800
-                    const left = (window.screen.width - width) / 2
-                    const top = (window.screen.height - height) / 2
-                    
-                    const popup = window.open(
-                      checkoutUrl,
-                      'WhopCheckout',
-                      `width=${width},height=${height},left=${left},top=${top},toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes`
-                    )
-                    
-                    if (popup) {
-                      popup.focus()
-                      
-                      // Verificar cuando se cierra el popup
-                      const checkPopup = setInterval(() => {
-                        if (popup.closed) {
-                          clearInterval(checkPopup)
-                          console.log('💳 Popup de checkout cerrado')
-                          // Podrías redirigir o refrescar aquí
-                        }
-                      }, 500)
-                    } else {
-                      alert('Por favor, permite popups para completar el pago')
-                    }
-                  }}
-                  className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[#07C59A] to-[#059c7e] text-white font-bold text-lg rounded-xl hover:shadow-xl transition-all duration-200"
-                >
-                  <FaLock className="text-xl" />
-                  Abrir Checkout Seguro
-                </button>
+                {/* Whop Checkout Embed (iframe) */}
+                <div className="max-w-2xl mx-auto">
+                  <WhopCheckoutEmbed
+                    planId={planId}
+                    prefill={{
+                      email: email,
+                    }}
+                    theme="light"
+                    returnUrl={`${typeof window !== 'undefined' ? window.location.origin : ''}/${lang}/resultado`}
+                    onComplete={(payment) => {
+                      console.log('✅ Pago completado:', payment)
+                      // Guardar estado de pago
+                      localStorage.setItem('paymentCompleted', 'true')
+                      localStorage.setItem('paymentId', typeof payment === 'string' ? payment : JSON.stringify(payment))
+                      // Redirigir a resultados
+                      router.push(`/${lang}/resultado`)
+                    }}
+                  />
+                </div>
                 
-                <p className="text-sm text-gray-500 mt-6">
-                  🔒 Conexión segura con Whop
-                </p>
-                
-                <div className="mt-8 p-4 bg-blue-50 rounded-lg max-w-md mx-auto">
+                <div className="mt-6 p-4 bg-blue-50 rounded-lg max-w-md mx-auto text-center">
                   <p className="text-sm text-gray-700">
-                    ℹ️ Se abrirá una ventana segura de Whop. No cierres esta página hasta completar el pago.
+                    🔒 Checkout seguro procesado por Whop
                   </p>
                 </div>
               </div>
