@@ -105,11 +105,11 @@ export default function DepressionTestPage() {
                 <ul className="space-y-2 text-blue-800">
                   <li className="flex items-start gap-2">
                     <span className="text-blue-500 mt-1">•</span>
-                    <span><strong>9 preguntas</strong> de la escala PHQ-9 clínicamente validada</span>
+                    <span><strong>20 preguntas</strong> basadas en la escala PHQ-9 clínicamente validada</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-blue-500 mt-1">•</span>
-                    <span><strong>3-5 minutos</strong> de duración</span>
+                    <span><strong>6-8 minutos</strong> de duración</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-blue-500 mt-1">•</span>

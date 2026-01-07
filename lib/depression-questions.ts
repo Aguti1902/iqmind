@@ -4,6 +4,7 @@ export interface DepressionQuestion {
 }
 
 export const depressionQuestions: DepressionQuestion[] = [
+  // PHQ-9 Original
   {
     id: 1,
     text: 'Poco interés o placer en hacer las cosas'
@@ -39,6 +40,51 @@ export const depressionQuestions: DepressionQuestion[] = [
   {
     id: 9,
     text: 'Pensamientos de que estarías mejor muerto/a o de hacerte daño de alguna manera'
+  },
+  // Preguntas adicionales para evaluación más completa
+  {
+    id: 10,
+    text: 'Sentirse sin esperanza sobre el futuro'
+  },
+  {
+    id: 11,
+    text: 'Dificultad para disfrutar actividades que antes te gustaban'
+  },
+  {
+    id: 12,
+    text: 'Sentirse aislado/a o desconectado/a de los demás'
+  },
+  {
+    id: 13,
+    text: 'Cambios significativos en el peso (pérdida o ganancia)'
+  },
+  {
+    id: 14,
+    text: 'Sentir que todo requiere mucho esfuerzo, incluso tareas simples'
+  },
+  {
+    id: 15,
+    text: 'Problemas de memoria o dificultad para tomar decisiones'
+  },
+  {
+    id: 16,
+    text: 'Sentimientos de culpa excesiva o inapropiada'
+  },
+  {
+    id: 17,
+    text: 'Irritabilidad o frustración frecuente, incluso por cosas pequeñas'
+  },
+  {
+    id: 18,
+    text: 'Pérdida de interés en relaciones sociales o actividades con amigos'
+  },
+  {
+    id: 19,
+    text: 'Sentir que la vida no tiene sentido o propósito'
+  },
+  {
+    id: 20,
+    text: 'Experimentar llanto frecuente o ganas de llorar sin razón aparente'
   }
 ]
 
@@ -58,15 +104,15 @@ export function calculateDepressionScore(answers: { [key: number]: number }): De
     }
   })
 
-  // Determinar severidad según escala PHQ-9
+  // Determinar severidad según escala extendida (20 preguntas, 0-60 puntos)
   let severity: 'minimal' | 'mild' | 'moderate' | 'moderately_severe' | 'severe'
-  if (totalScore <= 4) {
+  if (totalScore <= 10) {
     severity = 'minimal'
-  } else if (totalScore <= 9) {
+  } else if (totalScore <= 20) {
     severity = 'mild'
-  } else if (totalScore <= 14) {
+  } else if (totalScore <= 35) {
     severity = 'moderate'
-  } else if (totalScore <= 19) {
+  } else if (totalScore <= 45) {
     severity = 'moderately_severe'
   } else {
     severity = 'severe'
