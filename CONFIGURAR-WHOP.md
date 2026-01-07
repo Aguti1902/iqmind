@@ -91,12 +91,15 @@ Los webhooks permiten que Whop notifique a tu aplicación cuando ocurren eventos
 Ve a tu proyecto en Vercel → **Settings** → **Environment Variables** y añade:
 
 ```bash
-# Whop Configuration
+# Whop Configuration (servidor)
 WHOP_API_KEY=tu_api_key_de_whop
 WHOP_COMPANY_ID=tu_company_id
 WHOP_PLAN_ID=tu_plan_id_mensual
 WHOP_WEBHOOK_SECRET=tu_webhook_secret
 WHOP_MODE=production
+
+# Whop Configuration (público - REQUERIDO para checkout embebido)
+NEXT_PUBLIC_WHOP_PLAN_ID=tu_plan_id_mensual
 
 # App URL
 NEXT_PUBLIC_APP_URL=https://mindmetric.io
@@ -104,6 +107,8 @@ NEXT_PUBLIC_APP_URL=https://mindmetric.io
 # Database (Railway)
 DATABASE_URL=postgresql://postgres:...@switchback.proxy.rlwy.net:58127/railway
 ```
+
+⚠️ **IMPORTANTE:** La variable `NEXT_PUBLIC_WHOP_PLAN_ID` debe ser la **misma** que `WHOP_PLAN_ID` pero con el prefijo `NEXT_PUBLIC_` para que sea accesible desde el cliente (necesaria para el checkout embebido).
 
 ### En Railway (Database ya configurado):
 
@@ -147,6 +152,52 @@ Cuando estés listo para aceptar pagos reales:
 
 ---
 
+## 🎯 CHECKOUT EMBEBIDO (IFRAME)
+
+MindMetric utiliza el **checkout embebido de Whop** para ofrecer una experiencia de pago integrada sin redirecciones externas.
+
+### 📦 Paquete NPM:
+
+```bash
+npm install @whop/checkout
+```
+
+### 🔧 Implementación:
+
+El checkout se implementa usando el componente oficial de React:
+
+```tsx
+import { WhopCheckoutEmbed } from '@whop/checkout/react'
+
+<WhopCheckoutEmbed
+  planId={process.env.NEXT_PUBLIC_WHOP_PLAN_ID}
+  prefill={{ email: userEmail }}
+  theme="light"
+  returnUrl={`${window.location.origin}/${lang}/resultado`}
+  onComplete={(payment) => {
+    // Guardar estado de pago
+    localStorage.setItem('paymentCompleted', 'true')
+    // Redirigir a resultados
+    router.push(`/${lang}/resultado`)
+  }}
+/>
+```
+
+### ✅ Ventajas:
+
+- **Sin popups bloqueados** por el navegador
+- **Sin redirecciones** externas (mejor UX)
+- **Email pre-rellenado** automáticamente
+- **Callback inmediato** al completar el pago
+- **Totalmente responsive** en móvil y desktop
+- **Integrado** en el diseño de la web
+
+### 📖 Documentación Oficial:
+
+[https://docs.whop.com/payments/checkout-embed](https://docs.whop.com/payments/checkout-embed)
+
+---
+
 ## 📊 FLUJO DE PAGO COMPLETO
 
 ```
@@ -154,21 +205,27 @@ Cuando estés listo para aceptar pagos reales:
    ↓
 2. Click en "Desbloquear Resultado"
    ↓
-3. App llama a /api/whop/create-checkout
+3. Usuario redirigido a /checkout
    ↓
-4. Usuario es redirigido a Whop checkout
+4. Se carga el checkout embebido de Whop (iframe)
+   - Email pre-rellenado
+   - Formulario de pago integrado en la web
    ↓
-5. Usuario paga €1.00
+5. Usuario paga €1.00 dentro del iframe
    ↓
 6. Whop activa membresía con trial de 2 días
    ↓
-7. Whop envía webhook "membership.went_valid"
+7. Callback onComplete() se ejecuta automáticamente
    ↓
-8. App recibe webhook y actualiza BD
+8. Usuario redirigido a /resultado
    ↓
-9. App envía emails de bienvenida
+9. Whop envía webhook "membership.went_valid"
    ↓
-10. Usuario accede a resultados completos
+10. App recibe webhook y actualiza BD
+   ↓
+11. App envía emails de bienvenida
+   ↓
+12. Usuario accede a resultados completos
 ```
 
 ---
