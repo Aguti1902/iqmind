@@ -115,11 +115,14 @@ export default function ResultadoEstimadoPage() {
       return
     }
 
-    // Guardar email en localStorage
+    // Guardar email y testType en localStorage
     localStorage.setItem('userEmail', email)
+    localStorage.setItem('testType', testType)
     
-    // Redirigir a checkout
-    router.push(`/${lang}/checkout`)
+    console.log('🎯 Redirigiendo al checkout con testType:', testType)
+    
+    // Redirigir directo al checkout de Whop (sin pasar por checkout-router)
+    router.push(`/${lang}/checkout-stripe`)
   }
 
   if (isLoading || loading || !t) {
@@ -334,10 +337,37 @@ export default function ResultadoEstimadoPage() {
             <div className="bg-gradient-to-br from-[#e6f5f5] to-white rounded-2xl p-8 mb-8 border-2 border-[#07C59A]">
               <div className="text-center mb-8">
                 <h2 className="text-4xl md:text-5xl font-bold mb-4">
-                  {t.estimatedResult.mainTitle} <span className="text-[#07C59A]">{t.estimatedResult.mainTitleHighlight}</span>
+                  {testType === 'iq' ? (
+                    <>Descubre tu <span className="text-[#07C59A]">¡Capacidad Intelectual!</span></>
+                  ) : testType === 'personality' ? (
+                    <>Descubre tu <span className="text-[#07C59A]">¡Personalidad!</span></>
+                  ) : testType === 'adhd' ? (
+                    <>Descubre tu <span className="text-[#07C59A]">¡Nivel de TDAH!</span></>
+                  ) : testType === 'anxiety' ? (
+                    <>Descubre tu <span className="text-[#07C59A]">¡Nivel de Ansiedad!</span></>
+                  ) : testType === 'depression' ? (
+                    <>Descubre tu <span className="text-[#07C59A]">¡Nivel de Depresión!</span></>
+                  ) : testType === 'eq' ? (
+                    <>Descubre tu <span className="text-[#07C59A]">¡Inteligencia Emocional!</span></>
+                  ) : (
+                    <>{t.estimatedResult.mainTitle} <span className="text-[#07C59A]">{t.estimatedResult.mainTitleHighlight}</span></>
+                  )}
                 </h2>
                 <p className="text-lg text-gray-700 max-w-2xl mx-auto">
-                  {t.estimatedResult.mainSubtitle}
+                  {testType === 'iq' 
+                    ? 'Proporciona tu email para acceder a tu evaluación integral de inteligencia y perfil mental personalizado.'
+                    : testType === 'personality'
+                    ? 'Proporciona tu email para acceder a tu análisis completo de personalidad Big Five.'
+                    : testType === 'adhd'
+                    ? 'Proporciona tu email para acceder a tu evaluación completa de TDAH y recomendaciones.'
+                    : testType === 'anxiety'
+                    ? 'Proporciona tu email para acceder a tu evaluación completa de ansiedad y estrategias.'
+                    : testType === 'depression'
+                    ? 'Proporciona tu email para acceder a tu evaluación completa de depresión y recursos.'
+                    : testType === 'eq'
+                    ? 'Proporciona tu email para acceder a tu análisis completo de inteligencia emocional.'
+                    : t.estimatedResult.mainSubtitle
+                  }
                 </p>
               </div>
 
@@ -410,7 +440,7 @@ export default function ResultadoEstimadoPage() {
                 </button>
                 
                 <p className="text-sm text-gray-500 text-center mt-4">
-                  🔒 {t.estimatedResult.securePayment}
+                  🔒 Pago 100% seguro con Whop
                 </p>
               </div>
             </div>
