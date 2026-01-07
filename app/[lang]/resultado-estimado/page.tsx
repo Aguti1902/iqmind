@@ -187,40 +187,146 @@ export default function ResultadoEstimadoPage() {
               </div>
             </div>
 
-            {/* What You Get */}
+            {/* What You Get - Adaptado por tipo de test */}
             <div className="bg-gray-50 rounded-xl p-6 mb-8">
               <h3 className="text-xl font-bold text-gray-900 mb-4 text-center">
-                {t.estimatedResult.unlockSubtitle}
+                {testType === 'iq' ? 'Desbloquea tu Resultado Completo de CI' :
+                 testType === 'personality' ? 'Desbloquea tu Perfil de Personalidad Completo' :
+                 testType === 'adhd' ? 'Desbloquea tu Evaluación de TDAH Completa' :
+                 testType === 'anxiety' ? 'Desbloquea tu Evaluación de Ansiedad Completa' :
+                 testType === 'depression' ? 'Desbloquea tu Evaluación de Depresión Completa' :
+                 testType === 'eq' ? 'Desbloquea tu Inteligencia Emocional Completa' :
+                 t.estimatedResult.unlockSubtitle}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex items-start gap-3">
-                  <FaCheckCircle className="text-green-500 text-xl mt-1" />
-                  <div>
-                    <h4 className="font-semibold text-gray-900">{t.estimatedResult.feature1}</h4>
-                    <p className="text-sm text-gray-600">{t.estimatedResult.feature2}</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <FaChartLine className="text-green-500 text-xl mt-1" />
-                  <div>
-                    <h4 className="font-semibold text-gray-900">{t.estimatedResult.feature3}</h4>
-                    <p className="text-sm text-gray-600">{t.estimatedResult.feature2}</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <FaCertificate className="text-green-500 text-xl mt-1" />
-                  <div>
-                    <h4 className="font-semibold text-gray-900">{t.estimatedResult.feature4}</h4>
-                    <p className="text-sm text-gray-600">{t.estimatedResult.feature2}</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <FaShare className="text-green-500 text-xl mt-1" />
-                  <div>
-                    <h4 className="font-semibold text-gray-900">{t.estimatedResult.feature5}</h4>
-                    <p className="text-sm text-gray-600">{t.result.shareTitle}</p>
-                  </div>
-                </div>
+                {testType === 'iq' && (
+                  <>
+                    <div className="flex items-start gap-3">
+                      <FaCheckCircle className="text-green-500 text-xl mt-1" />
+                      <div>
+                        <h4 className="font-semibold text-gray-900">Puntuación Exacta de CI</h4>
+                        <p className="text-sm text-gray-600">Análisis detallado personalizado</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <FaChartLine className="text-green-500 text-xl mt-1" />
+                      <div>
+                        <h4 className="font-semibold text-gray-900">Gráficos Comparativos</h4>
+                        <p className="text-sm text-gray-600">Compárate con la población mundial</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <FaCertificate className="text-green-500 text-xl mt-1" />
+                      <div>
+                        <h4 className="font-semibold text-gray-900">Certificado Oficial</h4>
+                        <p className="text-sm text-gray-600">Descargable y compartible</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <FaShare className="text-green-500 text-xl mt-1" />
+                      <div>
+                        <h4 className="font-semibold text-gray-900">Acceso Premium Completo</h4>
+                        <p className="text-sm text-gray-600">¡Comparte tu Resultado!</p>
+                      </div>
+                    </div>
+                  </>
+                )}
+                {testType === 'personality' && (
+                  <>
+                    <div className="flex items-start gap-3">
+                      <FaCheckCircle className="text-green-500 text-xl mt-1" />
+                      <div>
+                        <h4 className="font-semibold text-gray-900">Análisis Big Five Completo</h4>
+                        <p className="text-sm text-gray-600">5 dimensiones de personalidad</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <FaChartLine className="text-green-500 text-xl mt-1" />
+                      <div>
+                        <h4 className="font-semibold text-gray-900">Gráficos Personalizados</h4>
+                        <p className="text-sm text-gray-600">Visualiza tu perfil único</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <FaCertificate className="text-green-500 text-xl mt-1" />
+                      <div>
+                        <h4 className="font-semibold text-gray-900">Recomendaciones Profesionales</h4>
+                        <p className="text-sm text-gray-600">Para desarrollo personal</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <FaShare className="text-green-500 text-xl mt-1" />
+                      <div>
+                        <h4 className="font-semibold text-gray-900">Acceso Premium</h4>
+                        <p className="text-sm text-gray-600">Todos los tests ilimitados</p>
+                      </div>
+                    </div>
+                  </>
+                )}
+                {(testType === 'adhd' || testType === 'anxiety' || testType === 'depression') && (
+                  <>
+                    <div className="flex items-start gap-3">
+                      <FaCheckCircle className="text-green-500 text-xl mt-1" />
+                      <div>
+                        <h4 className="font-semibold text-gray-900">Análisis Detallado</h4>
+                        <p className="text-sm text-gray-600">Nivel de severidad y síntomas</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <FaChartLine className="text-green-500 text-xl mt-1" />
+                      <div>
+                        <h4 className="font-semibold text-gray-900">Gráficos y Estadísticas</h4>
+                        <p className="text-sm text-gray-600">Visualiza tus resultados</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <FaCertificate className="text-green-500 text-xl mt-1" />
+                      <div>
+                        <h4 className="font-semibold text-gray-900">Recomendaciones Profesionales</h4>
+                        <p className="text-sm text-gray-600">Estrategias personalizadas</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <FaShare className="text-green-500 text-xl mt-1" />
+                      <div>
+                        <h4 className="font-semibold text-gray-900">Acceso Premium</h4>
+                        <p className="text-sm text-gray-600">Todos los tests ilimitados</p>
+                      </div>
+                    </div>
+                  </>
+                )}
+                {testType === 'eq' && (
+                  <>
+                    <div className="flex items-start gap-3">
+                      <FaCheckCircle className="text-green-500 text-xl mt-1" />
+                      <div>
+                        <h4 className="font-semibold text-gray-900">Análisis EQ Completo</h4>
+                        <p className="text-sm text-gray-600">Competencias emocionales</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <FaChartLine className="text-green-500 text-xl mt-1" />
+                      <div>
+                        <h4 className="font-semibold text-gray-900">Áreas de Fortaleza</h4>
+                        <p className="text-sm text-gray-600">Y oportunidades de mejora</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <FaCertificate className="text-green-500 text-xl mt-1" />
+                      <div>
+                        <h4 className="font-semibold text-gray-900">Plan de Desarrollo</h4>
+                        <p className="text-sm text-gray-600">Personalizado para ti</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <FaShare className="text-green-500 text-xl mt-1" />
+                      <div>
+                        <h4 className="font-semibold text-gray-900">Acceso Premium</h4>
+                        <p className="text-sm text-gray-600">Todos los tests ilimitados</p>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
 

@@ -476,7 +476,13 @@ export default function CheckoutPage() {
               {testConfig[testType]?.icon || '🧠'}
             </div>
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              {t.checkout.almostReady}
+              {testType === 'iq' ? 'Desbloquea tu Resultado de CI' :
+               testType === 'personality' ? 'Desbloquea tu Perfil de Personalidad' :
+               testType === 'adhd' ? 'Desbloquea tu Evaluación de TDAH' :
+               testType === 'anxiety' ? 'Desbloquea tu Evaluación de Ansiedad' :
+               testType === 'depression' ? 'Desbloquea tu Evaluación de Depresión' :
+               testType === 'eq' ? 'Desbloquea tu Inteligencia Emocional' :
+               t.checkout.almostReady}
             </h1>
             <p className="text-xl text-gray-600">
               {testConfig[testType]?.description || t.checkout.unlockScore}
