@@ -4,6 +4,7 @@ export interface AnxietyQuestion {
 }
 
 export const anxietyQuestions: AnxietyQuestion[] = [
+  // GAD-7 Original
   {
     id: 1,
     text: 'Sentirse nervioso/a, ansioso/a o con los nervios de punta'
@@ -31,6 +32,59 @@ export const anxietyQuestions: AnxietyQuestion[] = [
   {
     id: 7,
     text: 'Sentir miedo, como si algo terrible fuera a suceder'
+  },
+  // Preguntas adicionales para evaluación más completa
+  {
+    id: 8,
+    text: 'Tener dificultad para concentrarse debido a la ansiedad'
+  },
+  {
+    id: 9,
+    text: 'Experimentar tensión muscular o dolores relacionados con el estrés'
+  },
+  {
+    id: 10,
+    text: 'Tener problemas para conciliar o mantener el sueño debido a preocupaciones'
+  },
+  {
+    id: 11,
+    text: 'Evitar situaciones sociales o lugares por sentir ansiedad'
+  },
+  {
+    id: 12,
+    text: 'Experimentar sudoración excesiva o temblores cuando está ansioso/a'
+  },
+  {
+    id: 13,
+    text: 'Sentir que su corazón late rápido o de forma irregular'
+  },
+  {
+    id: 14,
+    text: 'Tener pensamientos repetitivos o intrusivos que causan malestar'
+  },
+  {
+    id: 15,
+    text: 'Sentir náuseas o malestar estomacal relacionado con la ansiedad'
+  },
+  {
+    id: 16,
+    text: 'Necesitar constante seguridad o confirmación de otros'
+  },
+  {
+    id: 17,
+    text: 'Sentir mareos o sensación de desmayo en momentos de ansiedad'
+  },
+  {
+    id: 18,
+    text: 'Experimentar dificultad para respirar o sensación de ahogo'
+  },
+  {
+    id: 19,
+    text: 'Tener cambios en el apetito relacionados con la ansiedad'
+  },
+  {
+    id: 20,
+    text: 'Sentir que las preocupaciones interfieren con su trabajo o estudios'
   }
 ]
 
