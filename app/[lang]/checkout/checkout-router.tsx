@@ -32,8 +32,8 @@ export default function CheckoutRouter() {
         setUserName(storedUserName || 'Usuario')
         setUserIQ(parseInt(storedIQ))
 
-        setStatus('Redirigiendo a checkout de Stripe...')
-        router.push(`/${lang}/checkout-stripe`)
+        setStatus('Redirigiendo a checkout de Whop...')
+        router.push(`/${lang}/checkout-stripe`) // Ruta mantenida por compatibilidad
 
       } catch (error: any) {
         console.error('❌ Error en checkout:', error)

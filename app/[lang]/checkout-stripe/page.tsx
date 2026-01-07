@@ -1,7 +1,8 @@
 // app/[lang]/checkout-stripe/page.tsx
-import CheckoutStripe from '../checkout/checkout-stripe'
+// MIGRADO A WHOP - Este archivo redirige al nuevo checkout
+import CheckoutWhop from '../checkout/checkout-whop'
 
 export default function CheckoutStripePage() {
-  return <CheckoutStripe />
+  return <CheckoutWhop />
 }
 
