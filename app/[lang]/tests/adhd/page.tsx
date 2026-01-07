@@ -23,7 +23,7 @@ export default function ADHDTestPage() {
   const handleSubmit = () => {
     const results = calculateADHDScores(answers)
     
-    // Guardar resultados
+    // Guardar resultados en localStorage
     const testResult = {
       id: Date.now().toString(),
       type: 'adhd',
@@ -32,11 +32,22 @@ export default function ADHDTestPage() {
       answers
     }
     
-    const existingResults = JSON.parse(localStorage.getItem('testResults') || '{}')
-    existingResults.adhd = testResult
-    localStorage.setItem('testResults', JSON.stringify(existingResults))
+    // Guardar en formato compatible con sistema de checkout
+    localStorage.setItem('testResults', JSON.stringify({
+      type: 'adhd',
+      answers,
+      completedAt: new Date().toISOString(),
+      userName: localStorage.getItem('userName') || 'Usuario'
+    }))
     
-    router.push(`/${lang}/tests/adhd/results`)
+    // Guardar datos específicos del test de TDAH
+    localStorage.setItem('adhdResults', JSON.stringify(testResult))
+    
+    // Marcar como usuario nuevo (debe pasar por checkout)
+    localStorage.removeItem('isPremiumTest')
+    
+    // Redirigir al flujo de análisis (igual que test de IQ)
+    router.push(`/${lang}/analizando`)
   }
 
   if (!started) {

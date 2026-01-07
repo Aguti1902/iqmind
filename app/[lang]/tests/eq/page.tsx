@@ -45,6 +45,7 @@ export default function EQTestPage() {
   const handleSubmit = () => {
     const results = calculateEQScores(answers)
     
+    // Guardar resultados en localStorage
     const testResult = {
       id: Date.now().toString(),
       type: 'eq',
@@ -53,11 +54,22 @@ export default function EQTestPage() {
       answers
     }
     
-    const existingResults = JSON.parse(localStorage.getItem('testResults') || '{}')
-    existingResults.eq = testResult
-    localStorage.setItem('testResults', JSON.stringify(existingResults))
+    // Guardar en formato compatible con sistema de checkout
+    localStorage.setItem('testResults', JSON.stringify({
+      type: 'eq',
+      answers,
+      completedAt: new Date().toISOString(),
+      userName: localStorage.getItem('userName') || 'Usuario'
+    }))
     
-    router.push(`/${lang}/tests/eq/results`)
+    // Guardar datos específicos del test de EQ
+    localStorage.setItem('eqResults', JSON.stringify(testResult))
+    
+    // Marcar como usuario nuevo (debe pasar por checkout)
+    localStorage.removeItem('isPremiumTest')
+    
+    // Redirigir al flujo de análisis (igual que test de IQ)
+    router.push(`/${lang}/analizando`)
   }
 
   if (!started) {

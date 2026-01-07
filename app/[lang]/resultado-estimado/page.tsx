@@ -16,6 +16,41 @@ export default function ResultadoEstimadoPage() {
   const [email, setEmail] = useState('')
   const [emailError, setEmailError] = useState('')
   const [agreedToTerms, setAgreedToTerms] = useState(false)
+  const [testType, setTestType] = useState<string>('iq')
+
+  // Configuración de mensajes según el tipo de test
+  const testConfig: any = {
+    'iq': {
+      title: 'Test de CI Completado',
+      subtitle: 'Tu Coeficiente Intelectual',
+      icon: '🧠'
+    },
+    'personality': {
+      title: 'Test de Personalidad Completado',
+      subtitle: 'Análisis Big Five (OCEAN)',
+      icon: '🎯'
+    },
+    'adhd': {
+      title: 'Test de TDAH Completado',
+      subtitle: 'Evaluación de Atención',
+      icon: '🎯'
+    },
+    'anxiety': {
+      title: 'Test de Ansiedad Completado',
+      subtitle: 'Análisis GAD-7',
+      icon: '💙'
+    },
+    'depression': {
+      title: 'Test de Depresión Completado',
+      subtitle: 'Análisis PHQ-9',
+      icon: '🌟'
+    },
+    'eq': {
+      title: 'Test de Inteligencia Emocional Completado',
+      subtitle: 'Análisis EQ',
+      icon: '❤️'
+    }
+  }
 
   useEffect(() => {
     const testResultsStr = localStorage.getItem('testResults')
@@ -25,25 +60,36 @@ export default function ResultadoEstimadoPage() {
     }
 
     const testResults = JSON.parse(testResultsStr)
+    const testType = testResults.type || localStorage.getItem('currentTestType') || 'iq'
     const answers = testResults.answers
     const name = testResults.userName || localStorage.getItem('userName') || 'Usuario'
 
-    // Calcular respuestas correctas
-    let correctAnswers = 0
-    answers.forEach((answer: number | null, index: number) => {
-      if (answer === questions[index].correctAnswer) {
-        correctAnswers++
-      }
-    })
+    // Calcular resultados según el tipo de test
+    if (testType === 'iq' || !testType) {
+      // Test de IQ
+      let correctAnswers = 0
+      answers.forEach((answer: number | null, index: number) => {
+        if (questions[index] && answer === questions[index].correctAnswer) {
+          correctAnswers++
+        }
+      })
+      const iq = calculateIQ(correctAnswers)
+      setEstimatedIQ(iq)
+      localStorage.setItem('userIQ', iq.toString())
+      localStorage.setItem('correctAnswers', correctAnswers.toString())
+    } else {
+      // Para otros tests, usamos un valor genérico que indica "completado"
+      // Los resultados reales se mostrarán después del pago
+      setEstimatedIQ(null)
+    }
 
-    const iq = calculateIQ(correctAnswers)
-    setEstimatedIQ(iq)
     setUserName(name)
+    setTestType(testType)
     setIsLoading(false)
 
-    // Guardar datos para el pago
-    localStorage.setItem('userIQ', iq.toString())
-    localStorage.setItem('correctAnswers', correctAnswers.toString())
+    // Guardar tipo de test para el checkout
+    localStorage.setItem('testType', testType)
+    console.log('📊 Tipo de test en resultado-estimado:', testType)
   }, [router])
 
   const validateEmail = (email: string) => {
@@ -114,8 +160,18 @@ export default function ResultadoEstimadoPage() {
             <div className="relative mb-8">
               <div className="blur-sm pointer-events-none">
                 <div className="bg-gradient-to-r from-primary-500 to-primary-700 rounded-xl p-8 text-white text-center">
-                  <div className="text-6xl font-bold mb-2">{estimatedIQ}</div>
-                  <div className="text-2xl">{t.estimatedResult.estimatedIQ}</div>
+                  {testType === 'iq' && estimatedIQ ? (
+                    <>
+                      <div className="text-6xl font-bold mb-2">{estimatedIQ}</div>
+                      <div className="text-2xl">{t.estimatedResult.estimatedIQ}</div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="text-6xl mb-4">{testConfig[testType]?.icon || '🧠'}</div>
+                      <div className="text-3xl font-bold mb-2">{testConfig[testType]?.title || 'Test Completado'}</div>
+                      <div className="text-xl">{testConfig[testType]?.subtitle || 'Resultados Disponibles'}</div>
+                    </>
+                  )}
                 </div>
               </div>
               <div className="absolute inset-0 flex items-center justify-center">

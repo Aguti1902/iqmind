@@ -23,6 +23,7 @@ export default function DepressionTestPage() {
   const handleSubmit = () => {
     const results = calculateDepressionScore(answers)
     
+    // Guardar resultados en localStorage
     const testResult = {
       id: Date.now().toString(),
       type: 'depression',
@@ -31,11 +32,22 @@ export default function DepressionTestPage() {
       answers
     }
     
-    const existingResults = JSON.parse(localStorage.getItem('testResults') || '{}')
-    existingResults.depression = testResult
-    localStorage.setItem('testResults', JSON.stringify(existingResults))
+    // Guardar en formato compatible con sistema de checkout
+    localStorage.setItem('testResults', JSON.stringify({
+      type: 'depression',
+      answers,
+      completedAt: new Date().toISOString(),
+      userName: localStorage.getItem('userName') || 'Usuario'
+    }))
     
-    router.push(`/${lang}/tests/depression/results`)
+    // Guardar datos específicos del test de depresión
+    localStorage.setItem('depressionResults', JSON.stringify(testResult))
+    
+    // Marcar como usuario nuevo (debe pasar por checkout)
+    localStorage.removeItem('isPremiumTest')
+    
+    // Redirigir al flujo de análisis (igual que test de IQ)
+    router.push(`/${lang}/analizando`)
   }
 
   if (!started) {

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import Link from 'next/link'
-import { FaBrain, FaChartLine, FaCertificate, FaUserFriends, FaLock, FaCheckCircle, FaChevronLeft, FaChevronRight } from 'react-icons/fa'
+import { FaBrain, FaChartLine, FaCertificate, FaUserFriends, FaLock, FaCheckCircle, FaChevronLeft, FaChevronRight, FaArrowRight } from 'react-icons/fa'
 import { useTranslations } from '@/hooks/useTranslations'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 
@@ -182,6 +182,188 @@ export default function Home() {
                   {t.howItWorks.step3Desc}
                 </p>
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Sección de Tests Disponibles - NUEVA */}
+        <section className="py-20 bg-white">
+          <div className="container-custom">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-bold text-gray-900 mb-4">
+                Tests de Evaluación Disponibles
+              </h2>
+              <p className="text-xl text-gray-600">
+                Evalúa diferentes aspectos de tu mente con nuestros tests científicamente validados
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Test de CI */}
+              <Link 
+                href={`/${lang}/test`}
+                className="group card hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border-2 border-transparent hover:border-[#07C59A] cursor-pointer"
+              >
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-16 h-16 bg-gradient-to-br from-[#07C59A] to-[#069e7b] rounded-xl flex items-center justify-center text-white text-3xl flex-shrink-0 group-hover:scale-110 transition-transform">
+                    <FaBrain />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900">Test de CI</h3>
+                    <p className="text-sm text-gray-600">Coeficiente Intelectual</p>
+                  </div>
+                </div>
+                <p className="text-gray-700 mb-4">
+                  Mide tu capacidad de razonamiento lógico, resolución de problemas y pensamiento abstracto.
+                </p>
+                <div className="flex items-center justify-between text-sm text-gray-600">
+                  <span>⏱️ 15-20 min</span>
+                  <span>📝 20 preguntas</span>
+                </div>
+                <div className="mt-4 text-[#07C59A] font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
+                  Comenzar Test <FaArrowRight className="text-sm" />
+                </div>
+              </Link>
+
+              {/* Test de Personalidad */}
+              <Link 
+                href={`/${lang}/tests/personality`}
+                className="group card hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border-2 border-transparent hover:border-purple-500 cursor-pointer"
+              >
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-700 rounded-xl flex items-center justify-center text-white text-3xl flex-shrink-0 group-hover:scale-110 transition-transform">
+                    <FaUserFriends />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900">Test de Personalidad</h3>
+                    <p className="text-sm text-gray-600">Big Five (OCEAN)</p>
+                  </div>
+                </div>
+                <p className="text-gray-700 mb-4">
+                  Descubre los 5 rasgos fundamentales de tu personalidad: Apertura, Responsabilidad, Extroversión, Amabilidad y Neuroticismo.
+                </p>
+                <div className="flex items-center justify-between text-sm text-gray-600">
+                  <span>⏱️ 10-15 min</span>
+                  <span>📝 44 preguntas</span>
+                </div>
+                <div className="mt-4 text-purple-600 font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
+                  Comenzar Test <FaArrowRight className="text-sm" />
+                </div>
+              </Link>
+
+              {/* Test de TDAH */}
+              <Link 
+                href={`/${lang}/tests/adhd`}
+                className="group card hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border-2 border-transparent hover:border-blue-500 cursor-pointer"
+              >
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl flex items-center justify-center text-white text-3xl flex-shrink-0 group-hover:scale-110 transition-transform">
+                    <FaBrain />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900">Test de TDAH</h3>
+                    <p className="text-sm text-gray-600">Evaluación de Atención</p>
+                  </div>
+                </div>
+                <p className="text-gray-700 mb-4">
+                  Evalúa síntomas de Trastorno por Déficit de Atención e Hiperactividad basado en criterios DSM-5.
+                </p>
+                <div className="flex items-center justify-between text-sm text-gray-600">
+                  <span>⏱️ 5-8 min</span>
+                  <span>📝 18 preguntas</span>
+                </div>
+                <div className="mt-4 text-blue-600 font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
+                  Comenzar Test <FaArrowRight className="text-sm" />
+                </div>
+              </Link>
+
+              {/* Test de Ansiedad */}
+              <Link 
+                href={`/${lang}/tests/anxiety`}
+                className="group card hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border-2 border-transparent hover:border-red-500 cursor-pointer"
+              >
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-red-700 rounded-xl flex items-center justify-center text-white text-3xl flex-shrink-0 group-hover:scale-110 transition-transform">
+                    <FaChartLine />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900">Test de Ansiedad</h3>
+                    <p className="text-sm text-gray-600">GAD-7</p>
+                  </div>
+                </div>
+                <p className="text-gray-700 mb-4">
+                  Mide el nivel de ansiedad generalizada con la escala clínica GAD-7 validada internacionalmente.
+                </p>
+                <div className="flex items-center justify-between text-sm text-gray-600">
+                  <span>⏱️ 2-3 min</span>
+                  <span>📝 7 preguntas</span>
+                </div>
+                <div className="mt-4 text-red-600 font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
+                  Comenzar Test <FaArrowRight className="text-sm" />
+                </div>
+              </Link>
+
+              {/* Test de Depresión */}
+              <Link 
+                href={`/${lang}/tests/depression`}
+                className="group card hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border-2 border-transparent hover:border-gray-500 cursor-pointer"
+              >
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-16 h-16 bg-gradient-to-br from-gray-500 to-gray-700 rounded-xl flex items-center justify-center text-white text-3xl flex-shrink-0 group-hover:scale-110 transition-transform">
+                    <FaCheckCircle />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900">Test de Depresión</h3>
+                    <p className="text-sm text-gray-600">PHQ-9</p>
+                  </div>
+                </div>
+                <p className="text-gray-700 mb-4">
+                  Evaluación del estado de ánimo y síntomas depresivos usando el cuestionario PHQ-9.
+                </p>
+                <div className="flex items-center justify-between text-sm text-gray-600">
+                  <span>⏱️ 3-5 min</span>
+                  <span>📝 9 preguntas</span>
+                </div>
+                <div className="mt-4 text-gray-600 font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
+                  Comenzar Test <FaArrowRight className="text-sm" />
+                </div>
+              </Link>
+
+              {/* Test de Inteligencia Emocional */}
+              <Link 
+                href={`/${lang}/tests/eq`}
+                className="group card hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border-2 border-transparent hover:border-green-500 cursor-pointer"
+              >
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-700 rounded-xl flex items-center justify-center text-white text-3xl flex-shrink-0 group-hover:scale-110 transition-transform">
+                    <FaChartLine />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900">Inteligencia Emocional</h3>
+                    <p className="text-sm text-gray-600">Test EQ</p>
+                  </div>
+                </div>
+                <p className="text-gray-700 mb-4">
+                  Mide tu capacidad para reconocer, comprender y gestionar emociones propias y ajenas.
+                </p>
+                <div className="flex items-center justify-between text-sm text-gray-600">
+                  <span>⏱️ 8-10 min</span>
+                  <span>📝  33 preguntas</span>
+                </div>
+                <div className="mt-4 text-green-600 font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
+                  Comenzar Test <FaArrowRight className="text-sm" />
+                </div>
+              </Link>
+            </div>
+
+            {/* CTA ver todos */}
+            <div className="text-center mt-12">
+              <Link 
+                href={`/${lang}/tests`}
+                className="inline-flex items-center gap-2 text-[#07C59A] hover:text-[#069e7b] font-semibold text-lg transition-colors"
+              >
+                Ver todos los tests disponibles <FaArrowRight />
+              </Link>
             </div>
           </div>
         </section>

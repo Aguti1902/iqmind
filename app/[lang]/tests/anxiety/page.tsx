@@ -23,6 +23,7 @@ export default function AnxietyTestPage() {
   const handleSubmit = () => {
     const results = calculateAnxietyScore(answers)
     
+    // Guardar resultados en localStorage
     const testResult = {
       id: Date.now().toString(),
       type: 'anxiety',
@@ -31,11 +32,22 @@ export default function AnxietyTestPage() {
       answers
     }
     
-    const existingResults = JSON.parse(localStorage.getItem('testResults') || '{}')
-    existingResults.anxiety = testResult
-    localStorage.setItem('testResults', JSON.stringify(existingResults))
+    // Guardar en formato compatible con sistema de checkout
+    localStorage.setItem('testResults', JSON.stringify({
+      type: 'anxiety',
+      answers,
+      completedAt: new Date().toISOString(),
+      userName: localStorage.getItem('userName') || 'Usuario'
+    }))
     
-    router.push(`/${lang}/tests/anxiety/results`)
+    // Guardar datos específicos del test de ansiedad
+    localStorage.setItem('anxietyResults', JSON.stringify(testResult))
+    
+    // Marcar como usuario nuevo (debe pasar por checkout)
+    localStorage.removeItem('isPremiumTest')
+    
+    // Redirigir al flujo de análisis (igual que test de IQ)
+    router.push(`/${lang}/analizando`)
   }
 
   if (!started) {

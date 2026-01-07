@@ -54,12 +54,22 @@ export default function PersonalityTestPage() {
       answers
     }
     
-    const existingResults = JSON.parse(localStorage.getItem('testResults') || '{}')
-    existingResults.personality = testResult
-    localStorage.setItem('testResults', JSON.stringify(existingResults))
+    // Guardar en formato compatible con sistema de checkout
+    localStorage.setItem('testResults', JSON.stringify({
+      type: 'personality',
+      answers,
+      completedAt: new Date().toISOString(),
+      userName: localStorage.getItem('userName') || 'Usuario'
+    }))
     
-    // Redirigir a resultados
-    router.push(`/${lang}/tests/personality/results`)
+    // Guardar datos específicos del test de personalidad
+    localStorage.setItem('personalityResults', JSON.stringify(testResult))
+    
+    // Marcar como usuario nuevo (debe pasar por checkout)
+    localStorage.removeItem('isPremiumTest')
+    
+    // Redirigir al flujo de análisis (igual que test de IQ)
+    router.push(`/${lang}/analizando`)
   }
 
   if (!started) {

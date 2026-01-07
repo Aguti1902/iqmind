@@ -28,6 +28,11 @@ export default function AnalyzingPage() {
       return
     }
 
+    // Detectar tipo de test
+    const parsedResults = JSON.parse(testResults)
+    const testType = parsedResults.type || 'iq' // Por defecto IQ si no se especifica
+    console.log('🧠 Tipo de test detectado:', testType)
+
     // Simular progreso de análisis
     const progressInterval = setInterval(() => {
       setProgress((prev) => {
@@ -56,7 +61,9 @@ export default function AnalyzingPage() {
         localStorage.removeItem('isPremiumTest') // Limpiar flag
         router.push(`/${lang}/resultado`)
       } else {
-        // Usuario nuevo que no ha pagado
+        // Usuario nuevo que no ha pagado - redirigir a resultado estimado
+        // Guardar el tipo de test para la página siguiente
+        localStorage.setItem('currentTestType', testType)
         router.push(`/${lang}/resultado-estimado`)
       }
     }, 6000)
