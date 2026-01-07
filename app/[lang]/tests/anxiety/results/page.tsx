@@ -14,11 +14,21 @@ export default function AnxietyResultsPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const storedResults = localStorage.getItem('testResults')
-    if (storedResults) {
-      const parsed = JSON.parse(storedResults)
-      if (parsed.anxiety?.results) {
-        setResults(parsed.anxiety.results)
+    // Verificar que el pago esté completado o sea test premium
+    const paymentCompleted = localStorage.getItem('paymentCompleted')
+    const isPremiumTest = localStorage.getItem('isPremiumTest')
+    
+    if (!paymentCompleted && isPremiumTest !== 'true') {
+      router.push(`/${lang}/tests/anxiety`)
+      return
+    }
+
+    // Cargar resultados
+    const anxietyResults = localStorage.getItem('anxietyResults')
+    if (anxietyResults) {
+      const parsed = JSON.parse(anxietyResults)
+      if (parsed.results) {
+        setResults(parsed.results)
       } else {
         router.push(`/${lang}/tests`)
       }

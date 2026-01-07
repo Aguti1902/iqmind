@@ -14,11 +14,21 @@ export default function DepressionResultsPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const storedResults = localStorage.getItem('testResults')
-    if (storedResults) {
-      const parsed = JSON.parse(storedResults)
-      if (parsed.depression?.results) {
-        setResults(parsed.depression.results)
+    // Verificar que el pago esté completado o sea test premium
+    const paymentCompleted = localStorage.getItem('paymentCompleted')
+    const isPremiumTest = localStorage.getItem('isPremiumTest')
+    
+    if (!paymentCompleted && isPremiumTest !== 'true') {
+      router.push(`/${lang}/tests/depression`)
+      return
+    }
+
+    // Cargar resultados
+    const depressionResults = localStorage.getItem('depressionResults')
+    if (depressionResults) {
+      const parsed = JSON.parse(depressionResults)
+      if (parsed.results) {
+        setResults(parsed.results)
       } else {
         router.push(`/${lang}/tests`)
       }

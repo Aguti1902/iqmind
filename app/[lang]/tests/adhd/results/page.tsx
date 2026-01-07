@@ -14,11 +14,21 @@ export default function ADHDResultsPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const storedResults = localStorage.getItem('testResults')
-    if (storedResults) {
-      const parsed = JSON.parse(storedResults)
-      if (parsed.adhd?.results) {
-        setResults(parsed.adhd.results)
+    // Verificar que el pago esté completado o sea test premium
+    const paymentCompleted = localStorage.getItem('paymentCompleted')
+    const isPremiumTest = localStorage.getItem('isPremiumTest')
+    
+    if (!paymentCompleted && isPremiumTest !== 'true') {
+      router.push(`/${lang}/tests/adhd`)
+      return
+    }
+
+    // Cargar resultados
+    const adhdResults = localStorage.getItem('adhdResults')
+    if (adhdResults) {
+      const parsed = JSON.parse(adhdResults)
+      if (parsed.results) {
+        setResults(parsed.results)
       } else {
         router.push(`/${lang}/tests`)
       }

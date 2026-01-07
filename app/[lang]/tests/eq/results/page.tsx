@@ -15,11 +15,21 @@ export default function EQResultsPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const storedResults = localStorage.getItem('testResults')
-    if (storedResults) {
-      const parsed = JSON.parse(storedResults)
-      if (parsed.eq?.results) {
-        setResults(parsed.eq.results)
+    // Verificar que el pago esté completado o sea test premium
+    const paymentCompleted = localStorage.getItem('paymentCompleted')
+    const isPremiumTest = localStorage.getItem('isPremiumTest')
+    
+    if (!paymentCompleted && isPremiumTest !== 'true') {
+      router.push(`/${lang}/tests/eq`)
+      return
+    }
+
+    // Cargar resultados
+    const eqResults = localStorage.getItem('eqResults')
+    if (eqResults) {
+      const parsed = JSON.parse(eqResults)
+      if (parsed.results) {
+        setResults(parsed.results)
       } else {
         router.push(`/${lang}/tests`)
       }
