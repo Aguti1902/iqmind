@@ -321,8 +321,8 @@ export default function Home() {
                   Evaluación del estado de ánimo y síntomas depresivos usando el cuestionario PHQ-9.
                 </p>
                 <div className="flex items-center justify-between text-sm text-gray-600">
-                  <span>⏱️ 3-5 min</span>
-                  <span>📝 9 preguntas</span>
+                  <span>⏱️ 6-8 min</span>
+                  <span>📝 20 preguntas</span>
                 </div>
                 <div className="mt-4 text-gray-600 font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
                   Comenzar Test <FaArrowRight className="text-sm" />

@@ -252,6 +252,47 @@ export default function CheckoutPage() {
   const [stripePromise, setStripePromise] = useState<Promise<Stripe | null> | null>(null)
   const [stripeMode, setStripeMode] = useState<string>('test')
   const [forceRefresh, setForceRefresh] = useState(0)
+  const [testType, setTestType] = useState<string>('iq')
+
+  // Configuración de mensajes según el tipo de test
+  const testConfig: any = {
+    'iq': {
+      title: 'Test de CI',
+      subtitle: 'Coeficiente Intelectual',
+      icon: '🧠',
+      description: 'Acceso completo a tu análisis de CI'
+    },
+    'personality': {
+      title: 'Test de Personalidad',
+      subtitle: 'Análisis Big Five (OCEAN)',
+      icon: '🎯',
+      description: 'Descubre los 5 rasgos de tu personalidad'
+    },
+    'adhd': {
+      title: 'Test de TDAH',
+      subtitle: 'Evaluación de Atención',
+      icon: '🎯',
+      description: 'Análisis completo de síntomas de TDAH'
+    },
+    'anxiety': {
+      title: 'Test de Ansiedad',
+      subtitle: 'Análisis GAD-7',
+      icon: '💙',
+      description: 'Evaluación de niveles de ansiedad'
+    },
+    'depression': {
+      title: 'Test de Depresión',
+      subtitle: 'Análisis PHQ-9',
+      icon: '🌟',
+      description: 'Evaluación de síntomas depresivos'
+    },
+    'eq': {
+      title: 'Test de Inteligencia Emocional',
+      subtitle: 'Análisis EQ',
+      icon: '❤️',
+      description: 'Descubre tu inteligencia emocional'
+    }
+  }
 
   // Cargar la configuración de Stripe según el modo actual
   useEffect(() => {
@@ -285,6 +326,10 @@ export default function CheckoutPage() {
     const iq = localStorage.getItem('userIQ')
     const savedEmail = localStorage.getItem('userEmail')
     const name = localStorage.getItem('userName')
+    const savedTestType = localStorage.getItem('testType') || 'iq'
+    
+    console.log('📊 Tipo de test en checkout:', savedTestType)
+    setTestType(savedTestType)
     
     if (!iq) {
       router.push(`/${lang}/test`)
@@ -427,14 +472,17 @@ export default function CheckoutPage() {
           
           {/* Hero Section */}
           <div className="text-center mb-12">
-            <div className="inline-block p-4 bg-yellow-100 rounded-full mb-4">
-              <FaLock className="text-4xl text-yellow-600" />
+            <div className="inline-block p-4 bg-yellow-100 rounded-full mb-4 text-5xl">
+              {testConfig[testType]?.icon || '🧠'}
             </div>
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               {t.checkout.almostReady}
             </h1>
             <p className="text-xl text-gray-600">
-              {t.checkout.unlockScore}
+              {testConfig[testType]?.description || t.checkout.unlockScore}
+            </p>
+            <p className="text-lg text-gray-500 mt-2">
+              {testConfig[testType]?.subtitle}
             </p>
           </div>
 
