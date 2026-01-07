@@ -111,12 +111,7 @@ export default function CheckoutWhop() {
         setCheckoutUrl(data.checkoutUrl)
         setIsLoading(false)
 
-        // Redirigir automáticamente después de 2 segundos
-        setTimeout(() => {
-          if (data.checkoutUrl) {
-            window.location.href = data.checkoutUrl
-          }
-        }, 2000)
+        // NO redirigir automáticamente - mostrar en iframe
 
       } catch (error: any) {
         console.error('❌ Error en checkout:', error)
@@ -190,27 +185,30 @@ export default function CheckoutWhop() {
                 <p className="text-gray-600 mb-2">Conectando con Whop</p>
                 <p className="text-sm text-gray-500">Por favor, espera un momento</p>
               </div>
-            ) : (
-              <div className="text-center py-8">
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <FaCheckCircle className="text-green-600 text-3xl" />
-                </div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                  ¡Checkout listo!
+            ) : checkoutUrl ? (
+              <div className="py-4">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4 text-center">
+                  Completa tu pago
                 </h2>
-                <p className="text-gray-600 mb-6">
-                  Serás redirigido a la página de pago seguro de Whop
+                <p className="text-gray-600 mb-6 text-center">
+                  Pago seguro procesado por Whop
                 </p>
-                {checkoutUrl && (
-                  <a
-                    href={checkoutUrl}
-                    className="inline-block px-8 py-4 bg-gradient-to-r from-[#07C59A] to-[#059c7e] text-white font-bold text-lg rounded-xl hover:shadow-lg transition-all duration-200"
-                  >
-                    Ir al Pago →
-                  </a>
-                )}
+                
+                {/* Iframe de Whop */}
+                <div className="w-full bg-white rounded-lg overflow-hidden border-2 border-gray-200">
+                  <iframe
+                    src={checkoutUrl}
+                    className="w-full h-[600px] border-0"
+                    title="Whop Checkout"
+                    allow="payment"
+                  />
+                </div>
+                
+                <p className="text-sm text-gray-500 text-center mt-4">
+                  🔒 Conexión segura con Whop
+                </p>
               </div>
-            )}
+            ) : null}
 
             {/* Características */}
             {!error && (
