@@ -149,10 +149,10 @@ export default function ResultadoEstimadoPage() {
                 <FaLock className="text-4xl text-yellow-600" />
               </div>
               <h1 className="text-4xl font-bold text-gray-900 mb-4">
-                {userName}, {t.estimatedResult.title}
+                {userName}, {testConfig[testType]?.title || t.estimatedResult.title}
               </h1>
               <p className="text-xl text-gray-600">
-                {t.estimatedResult.subtitle}
+                {testConfig[testType]?.subtitle || t.estimatedResult.subtitle}
               </p>
             </div>
 

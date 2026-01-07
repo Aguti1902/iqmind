@@ -22,15 +22,21 @@ export default function CheckoutRouter() {
         const storedEmail = localStorage.getItem('userEmail')
         const storedUserName = localStorage.getItem('userName')
         const storedIQ = localStorage.getItem('userIQ')
+        const testType = localStorage.getItem('testType') || 'iq'
 
-        if (!storedEmail || !storedIQ) {
-          router.push(`/${lang}/test`)
+        // Validar que al menos haya email (requerido para todos los tests)
+        if (!storedEmail) {
+          router.push(`/${lang}/resultado-estimado`)
           return
         }
 
         setEmail(storedEmail)
         setUserName(storedUserName || 'Usuario')
-        setUserIQ(parseInt(storedIQ))
+        
+        // Solo setear IQ si es test de IQ y existe el valor
+        if (storedIQ) {
+          setUserIQ(parseInt(storedIQ))
+        }
 
         setStatus('Redirigiendo a checkout de Whop...')
         router.push(`/${lang}/checkout-stripe`) // Ruta mantenida por compatibilidad

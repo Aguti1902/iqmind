@@ -15,7 +15,7 @@ export default function EQTestPage() {
   const [started, setStarted] = useState(false)
   const [userName, setUserName] = useState('')
 
-  const questionsPerPage = 11
+  const questionsPerPage = 1
   const totalPages = Math.ceil(eqQuestions.length / questionsPerPage)
   const currentQuestions = eqQuestions.slice(
     currentPage * questionsPerPage,
