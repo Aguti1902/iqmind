@@ -70,14 +70,22 @@ export default function CheckoutWhop() {
         console.log('📊 Tipo de test en checkout:', savedTestType)
         setTestType(savedTestType)
 
-        if (!storedEmail || !storedIQ) {
-          router.push(`/${lang}/test`)
+        // Validar solo email (requerido para todos los tests)
+        if (!storedEmail) {
+          console.error('❌ No hay email, redirigiendo...')
+          router.push(`/${lang}/resultado-estimado`)
           return
         }
 
         setEmail(storedEmail)
         setUserName(storedUserName || 'Usuario')
-        setUserIQ(parseInt(storedIQ))
+        
+        // Solo setear IQ si existe (solo para test de IQ)
+        if (storedIQ) {
+          setUserIQ(parseInt(storedIQ))
+        } else {
+          console.log('ℹ️ No hay IQ (test no es de CI, es normal)')
+        }
 
         // Crear checkout en Whop
         console.log('🛒 Creando checkout en Whop...')
