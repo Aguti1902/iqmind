@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 import { db } from '@/lib/database-postgres'
-import { sendWelcomeEmail, sendTrialStartEmail } from '@/lib/email'
+// import { sendWelcomeEmail, sendTrialStartEmail } from '@/lib/email-service'
 
 export const dynamic = 'force-dynamic'
 
@@ -105,7 +105,8 @@ async function handleMembershipActivated(event: any) {
       await db.createUser({
         email,
         password: '', // Whop maneja la autenticación
-        name: membership.username || 'Usuario',
+        userName: membership.username || 'Usuario',
+        subscriptionStatus: 'trial',
       })
       user = await db.getUserByEmail(email)
     }
@@ -115,20 +116,22 @@ async function handleMembershipActivated(event: any) {
       const trialEndDate = new Date()
       trialEndDate.setDate(trialEndDate.getDate() + 2) // 2 días de trial
 
-      await db.updateUserSubscription(user.id, {
-        subscription_id: membershipId,
-        status: 'trialing',
-        trial_end_date: trialEndDate,
-        current_period_end: new Date(validUntil),
-      })
+      await db.updateUserSubscription(
+        user.id,
+        membershipId,
+        'trial',
+        trialEndDate,
+        new Date(validUntil)
+      )
 
       console.log('✅ Usuario actualizado en BD')
 
       // Enviar emails de bienvenida
       try {
-        await sendWelcomeEmail(email, user.name || 'Usuario')
-        await sendTrialStartEmail(email, user.name || 'Usuario', 2) // 2 días
-        console.log('📧 Emails enviados correctamente')
+        // TODO: Implementar envío de emails con Whop
+        // await sendWelcomeEmail(email, user.name || 'Usuario')
+        // await sendTrialStartEmail(email, user.name || 'Usuario', 2) // 2 días
+        console.log('📧 Emails pendientes de configurar')
       } catch (emailError) {
         console.error('⚠️ Error enviando emails:', emailError)
       }
@@ -156,12 +159,13 @@ async function handleMembershipDeactivated(event: any) {
     const user = await db.getUserByEmail(email)
 
     if (user) {
-      await db.updateUserSubscription(user.id, {
-        subscription_id: membershipId,
-        status: 'canceled',
-        trial_end_date: null,
-        current_period_end: new Date(),
-      })
+      await db.updateUserSubscription(
+        user.id,
+        membershipId,
+        'cancelled',
+        undefined,
+        new Date()
+      )
 
       console.log('✅ Usuario actualizado - membresía cancelada')
     }
