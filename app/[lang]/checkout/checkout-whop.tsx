@@ -186,27 +186,59 @@ export default function CheckoutWhop() {
                 <p className="text-sm text-gray-500">Por favor, espera un momento</p>
               </div>
             ) : checkoutUrl ? (
-              <div className="py-4">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4 text-center">
+              <div className="py-8 text-center">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">
                   Completa tu pago
                 </h2>
-                <p className="text-gray-600 mb-6 text-center">
-                  Pago seguro procesado por Whop
+                <p className="text-gray-600 mb-6">
+                  Haz clic en el botón para abrir el checkout seguro de Whop
                 </p>
                 
-                {/* Iframe de Whop */}
-                <div className="w-full bg-white rounded-lg overflow-hidden border-2 border-gray-200">
-                  <iframe
-                    src={checkoutUrl}
-                    className="w-full h-[600px] border-0"
-                    title="Whop Checkout"
-                    allow="payment"
-                  />
-                </div>
+                {/* Botón para abrir popup de Whop */}
+                <button
+                  onClick={() => {
+                    // Abrir popup centrado
+                    const width = 600
+                    const height = 800
+                    const left = (window.screen.width - width) / 2
+                    const top = (window.screen.height - height) / 2
+                    
+                    const popup = window.open(
+                      checkoutUrl,
+                      'WhopCheckout',
+                      `width=${width},height=${height},left=${left},top=${top},toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes`
+                    )
+                    
+                    if (popup) {
+                      popup.focus()
+                      
+                      // Verificar cuando se cierra el popup
+                      const checkPopup = setInterval(() => {
+                        if (popup.closed) {
+                          clearInterval(checkPopup)
+                          console.log('💳 Popup de checkout cerrado')
+                          // Podrías redirigir o refrescar aquí
+                        }
+                      }, 500)
+                    } else {
+                      alert('Por favor, permite popups para completar el pago')
+                    }
+                  }}
+                  className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[#07C59A] to-[#059c7e] text-white font-bold text-lg rounded-xl hover:shadow-xl transition-all duration-200"
+                >
+                  <FaLock className="text-xl" />
+                  Abrir Checkout Seguro
+                </button>
                 
-                <p className="text-sm text-gray-500 text-center mt-4">
+                <p className="text-sm text-gray-500 mt-6">
                   🔒 Conexión segura con Whop
                 </p>
+                
+                <div className="mt-8 p-4 bg-blue-50 rounded-lg max-w-md mx-auto">
+                  <p className="text-sm text-gray-700">
+                    ℹ️ Se abrirá una ventana segura de Whop. No cierres esta página hasta completar el pago.
+                  </p>
+                </div>
               </div>
             ) : null}
 
