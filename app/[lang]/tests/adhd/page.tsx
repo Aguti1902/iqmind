@@ -12,9 +12,18 @@ export default function ADHDTestPage() {
   const router = useRouter()
   const [answers, setAnswers] = useState<{ [key: number]: number }>({})
   const [started, setStarted] = useState(false)
+  const [userName, setUserName] = useState('')
 
   const progress = (Object.keys(answers).length / adhdQuestions.length) * 100
   const isComplete = Object.keys(answers).length === adhdQuestions.length
+
+  const handleStart = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (userName.trim()) {
+      localStorage.setItem('userName', userName)
+      setStarted(true)
+    }
+  }
 
   const handleAnswer = (questionId: number, value: number) => {
     setAnswers(prev => ({ ...prev, [questionId]: value }))
@@ -56,17 +65,39 @@ export default function ADHDTestPage() {
         <Header />
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white py-12">
           <div className="container-custom max-w-4xl">
+            {/* Pantalla de inicio con nombre */}
+            <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 text-center mb-8">
+              <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-blue-700 rounded-full flex items-center justify-center mx-auto mb-6">
+                <span className="text-4xl">🎯</span>
+              </div>
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                Test de TDAH
+              </h1>
+              <p className="text-lg md:text-xl text-gray-600 mb-8">
+                Evaluación de síntomas de Trastorno por Déficit de Atención e Hiperactividad
+              </p>
+
+              <form onSubmit={handleStart} className="max-w-md mx-auto mb-8">
+                <input
+                  type="text"
+                  value={userName}
+                  onChange={(e) => setUserName(e.target.value)}
+                  placeholder="Introduce tu nombre"
+                  className="w-full px-6 py-4 text-lg border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-6"
+                  required
+                  autoFocus
+                />
+                <button type="submit" className="w-full bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white py-4 px-8 rounded-xl font-bold text-xl transition shadow-lg hover:shadow-xl">
+                  Comenzar Test
+                </button>
+              </form>
+            </div>
+
             <div className="bg-white rounded-2xl shadow-2xl p-12">
               <div className="text-center mb-8">
-                <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-blue-700 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <span className="text-4xl">🎯</span>
-                </div>
-                <h1 className="text-4xl font-bold text-gray-900 mb-4">
-                  Test de TDAH
-                </h1>
-                <p className="text-xl text-gray-600">
-                  Evaluación de síntomas de Trastorno por Déficit de Atención e Hiperactividad
-                </p>
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                  Información sobre el test
+                </h2>
               </div>
 
               <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-lg mb-8">
@@ -135,12 +166,6 @@ export default function ADHDTestPage() {
                 </ul>
               </div>
 
-              <button
-                onClick={() => setStarted(true)}
-                className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-4 px-8 rounded-xl text-lg transition-all duration-300 shadow-lg hover:shadow-xl"
-              >
-                Comenzar Test
-              </button>
             </div>
           </div>
         </div>
