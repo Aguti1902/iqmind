@@ -25,6 +25,18 @@ export default function ResultadoPage() {
       return
     }
 
+    // Detectar tipo de test completado
+    const testType = localStorage.getItem('testType') || localStorage.getItem('currentTestType') || 'iq'
+    console.log('📊 Tipo de test en página de resultado:', testType)
+
+    // Si es un test diferente a IQ, redirigir a su página específica de resultados
+    if (testType !== 'iq') {
+      // Asegurar que las páginas de resultados sepan que el pago está completado
+      localStorage.setItem('isPremiumTest', 'true')
+      router.push(`/${lang}/tests/${testType}/results`)
+      return
+    }
+
     // Verificar si se quiere ver un test específico del historial
     const viewTestId = localStorage.getItem('viewTestId')
     
@@ -43,7 +55,7 @@ export default function ResultadoPage() {
       }
     }
 
-    // Si no, cargar el último test
+    // Si no, cargar el último test de IQ
     const iq = parseInt(localStorage.getItem('userIQ') || '0')
     const correct = parseInt(localStorage.getItem('correctAnswers') || '0')
     const email = localStorage.getItem('userEmail') || ''

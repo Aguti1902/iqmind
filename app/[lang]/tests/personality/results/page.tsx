@@ -15,15 +15,27 @@ export default function PersonalityResultsPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const storedResults = localStorage.getItem('testResults')
-    if (storedResults) {
-      const parsed = JSON.parse(storedResults)
-      if (parsed.personality?.results) {
-        setResults(parsed.personality.results)
+    // Verificar que el pago esté completado o sea test premium
+    const paymentCompleted = localStorage.getItem('paymentCompleted')
+    const isPremiumTest = localStorage.getItem('isPremiumTest')
+    
+    if (!paymentCompleted && isPremiumTest !== 'true') {
+      // Si no ha pagado, redirigir al test
+      router.push(`/${lang}/tests/personality`)
+      return
+    }
+
+    // Cargar resultados del localStorage
+    const personalityResults = localStorage.getItem('personalityResults')
+    if (personalityResults) {
+      const parsed = JSON.parse(personalityResults)
+      if (parsed.results) {
+        setResults(parsed.results)
       } else {
         router.push(`/${lang}/tests`)
       }
     } else {
+      // Si no hay resultados, redirigir
       router.push(`/${lang}/tests`)
     }
     setLoading(false)
