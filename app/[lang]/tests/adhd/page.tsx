@@ -13,6 +13,7 @@ export default function ADHDTestPage() {
   const [answers, setAnswers] = useState<{ [key: number]: number }>({})
   const [started, setStarted] = useState(false)
   const [userName, setUserName] = useState('')
+  const [userName, setUserName] = useState('')
 
   const progress = (Object.keys(answers).length / adhdQuestions.length) * 100
   const isComplete = Object.keys(answers).length === adhdQuestions.length

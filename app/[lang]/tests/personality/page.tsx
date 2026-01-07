@@ -14,6 +14,7 @@ export default function PersonalityTestPage() {
   const [answers, setAnswers] = useState<{ [key: number]: number }>({})
   const [started, setStarted] = useState(false)
   const [userName, setUserName] = useState('')
+  const [userName, setUserName] = useState('')
 
   const questionsPerPage = 10
   const totalPages = Math.ceil(personalityQuestions.length / questionsPerPage)
