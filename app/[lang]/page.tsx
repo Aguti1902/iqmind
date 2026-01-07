@@ -288,15 +288,15 @@ export default function Home() {
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-gray-900">Test de Ansiedad</h3>
-                    <p className="text-sm text-gray-600">GAD-7</p>
+                    <p className="text-sm text-gray-600">GAD-7 Extendido</p>
                   </div>
                 </div>
                 <p className="text-gray-700 mb-4">
-                  Mide el nivel de ansiedad generalizada con la escala clínica GAD-7 validada internacionalmente.
+                  Evaluación completa de ansiedad generalizada con escala clínica validada internacionalmente.
                 </p>
                 <div className="flex items-center justify-between text-sm text-gray-600">
-                  <span>⏱️ 2-3 min</span>
-                  <span>📝 7 preguntas</span>
+                  <span>⏱️ 5-7 min</span>
+                  <span>📝 20 preguntas</span>
                 </div>
                 <div className="mt-4 text-red-600 font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
                   Comenzar Test <FaArrowRight className="text-sm" />
