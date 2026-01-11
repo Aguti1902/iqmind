@@ -15,6 +15,15 @@ const nextConfig = {
           },
         ],
       },
+      {
+        source: '/primePayments.txt',
+        headers: [
+          {
+            key: 'Content-Type',
+            value: 'text/plain',
+          },
+        ],
+      },
     ]
   },
 }
