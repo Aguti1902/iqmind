@@ -7,6 +7,11 @@ const defaultLocale = 'es'
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
+  // Skip verification files
+  if (pathname === '/primePayments.txt' || pathname.endsWith('.txt')) {
+    return NextResponse.next()
+  }
+
   // Verificar si la ruta ya tiene un idioma
   const pathnameHasLocale = supportedLocales.some(
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
@@ -30,7 +35,7 @@ export function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     // Skip all internal paths (_next, api, etc)
-    '/((?!api|_next/static|_next/image|images|favicon.ico|messages|.*\\.txt).*)',
+    '/((?!api|_next/static|_next/image|images|favicon.ico|messages).*)',
   ],
 }
 
