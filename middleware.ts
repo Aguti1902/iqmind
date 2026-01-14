@@ -7,11 +7,6 @@ const defaultLocale = 'es'
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Skip verification files
-  if (pathname === '/primePayments.txt' || pathname.endsWith('.txt')) {
-    return NextResponse.next()
-  }
-
   // Verificar si la ruta ya tiene un idioma
   const pathnameHasLocale = supportedLocales.some(
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`

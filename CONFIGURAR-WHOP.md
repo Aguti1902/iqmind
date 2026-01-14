@@ -8,21 +8,6 @@ MindMetric ha migrado de **Stripe a Whop** como pasarela de pago.
 
 ---
 
-## ⚠️ NOTA IMPORTANTE: PRIME PAYMENTS
-
-Actualmente también se está configurando **Prime Payments** como pasarela alternativa de pago.
-
-**Documentación de Prime Payments:**
-- 📄 [CONFIGURAR-PRIME-PAYMENTS.md](./CONFIGURAR-PRIME-PAYMENTS.md) - Configuración completa
-- 🔐 [PRIME-PAYMENTS-ENV-VARS.md](./PRIME-PAYMENTS-ENV-VARS.md) - Variables de entorno
-
-**URLs de Prime Payments:**
-- ✅ URL de éxito: `https://mindmetric.io/es/success?session_id={CHECKOUT_SESSION_ID}`
-- ❌ URL de cancelación: `https://mindmetric.io/es?canceled=true`
-- 🪝 Webhook: `https://mindmetric.io/api/prime-payments-webhook`
-
----
-
 ## 🔧 PASO 1: CREAR CUENTA EN WHOP
 
 1. Ve a [https://whop.com/](https://whop.com/)
