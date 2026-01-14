@@ -19,8 +19,6 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/pg": "^8.15.5",
     "@vercel/postgres": "^0.10.0",
-    "@whop/checkout": "^0.0.49",
-    "@whop/sdk": "^0.0.20",
     "bcryptjs": "^3.0.2",
     "jsonwebtoken": "^9.0.2",
     "jspdf": "^3.0.3",
