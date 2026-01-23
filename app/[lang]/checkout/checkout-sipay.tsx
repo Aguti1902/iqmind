@@ -17,7 +17,6 @@ export default function CheckoutSipay() {
   const [error, setError] = useState('')
   const [agreedToTerms, setAgreedToTerms] = useState(false)
   const [testType, setTestType] = useState<string>('iq')
-  const [sipayLoaded, setSipayLoaded] = useState(false)
 
   // Configuración de mensajes según el tipo de test
   const testConfig: any = {
@@ -74,30 +73,7 @@ export default function CheckoutSipay() {
       if (savedEmail) setEmail(savedEmail)
       if (name) setUserName(name)
     }
-
-    // Cargar script de Sipay
-    loadSipayScript()
   }, [router, lang])
-
-  const loadSipayScript = () => {
-    // Cargar el SDK de Sipay si no está cargado
-    if (typeof window !== 'undefined' && !(window as any).SipaySDK) {
-      const script = document.createElement('script')
-      script.src = 'https://sandbox.sipay.es/sdk/sipay-sdk.js' // Cambiar a producción cuando esté listo
-      script.async = true
-      script.onload = () => {
-        console.log('✅ Sipay SDK cargado')
-        setSipayLoaded(true)
-      }
-      script.onerror = () => {
-        console.error('❌ Error cargando Sipay SDK')
-        setError('Error cargando el sistema de pagos')
-      }
-      document.body.appendChild(script)
-    } else {
-      setSipayLoaded(true)
-    }
-  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -136,6 +112,10 @@ export default function CheckoutSipay() {
         }
       }
 
+      // Guardar email en localStorage
+      localStorage.setItem('userEmail', email)
+      if (userName) localStorage.setItem('userName', userName)
+
       // Crear pago en el backend
       const response = await fetch('/api/sipay/create-payment', {
         method: 'POST',
@@ -160,36 +140,11 @@ export default function CheckoutSipay() {
 
       console.log('✅ Pago creado:', data)
 
-      // Inicializar formulario de Sipay
-      if ((window as any).SipaySDK && sipayLoaded) {
-        (window as any).SipaySDK.init({
-          key: data.sipayConfig.key,
-          resource: data.sipayConfig.resource,
-          endpoint: data.sipayConfig.endpoint,
-          amount: 50, // 0.50€ en centavos
-          currency: 'EUR',
-          orderId: data.orderId,
-          returnUrl: data.returnUrl,
-          cancelUrl: data.cancelUrl,
-          customerEmail: email,
-          onSuccess: (result: any) => {
-            console.log('✅ Pago exitoso:', result)
-            localStorage.setItem('paymentCompleted', 'true')
-            router.push(`/${lang}/resultado`)
-          },
-          onError: (err: any) => {
-            console.error('❌ Error en pago:', err)
-            setError(err.message || 'Error procesando el pago')
-            setIsProcessing(false)
-          },
-          onCancel: () => {
-            console.log('❌ Pago cancelado')
-            setError('Pago cancelado')
-            setIsProcessing(false)
-          }
-        })
+      // Redirigir a la URL de pago de Sipay
+      if (data.paymentUrl) {
+        window.location.href = data.paymentUrl
       } else {
-        throw new Error('SDK de Sipay no está cargado')
+        throw new Error('No se recibió URL de pago')
       }
 
     } catch (error: any) {
@@ -370,9 +325,6 @@ export default function CheckoutSipay() {
                     </div>
                   </div>
 
-                  {/* Área donde se renderizará el formulario de Sipay */}
-                  <div id="sipay-card-form" className="my-6"></div>
-
                   {/* Error */}
                   {error && (
                     <div className="bg-red-50 border-2 border-red-200 text-red-800 px-4 py-3 rounded-lg text-sm">
@@ -399,9 +351,9 @@ export default function CheckoutSipay() {
                   {/* Botón de Pago */}
                   <button
                     type="submit"
-                    disabled={isProcessing || !agreedToTerms || !sipayLoaded}
+                    disabled={isProcessing || !agreedToTerms}
                     className={`w-full py-4 rounded-xl font-bold text-lg transition-all duration-200 flex items-center justify-center gap-3 ${
-                      isProcessing || !agreedToTerms || !sipayLoaded
+                      isProcessing || !agreedToTerms
                         ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                         : 'bg-[#113240] text-white hover:bg-[#052547] shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
                     }`}

@@ -128,8 +128,7 @@ app/api/sipay/
   ├── card-info/route.ts           # Consultar tarjeta
   ├── delete-card/route.ts         # Eliminar token de tarjeta
   ├── apple-pay/route.ts           # Pagos con Apple Pay
-  ├── google-pay/route.ts          # Pagos con Google Pay
-  └── webhook/route.ts             # Webhook para notificaciones
+  └── google-pay/route.ts          # Pagos con Google Pay
 
 app/[lang]/checkout/
   └── checkout-sipay.tsx           # Componente de checkout frontend
@@ -144,7 +143,7 @@ app/[lang]/checkout/
 Usuario completa el test → Checkout → Sipay → Token guardado
 
 ```mermaid
-Usuario → Checkout Sipay → API create-payment → SDK Sipay → Autorización + Token → Webhook → BD
+Usuario → Checkout Sipay → API create-payment → Formulario Sipay → Autorización + Token → Return URL → BD
 ```
 
 **Monto:** 0,50€  
@@ -156,7 +155,7 @@ Usuario → Checkout Sipay → API create-payment → SDK Sipay → Autorizació
 Sistema cobra automáticamente usando el token guardado
 
 ```mermaid
-Cron Job → recurring-payment API → Sipay MIT → Cobro sin presencia del cliente → Webhook → BD actualizada
+Cron Job → recurring-payment API → Sipay MIT → Cobro sin presencia del cliente → BD actualizada
 ```
 
 ### 3. **Devoluciones**
@@ -164,7 +163,7 @@ Cron Job → recurring-payment API → Sipay MIT → Cobro sin presencia del cli
 Usuario solicita reembolso → Sistema procesa → Sipay devuelve dinero
 
 ```mermaid
-Usuario → Solicitud de reembolso → API refund → Sipay → Reembolso procesado → Webhook → BD + Email
+Usuario → Solicitud de reembolso → API refund → Sipay → Reembolso procesado → BD + Email
 ```
 
 ---
@@ -215,7 +214,8 @@ Usuario → Solicitud de reembolso → API refund → Sipay → Reembolso proces
 | `/api/sipay/delete-card` | POST | Eliminar token |
 | `/api/sipay/apple-pay` | POST | Pago con Apple Pay |
 | `/api/sipay/google-pay` | POST | Pago con Google Pay |
-| `/api/sipay/webhook` | POST | Recibir notificaciones |
+
+**Nota:** Sipay NO utiliza webhooks. Las notificaciones de pago se manejan mediante las URLs de retorno (`returnUrl` y `cancelUrl`).
 
 ### Frontend:
 
@@ -241,22 +241,7 @@ curl -X POST https://mindmetric.io/api/sipay/create-payment \
   }'
 ```
 
-### 2. Probar Webhook Local
-
-```bash
-curl -X POST http://localhost:3000/api/sipay/webhook \
-  -H "Content-Type: application/json" \
-  -H "X-Sipay-Signature: test_signature" \
-  -d '{
-    "type": "payment.success",
-    "id_transaction": "test_123",
-    "amount": 50,
-    "customer_email": "test@mindmetric.io",
-    "card_token": "tok_test_123"
-  }'
-```
-
-### 3. Ver Logs
+### 2. Ver Logs
 
 ```bash
 vercel logs --follow
@@ -289,15 +274,7 @@ Cambiar en las variables de entorno:
 SIPAY_ENDPOINT=https://api.sipay.es
 ```
 
-### Paso 3: Configurar Webhook en Sipay
-
-En el backoffice de Sipay, configura:
-```
-Webhook URL: https://mindmetric.io/api/sipay/webhook
-Eventos: payment.success, payment.failed, refund.completed, recurring.success, recurring.failed
-```
-
-### Paso 4: Deploy
+### Paso 3: Deploy
 
 ```bash
 git add .
@@ -321,23 +298,15 @@ vercel env ls  # Verificar variables
 vercel env add SIPAY_API_KEY production  # Agregar las que falten
 ```
 
-### Error: "Invalid signature"
-
-**Causa:** Firma del webhook incorrecta
-
-**Solución:**
-1. Verificar que `SIPAY_API_SECRET` sea correcta
-2. Revisar que Sipay envíe el header `X-Sipay-Signature`
-3. Contactar soporte de Sipay
-
 ### Error: "Card token not found"
 
 **Causa:** Token no guardado en BD
 
 **Solución:**
-1. Verificar que el webhook se esté recibiendo
+1. Verificar que el usuario complete el pago correctamente
 2. Revisar logs: `vercel logs --follow`
-3. Verificar que `subscriptionId` se guarde en la BD
+3. Verificar que `subscriptionId` se guarde en la BD después del return URL
+4. Verificar que el proceso de tokenización en `/api/sipay/process-payment` funcione correctamente
 
 ### Pagos Recurrentes No Funcionan
 
@@ -371,13 +340,15 @@ vercel env add SIPAY_API_KEY production  # Agregar las que falten
 - [ ] Probar tokenización
 - [ ] Probar pagos recurrentes
 - [ ] Probar devoluciones
-- [ ] Configurar webhook
+- [ ] Configurar URLs de retorno
 - [ ] Probar Apple Pay
 - [ ] Probar Google Pay
 - [ ] Deploy a producción
-- [ ] Configurar webhook en producción
+- [ ] Configurar credenciales de producción
 - [ ] Realizar prueba end-to-end en producción
 - [ ] Monitorear primeros pagos reales
+
+**Nota importante:** Sipay NO usa webhooks. Las notificaciones se manejan mediante las URLs de retorno configuradas en cada pago.
 
 ---
 

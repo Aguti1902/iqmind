@@ -70,9 +70,12 @@ export async function POST(request: NextRequest) {
 
     console.log('🔗 URLs configuradas:', { returnUrl, cancelUrl })
 
-    // Preparar datos para la respuesta
-    // En producción, aquí se llamaría a Sipay para obtener el token de la tarjeta
-    // Por ahora, devolvemos los datos necesarios para el frontend
+    // TODO: Integrar con Sipay para obtener URL de pago o token
+    // Documentación: https://developer.sipay.es/docs/documentation/online/selling/only_card
+    
+    // Por ahora, devolvemos una URL de ejemplo
+    // En producción, aquí se llamaría a la API de Sipay para crear la sesión de pago
+    const paymentUrl = `${process.env.NEXT_PUBLIC_SIPAY_ENDPOINT || 'https://sandbox.sipay.es'}/payment/${orderId}`
     
     return NextResponse.json({
       success: true,
@@ -82,6 +85,7 @@ export async function POST(request: NextRequest) {
       returnUrl,
       cancelUrl,
       userId: user.id,
+      paymentUrl, // URL a la que redirigir al usuario para completar el pago
       // Configuración para el frontend de Sipay
       sipayConfig: {
         key: process.env.NEXT_PUBLIC_SIPAY_KEY,
