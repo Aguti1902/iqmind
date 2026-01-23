@@ -1,7 +1,8 @@
 // app/[lang]/checkout-stripe/page.tsx
-import CheckoutStripe from '../checkout/checkout-stripe'
+// MIGRADO A SIPAY - Ruta mantenida por compatibilidad
+import CheckoutSipay from '../checkout/checkout-sipay'
 
 export default function CheckoutStripePage() {
-  return <CheckoutStripe />
+  return <CheckoutSipay />
 }
 
