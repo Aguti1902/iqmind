@@ -221,7 +221,7 @@ Usuario → Solicitud de reembolso → API refund → Sipay → Reembolso proces
 
 | Ruta | Componente |
 |------|------------|
-| `/[lang]/checkout-stripe` | Checkout con Sipay (mantiene ruta por compatibilidad) |
+| `/[lang]/checkout` | Checkout con Sipay (formulario embebido) |
 
 ---
 

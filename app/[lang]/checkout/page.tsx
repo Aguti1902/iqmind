@@ -1,6 +1,6 @@
 // app/[lang]/checkout/page.tsx
-import CheckoutRouter from './checkout-router'
+import CheckoutSipay from './checkout-sipay'
 
 export default function CheckoutPage() {
-  return <CheckoutRouter />
+  return <CheckoutSipay />
 }

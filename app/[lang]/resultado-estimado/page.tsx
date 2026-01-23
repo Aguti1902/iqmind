@@ -121,8 +121,8 @@ export default function ResultadoEstimadoPage() {
     
     console.log('🎯 Redirigiendo al checkout con testType:', testType)
     
-    // Redirigir directo al checkout de Whop (sin pasar por checkout-router)
-    router.push(`/${lang}/checkout-stripe`)
+    // Redirigir al checkout
+    router.push(`/${lang}/checkout`)
   }
 
   if (isLoading || loading || !t) {

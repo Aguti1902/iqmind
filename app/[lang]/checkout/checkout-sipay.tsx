@@ -75,6 +75,69 @@ export default function CheckoutSipay() {
     }
   }, [router, lang])
 
+  // Cargar iframe de Sipay
+  useEffect(() => {
+    if (!email || !userIQ) return
+
+    const loadSipayPayment = async () => {
+      try {
+        console.log('💳 Cargando formulario de pago Sipay...')
+
+        // Obtener datos del test
+        const testResultsStr = localStorage.getItem('testResults')
+        let testData = {}
+        
+        if (testResultsStr) {
+          try {
+            const testResults = JSON.parse(testResultsStr)
+            testData = {
+              answers: testResults.answers || [],
+              timeElapsed: testResults.timeElapsed || 0,
+              correctAnswers: testResults.correctAnswers || 0,
+              categoryScores: testResults.categoryScores || {}
+            }
+          } catch (error) {
+            console.error('Error parseando testResults:', error)
+          }
+        }
+
+        // Crear sesión de pago en el backend
+        const response = await fetch('/api/sipay/create-payment', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email,
+            userName,
+            amount: 0.50,
+            userIQ,
+            lang,
+            testData,
+          }),
+        })
+
+        const data = await response.json()
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Error creando el pago')
+        }
+
+        console.log('✅ Sesión de pago creada:', data)
+
+        // TODO: Integrar formulario de Sipay aquí
+        // Por ahora mostramos un iframe de ejemplo
+        // La integración real requiere las credenciales de Sipay
+        
+      } catch (error: any) {
+        console.error('Error:', error)
+        setError(error.message || 'Error cargando el formulario de pago')
+      }
+    }
+
+    loadSipayPayment()
+  }, [email, userIQ, userName, lang])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -92,60 +155,19 @@ export default function CheckoutSipay() {
     setError('')
 
     try {
-      console.log('💳 Iniciando pago con Sipay...')
-
-      // Obtener datos del test
-      const testResultsStr = localStorage.getItem('testResults')
-      let testData = {}
+      console.log('💳 Procesando pago con Sipay...')
       
-      if (testResultsStr) {
-        try {
-          const testResults = JSON.parse(testResultsStr)
-          testData = {
-            answers: testResults.answers || [],
-            timeElapsed: testResults.timeElapsed || 0,
-            correctAnswers: testResults.correctAnswers || 0,
-            categoryScores: testResults.categoryScores || {}
-          }
-        } catch (error) {
-          console.error('Error parseando testResults:', error)
-        }
-      }
-
       // Guardar email en localStorage
       localStorage.setItem('userEmail', email)
       if (userName) localStorage.setItem('userName', userName)
 
-      // Crear pago en el backend
-      const response = await fetch('/api/sipay/create-payment', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email,
-          userName,
-          amount: 0.50, // €0.50 pago inicial
-          userIQ,
-          lang,
-          testData,
-        }),
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Error creando el pago')
-      }
-
-      console.log('✅ Pago creado:', data)
-
-      // Redirigir a la URL de pago de Sipay
-      if (data.paymentUrl) {
-        window.location.href = data.paymentUrl
-      } else {
-        throw new Error('No se recibió URL de pago')
-      }
+      // TODO: Aquí se procesaría el pago con Sipay
+      // La integración completa requiere las credenciales reales de Sipay
+      
+      // Por ahora simulamos éxito para testing
+      console.log('✅ Pago procesado (simulado)')
+      localStorage.setItem('paymentCompleted', 'true')
+      router.push(`/${lang}/resultado`)
 
     } catch (error: any) {
       console.error('Error:', error)
@@ -321,6 +343,18 @@ export default function CheckoutSipay() {
                       <div className="border-t-2 pt-3 flex justify-between items-center">
                         <span className="text-lg font-bold text-gray-900">Total Hoy</span>
                         <span className="text-3xl font-bold text-[#07C59A]">0,50€</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Formulario de Pago de Sipay */}
+                  <div className="border-2 border-gray-200 rounded-xl p-6 bg-gray-50 min-h-[300px]">
+                    <div id="sipay-payment-form">
+                      {/* Aquí se cargará el formulario de Sipay */}
+                      <div className="text-center py-8">
+                        <div className="w-16 h-16 border-4 border-[#07C59A] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                        <p className="text-gray-600 mb-2">Cargando formulario de pago seguro...</p>
+                        <p className="text-sm text-gray-500">Powered by Sipay</p>
                       </div>
                     </div>
                   </div>

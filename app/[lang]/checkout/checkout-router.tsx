@@ -38,8 +38,8 @@ export default function CheckoutRouter() {
           setUserIQ(parseInt(storedIQ))
         }
 
-        setStatus('Redirigiendo a checkout de Whop...')
-        router.push(`/${lang}/checkout-stripe`) // Ruta mantenida por compatibilidad
+        setStatus('Redirigiendo a checkout de Sipay...')
+        router.push(`/${lang}/checkout`)
 
       } catch (error: any) {
         console.error('❌ Error en checkout:', error)
