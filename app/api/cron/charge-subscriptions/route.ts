@@ -1,7 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { db } from '@/lib/database-postgres'
+import { Pool } from 'pg'
 
 export const dynamic = 'force-dynamic'
+
+// Función para obtener el pool de conexiones
+function getPool() {
+  const connectionString = process.env.POSTGRES_URL || process.env.DATABASE_URL
+  if (!connectionString) {
+    throw new Error('No se encontró POSTGRES_URL o DATABASE_URL en las variables de entorno')
+  }
+  
+  return new Pool({
+    connectionString,
+    ssl: { rejectUnauthorized: false },
+    max: 10,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 2000,
+  })
+}
 
 /**
  * Cron Job para cobrar suscripciones vencidas
@@ -50,7 +66,8 @@ export async function GET(request: NextRequest) {
     // 1. Buscar usuarios con trial vencido
     console.log('📋 Buscando usuarios con trial vencido...')
     
-    const usersWithExpiredTrial = await db.query(`
+    const pool = getPool()
+    const usersWithExpiredTrialResult = await pool.query(`
       SELECT 
         id, 
         email, 
@@ -61,6 +78,8 @@ export async function GET(request: NextRequest) {
         AND trial_end_date <= $1
         AND subscription_id IS NOT NULL
     `, [now.toISOString()])
+    
+    const usersWithExpiredTrial = usersWithExpiredTrialResult.rows
 
     console.log(`📊 Encontrados ${usersWithExpiredTrial.length} usuarios con trial vencido`)
 
@@ -106,7 +125,7 @@ export async function GET(request: NextRequest) {
     // 3. Buscar usuarios con suscripción activa que necesitan renovación
     console.log('📋 Buscando suscripciones activas a renovar...')
 
-    const usersToRenew = await db.query(`
+    const usersToRenewResult = await pool.query(`
       SELECT 
         id, 
         email, 
@@ -117,6 +136,8 @@ export async function GET(request: NextRequest) {
         AND access_until <= $1
         AND subscription_id IS NOT NULL
     `, [now.toISOString()])
+    
+    const usersToRenew = usersToRenewResult.rows
 
     console.log(`📊 Encontrados ${usersToRenew.length} usuarios a renovar`)
 
@@ -186,6 +207,14 @@ export async function GET(request: NextRequest) {
       },
       { status: 500 }
     )
+  } finally {
+    // Cerrar pool si se creó
+    try {
+      const pool = getPool()
+      await pool.end()
+    } catch (e) {
+      // Ignorar errores al cerrar
+    }
   }
 }
 
