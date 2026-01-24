@@ -292,34 +292,51 @@ Response: {
 
 ## 🧪 Tarjetas de Prueba (Sandbox)
 
-### Tarjetas Exitosas (con 3D Secure)
+### Tarjetas Exitosas (Documentación Oficial Sipay):
 
-| Marca | Número | Caducidad | CVV |
-|-------|--------|-----------|-----|
-| **VISA** | `4548819407777774` | 12/25 | 123 |
-| **VISA** | `4548810000000003` | 12/49 | 123 |
-| **Mastercard** | `5576 4415 6304 5037` | 12/49 | 123 |
+| Marca | Número | Caducidad | CVV | Protocolo 3D Secure |
+|-------|--------|-----------|-----|---------------------|
+| **VISA** | `4548819407777774` | 12/25 | 123 | EMV3DS 2.2 ✅ |
+| **VISA** | `4548810000000003` | 12/49 | 123 | EMV3DS 2.2 ✅ |
+| **Mastercard** | `5576 4415 6304 5037` | 12/49 | 123 | EMV3DS 2.1 ✅ |
 
-### CVV Especiales para Pruebas
+**Nota:** Durante la autenticación 3D Secure en el simulador, elige **autenticar con éxito la operación**.
 
-| CVV | Resultado |
-|-----|-----------|
-| `123` | Pago exitoso |
-| `999` | Denegada - Autenticación exitosa |
-| `172` | Denegada - No repetir |
-| `173` | Denegada - No repetir sin actualizar datos |
-| `174` | Denegada - No repetir hasta 72 horas |
+### Códigos CVV Especiales para Simular Errores:
 
-### Importes Especiales para Pruebas
+| CVV | Resultado | Descripción |
+|-----|-----------|-------------|
+| `123` | ✅ **Pago exitoso** | Uso normal |
+| `999` | ❌ Denegada | Autenticación exitosa pero pago denegado |
+| `172` | ❌ Denegada 172 | La marca ordena no repetir |
+| `173` | ❌ Denegada 173 | La marca ordena no repetir sin actualizar datos |
+| `174` | ❌ Denegada 174 | La marca ordena no repetir hasta 72 horas |
 
-| Importe | Resultado |
-|---------|-----------|
-| `X,96€` | Denegación genérica |
-| `X,72€` | Error de conexión |
-| `X,73€` | Error de autenticación |
-| `X,74€` | Tiempo de espera agotado |
+### Códigos de Error por Importe (Sandbox):
 
-**Ejemplo:** `1,96€` devolverá una denegación genérica
+Si el importe tiene un valor de `X,96€`, `X,72€`, `X,73€` o `X,74€`, las denegaciones también se producirán.
+
+| Importe | Código Error | Resultado |
+|---------|--------------|-----------|
+| `X,96€` | 96 | ❌ Denegación genérica |
+| `X,72€` | 72 | ❌ Error de conexión |
+| `X,73€` | 73 | ❌ Error de autenticación |
+| `X,74€` | 74 | ❌ Timeout |
+
+**Ejemplo:** Si cobras `1,96€`, Sipay devolverá código 96 (denegación genérica).
+
+### ⚠️ Notas Importantes del Sandbox:
+
+**El entorno Sandbox NO es una réplica exacta de producción:**
+
+- El código **190** suele representar "denegación genérica del emisor" (código de prueba)
+- No implica que la tarjeta esté mal o que haya un problema real
+- Es solo para que tu sistema reciba respuestas similares a las de producción
+- A veces aparecen denegaciones "inesperadas" para comprobar que manejas errores
+- El sandbox puede estar en mantenimiento y responder con códigos que en producción no ocurrirían
+- Un 190 en sandbox NO garantiza que la misma transacción falle en producción
+
+**Códigos 9xx:** Errores de sistema o comunicación, no de saldo o datos incorrectos.
 
 ---
 
