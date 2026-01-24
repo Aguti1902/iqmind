@@ -8,7 +8,8 @@ export const dynamic = 'force-dynamic'
  * 
  * Configurar en Vercel:
  * - Path: /api/cron/charge-subscriptions
- * - Schedule: 0 */6 * * * (cada 6 horas)
+ * - Schedule: "0 star-slash-6 * * *" (cada 6 horas)
+ * - Reemplaza "star-slash-6" por: asterisco/6
  * 
  * Agregar variable de entorno:
  * CRON_SECRET=tu_secret_aleatorio
