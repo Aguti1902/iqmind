@@ -75,7 +75,7 @@ export default function CheckoutSipay() {
     }
   }, [router, lang])
 
-  // Cargar iframe de Sipay
+  // Cargar SDK de Sipay y crear formulario de pago
   useEffect(() => {
     if (!email || !userIQ) return
 
@@ -125,9 +125,18 @@ export default function CheckoutSipay() {
 
         console.log('✅ Sesión de pago creada:', data)
 
-        // TODO: Integrar formulario de Sipay aquí
-        // Por ahora mostramos un iframe de ejemplo
-        // La integración real requiere las credenciales de Sipay
+        // Cargar SDK de Sipay si no está cargado
+        if (typeof window !== 'undefined' && !(window as any).Sipay) {
+          const script = document.createElement('script')
+          script.src = data.sipayConfig.endpoint.includes('sandbox')
+            ? 'https://sandbox.sipay.es/js/sipay-sdk.js'
+            : 'https://api.sipay.es/js/sipay-sdk.js'
+          script.async = true
+          script.onload = () => initializeSipayForm(data)
+          document.body.appendChild(script)
+        } else {
+          initializeSipayForm(data)
+        }
         
       } catch (error: any) {
         console.error('Error:', error)
@@ -135,8 +144,102 @@ export default function CheckoutSipay() {
       }
     }
 
+    const initializeSipayForm = (data: any) => {
+      try {
+        const SipayClass = (window as any).Sipay
+        
+        if (!SipayClass) {
+          throw new Error('SDK de Sipay no cargado')
+        }
+
+        // Configurar Sipay
+        const sipayConfig = {
+          key: data.sipayConfig.key,
+          resource: data.sipayConfig.resource,
+          amount: Math.round(data.amount * 100), // Convertir a centavos
+          currency: data.currency || 'EUR',
+          order_id: data.orderId,
+          customer_email: email,
+          language: lang === 'es' ? 'es' : lang === 'en' ? 'en' : 'es',
+          environment: data.sipayConfig.endpoint.includes('sandbox') ? 'sandbox' : 'live'
+        }
+
+        console.log('🔧 Configurando Sipay:', sipayConfig)
+
+        const sipay = new SipayClass(sipayConfig)
+
+        // Renderizar formulario en el contenedor
+        const container = document.getElementById('sipay-payment-form')
+        if (container) {
+          container.innerHTML = '' // Limpiar contenedor
+          sipay.render('sipay-payment-form')
+        }
+
+        // Escuchar evento de token
+        sipay.on('token', async (token: string) => {
+          console.log('✅ Token recibido de Sipay')
+          await processPaymentWithToken(data.orderId, token, data.amount)
+        })
+
+        // Escuchar errores
+        sipay.on('error', (error: any) => {
+          console.error('❌ Error de Sipay:', error)
+          setError(error.message || 'Error procesando el pago')
+          setIsProcessing(false)
+        })
+
+      } catch (error: any) {
+        console.error('Error inicializando Sipay:', error)
+        setError('Error cargando el formulario de pago. Por favor recarga la página.')
+      }
+    }
+
+    const processPaymentWithToken = async (orderId: string, cardToken: string, amount: number) => {
+      setIsProcessing(true)
+      setError('')
+
+      try {
+        console.log('💳 Procesando pago con token...')
+
+        const response = await fetch('/api/sipay/process-payment', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            orderId,
+            cardToken,
+            email,
+            amount,
+            description: `Resultado Test MindMetric - ${email}`,
+            lang,
+          }),
+        })
+
+        const result = await response.json()
+
+        if (!response.ok) {
+          throw new Error(result.error || 'Error procesando el pago')
+        }
+
+        console.log('✅ Pago procesado exitosamente:', result)
+        
+        // Guardar en localStorage
+        localStorage.setItem('paymentCompleted', 'true')
+        localStorage.setItem('transactionId', result.transactionId)
+
+        // Redirigir a resultado
+        router.push(`/${lang}/resultado?order_id=${orderId}`)
+
+      } catch (error: any) {
+        console.error('Error:', error)
+        setError(error.message || 'Error procesando el pago')
+        setIsProcessing(false)
+      }
+    }
+
     loadSipayPayment()
-  }, [email, userIQ, userName, lang])
+  }, [email, userIQ, userName, lang, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -151,28 +254,23 @@ export default function CheckoutSipay() {
       return
     }
 
-    setIsProcessing(true)
     setError('')
 
     try {
-      console.log('💳 Procesando pago con Sipay...')
-      
       // Guardar email en localStorage
       localStorage.setItem('userEmail', email)
       if (userName) localStorage.setItem('userName', userName)
 
-      // TODO: Aquí se procesaría el pago con Sipay
-      // La integración completa requiere las credenciales reales de Sipay
+      // El pago se procesa cuando el usuario ingresa los datos de la tarjeta
+      // y Sipay dispara el evento 'token'
+      console.log('📝 Email guardado. Esperando datos de tarjeta...')
       
-      // Por ahora simulamos éxito para testing
-      console.log('✅ Pago procesado (simulado)')
-      localStorage.setItem('paymentCompleted', 'true')
-      router.push(`/${lang}/resultado`)
+      // Mostrar mensaje al usuario
+      setError('Por favor ingresa los datos de tu tarjeta arriba')
 
     } catch (error: any) {
       console.error('Error:', error)
       setError(error.message || 'Error procesando el pago')
-      setIsProcessing(false)
     }
   }
 
@@ -348,13 +446,14 @@ export default function CheckoutSipay() {
                   </div>
 
                   {/* Formulario de Pago de Sipay */}
-                  <div className="border-2 border-gray-200 rounded-xl p-6 bg-gray-50 min-h-[300px]">
+                  <div className="border-2 border-gray-200 rounded-xl p-6 bg-gray-50 min-h-[350px]">
+                    <h4 className="font-bold text-gray-900 mb-4">Datos de la Tarjeta</h4>
                     <div id="sipay-payment-form">
                       {/* Aquí se cargará el formulario de Sipay */}
-                      <div className="text-center py-8">
+                      <div className="text-center py-12">
                         <div className="w-16 h-16 border-4 border-[#07C59A] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
                         <p className="text-gray-600 mb-2">Cargando formulario de pago seguro...</p>
-                        <p className="text-sm text-gray-500">Powered by Sipay</p>
+                        <p className="text-xs text-gray-500">Powered by Sipay</p>
                       </div>
                     </div>
                   </div>

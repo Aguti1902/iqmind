@@ -321,14 +321,23 @@ vercel env add SIPAY_API_KEY production  # Agregar las que falten
 
 ## 📚 Documentación de Referencia
 
+### Documentación Oficial Sipay:
 - **Documentación oficial:** https://developer.sipay.es/docs/
 - **Tarjeta (Frontend):** https://developer.sipay.es/docs/documentation/online/selling/only_card
 - **Autorización + Tokenización:** https://developer.sipay.es/docs/api/mdwr/allinone#2-autorizaci%C3%B3n-con-autenticaci%C3%B3n-con-almacenamiento-de-tarjeta-tokenizaci%C3%B3n
 - **Pagos MIT:** https://developer.sipay.es/docs/api/mdwr/allinone#4-autorizaci%C3%B3n-con-exenci%C3%B3n-mit-r
 - **Devoluciones:** https://developer.sipay.es/docs/api/mdwr/refund
-- **Gestión de Tokens:** https://developer.sipay.es/docs/api/mdwr/unregister
+- **Gestión de Tokens - Borrado:** https://developer.sipay.es/docs/api/mdwr/unregister
+- **Gestión de Tokens - Consulta:** https://developer.sipay.es/docs/api/mdwr/card
 - **Apple Pay:** https://developer.sipay.es/docs/documentation/online/selling/wallets/apay
 - **Google Pay:** https://developer.sipay.es/docs/documentation/online/selling/wallets/gpay
+
+### Documentación Interna MindMetric:
+- **`SIPAY-GUIA-COMPLETA-OFICIAL.md`** - Guía completa con todos los detalles
+- **`SIPAY-PROXIMOS-PASOS.md`** - Checklist de implementación paso a paso
+- **`sipay-example-integration.html`** - Ejemplo HTML completo funcional
+- **`test-sipay-integration.js`** - Script para probar todos los endpoints
+- **`SIPAY-VARIABLES-ENTORNO.md`** - Configuración de variables de entorno
 
 ---
 
@@ -352,6 +361,20 @@ vercel env add SIPAY_API_KEY production  # Agregar las que falten
 
 ---
 
+---
+
+## 🚀 Empezar Ahora
+
+### Ruta Recomendada:
+
+1. **Lee primero:** `SIPAY-PROXIMOS-PASOS.md` (checklist completo)
+2. **Consulta detalles:** `SIPAY-GUIA-COMPLETA-OFICIAL.md` (guía técnica)
+3. **Mira ejemplo:** `sipay-example-integration.html` (código funcional)
+4. **Prueba endpoints:** `node test-sipay-integration.js`
+
+---
+
 **Última actualización:** Enero 2026  
-**Estado:** ✅ Integración completa implementada
+**Estado:** ✅ Integración completa implementada  
+**Próximo paso:** Ver `SIPAY-PROXIMOS-PASOS.md`
 
