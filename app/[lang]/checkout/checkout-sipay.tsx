@@ -125,7 +125,7 @@ export default function CheckoutSipay() {
 
         console.log('✅ Sesión de pago creada:', data)
 
-        // Definir función callback global ANTES de cargar FastPay
+        // Definir función callback global ANTES de todo
         ;(window as any).processSipayPayment = async (response: any) => {
           console.log('📨 Respuesta de Sipay FastPay:', response)
           
@@ -137,7 +137,10 @@ export default function CheckoutSipay() {
           }
         }
 
-        // Cargar FastPay SDK de Sipay (iframe embebido)
+        // PASO 1: Crear el botón PRIMERO (FastPay necesita que exista antes de cargar el script)
+        initializeFastPayButton(data)
+
+        // PASO 2: Cargar FastPay SDK (detectará el botón automáticamente)
         if (typeof window !== 'undefined') {
           const existingScript = document.querySelector('script[src*="fastpay.js"]')
           
@@ -147,24 +150,18 @@ export default function CheckoutSipay() {
             script.src = data.sipayConfig.endpoint.includes('sandbox')
               ? 'https://sandbox.sipay.es/fpay/v1/static/bundle/fastpay.js'
               : 'https://live.sipay.es/fpay/v1/static/bundle/fastpay.js'
-            script.async = true
+            script.async = false // Cambiado a síncrono
             script.onload = () => {
-              console.log('✅ FastPay SDK cargado')
-              // Esperar un momento para que FastPay inicialice
-              setTimeout(() => {
-                initializeFastPayButton(data)
-              }, 500)
+              console.log('✅ FastPay SDK cargado - El botón debería transformarse en iframe ahora')
             }
             script.onerror = () => {
               console.error('❌ Error cargando FastPay SDK')
               setError('Error cargando el sistema de pago. Por favor recarga la página.')
             }
+            // Importante: agregar al head según documentación de Sipay
             document.head.appendChild(script)
           } else {
             console.log('✅ FastPay SDK ya estaba cargado')
-            setTimeout(() => {
-              initializeFastPayButton(data)
-            }, 500)
           }
         }
         
@@ -183,22 +180,23 @@ export default function CheckoutSipay() {
           return
         }
 
-        console.log('🔧 Inicializando FastPay con config:', {
+        console.log('🔧 Inicializando botón FastPay:', {
           key: data.sipayConfig.key,
           amount: Math.round(data.amount * 100),
-          orderId: data.orderId
+          currency: 'EUR',
+          callback: 'processSipayPayment'
         })
 
         // Limpiar contenedor
         container.innerHTML = ''
 
         // Crear botón de FastPay con atributos data-*
-        // FastPay convertirá este botón en un iframe embebido
+        // Según documentación: FastPay detecta botones con data-* automáticamente
         const button = document.createElement('button')
         button.type = 'button'
         button.id = 'sipay-fastpay-button'
         
-        // Atributos requeridos por FastPay
+        // Atributos obligatorios según documentación de Sipay
         button.setAttribute('data-key', data.sipayConfig.key)
         button.setAttribute('data-amount', Math.round(data.amount * 100).toString())
         button.setAttribute('data-currency', 'EUR')
@@ -209,17 +207,24 @@ export default function CheckoutSipay() {
         button.setAttribute('data-paymentbutton', 'Pagar Ahora')
         button.setAttribute('data-hiddenprice', 'false')
         
-        // Estilos del botón
+        // Estilos del botón (se mantendrán hasta que FastPay lo transforme)
         button.className = 'w-full py-4 bg-[#07C59A] text-white rounded-xl font-bold text-lg hover:bg-[#06b489] transition-all duration-200 cursor-pointer'
         button.textContent = `💳 Pagar ${data.amount.toFixed(2)}€`
 
         container.appendChild(button)
         
-        console.log('✅ Botón FastPay creado. FastPay lo convertirá en iframe embebido.')
-        console.log('ℹ️ Los campos de tarjeta aparecerán cuando FastPay procese el botón.')
+        console.log('✅ Botón FastPay agregado al DOM con atributos data-*')
+        console.log('📋 Atributos del botón:', {
+          'data-key': button.getAttribute('data-key'),
+          'data-amount': button.getAttribute('data-amount'),
+          'data-currency': button.getAttribute('data-currency'),
+          'data-template': button.getAttribute('data-template'),
+          'data-callback': button.getAttribute('data-callback')
+        })
+        console.log('⏳ Esperando a que FastPay lo convierta en iframe...')
 
       } catch (error: any) {
-        console.error('Error inicializando FastPay:', error)
+        console.error('❌ Error inicializando FastPay:', error)
         setError('Error cargando el formulario de pago')
       }
     }
