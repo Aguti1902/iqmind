@@ -233,6 +233,9 @@ export default function CheckoutSipay() {
         button.setAttribute('data-paymentbutton', 'Pagar')
         button.setAttribute('data-hiddenprice', 'false')
         button.setAttribute('data-notab', '1') // Importante para iframe embebido
+        
+        // Agregar texto al botón (puede ser necesario para FastPay)
+        button.textContent = 'Pagar'
 
         container.appendChild(button)
         
