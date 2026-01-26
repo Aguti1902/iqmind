@@ -125,7 +125,22 @@ export default function CheckoutSipay() {
 
         console.log('✅ Sesión de pago creada:', data)
 
-        // Cargar FastPay SDK de Sipay
+        // Definir función callback global ANTES de crear el botón
+        ;(window as any).processSipayPayment = async (response: any) => {
+          console.log('📨 Respuesta de Sipay FastPay:', response)
+          
+          if (response.type === 'success' && response.request_id) {
+            await processPaymentWithRequestId(data.orderId, response.request_id, data.amount, response)
+          } else {
+            setError(response.description || 'Error capturando los datos de la tarjeta')
+            setIsProcessing(false)
+          }
+        }
+
+        // Primero crear el botón en el DOM
+        initializeSipayButton(data)
+
+        // Luego cargar FastPay SDK (detectará el botón automáticamente)
         if (typeof window !== 'undefined') {
           const existingScript = document.querySelector('script[src*="fastpay.js"]')
           
@@ -135,10 +150,9 @@ export default function CheckoutSipay() {
             script.src = data.sipayConfig.endpoint.includes('sandbox')
               ? 'https://sandbox.sipay.es/fpay/v1/static/bundle/fastpay.js'
               : 'https://live.sipay.es/fpay/v1/static/bundle/fastpay.js'
-            script.async = true
+            script.async = false // Cambiar a síncrono para asegurar que se cargue
             script.onload = () => {
-              console.log('✅ FastPay SDK cargado')
-              initializeSipayButton(data)
+              console.log('✅ FastPay SDK cargado y botón inicializado')
             }
             script.onerror = () => {
               console.error('❌ Error cargando FastPay SDK')
@@ -146,19 +160,7 @@ export default function CheckoutSipay() {
             }
             document.body.appendChild(script)
           } else {
-            initializeSipayButton(data)
-          }
-        }
-        
-        // Definir función callback global
-        ;(window as any).processSipayPayment = async (response: any) => {
-          console.log('📨 Respuesta de Sipay FastPay:', response)
-          
-          if (response.type === 'success' && response.request_id) {
-            await processPaymentWithRequestId(data.orderId, response.request_id, data.amount, response)
-          } else {
-            setError(response.description || 'Error capturando los datos de la tarjeta')
-            setIsProcessing(false)
+            console.log('✅ FastPay SDK ya estaba cargado')
           }
         }
         
@@ -172,28 +174,38 @@ export default function CheckoutSipay() {
     const initializeSipayButton = (data: any) => {
       // Crear botón de pago de Sipay con FastPay
       const container = document.getElementById('sipay-payment-form')
-      if (!container) return
+      if (!container) {
+        console.error('❌ Contenedor sipay-payment-form no encontrado')
+        return
+      }
 
       // Limpiar contenedor
       container.innerHTML = ''
 
-      // Crear botón con atributos data-*
+      // Crear botón con atributos data-* (FastPay lo detectará automáticamente)
       const button = document.createElement('button')
+      button.type = 'button' // Importante: tipo button
       button.id = 'sipay-fastpay-button'
       button.setAttribute('data-key', data.sipayConfig.key)
-      button.setAttribute('data-amount', Math.round(data.amount * 100).toString()) // Convertir a centavos
+      button.setAttribute('data-amount', Math.round(data.amount * 100).toString()) // En centavos
       button.setAttribute('data-currency', 'EUR')
       button.setAttribute('data-template', 'v4')
       button.setAttribute('data-callback', 'processSipayPayment')
       button.setAttribute('data-lang', lang || 'es')
       button.setAttribute('data-cardholdername', 'true')
       button.setAttribute('data-paymentbutton', 'Pagar Ahora')
-      button.className = 'w-full py-4 bg-[#07C59A] text-white rounded-xl font-bold text-lg hover:bg-[#06b489] transition-all duration-200'
+      button.setAttribute('data-hiddenprice', 'false') // Mostrar precio
+      button.className = 'w-full py-4 bg-[#07C59A] text-white rounded-xl font-bold text-lg hover:bg-[#06b489] transition-all duration-200 cursor-pointer'
       button.textContent = `Pagar ${data.amount.toFixed(2)}€`
 
       container.appendChild(button)
       
-      console.log('✅ Botón FastPay inicializado')
+      console.log('✅ Botón FastPay creado:', {
+        key: data.sipayConfig.key,
+        amount: Math.round(data.amount * 100),
+        currency: 'EUR',
+        callback: 'processSipayPayment'
+      })
     }
 
     const processPaymentWithRequestId = async (orderId: string, requestId: string, amount: number, sipayResponse: any) => {
@@ -578,15 +590,13 @@ export default function CheckoutSipay() {
                     </label>
                   </div>
 
-                  {/* Botón de Pago */}
+                  {/* Botón de Pago - OCULTO: FastPay maneja el pago */}
+                  {/* El botón de FastPay se muestra arriba en #sipay-payment-form */}
                   <button
                     type="submit"
                     disabled={isProcessing || !agreedToTerms}
-                    className={`w-full py-4 rounded-xl font-bold text-lg transition-all duration-200 flex items-center justify-center gap-3 ${
-                      isProcessing || !agreedToTerms
-                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                        : 'bg-[#113240] text-white hover:bg-[#052547] shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
-                    }`}
+                    className="hidden"
+                    style={{ display: 'none' }}
                   >
                     {isProcessing ? (
                       <>
