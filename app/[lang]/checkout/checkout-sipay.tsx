@@ -153,6 +153,25 @@ export default function CheckoutSipay() {
             script.async = false // Cambiado a síncrono
             script.onload = () => {
               console.log('✅ FastPay SDK cargado - El botón debería transformarse en iframe ahora')
+              
+              // Verificar después de 2 segundos si el iframe se renderizó
+              setTimeout(() => {
+                const container = document.getElementById('sipay-payment-form')
+                const button = document.getElementById('sipay-fastpay-button')
+                const iframe = container?.querySelector('iframe')
+                
+                console.log('🔍 Estado después de cargar FastPay:', {
+                  contenedorExiste: !!container,
+                  botonExiste: !!button,
+                  iframeRenderizado: !!iframe,
+                  htmlContenido: container?.innerHTML.substring(0, 300)
+                })
+                
+                if (!iframe) {
+                  console.error('❌ FastPay NO renderizó el iframe.')
+                  console.error('📋 Inspecciona el elemento #sipay-payment-form para ver qué hay dentro')
+                }
+              }, 2000)
             }
             script.onerror = () => {
               console.error('❌ Error cargando FastPay SDK')
