@@ -152,7 +152,25 @@ export default function CheckoutSipay() {
               : 'https://live.sipay.es/fpay/v1/static/bundle/fastpay.js'
             script.async = false // Cambiado a síncrono
             script.onload = () => {
-              console.log('✅ FastPay SDK cargado - El botón debería transformarse en iframe ahora')
+              console.log('✅ FastPay SDK cargado')
+              
+              // Verificar si FastPay está disponible como objeto global
+              if (typeof (window as any).FastPay !== 'undefined') {
+                console.log('✅ FastPay está disponible como objeto global')
+                
+                // Intentar inicialización manual
+                try {
+                  const fastpay = (window as any).FastPay
+                  if (fastpay && fastpay.init) {
+                    console.log('🔧 Intentando inicializar FastPay manualmente...')
+                    fastpay.init()
+                  }
+                } catch (e) {
+                  console.log('ℹ️ FastPay no tiene método init(), debe detectar automáticamente')
+                }
+              } else {
+                console.warn('⚠️ FastPay NO está disponible como objeto global')
+              }
               
               // Verificar después de 2 segundos si el iframe se renderizó
               setTimeout(() => {
@@ -163,13 +181,16 @@ export default function CheckoutSipay() {
                 console.log('🔍 Estado después de cargar FastPay:', {
                   contenedorExiste: !!container,
                   botonExiste: !!button,
+                  botonClase: button?.className,
                   iframeRenderizado: !!iframe,
                   htmlContenido: container?.innerHTML.substring(0, 300)
                 })
                 
                 if (!iframe) {
                   console.error('❌ FastPay NO renderizó el iframe.')
-                  console.error('📋 Inspecciona el elemento #sipay-payment-form para ver qué hay dentro')
+                  console.error('🔑 Verifica que data-key="clicklabsdigital" sea correcto para sandbox')
+                  console.error('📋 Ejemplo de Sipay usa: data-key="sipay-test-team"')
+                  console.error('💡 Contacta a Sipay para confirmar la KEY correcta')
                 }
               }, 2000)
             }
