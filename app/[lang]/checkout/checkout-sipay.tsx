@@ -125,42 +125,28 @@ export default function CheckoutSipay() {
 
         console.log('✅ Sesión de pago creada:', data)
 
-        // Definir función callback global ANTES de crear el botón
-        ;(window as any).processSipayPayment = async (response: any) => {
-          console.log('📨 Respuesta de Sipay FastPay:', response)
-          
-          if (response.type === 'success' && response.request_id) {
-            await processPaymentWithRequestId(data.orderId, response.request_id, data.amount, response)
-          } else {
-            setError(response.description || 'Error capturando los datos de la tarjeta')
-            setIsProcessing(false)
-          }
-        }
-
-        // Primero crear el botón en el DOM
-        initializeSipayButton(data)
-
-        // Luego cargar FastPay SDK (detectará el botón automáticamente)
+        // Cargar SDK de Sipay (NO FastPay - usamos el SDK principal)
         if (typeof window !== 'undefined') {
-          const existingScript = document.querySelector('script[src*="fastpay.js"]')
+          const existingScript = document.querySelector('script[src*="sipay-sdk.js"]')
           
           if (!existingScript) {
             const script = document.createElement('script')
             script.type = 'text/javascript'
             script.src = data.sipayConfig.endpoint.includes('sandbox')
-              ? 'https://sandbox.sipay.es/fpay/v1/static/bundle/fastpay.js'
-              : 'https://live.sipay.es/fpay/v1/static/bundle/fastpay.js'
-            script.async = false // Cambiar a síncrono para asegurar que se cargue
+              ? 'https://sandbox.sipay.es/js/sipay-sdk.js'
+              : 'https://live.sipay.es/js/sipay-sdk.js'
+            script.async = false
             script.onload = () => {
-              console.log('✅ FastPay SDK cargado y botón inicializado')
+              console.log('✅ Sipay SDK cargado')
+              setTimeout(() => initializeSipayForm(data), 500)
             }
             script.onerror = () => {
-              console.error('❌ Error cargando FastPay SDK')
+              console.error('❌ Error cargando Sipay SDK')
               setError('Error cargando el sistema de pago. Por favor recarga la página.')
             }
             document.body.appendChild(script)
           } else {
-            console.log('✅ FastPay SDK ya estaba cargado')
+            setTimeout(() => initializeSipayForm(data), 500)
           }
         }
         
@@ -171,41 +157,61 @@ export default function CheckoutSipay() {
       }
     }
 
-    const initializeSipayButton = (data: any) => {
-      // Crear botón de pago de Sipay con FastPay
-      const container = document.getElementById('sipay-payment-form')
-      if (!container) {
-        console.error('❌ Contenedor sipay-payment-form no encontrado')
-        return
+    const initializeSipayForm = (data: any) => {
+      try {
+        // Verificar que el SDK de Sipay esté cargado
+        if (typeof (window as any).Sipay === 'undefined') {
+          console.error('❌ SDK de Sipay no cargado')
+          setError('Error cargando el formulario de pago. Por favor recarga la página.')
+          return
+        }
+
+        console.log('🔧 Inicializando Sipay con config:', {
+          key: data.sipayConfig.key,
+          resource: data.sipayConfig.resource,
+          amount: Math.round(data.amount * 100),
+          orderId: data.orderId
+        })
+
+        // Configuración para Sipay SDK
+        const sipayConfig = {
+          key: data.sipayConfig.key,
+          resource: data.sipayConfig.resource,
+          amount: Math.round(data.amount * 100), // En centavos
+          currency: 'EUR',
+          order_id: data.orderId,
+          customer_email: email,
+          language: lang || 'es',
+          environment: data.sipayConfig.endpoint.includes('sandbox') ? 'sandbox' : 'live'
+        }
+
+        // Crear instancia de Sipay
+        const sipayInstance = new (window as any).Sipay(sipayConfig)
+
+        // Guardar instancia para usarla en el botón de pago
+        ;(window as any).sipayInstance = sipayInstance
+
+        // Renderizar formulario en el contenedor
+        sipayInstance.render('sipay-payment-form')
+        console.log('✅ Formulario de Sipay renderizado')
+
+        // Escuchar evento de token (cuando el usuario ingresa los datos de tarjeta)
+        sipayInstance.on('token', async (token: string) => {
+          console.log('✅ Token recibido:', token)
+          await processPaymentWithToken(data.orderId, token, data.amount)
+        })
+
+        // Escuchar errores
+        sipayInstance.on('error', (error: any) => {
+          console.error('❌ Error de Sipay:', error)
+          setError(error.message || 'Error procesando el pago')
+          setIsProcessing(false)
+        })
+
+      } catch (error: any) {
+        console.error('Error inicializando Sipay:', error)
+        setError('Error cargando el formulario de pago')
       }
-
-      // Limpiar contenedor
-      container.innerHTML = ''
-
-      // Crear botón con atributos data-* (FastPay lo detectará automáticamente)
-      const button = document.createElement('button')
-      button.type = 'button' // Importante: tipo button
-      button.id = 'sipay-fastpay-button'
-      button.setAttribute('data-key', data.sipayConfig.key)
-      button.setAttribute('data-amount', Math.round(data.amount * 100).toString()) // En centavos
-      button.setAttribute('data-currency', 'EUR')
-      button.setAttribute('data-template', 'v4')
-      button.setAttribute('data-callback', 'processSipayPayment')
-      button.setAttribute('data-lang', lang || 'es')
-      button.setAttribute('data-cardholdername', 'true')
-      button.setAttribute('data-paymentbutton', 'Pagar Ahora')
-      button.setAttribute('data-hiddenprice', 'false') // Mostrar precio
-      button.className = 'w-full py-4 bg-[#07C59A] text-white rounded-xl font-bold text-lg hover:bg-[#06b489] transition-all duration-200 cursor-pointer'
-      button.textContent = `Pagar ${data.amount.toFixed(2)}€`
-
-      container.appendChild(button)
-      
-      console.log('✅ Botón FastPay creado:', {
-        key: data.sipayConfig.key,
-        amount: Math.round(data.amount * 100),
-        currency: 'EUR',
-        callback: 'processSipayPayment'
-      })
     }
 
     const processPaymentWithRequestId = async (orderId: string, requestId: string, amount: number, sipayResponse: any) => {
@@ -363,6 +369,14 @@ export default function CheckoutSipay() {
       return
     }
 
+    // Verificar que la instancia de Sipay esté lista
+    const sipayInstance = (window as any).sipayInstance
+    if (!sipayInstance) {
+      setError('Formulario de pago no inicializado. Por favor recarga la página.')
+      return
+    }
+
+    setIsProcessing(true)
     setError('')
 
     try {
@@ -370,16 +384,16 @@ export default function CheckoutSipay() {
       localStorage.setItem('userEmail', email)
       if (userName) localStorage.setItem('userName', userName)
 
-      // El pago se procesa cuando el usuario ingresa los datos de la tarjeta
-      // y Sipay dispara el evento 'token'
-      console.log('📝 Email guardado. Esperando datos de tarjeta...')
-      
-      // Mostrar mensaje al usuario
-      setError('Por favor ingresa los datos de tu tarjeta arriba')
+      // Disparar el envío del formulario de Sipay
+      // Esto validará los datos de la tarjeta y generará el token
+      // El token se recibirá en el evento 'token' configurado en initializeSipayForm
+      console.log('📤 Procesando pago con Sipay...')
+      sipayInstance.submit()
 
     } catch (error: any) {
       console.error('Error:', error)
       setError(error.message || 'Error procesando el pago')
+      setIsProcessing(false)
     }
   }
 
@@ -590,13 +604,15 @@ export default function CheckoutSipay() {
                     </label>
                   </div>
 
-                  {/* Botón de Pago - OCULTO: FastPay maneja el pago */}
-                  {/* El botón de FastPay se muestra arriba en #sipay-payment-form */}
+                  {/* Botón de Pago */}
                   <button
                     type="submit"
                     disabled={isProcessing || !agreedToTerms}
-                    className="hidden"
-                    style={{ display: 'none' }}
+                    className={`w-full py-4 rounded-xl font-bold text-lg transition-all duration-200 flex items-center justify-center gap-3 ${
+                      isProcessing || !agreedToTerms
+                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        : 'bg-[#113240] text-white hover:bg-[#052547] shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
+                    }`}
                   >
                     {isProcessing ? (
                       <>
