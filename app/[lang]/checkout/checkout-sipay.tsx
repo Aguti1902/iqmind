@@ -125,18 +125,19 @@ export default function CheckoutSipay() {
 
         console.log('✅ Sesión de pago creada:', data)
 
-        // Cargar SDK de Sipay si no está cargado
-        if (typeof window !== 'undefined' && !(window as any).Sipay) {
-          const script = document.createElement('script')
-          script.src = data.sipayConfig.endpoint.includes('sandbox')
-            ? 'https://sandbox.sipay.es/js/sipay-sdk.js'
-            : 'https://api.sipay.es/js/sipay-sdk.js'
-          script.async = true
-          script.onload = () => initializeSipayForm(data)
-          document.body.appendChild(script)
-        } else {
-          initializeSipayForm(data)
-        }
+        // TEMPORAL: Mostrar mensaje mientras esperamos instrucciones de Sipay
+        setError(`⚠️ Integración de Sipay en progreso.
+        
+Por favor, contacta a Sipay y pregunta:
+1. ¿Cuál es la URL del SDK JavaScript? o
+2. ¿A qué URL debo redirigir al usuario? o
+3. ¿Cuál es la URL del iframe de payment wall?
+
+Email: soporte@sipay.es
+Tus credenciales: clicklabsdigital (sandbox)`)
+        
+        console.log('📋 Datos de sesión:', data)
+        console.log('🔑 Config Sipay:', data.sipayConfig)
         
       } catch (error: any) {
         console.error('Error:', error)
