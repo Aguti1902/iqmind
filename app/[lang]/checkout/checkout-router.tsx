@@ -41,13 +41,16 @@ export default function CheckoutRouter() {
         setStatus('Redirigiendo a checkout de Sipay...')
         
         // Redirigir al checkout HTML estático (funciona con Sipay)
-        const checkoutUrl = `/checkout-sipay.html?` + new URLSearchParams({
+        const params = new URLSearchParams({
           email: storedEmail,
           testType: testType,
           lang: lang || 'es'
         }).toString()
         
-        window.location.href = checkoutUrl
+        // Usar URL absoluta para evitar problemas con rutas relativas
+        if (typeof window !== 'undefined') {
+          window.location.href = `${window.location.origin}/checkout-sipay.html?${params}`
+        }
 
       } catch (error: any) {
         console.error('❌ Error en checkout:', error)
