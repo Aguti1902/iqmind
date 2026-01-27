@@ -121,8 +121,8 @@ export default function ResultadoEstimadoPage() {
     
     console.log('🎯 Redirigiendo al checkout HTML con testType:', testType)
     
-    // Redirigir al checkout de pago con parámetros
-    const checkoutUrl = `/checkout-payment?` + new URLSearchParams({
+    // Redirigir al checkout HTML estático (funciona con Sipay)
+    const checkoutUrl = `/checkout-sipay.html?` + new URLSearchParams({
       email: email,
       testType: testType,
       lang: lang || 'es'

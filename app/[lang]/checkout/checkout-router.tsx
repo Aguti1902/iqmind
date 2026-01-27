@@ -40,8 +40,8 @@ export default function CheckoutRouter() {
 
         setStatus('Redirigiendo a checkout de Sipay...')
         
-        // Redirigir al checkout de pago con parámetros
-        const checkoutUrl = `/checkout-payment?` + new URLSearchParams({
+        // Redirigir al checkout HTML estático (funciona con Sipay)
+        const checkoutUrl = `/checkout-sipay.html?` + new URLSearchParams({
           email: storedEmail,
           testType: testType,
           lang: lang || 'es'
