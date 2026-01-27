@@ -121,8 +121,8 @@ export default function ResultadoEstimadoPage() {
     
     console.log('🎯 Redirigiendo al checkout HTML con testType:', testType)
     
-    // Redirigir al checkout HTML estático con parámetros
-    const checkoutUrl = `/checkout.html?` + new URLSearchParams({
+    // Redirigir al checkout de pago con parámetros
+    const checkoutUrl = `/checkout-payment?` + new URLSearchParams({
       email: email,
       testType: testType,
       lang: lang || 'es'
