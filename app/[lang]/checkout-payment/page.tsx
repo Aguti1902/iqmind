@@ -1,10 +1,13 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Script from 'next/script'
 
-export default function CheckoutPayment() {
+// Deshabilitar pre-rendering estático
+export const dynamic = 'force-dynamic'
+
+function CheckoutPaymentContent() {
   const searchParams = useSearchParams()
   const [email, setEmail] = useState('')
   const [testType, setTestType] = useState('iq')
@@ -484,5 +487,21 @@ export default function CheckoutPayment() {
       {/* Font Awesome */}
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     </>
+  )
+}
+
+export default function CheckoutPayment() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-[#07C59A] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600 mb-2">Cargando checkout...</p>
+          <p className="text-xs text-gray-500">Por favor espera</p>
+        </div>
+      </div>
+    }>
+      <CheckoutPaymentContent />
+    </Suspense>
   )
 }
