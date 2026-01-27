@@ -27,9 +27,6 @@ export default function RootLayout({
         <script
           type="text/javascript"
           src="https://sandbox.sipay.es/fpay/v1/static/bundle/fastpay.js"
-          async={false}
-          onLoad={() => console.log('✅ [LAYOUT] Script FastPay cargado desde layout')}
-          onError={() => console.error('❌ [LAYOUT] Error cargando script FastPay')}
         />
         {/* Script de verificación inmediata */}
         <script
