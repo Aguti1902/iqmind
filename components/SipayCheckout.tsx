@@ -54,38 +54,90 @@ export default function SipayCheckout({
     }
   }, [onPaymentSuccess, onPaymentError])
 
-  // Auto-click cuando el script esté listo
   useEffect(() => {
     if (!scriptReady) return
     if (startedRef.current) return
 
-    console.log('✅ Script listo, preparando checkout...')
+    console.log('✅ Script listo, iniciando checkout...')
 
-    // Ocultar el botón (Sipay genera UI sobre .fastpay-btn)
+    // ⚠️ IMPORTANTE: NO display:none - Sipay necesita medir el DOM
     const style = document.createElement('style')
-    style.innerHTML = `.fastpay-btn{display:none !important;}`
+    style.innerHTML = `
+      .fastpay-btn {
+        position: absolute !important;
+        left: -99999px !important;
+        top: -99999px !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+        width: 1px !important;
+        height: 1px !important;
+      }
+    `
     document.head.appendChild(style)
+
+    // Mover el iframe al contenedor visible
+    const moveIframeIntoMount = () => {
+      const mount = document.getElementById('sipay-mount')
+      if (!mount) return false
+
+      // Buscar iframe de Sipay
+      const iframe = Array.from(document.querySelectorAll('iframe')).find((f) => {
+        const src = f.getAttribute('src') || ''
+        return src.includes('sipay.es') || src.includes('/fpay/')
+      })
+
+      if (!iframe) return false
+
+      console.log('✅ Iframe de Sipay detectado, moviéndolo al contenedor visible...')
+      
+      // Moverlo al contenedor
+      mount.innerHTML = ''
+      mount.appendChild(iframe)
+
+      // Asegurar tamaño visible
+      iframe.style.width = '100%'
+      iframe.style.minHeight = '520px'
+      iframe.style.border = '0'
+      
+      console.log('✅ Iframe movido correctamente')
+      return true
+    }
 
     const start = () => {
       if (startedRef.current) return true
+
       const btn = document.querySelector<HTMLButtonElement>('button.fastpay-btn')
       if (!btn) return false
 
       startedRef.current = true
-      console.log('🎯 Ejecutando click en botón FastPay...')
-      btn.click() // dispara el render del iframe interno
-      console.log('✅ Click ejecutado - Sipay renderizará el iframe automáticamente')
+      console.log('🎯 Click en botón FastPay...')
+      btn.click()
+
+      // Después del click, intentar mover el iframe
+      setTimeout(() => moveIframeIntoMount(), 200)
       return true
     }
 
-    if (start()) return
+    // Intentar arrancar
+    if (!start()) {
+      console.log('📡 Esperando botón FastPay...')
+      const obsBtn = new MutationObserver(() => start())
+      obsBtn.observe(document.body, { childList: true, subtree: true })
 
-    console.log('📡 Esperando botón FastPay...')
-    const obs = new MutationObserver(() => start())
-    obs.observe(document.body, { childList: true, subtree: true })
+      return () => {
+        obsBtn.disconnect()
+        if (style.parentNode) {
+          document.head.removeChild(style)
+        }
+      }
+    }
+
+    // Observar para capturar el iframe cuando aparezca
+    const obsIframe = new MutationObserver(() => moveIframeIntoMount())
+    obsIframe.observe(document.body, { childList: true, subtree: true })
 
     return () => {
-      obs.disconnect()
+      obsIframe.disconnect()
       if (style.parentNode) {
         document.head.removeChild(style)
       }
@@ -106,6 +158,7 @@ export default function SipayCheckout({
         }}
       />
 
+      {/* Botón-ancla que Sipay usa para inyectar el flujo */}
       <button
         type="button"
         className="fastpay-btn"
@@ -113,18 +166,18 @@ export default function SipayCheckout({
         data-amount={amount.toString()}
         data-currency={currency}
         data-template="v4"
+        data-lang={lang}
         data-callback="processSipayPayment"
         data-paymentbutton="Pagar"
         data-cardholdername="true"
-        data-lang={lang}
         data-hiddenprice="false"
         data-notab="1"
       >
         Pagar
       </button>
 
-      {/* Espacio para el iframe - evita colapso del layout */}
-      <div style={{ minHeight: 650 }} />
+      {/* Contenedor donde queremos ver el iframe */}
+      <div id="sipay-mount" style={{ width: '100%', minHeight: 560 }} />
     </>
   )
 }
