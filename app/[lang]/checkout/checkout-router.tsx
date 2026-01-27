@@ -40,16 +40,16 @@ export default function CheckoutRouter() {
 
         setStatus('Redirigiendo a checkout de Sipay...')
         
-        // Redirigir al checkout HTML estático (funciona con Sipay)
+        // Redirigir al checkout HTML via API route
         const params = new URLSearchParams({
           email: storedEmail,
           testType: testType,
           lang: lang || 'es'
         }).toString()
         
-        // Usar URL absoluta para evitar problemas con rutas relativas
+        // Usar API route para servir el HTML correctamente
         if (typeof window !== 'undefined') {
-          window.location.href = `${window.location.origin}/checkout-sipay.html?${params}`
+          window.location.href = `/api/checkout-html?${params}`
         }
 
       } catch (error: any) {
