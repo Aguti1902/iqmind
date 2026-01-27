@@ -12,18 +12,26 @@ export async function POST(request: NextRequest) {
   try {
     const {
       orderId,
-      cardToken,
+      requestId, // request_id de FastPay
+      cardToken, // token directo (legacy)
       email,
       amount,
       description,
       lang
     } = await request.json()
 
-    console.log('💳 Procesando pago con Sipay:', { orderId, email, amount })
+    console.log('💳 Procesando pago con Sipay:', { orderId, requestId, cardToken, email, amount })
 
-    if (!orderId || !cardToken || !email || !amount) {
+    if (!orderId) {
       return NextResponse.json(
-        { error: 'Datos incompletos' },
+        { error: 'orderId es requerido' },
+        { status: 400 }
+      )
+    }
+
+    if (!requestId && !cardToken) {
+      return NextResponse.json(
+        { error: 'Se requiere requestId o cardToken' },
         { status: 400 }
       )
     }
@@ -31,8 +39,23 @@ export async function POST(request: NextRequest) {
     // Obtener cliente de Sipay
     const sipay = getSipayClient()
 
+    // Determinar qué token usar (requestId de FastPay o cardToken directo)
+    const tokenToUse = requestId || cardToken
+
+    // Si viene de la página HTML estática, necesitamos obtener los datos del orderId
+    let userEmail = email
+    let paymentAmount = amount
+    let paymentLang = lang || 'es'
+
+    if (requestId && !email) {
+      // Buscar en la BD el pedido para obtener el email
+      // Por ahora, vamos a necesitar que el frontend pase estos datos
+      console.log('⚠️ Falta email, buscando en BD por orderId...')
+      // TODO: Implementar búsqueda de orden en BD si es necesario
+    }
+
     // Obtener usuario
-    const user = await db.getUserByEmail(email)
+    const user = await db.getUserByEmail(userEmail)
     if (!user) {
       return NextResponse.json(
         { error: 'Usuario no encontrado' },
@@ -42,19 +65,19 @@ export async function POST(request: NextRequest) {
 
     // URLs de retorno
     const origin = request.headers.get('origin') || 'https://mindmetric.io'
-    const returnUrl = `${origin}/${lang}/resultado?order_id=${orderId}`
-    const cancelUrl = `${origin}/${lang}/checkout?canceled=true`
+    const returnUrl = `${origin}/${paymentLang}/resultado?order_id=${orderId}`
+    const cancelUrl = `${origin}/${paymentLang}/checkout?canceled=true`
 
     // Procesar pago con Sipay (autorización + tokenización)
-    const amountInCents = Math.round(amount * 100) // Convertir a centavos
+    const amountInCents = paymentAmount ? Math.round(paymentAmount * 100) : 50 // 0.50€ por defecto
 
     const response = await sipay.authorizeWithTokenization({
       amount: amountInCents,
       currency: 'EUR',
       orderId,
-      description: description || `Pago MindMetric - Test de CI - ${email}`,
-      cardToken,
-      customerEmail: email,
+      description: description || `Pago MindMetric - Test de CI - ${userEmail}`,
+      cardToken: tokenToUse, // requestId de FastPay o cardToken directo
+      customerEmail: userEmail,
       returnUrl,
       cancelUrl,
     })

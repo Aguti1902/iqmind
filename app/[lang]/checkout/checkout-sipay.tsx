@@ -1,8 +1,7 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Script from 'next/script'
 import MinimalHeader from '@/components/MinimalHeader'
 import Footer from '@/components/Footer'
 import { FaLock, FaCheckCircle, FaBrain, FaCertificate, FaChartLine, FaUsers } from 'react-icons/fa'
@@ -18,9 +17,6 @@ export default function CheckoutSipay() {
   const [error, setError] = useState('')
   const [agreedToTerms, setAgreedToTerms] = useState(false)
   const [testType, setTestType] = useState<string>('iq')
-  const [paymentData, setPaymentData] = useState<any>(null)
-  const fastPayContainerRef = useRef<HTMLDivElement>(null)
-  const [fastPayReady, setFastPayReady] = useState(false)
 
   // Configuración de mensajes según el tipo de test
   const testConfig: any = {
@@ -131,21 +127,21 @@ export default function CheckoutSipay() {
 
         console.log('✅ Sesión de pago creada:', data)
 
-        // Definir función callback global ANTES de todo
-        ;(window as any).processSipayPayment = async (response: any) => {
-          console.log('📨 Respuesta de Sipay FastPay:', response)
-          
-          if (response.type === 'success' && response.request_id) {
-            await processPaymentWithRequestId(data.orderId, response.request_id, data.amount, response)
-          } else {
-            setError(response.description || 'Error capturando los datos de la tarjeta')
-            setIsProcessing(false)
-          }
-        }
+        // REDIRIGIR a página HTML estática (sin React)
+        // Esta página usa el HTML puro que funcionó perfectamente
+        const checkoutUrl = new URL('/sipay-checkout.html', window.location.origin)
+        checkoutUrl.searchParams.set('orderId', data.orderId)
+        checkoutUrl.searchParams.set('email', email)
+        checkoutUrl.searchParams.set('amount', data.amount.toString())
+        checkoutUrl.searchParams.set('key', data.sipayConfig.key)
+        checkoutUrl.searchParams.set('returnUrl', data.returnUrl)
+        checkoutUrl.searchParams.set('cancelUrl', data.cancelUrl)
+        checkoutUrl.searchParams.set('lang', lang || 'es')
 
-        // Guardar datos para renderizar el botón en el JSX
-        setPaymentData(data)
-        console.log('🔧 Datos guardados, botón se renderizará en el DOM')
+        console.log('🔄 Redirigiendo a página HTML estática:', checkoutUrl.toString())
+        
+        // Redirección
+        window.location.href = checkoutUrl.toString()
         
         
       } catch (error: any) {
@@ -296,28 +292,6 @@ export default function CheckoutSipay() {
     loadSipayPayment()
   }, [email, userIQ, userName, lang, router])
 
-  // useEffect para verificar si FastPay renderizó el iframe
-  useEffect(() => {
-    if (!paymentData || !fastPayReady) return
-
-    console.log('🔍 FastPay cargado, verificando iframe en 3 segundos...')
-    
-    const checkIframe = setTimeout(() => {
-      const iframe = fastPayContainerRef.current?.querySelector('iframe')
-      
-      if (!iframe) {
-        console.error('❌ FastPay NO renderizó el iframe')
-        console.error('📋 HTML del contenedor:', fastPayContainerRef.current?.innerHTML)
-        console.error('💡 NOTA: FastPay funciona en HTML puro pero NO en React')
-        console.error('🔧 Puede ser necesario usar iframe redirect en lugar de componente embebido')
-      } else {
-        console.log('✅ ¡Iframe renderizado correctamente!')
-      }
-    }, 3000)
-
-    return () => clearTimeout(checkIframe)
-  }, [paymentData, fastPayReady])
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -375,19 +349,6 @@ export default function CheckoutSipay() {
 
   return (
     <>
-      {/* Script de FastPay en el head (como en el HTML standalone) */}
-      <Script
-        src="https://sandbox.sipay.es/fpay/v1/static/bundle/fastpay.js"
-        strategy="beforeInteractive"
-        onLoad={() => {
-          console.log('✅ FastPay script cargado por Next.js Script')
-          setFastPayReady(true)
-        }}
-        onError={() => {
-          console.error('❌ Error cargando FastPay script')
-        }}
-      />
-      
       <MinimalHeader email={email} />
       
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-12 px-4">
@@ -546,35 +507,10 @@ export default function CheckoutSipay() {
                   {/* Formulario de Pago de Sipay */}
                   <div className="border-2 border-gray-200 rounded-xl p-6 bg-gray-50 min-h-[350px]">
                     <h4 className="font-bold text-gray-900 mb-4">Datos de la Tarjeta</h4>
-                    <div id="sipay-payment-form" ref={fastPayContainerRef} style={{ display: 'flex', justifyContent: 'center', minHeight: '600px' }}>
-                      {!paymentData ? (
-                        // Loading state
-                        <div className="text-center py-12">
-                          <div className="w-16 h-16 border-4 border-[#07C59A] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                          <p className="text-gray-600 mb-2">Cargando formulario de pago seguro...</p>
-                          <p className="text-xs text-gray-500">Powered by Sipay</p>
-                        </div>
-                      ) : (
-                        // Botón FastPay renderizado directamente en React (NO creado con JavaScript)
-                        <div style={{ minWidth: '430px' }}>
-                          <button
-                            className="fastpay-btn"
-                            data-key={paymentData.sipayConfig.key}
-                            data-amount={Math.round(paymentData.amount * 100).toString()}
-                            data-currency="EUR"
-                            data-template="v4"
-                            data-callback="processSipayPayment"
-                            data-paymentbutton="Pagar"
-                            data-cardholdername="true"
-                            data-remember="checkbox"
-                            data-remembertext="Recordar tarjeta"
-                            data-hiddenprice="false"
-                            data-lang={lang || 'es'}
-                          >
-                            {/* Botón vacío - FastPay lo transformará */}
-                          </button>
-                        </div>
-                      )}
+                    <div className="text-center py-12">
+                      <div className="w-16 h-16 border-4 border-[#07C59A] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                      <p className="text-gray-600 mb-2">Redirigiendo a página de pago seguro...</p>
+                      <p className="text-xs text-gray-500">Powered by Sipay</p>
                     </div>
                   </div>
 
