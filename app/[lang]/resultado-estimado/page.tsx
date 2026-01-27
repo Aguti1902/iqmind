@@ -115,38 +115,14 @@ export default function ResultadoEstimadoPage() {
       return
     }
 
-    // Guardar email y testType en localStorage (por si acaso se necesita después)
+    // Guardar email y testType en localStorage
     localStorage.setItem('userEmail', email)
     localStorage.setItem('testType', testType)
     
-    console.log('🎯 Redirigiendo al checkout HTML con testType:', testType)
+    console.log('🎯 Redirigiendo al checkout con testType:', testType)
     
-    // Obtener testResults del localStorage
-    const testResultsStr = localStorage.getItem('testResults') || '{}'
-    const userIQ = localStorage.getItem('userIQ') || ''
-    const userName = localStorage.getItem('userName') || ''
-    
-    // Construir objeto de datos del test
-    const testData = {
-      type: testType,
-      results: JSON.parse(testResultsStr),
-      iq: userIQ,
-      name: userName
-    }
-    
-    // Construir URL del checkout HTML con todos los parámetros
-    // IMPORTANTE: El archivo está en /public/, se sirve desde la raíz (sin /es/)
-    const checkoutUrl = `${window.location.origin}/checkout-full.html?` + new URLSearchParams({
-      lang: lang || 'es',
-      email: email,
-      testType: testType,
-      testData: JSON.stringify(testData)
-    }).toString()
-    
-    console.log('📍 Redirigiendo a:', checkoutUrl)
-    
-    // Redirigir al checkout HTML puro (FastPay funciona aquí)
-    window.location.href = checkoutUrl
+    // Redirigir al checkout
+    router.push(`/${lang}/checkout`)
   }
 
   if (isLoading || loading || !t) {

@@ -23,6 +23,11 @@ export default function RootLayout({
     <html lang="es">
       <head>
         <link rel="icon" href="/images/FAVICON2.png" type="image/png" />
+        {/* Script del Web Component ANTES de FastPay */}
+        <script
+          type="text/javascript"
+          src="/sipay-fastpay-element.js"
+        />
         {/* Script de FastPay cargado GLOBALMENTE para toda la app */}
         <script
           type="text/javascript"

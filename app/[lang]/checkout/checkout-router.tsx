@@ -38,32 +38,8 @@ export default function CheckoutRouter() {
           setUserIQ(parseInt(storedIQ))
         }
 
-        setStatus('Redirigiendo a checkout HTML...')
-        
-        // Obtener testResults del localStorage
-        const testResultsStr = localStorage.getItem('testResults') || '{}'
-        
-        // Construir objeto de datos del test
-        const testData = {
-          type: testType,
-          results: JSON.parse(testResultsStr),
-          iq: storedIQ || '',
-          name: storedUserName || ''
-        }
-        
-        // Construir URL del checkout HTML con todos los parámetros
-        // IMPORTANTE: El archivo está en /public/, se sirve desde la raíz (sin /es/)
-        const checkoutUrl = `${window.location.origin}/checkout-full.html?` + new URLSearchParams({
-          lang: lang || 'es',
-          email: storedEmail,
-          testType: testType,
-          testData: JSON.stringify(testData)
-        }).toString()
-        
-        console.log('📍 Redirigiendo a:', checkoutUrl)
-        
-        // Redirigir al checkout HTML puro (FastPay funciona aquí)
-        window.location.href = checkoutUrl
+        setStatus('Redirigiendo a checkout de Sipay...')
+        router.push(`/${lang}/checkout`)
 
       } catch (error: any) {
         console.error('❌ Error en checkout:', error)

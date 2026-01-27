@@ -634,36 +634,21 @@ export default function CheckoutSipay() {
                         <p className="text-xs text-gray-500">Powered by Sipay</p>
                       </div>
                     ) : (
-                      <div 
-                        style={{ display: 'flex', justifyContent: 'center', minHeight: '600px' }}
-                        dangerouslySetInnerHTML={{
-                          __html: (() => {
-                            const html = `
-                              <div style="min-width: 430px">
-                                <button 
-                                  class="fastpay-btn"
-                                  data-key="${paymentData.sipayConfig.key}"
-                                  data-amount="${Math.round(paymentData.amount * 100)}"
-                                  data-currency="EUR"
-                                  data-template="v4"
-                                  data-callback="processSipayPayment"
-                                  data-paymentbutton="Pagar"
-                                  data-cardholdername="true"
-                                  data-remember="checkbox"
-                                  data-remembertext="Recordar tarjeta"
-                                  data-hiddenprice="false"
-                                  data-lang="${lang || 'es'}">
-                                </button>
-                              </div>
-                            `
-                            console.log('🎨 [RENDER] HTML que se va a inyectar:', html)
-                            console.log('🎨 [RENDER] Sipay Key:', paymentData.sipayConfig.key)
-                            console.log('🎨 [RENDER] Amount (centavos):', Math.round(paymentData.amount * 100))
-                            console.log('🎨 [RENDER] Language:', lang || 'es')
-                            return html
-                          })()
-                        }}
-                      />
+                      <div style={{ display: 'flex', justifyContent: 'center', minHeight: '600px' }}>
+                        <sipay-fastpay
+                          data-key={paymentData.sipayConfig.key}
+                          data-amount={Math.round(paymentData.amount * 100)}
+                          data-currency="EUR"
+                          data-template="v4"
+                          data-callback="processSipayPayment"
+                          data-paymentbutton="Pagar"
+                          data-cardholdername="true"
+                          data-remember="checkbox"
+                          data-remembertext="Recordar tarjeta"
+                          data-hiddenprice="false"
+                          data-lang={lang || 'es'}
+                        />
+                      </div>
                     )}
                   </div>
 
