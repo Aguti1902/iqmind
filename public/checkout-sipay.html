@@ -27,6 +27,11 @@
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
+        
+        /* OCULTAR BOTÓN FASTPAY - Recomendación oficial de Sipay */
+        .fastpay-btn {
+            display: none !important;
+        }
     </style>
 </head>
 <body class="gradient-bg">
@@ -428,28 +433,39 @@ async function createPaymentSession() {
     }
 }
 
+// AUTO-RENDERIZAR IFRAME - Recomendación oficial de Sipay
+// Hacer clic automáticamente en el botón FastPay para mostrar el iframe
+document.addEventListener("DOMContentLoaded", function () {
+    console.log('🎯 Intentando auto-renderizar iframe de Sipay...')
+    
+    // Esperar un momento para que FastPay procese el botón
+    setTimeout(function() {
+        const btn = document.querySelector(".fastpay-btn")
+        if (btn) {
+            console.log('✅ Botón FastPay encontrado, haciendo clic automático...')
+            btn.click()
+            
+            // Verificar si el iframe se renderizó
+            setTimeout(function() {
+                const iframe = document.querySelector('iframe[src*="sipay"]')
+                if (iframe) {
+                    console.log('✅ ¡ÉXITO! Iframe de Sipay renderizado automáticamente')
+                } else {
+                    console.error('❌ Iframe NO detectado después del clic')
+                }
+            }, 2000)
+        } else {
+            console.error('❌ Botón FastPay NO encontrado')
+        }
+    }, 500)
+})
+
 // Inicializar cuando el DOM esté listo
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initializePage)
 } else {
     initializePage()
 }
-
-// Verificar si FastPay transformó el botón después de 2 segundos
-setTimeout(function() {
-    const iframe = document.querySelector('iframe[src*="sipay"]')
-    if (iframe) {
-        console.log('✅ ¡ÉXITO! Iframe de FastPay detectado')
-    } else {
-        console.error('❌ Iframe de FastPay NO detectado - El botón no fue transformado')
-        const btn = document.getElementById('sipay-fastpay-btn')
-        if (btn) {
-            console.log('Button exists:', btn.outerHTML)
-            console.log('Button classes:', btn.className)
-            console.log('Button attributes:', btn.dataset)
-        }
-    }
-}, 3000)
 </script>
 
 </body>
