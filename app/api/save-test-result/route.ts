@@ -43,8 +43,9 @@ export async function POST(request: NextRequest) {
         console.log('👤 Creando usuario temporal para email:', email)
         user = await db.createUser({
           email: email,
-          name: 'Usuario',
+          userName: 'Usuario',
           password: '', // Sin password por ahora
+          subscriptionStatus: 'trial',
         })
       }
     } else {
