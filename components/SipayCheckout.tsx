@@ -1,7 +1,7 @@
 'use client'
 
 import Script from 'next/script'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 // Configuración del entorno
 const SIPAY_ENV = 'sandbox' // 'sandbox' | 'live'
@@ -33,6 +33,7 @@ export default function SipayCheckout({
   onPaymentError
 }: SipayCheckoutProps) {
   const [scriptReady, setScriptReady] = useState(false)
+  const openedRef = useRef(false)
 
   // Configurar callback global
   useEffect(() => {
@@ -53,6 +54,21 @@ export default function SipayCheckout({
     }
   }, [onPaymentSuccess, onPaymentError])
 
+  // Función para abrir el formulario con click del usuario (trusted)
+  const openCardForm = () => {
+    if (!scriptReady || openedRef.current) return
+
+    console.log('👆 Usuario hizo click, abriendo formulario Sipay...')
+    
+    // Click REAL al launcher (trusted porque viene de interacción del usuario)
+    const launcher = document.querySelector<HTMLButtonElement>('.fastpay-btn')
+    if (launcher) {
+      launcher.click()
+      openedRef.current = true
+      console.log('✅ Formulario Sipay abierto')
+    }
+  }
+
   return (
     <>
       <Script
@@ -67,85 +83,98 @@ export default function SipayCheckout({
         }}
       />
 
-      {/* Zona visible del checkout */}
+      {/* CSS para ocultar el botón SIN display:none */}
+      <style jsx global>{`
+        .fastpay-btn {
+          position: absolute !important;
+          left: -99999px !important;
+          top: -99999px !important;
+          opacity: 0 !important;
+          width: 1px !important;
+          height: 1px !important;
+          pointer-events: none !important;
+        }
+      `}</style>
+
+      {/* Botón de Sipay - Intentar modo embebido con data-embedded y data-open */}
+      <button
+        type="button"
+        className="fastpay-btn"
+        data-key={merchantKey}
+        data-amount={amount.toString()}
+        data-currency={currency}
+        data-template="v3"
+        data-lang={lang}
+        data-callback="processSipayPayment"
+        data-paymentbutton="Pagar"
+        data-cardholdername="true"
+        data-hiddenprice="true"
+        data-header="false"
+        data-autosave="true"
+        data-notab="1"
+        data-embedded="1"
+        data-open="1"
+      >
+        Pagar
+      </button>
+
+      {/* Bloque de checkout - Click abre el formulario */}
       <div
+        onClick={openCardForm}
         style={{
-          position: 'relative',
           width: '100%',
           minHeight: 560,
           border: '2px solid #e5e7eb',
           borderRadius: 12,
           background: 'white',
-          overflow: 'hidden'
+          padding: 24,
+          cursor: scriptReady ? 'pointer' : 'default',
+          transition: 'border-color 0.2s'
+        }}
+        onMouseEnter={(e) => {
+          if (scriptReady) e.currentTarget.style.borderColor = '#07C59A'
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.borderColor = '#e5e7eb'
         }}
       >
-        {/* UI visible para el usuario */}
-        <div style={{ padding: 24 }}>
-          <div style={{ 
-            fontWeight: 700, 
-            fontSize: 16,
-            color: '#111827',
-            marginBottom: 12 
-          }}>
-            Datos de la Tarjeta
-          </div>
-          <div style={{ 
-            color: '#6b7280', 
-            fontSize: 14,
-            lineHeight: 1.6
-          }}>
-            {scriptReady 
-              ? '👆 Haz click en este recuadro para cargar el formulario de pago seguro con Sipay'
-              : '⏳ Cargando pasarela de pago segura...'}
-          </div>
-          
-          {scriptReady && (
-            <div style={{ 
-              marginTop: 16,
-              padding: 12,
-              background: '#f3f4f6',
-              borderRadius: 8,
-              fontSize: 13,
-              color: '#4b5563'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span>🔒</span>
-                <span>Pago 100% seguro · Protegido por Sipay</span>
-              </div>
-            </div>
-          )}
+        <div style={{ 
+          fontWeight: 700, 
+          fontSize: 16,
+          color: '#111827',
+          marginBottom: 12 
+        }}>
+          Datos de la Tarjeta
+        </div>
+        
+        <div style={{ 
+          color: '#6b7280', 
+          fontSize: 14,
+          marginBottom: 16
+        }}>
+          {scriptReady 
+            ? '👆 Haz click aquí para cargar el formulario de pago seguro'
+            : '⏳ Cargando pasarela de pago...'}
         </div>
 
-        {/* ✅ BOTÓN REAL DE SIPAY - Invisible pero clicable */}
-        {/* El usuario hace click REAL (trusted) sobre toda el área */}
-        <button
-          type="button"
-          className="fastpay-btn"
-          data-key={merchantKey}
-          data-amount={amount.toString()}
-          data-currency={currency}
-          data-template="v3"
-          data-lang={lang}
-          data-callback="processSipayPayment"
-          data-paymentbutton="Pagar"
-          data-cardholdername="true"
-          data-hiddenprice="false"
-          data-notab="1"
-          style={{
-            position: 'absolute',
-            inset: 0,
-            width: '100%',
-            height: '100%',
-            opacity: 0,           // Invisible
-            cursor: 'pointer',    // Clicable
-            border: 'none',
-            background: 'transparent',
-            zIndex: 10
-          }}
-          aria-label="Pago seguro con Sipay"
-        >
-          Pagar {(amount / 100).toFixed(2)}€
-        </button>
+        {scriptReady && !openedRef.current && (
+          <div style={{ 
+            padding: 16,
+            background: '#f3f4f6',
+            borderRadius: 8,
+            fontSize: 13,
+            color: '#4b5563',
+            marginBottom: 16
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span>🔒</span>
+              <span>Pago 100% seguro · Protegido por Sipay</span>
+            </div>
+          </div>
+        )}
+
+        {/* Espacio para el iframe de Sipay */}
+        <div style={{ minHeight: 420 }} id="sipay-form-container" />
       </div>
 
       {/* Mensaje de ayuda */}
