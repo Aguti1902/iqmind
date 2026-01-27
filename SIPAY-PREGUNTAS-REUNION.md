@@ -225,7 +225,20 @@ window.addEventListener('fastpay:ready', () => {
 
 ---
 
-### 12. Soporte Técnico Directo
+### 12. Modo Embebido Sin Launcher
+
+**Pregunta**: Con `fastpay.js` (Solo tarjeta – iframe) solo consigo el launcher 'Pago 100% seguro…'. Necesito que el formulario de tarjeta se renderice embebido en la página sin botón y, si por seguridad exige gesto, que sea al menos auto-open tras el primer tap en cualquier parte del contenedor.
+
+**¿Existe algún parámetro oficial tipo**:
+- `data-autoopen` / `data-embedded` / `renderInline`
+- Algún flag no documentado que fuerce el renderizado del formulario completo
+- ¿O debemos usar un producto diferente (ej: 'Componentes') para un checkout embebido real?
+
+**Contexto**: El launcher añade fricción innecesaria. Queremos que el formulario aparezca directamente al cargar la página de checkout (o tras un gesto mínimo del usuario).
+
+---
+
+### 13. Soporte Técnico Directo
 
 **Pregunta**: ¿Pueden ayudarnos con la integración directamente? ¿Tienen servicio de implementación?
 
