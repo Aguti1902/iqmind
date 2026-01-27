@@ -18,7 +18,6 @@ export default function CheckoutSipay() {
   const [agreedToTerms, setAgreedToTerms] = useState(false)
   const [testType, setTestType] = useState<string>('iq')
   const [paymentData, setPaymentData] = useState<any>(null)
-  const [paymentData, setPaymentData] = useState<any>(null)
   const [scriptLoaded, setScriptLoaded] = useState(false)
 
   // Configuración de mensajes según el tipo de test
