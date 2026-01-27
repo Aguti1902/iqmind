@@ -17,7 +17,6 @@ export default function CheckoutSipay() {
   const [error, setError] = useState('')
   const [agreedToTerms, setAgreedToTerms] = useState(false)
   const [testType, setTestType] = useState<string>('iq')
-  const [fastPayReady, setFastPayReady] = useState(false)
   const [paymentData, setPaymentData] = useState<any>(null)
 
   // Configuración de mensajes según el tipo de test
@@ -60,30 +59,7 @@ export default function CheckoutSipay() {
     }
   }
 
-  // Cargar script de FastPay PRIMERO (antes de cualquier otra cosa)
-  useEffect(() => {
-    const existingScript = document.querySelector('script[src*="fastpay.js"]')
-    
-    if (!existingScript) {
-      console.log('🔄 Cargando script FastPay...')
-      const script = document.createElement('script')
-      script.type = 'text/javascript'
-      script.src = 'https://sandbox.sipay.es/fpay/v1/static/bundle/fastpay.js'
-      script.async = false // Síncrono para que se cargue completamente
-      script.onload = () => {
-        console.log('✅ Script FastPay cargado')
-        setFastPayReady(true)
-      }
-      script.onerror = () => {
-        console.error('❌ Error cargando script FastPay')
-      }
-      // Agregar al head como en el ejemplo de Sipay
-      document.head.appendChild(script)
-    } else {
-      console.log('✅ Script FastPay ya estaba cargado')
-      setFastPayReady(true)
-    }
-  }, [])
+  // Ya no cargamos el script aquí - se cargará DESPUÉS de que el botón esté en el DOM
 
   useEffect(() => {
     const iq = localStorage.getItem('userIQ')
@@ -102,9 +78,9 @@ export default function CheckoutSipay() {
     }
   }, [router, lang])
 
-  // Cargar SDK de Sipay y crear formulario de pago (SOLO cuando FastPay esté listo)
+  // Cargar SDK de Sipay y crear formulario de pago
   useEffect(() => {
-    if (!email || !userIQ || !fastPayReady) return
+    if (!email || !userIQ) return
 
     const loadSipayPayment = async () => {
       try {
@@ -167,28 +143,52 @@ export default function CheckoutSipay() {
         // Guardar datos para renderizar el botón en el JSX
         setPaymentData(data)
         
-        console.log('🔧 Botón FastPay se renderizará en el DOM (React JSX)')
+        console.log('🔧 Datos guardados, botón se renderizará en el DOM')
         
-        // Verificar después de 3 segundos si el iframe se renderizó
+        // CRÍTICO: Cargar script FastPay DESPUÉS de que React renderice el botón
         setTimeout(() => {
-          const container = document.getElementById('sipay-payment-form')
-          const button = container?.querySelector('.fastpay-btn')
-          const iframe = container?.querySelector('iframe')
+          const existingScript = document.querySelector('script[src*="fastpay.js"]')
           
-          console.log('🔍 Estado después de 3 segundos:', {
-            contenedorExiste: !!container,
-            botonExiste: !!button,
-            iframeRenderizado: !!iframe,
-            htmlContenido: container?.innerHTML.substring(0, 500)
-          })
-          
-          if (!iframe) {
-            console.error('❌ FastPay NO renderizó el iframe después de 3 segundos')
-            console.error('📋 HTML del contenedor:', container?.innerHTML)
+          if (!existingScript) {
+            console.log('🔄 Botón en DOM, ahora cargando script FastPay...')
+            const script = document.createElement('script')
+            script.type = 'text/javascript'
+            script.src = data.sipayConfig.endpoint.includes('sandbox')
+              ? 'https://sandbox.sipay.es/fpay/v1/static/bundle/fastpay.js'
+              : 'https://live.sipay.es/fpay/v1/static/bundle/fastpay.js'
+            script.async = false
+            script.onload = () => {
+              console.log('✅ FastPay cargado, debería detectar el botón ahora')
+              
+              // Verificar después de 2 segundos
+              setTimeout(() => {
+                const container = document.getElementById('sipay-payment-form')
+                const button = container?.querySelector('.fastpay-btn')
+                const iframe = container?.querySelector('iframe')
+                
+                console.log('🔍 Estado final:', {
+                  botonExiste: !!button,
+                  iframeRenderizado: !!iframe,
+                  htmlContenido: container?.innerHTML.substring(0, 500)
+                })
+                
+                if (!iframe) {
+                  console.error('❌ FastPay NO renderizó el iframe')
+                  console.error('📋 HTML:', container?.innerHTML)
+                } else {
+                  console.log('✅ ¡Iframe renderizado correctamente!')
+                }
+              }, 2000)
+            }
+            script.onerror = () => {
+              console.error('❌ Error cargando FastPay')
+              setError('Error cargando el sistema de pago')
+            }
+            document.head.appendChild(script)
           } else {
-            console.log('✅ ¡Iframe renderizado correctamente!')
+            console.log('✅ Script FastPay ya estaba cargado')
           }
-        }, 3000)
+        }, 100) // Esperar 100ms para que React renderice el botón
         
         
       } catch (error: any) {
@@ -337,7 +337,7 @@ export default function CheckoutSipay() {
     }
 
     loadSipayPayment()
-  }, [email, userIQ, userName, lang, router, fastPayReady])
+  }, [email, userIQ, userName, lang, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -574,6 +574,8 @@ export default function CheckoutSipay() {
                             data-callback="processSipayPayment"
                             data-paymentbutton="Pagar"
                             data-cardholdername="true"
+                            data-remember="checkbox"
+                            data-remembertext="Recordar tarjeta"
                             data-hiddenprice="false"
                             data-lang={lang || 'es'}
                           >
