@@ -135,7 +135,8 @@ export default function ResultadoEstimadoPage() {
     }
     
     // Construir URL del checkout HTML con todos los parámetros
-    const checkoutUrl = `/checkout-full.html?` + new URLSearchParams({
+    // IMPORTANTE: El archivo está en /public/, se sirve desde la raíz (sin /es/)
+    const checkoutUrl = `${window.location.origin}/checkout-full.html?` + new URLSearchParams({
       lang: lang || 'es',
       email: email,
       testType: testType,
