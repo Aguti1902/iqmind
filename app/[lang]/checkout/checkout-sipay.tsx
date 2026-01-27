@@ -129,19 +129,22 @@ export default function CheckoutSipay() {
 
         // REDIRIGIR a página HTML estática (sin React)
         // Esta página usa el HTML puro que funcionó perfectamente
-        const checkoutUrl = new URL('/sipay-checkout.html', window.location.origin)
-        checkoutUrl.searchParams.set('orderId', data.orderId)
-        checkoutUrl.searchParams.set('email', email)
-        checkoutUrl.searchParams.set('amount', data.amount.toString())
-        checkoutUrl.searchParams.set('key', data.sipayConfig.key)
-        checkoutUrl.searchParams.set('returnUrl', data.returnUrl)
-        checkoutUrl.searchParams.set('cancelUrl', data.cancelUrl)
-        checkoutUrl.searchParams.set('lang', lang || 'es')
+        // IMPORTANTE: URL absoluta sin prefijo de idioma (archivos en /public se sirven desde la raíz)
+        const origin = window.location.origin
+        const checkoutUrl = `${origin}/sipay-checkout.html?` + new URLSearchParams({
+          orderId: data.orderId,
+          email: email,
+          amount: data.amount.toString(),
+          key: data.sipayConfig.key,
+          returnUrl: `${origin}/${lang}/sipay-result`, // Resultado donde procesaremos el pago
+          cancelUrl: data.cancelUrl,
+          lang: lang || 'es'
+        }).toString()
 
-        console.log('🔄 Redirigiendo a página HTML estática:', checkoutUrl.toString())
+        console.log('🔄 Redirigiendo a página HTML estática:', checkoutUrl)
         
         // Redirección
-        window.location.href = checkoutUrl.toString()
+        window.location.href = checkoutUrl
         
         
       } catch (error: any) {
