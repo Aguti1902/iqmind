@@ -18,6 +18,7 @@ export default function CheckoutSipay() {
   const [agreedToTerms, setAgreedToTerms] = useState(false)
   const [testType, setTestType] = useState<string>('iq')
   const [fastPayReady, setFastPayReady] = useState(false)
+  const [paymentData, setPaymentData] = useState<any>(null)
 
   // Configuración de mensajes según el tipo de test
   const testConfig: any = {
@@ -163,18 +164,18 @@ export default function CheckoutSipay() {
           }
         }
 
-        // FastPay ya está cargado (en el useEffect anterior)
-        // Solo crear el botón y esperar a que FastPay lo procese
-        console.log('🔧 Creando botón FastPay (el script ya está cargado)...')
-        initializeFastPayButton(data)
+        // Guardar datos para renderizar el botón en el JSX
+        setPaymentData(data)
         
-        // Verificar después de 2 segundos si el iframe se renderizó
+        console.log('🔧 Botón FastPay se renderizará en el DOM (React JSX)')
+        
+        // Verificar después de 3 segundos si el iframe se renderizó
         setTimeout(() => {
           const container = document.getElementById('sipay-payment-form')
           const button = container?.querySelector('.fastpay-btn')
           const iframe = container?.querySelector('iframe')
           
-          console.log('🔍 Estado después de 2 segundos:', {
+          console.log('🔍 Estado después de 3 segundos:', {
             contenedorExiste: !!container,
             botonExiste: !!button,
             iframeRenderizado: !!iframe,
@@ -182,76 +183,17 @@ export default function CheckoutSipay() {
           })
           
           if (!iframe) {
-            console.error('❌ FastPay NO renderizó el iframe después de 2 segundos')
+            console.error('❌ FastPay NO renderizó el iframe después de 3 segundos')
             console.error('📋 HTML del contenedor:', container?.innerHTML)
           } else {
             console.log('✅ ¡Iframe renderizado correctamente!')
           }
-        }, 2000)
+        }, 3000)
         
         
       } catch (error: any) {
         console.error('Error:', error)
         setError(error.message || 'Error cargando el formulario de pago')
-      }
-    }
-
-    const initializeFastPayButton = (data: any) => {
-      try {
-        const container = document.getElementById('sipay-payment-form')
-        if (!container) {
-          console.error('❌ Contenedor sipay-payment-form no encontrado')
-          return
-        }
-
-        console.log('🔧 Inicializando botón FastPay según ejemplo oficial de Sipay:', {
-          key: data.sipayConfig.key,
-          amount: Math.round(data.amount * 100),
-          currency: 'EUR',
-          callback: 'processSipayPayment'
-        })
-
-        // Limpiar contenedor
-        container.innerHTML = ''
-
-        // Aplicar estilos EXACTOS del ejemplo oficial de Sipay
-        container.style.display = 'flex'
-        container.style.justifyContent = 'center'
-        container.style.minHeight = '600px'
-
-        // Crear wrapper interior (como en el ejemplo)
-        const wrapper = document.createElement('div')
-        wrapper.style.minWidth = '430px'
-
-        // Crear botón EXACTO del ejemplo oficial de Sipay
-        const button = document.createElement('button')
-        button.className = 'fastpay-btn' // SIN id, como en el ejemplo
-        
-        // Atributos EXACTOS del ejemplo (sin data-notab)
-        button.setAttribute('data-key', data.sipayConfig.key)
-        button.setAttribute('data-amount', Math.round(data.amount * 100).toString())
-        button.setAttribute('data-currency', 'EUR')
-        button.setAttribute('data-template', 'v4')
-        button.setAttribute('data-callback', 'processSipayPayment')
-        button.setAttribute('data-paymentbutton', 'Pagar')
-        button.setAttribute('data-cardholdername', 'true')
-        button.setAttribute('data-hiddenprice', 'false')
-        button.setAttribute('data-lang', lang || 'es')
-        // NO usar data-notab (no está en el ejemplo oficial)
-
-        wrapper.appendChild(button)
-        container.appendChild(wrapper)
-        
-        console.log('✅ Botón FastPay creado según ejemplo oficial')
-        console.log('📋 Atributos:', {
-          'class': button.className,
-          'data-key': button.getAttribute('data-key'),
-          'data-amount': button.getAttribute('data-amount')
-        })
-
-      } catch (error: any) {
-        console.error('❌ Error inicializando FastPay:', error)
-        setError('Error cargando el formulario de pago')
       }
     }
 
@@ -612,13 +554,33 @@ export default function CheckoutSipay() {
                   {/* Formulario de Pago de Sipay */}
                   <div className="border-2 border-gray-200 rounded-xl p-6 bg-gray-50 min-h-[350px]">
                     <h4 className="font-bold text-gray-900 mb-4">Datos de la Tarjeta</h4>
-                    <div id="sipay-payment-form">
-                      {/* Aquí se cargará el formulario de Sipay */}
-                      <div className="text-center py-12">
-                        <div className="w-16 h-16 border-4 border-[#07C59A] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                        <p className="text-gray-600 mb-2">Cargando formulario de pago seguro...</p>
-                        <p className="text-xs text-gray-500">Powered by Sipay</p>
-                      </div>
+                    <div id="sipay-payment-form" style={{ display: 'flex', justifyContent: 'center', minHeight: '600px' }}>
+                      {!paymentData ? (
+                        // Loading state
+                        <div className="text-center py-12">
+                          <div className="w-16 h-16 border-4 border-[#07C59A] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                          <p className="text-gray-600 mb-2">Cargando formulario de pago seguro...</p>
+                          <p className="text-xs text-gray-500">Powered by Sipay</p>
+                        </div>
+                      ) : (
+                        // Botón FastPay renderizado directamente en React (NO creado con JavaScript)
+                        <div style={{ minWidth: '430px' }}>
+                          <button
+                            className="fastpay-btn"
+                            data-key={paymentData.sipayConfig.key}
+                            data-amount={Math.round(paymentData.amount * 100).toString()}
+                            data-currency="EUR"
+                            data-template="v4"
+                            data-callback="processSipayPayment"
+                            data-paymentbutton="Pagar"
+                            data-cardholdername="true"
+                            data-hiddenprice="false"
+                            data-lang={lang || 'es'}
+                          >
+                            {/* Botón vacío - FastPay lo transformará */}
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
 
