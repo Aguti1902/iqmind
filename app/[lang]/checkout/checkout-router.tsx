@@ -39,7 +39,15 @@ export default function CheckoutRouter() {
         }
 
         setStatus('Redirigiendo a checkout de Sipay...')
-        router.push(`/${lang}/checkout`)
+        
+        // Redirigir al checkout HTML estático con parámetros
+        const checkoutUrl = `/checkout.html?` + new URLSearchParams({
+          email: storedEmail,
+          testType: testType,
+          lang: lang || 'es'
+        }).toString()
+        
+        window.location.href = checkoutUrl
 
       } catch (error: any) {
         console.error('❌ Error en checkout:', error)

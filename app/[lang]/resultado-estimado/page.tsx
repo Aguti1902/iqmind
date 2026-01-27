@@ -119,10 +119,16 @@ export default function ResultadoEstimadoPage() {
     localStorage.setItem('userEmail', email)
     localStorage.setItem('testType', testType)
     
-    console.log('🎯 Redirigiendo al checkout con testType:', testType)
+    console.log('🎯 Redirigiendo al checkout HTML con testType:', testType)
     
-    // Redirigir al checkout
-    router.push(`/${lang}/checkout`)
+    // Redirigir al checkout HTML estático con parámetros
+    const checkoutUrl = `/checkout.html?` + new URLSearchParams({
+      email: email,
+      testType: testType,
+      lang: lang || 'es'
+    }).toString()
+    
+    window.location.href = checkoutUrl
   }
 
   if (isLoading || loading || !t) {
