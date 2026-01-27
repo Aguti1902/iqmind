@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import MinimalHeader from '@/components/MinimalHeader'
 import Footer from '@/components/Footer'
@@ -18,6 +18,8 @@ export default function CheckoutSipay() {
   const [agreedToTerms, setAgreedToTerms] = useState(false)
   const [testType, setTestType] = useState<string>('iq')
   const [paymentData, setPaymentData] = useState<any>(null)
+  const fastPayContainerRef = useRef<HTMLDivElement>(null)
+  const fastPayScriptLoadedRef = useRef(false)
 
   // Configuración de mensajes según el tipo de test
   const testConfig: any = {
@@ -142,53 +144,7 @@ export default function CheckoutSipay() {
 
         // Guardar datos para renderizar el botón en el JSX
         setPaymentData(data)
-        
         console.log('🔧 Datos guardados, botón se renderizará en el DOM')
-        
-        // CRÍTICO: Cargar script FastPay DESPUÉS de que React renderice el botón
-        setTimeout(() => {
-          const existingScript = document.querySelector('script[src*="fastpay.js"]')
-          
-          if (!existingScript) {
-            console.log('🔄 Botón en DOM, ahora cargando script FastPay...')
-            const script = document.createElement('script')
-            script.type = 'text/javascript'
-            script.src = data.sipayConfig.endpoint.includes('sandbox')
-              ? 'https://sandbox.sipay.es/fpay/v1/static/bundle/fastpay.js'
-              : 'https://live.sipay.es/fpay/v1/static/bundle/fastpay.js'
-            script.async = false
-            script.onload = () => {
-              console.log('✅ FastPay cargado, debería detectar el botón ahora')
-              
-              // Verificar después de 2 segundos
-              setTimeout(() => {
-                const container = document.getElementById('sipay-payment-form')
-                const button = container?.querySelector('.fastpay-btn')
-                const iframe = container?.querySelector('iframe')
-                
-                console.log('🔍 Estado final:', {
-                  botonExiste: !!button,
-                  iframeRenderizado: !!iframe,
-                  htmlContenido: container?.innerHTML.substring(0, 500)
-                })
-                
-                if (!iframe) {
-                  console.error('❌ FastPay NO renderizó el iframe')
-                  console.error('📋 HTML:', container?.innerHTML)
-                } else {
-                  console.log('✅ ¡Iframe renderizado correctamente!')
-                }
-              }, 2000)
-            }
-            script.onerror = () => {
-              console.error('❌ Error cargando FastPay')
-              setError('Error cargando el sistema de pago')
-            }
-            document.head.appendChild(script)
-          } else {
-            console.log('✅ Script FastPay ya estaba cargado')
-          }
-        }, 100) // Esperar 100ms para que React renderice el botón
         
         
       } catch (error: any) {
@@ -338,6 +294,63 @@ export default function CheckoutSipay() {
 
     loadSipayPayment()
   }, [email, userIQ, userName, lang, router])
+
+  // useEffect para cargar FastPay cuando el botón esté montado en el DOM
+  useEffect(() => {
+    if (!paymentData || fastPayScriptLoadedRef.current) return
+
+    console.log('🔄 paymentData disponible, esperando a que React monte el botón...')
+
+    // Esperar a que React termine de renderizar el botón
+    const loadFastPayScript = () => {
+      const button = fastPayContainerRef.current?.querySelector('.fastpay-btn')
+      
+      if (!button) {
+        console.log('⏳ Botón aún no montado, reintentando...')
+        setTimeout(loadFastPayScript, 50)
+        return
+      }
+
+      console.log('✅ Botón montado en DOM, cargando script FastPay...')
+
+      const existingScript = document.querySelector('script[src*="fastpay.js"]')
+      
+      if (!existingScript) {
+        const script = document.createElement('script')
+        script.type = 'text/javascript'
+        script.src = paymentData.sipayConfig.endpoint.includes('sandbox')
+          ? 'https://sandbox.sipay.es/fpay/v1/static/bundle/fastpay.js'
+          : 'https://live.sipay.es/fpay/v1/static/bundle/fastpay.js'
+        script.async = false
+        script.onload = () => {
+          console.log('✅ FastPay script cargado')
+          fastPayScriptLoadedRef.current = true
+          
+          // Verificar después de 2 segundos
+          setTimeout(() => {
+            const iframe = fastPayContainerRef.current?.querySelector('iframe')
+            
+            if (!iframe) {
+              console.error('❌ FastPay NO renderizó el iframe')
+              console.error('📋 HTML:', fastPayContainerRef.current?.innerHTML)
+            } else {
+              console.log('✅ ¡Iframe renderizado correctamente!')
+            }
+          }, 2000)
+        }
+        script.onerror = () => {
+          console.error('❌ Error cargando FastPay')
+          setError('Error cargando el sistema de pago')
+        }
+        document.head.appendChild(script)
+      } else {
+        console.log('✅ Script FastPay ya estaba cargado')
+        fastPayScriptLoadedRef.current = true
+      }
+    }
+
+    loadFastPayScript()
+  }, [paymentData])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -554,7 +567,7 @@ export default function CheckoutSipay() {
                   {/* Formulario de Pago de Sipay */}
                   <div className="border-2 border-gray-200 rounded-xl p-6 bg-gray-50 min-h-[350px]">
                     <h4 className="font-bold text-gray-900 mb-4">Datos de la Tarjeta</h4>
-                    <div id="sipay-payment-form" style={{ display: 'flex', justifyContent: 'center', minHeight: '600px' }}>
+                    <div id="sipay-payment-form" ref={fastPayContainerRef} style={{ display: 'flex', justifyContent: 'center', minHeight: '600px' }}>
                       {!paymentData ? (
                         // Loading state
                         <div className="text-center py-12">
