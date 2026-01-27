@@ -15,23 +15,6 @@ const nextConfig = {
           },
         ],
       },
-      {
-        source: '/checkout.html',
-        headers: [
-          {
-            key: 'Content-Type',
-            value: 'text/html; charset=utf-8',
-          },
-        ],
-      },
-    ]
-  },
-  async rewrites() {
-    return [
-      {
-        source: '/checkout.html',
-        destination: '/checkout.html',
-      },
     ]
   },
 }
