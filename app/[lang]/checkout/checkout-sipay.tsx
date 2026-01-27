@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import Script from 'next/script'
 import MinimalHeader from '@/components/MinimalHeader'
 import Footer from '@/components/Footer'
 import { FaLock, FaCheckCircle, FaBrain, FaCertificate, FaChartLine, FaUsers } from 'react-icons/fa'
@@ -19,7 +20,7 @@ export default function CheckoutSipay() {
   const [testType, setTestType] = useState<string>('iq')
   const [paymentData, setPaymentData] = useState<any>(null)
   const fastPayContainerRef = useRef<HTMLDivElement>(null)
-  const fastPayScriptLoadedRef = useRef(false)
+  const [fastPayReady, setFastPayReady] = useState(false)
 
   // Configuración de mensajes según el tipo de test
   const testConfig: any = {
@@ -295,62 +296,27 @@ export default function CheckoutSipay() {
     loadSipayPayment()
   }, [email, userIQ, userName, lang, router])
 
-  // useEffect para cargar FastPay cuando el botón esté montado en el DOM
+  // useEffect para verificar si FastPay renderizó el iframe
   useEffect(() => {
-    if (!paymentData || fastPayScriptLoadedRef.current) return
+    if (!paymentData || !fastPayReady) return
 
-    console.log('🔄 paymentData disponible, esperando a que React monte el botón...')
-
-    // Esperar a que React termine de renderizar el botón
-    const loadFastPayScript = () => {
-      const button = fastPayContainerRef.current?.querySelector('.fastpay-btn')
+    console.log('🔍 FastPay cargado, verificando iframe en 3 segundos...')
+    
+    const checkIframe = setTimeout(() => {
+      const iframe = fastPayContainerRef.current?.querySelector('iframe')
       
-      if (!button) {
-        console.log('⏳ Botón aún no montado, reintentando...')
-        setTimeout(loadFastPayScript, 50)
-        return
-      }
-
-      console.log('✅ Botón montado en DOM, cargando script FastPay...')
-
-      const existingScript = document.querySelector('script[src*="fastpay.js"]')
-      
-      if (!existingScript) {
-        const script = document.createElement('script')
-        script.type = 'text/javascript'
-        script.src = paymentData.sipayConfig.endpoint.includes('sandbox')
-          ? 'https://sandbox.sipay.es/fpay/v1/static/bundle/fastpay.js'
-          : 'https://live.sipay.es/fpay/v1/static/bundle/fastpay.js'
-        script.async = false
-        script.onload = () => {
-          console.log('✅ FastPay script cargado')
-          fastPayScriptLoadedRef.current = true
-          
-          // Verificar después de 2 segundos
-          setTimeout(() => {
-            const iframe = fastPayContainerRef.current?.querySelector('iframe')
-            
-            if (!iframe) {
-              console.error('❌ FastPay NO renderizó el iframe')
-              console.error('📋 HTML:', fastPayContainerRef.current?.innerHTML)
-            } else {
-              console.log('✅ ¡Iframe renderizado correctamente!')
-            }
-          }, 2000)
-        }
-        script.onerror = () => {
-          console.error('❌ Error cargando FastPay')
-          setError('Error cargando el sistema de pago')
-        }
-        document.head.appendChild(script)
+      if (!iframe) {
+        console.error('❌ FastPay NO renderizó el iframe')
+        console.error('📋 HTML del contenedor:', fastPayContainerRef.current?.innerHTML)
+        console.error('💡 NOTA: FastPay funciona en HTML puro pero NO en React')
+        console.error('🔧 Puede ser necesario usar iframe redirect en lugar de componente embebido')
       } else {
-        console.log('✅ Script FastPay ya estaba cargado')
-        fastPayScriptLoadedRef.current = true
+        console.log('✅ ¡Iframe renderizado correctamente!')
       }
-    }
+    }, 3000)
 
-    loadFastPayScript()
-  }, [paymentData])
+    return () => clearTimeout(checkIframe)
+  }, [paymentData, fastPayReady])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -409,6 +375,19 @@ export default function CheckoutSipay() {
 
   return (
     <>
+      {/* Script de FastPay en el head (como en el HTML standalone) */}
+      <Script
+        src="https://sandbox.sipay.es/fpay/v1/static/bundle/fastpay.js"
+        strategy="beforeInteractive"
+        onLoad={() => {
+          console.log('✅ FastPay script cargado por Next.js Script')
+          setFastPayReady(true)
+        }}
+        onError={() => {
+          console.error('❌ Error cargando FastPay script')
+        }}
+      />
+      
       <MinimalHeader email={email} />
       
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-12 px-4">
