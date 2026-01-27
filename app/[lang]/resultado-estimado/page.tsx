@@ -121,15 +121,12 @@ export default function ResultadoEstimadoPage() {
     
     console.log('🎯 Redirigiendo al checkout HTML con testType:', testType)
     
-    // Redirigir al checkout HTML via API route
-    const params = new URLSearchParams({
+    // Redirigir al checkout React con componente Sipay
+    router.push(`/${lang}/checkout-payment?` + new URLSearchParams({
       email: email,
       testType: testType,
       lang: lang || 'es'
-    }).toString()
-    
-    // Usar API route para servir el HTML correctamente
-    window.location.href = `/api/checkout-html?${params}`
+    }).toString())
   }
 
   if (isLoading || loading || !t) {

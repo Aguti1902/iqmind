@@ -40,17 +40,12 @@ export default function CheckoutRouter() {
 
         setStatus('Redirigiendo a checkout de Sipay...')
         
-        // Redirigir al checkout HTML via API route
-        const params = new URLSearchParams({
+        // Redirigir al checkout React con componente Sipay
+        router.push(`/${lang}/checkout-payment?` + new URLSearchParams({
           email: storedEmail,
           testType: testType,
           lang: lang || 'es'
-        }).toString()
-        
-        // Usar API route para servir el HTML correctamente
-        if (typeof window !== 'undefined') {
-          window.location.href = `/api/checkout-html?${params}`
-        }
+        }).toString())
 
       } catch (error: any) {
         console.error('❌ Error en checkout:', error)
