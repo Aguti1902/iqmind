@@ -1,10 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import MinimalHeader from '@/components/MinimalHeader'
 
-export default function SipayResult() {
+function SipayResultContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [status, setStatus] = useState<'processing' | 'success' | 'error'>('processing')
@@ -120,6 +120,25 @@ export default function SipayResult() {
         </div>
       </div>
     </>
+  )
+}
+
+export default function SipayResult() {
+  return (
+    <Suspense fallback={
+      <>
+        <MinimalHeader email="" />
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex items-center justify-center px-4">
+          <div className="max-w-md w-full bg-white rounded-2xl shadow-2xl p-8 text-center">
+            <div className="w-20 h-20 border-4 border-[#07C59A] border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Cargando...</h2>
+            <p className="text-gray-600">Procesando información del pago</p>
+          </div>
+        </div>
+      </>
+    }>
+      <SipayResultContent />
+    </Suspense>
   )
 }
 
