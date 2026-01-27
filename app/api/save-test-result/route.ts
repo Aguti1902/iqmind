@@ -5,16 +5,6 @@ import { verifyToken } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
   try {
-    const token = request.headers.get('Authorization')?.split(' ')[1]
-    if (!token) {
-      return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
-    }
-
-    const decodedToken = verifyToken(token)
-    if (!decodedToken || !decodedToken.userId) {
-      return NextResponse.json({ error: 'Token inválido o expirado' }, { status: 401 })
-    }
-
     const body = await request.json()
     const { 
       iq, 
@@ -22,7 +12,8 @@ export async function POST(request: NextRequest) {
       totalQuestions, 
       timeElapsed, 
       answers, 
-      categoryScores 
+      categoryScores,
+      email  // Permitir email como alternativa al token
     } = body
 
     if (!iq || !correctAnswers || !totalQuestions || !timeElapsed || !answers) {
@@ -31,10 +22,37 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
-    console.log('💾 Guardando resultado de test para usuario:', decodedToken.userId)
+    // Intentar obtener usuario por token O por email
+    let user = null
+    
+    const token = request.headers.get('Authorization')?.split(' ')[1]
+    if (token) {
+      // Usuario autenticado con token
+      const decodedToken = verifyToken(token)
+      if (decodedToken && decodedToken.userId) {
+        user = await db.getUserById(decodedToken.userId)
+        console.log('💾 Guardando resultado de test para usuario autenticado:', decodedToken.userId)
+      }
+    } else if (email) {
+      // Usuario NO autenticado, buscar/crear por email
+      console.log('💾 Guardando resultado de test para email:', email)
+      user = await db.getUserByEmail(email)
+      
+      if (!user) {
+        // Crear usuario temporal
+        console.log('👤 Creando usuario temporal para email:', email)
+        user = await db.createUser({
+          email: email,
+          name: 'Usuario',
+          password: '', // Sin password por ahora
+        })
+      }
+    } else {
+      return NextResponse.json({ 
+        error: 'Se requiere token de autenticación o email' 
+      }, { status: 401 })
+    }
 
-    // Obtener usuario
-    const user = await db.getUserById(decodedToken.userId)
     if (!user) {
       return NextResponse.json({ error: 'Usuario no encontrado' }, { status: 404 })
     }
