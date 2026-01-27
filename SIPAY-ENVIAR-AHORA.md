@@ -51,13 +51,19 @@ He adjuntado nuestro componente React que, con el MISMO código exacto, no funci
 O si FastPay no es compatible con React/Next.js, necesitamos saberlo para buscar 
 alternativas.
 
-📦 ARCHIVOS ADJUNTOS:
-He adjuntado un ZIP (16KB) con:
+📦 CÓDIGO PARA REVISIÓN:
+He preparado un paquete completo (16KB) con:
 - Componente React (NO funciona)
 - Página Next.js
-- HTML puro (SÍ funciona) ← COMPARAR
-- Configuración del proyecto
+- HTML puro (SÍ funciona) ← COMPARAR AMBOS
+- Configuración del proyecto (package.json, next.config.js)
+- README.txt con explicación detallada
 - Documento técnico completo con todas nuestras pruebas
+
+🔗 DESCARGAR AQUÍ:
+[PEGAR TU LINK DE GOOGLE DRIVE O WETRANSFER AQUÍ]
+
+Archivo: MindMetric-Sipay-Integration-2026-01-28.zip
 
 🤝 PROPUESTA:
 Si prefieren, podemos:
@@ -86,16 +92,18 @@ MindMetric - https://mindmetric.io
 
 ---
 
-## 📎 PASO 2: Adjuntar el ZIP
+## 📎 PASO 2: Subir el ZIP a Google Drive (Email lo bloquea)
 
-1. Abre tu cliente de email
-2. Crea un nuevo mensaje
-3. Pega el texto de arriba
-4. **Adjunta el archivo:**
-   ```
-   MindMetric-Sipay-Integration-2026-01-28.zip
-   ```
-5. Personaliza los datos en corchetes `[TU NOMBRE]`, `[TU TELÉFONO]`, fechas
+⚠️ **Los emails bloquean archivos ZIP con código. Usa Google Drive:**
+
+1. Ve a https://drive.google.com
+2. Click "Nuevo" → "Subir archivo"
+3. Selecciona: `MindMetric-Sipay-Integration-2026-01-28.zip`
+4. Click derecho en el archivo → "Compartir"
+5. Cambia a: **"Cualquier persona con el enlace"** (Lector)
+6. **Copia el enlace**
+
+**ALTERNATIVA:** Usa https://wetransfer.com (sin cuenta, gratuito)
 
 ---
 
@@ -205,7 +213,9 @@ Si Sipay no puede ayudar:
 
 Antes de enviar el email, verifica:
 
-- [ ] Archivo ZIP adjuntado (16KB)
+- [ ] ZIP subido a Google Drive / WeTransfer
+- [ ] Link de descarga copiado y pegado en el email
+- [ ] Link probado (descárgalo tú mismo para verificar)
 - [ ] Email personalizado con tu nombre
 - [ ] Email personalizado con tu teléfono
 - [ ] Franjas horarias propuestas para reunión
