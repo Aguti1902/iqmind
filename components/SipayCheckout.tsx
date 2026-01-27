@@ -1,9 +1,9 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
 import Script from 'next/script'
+import { useEffect, useRef, useState } from 'react'
 
-// Configuración del entorno (cambiar a 'live' en producción)
+// Configuración del entorno
 const SIPAY_ENV = 'sandbox' // 'sandbox' | 'live'
 const SIPAY_SCRIPT_URL = `https://${SIPAY_ENV}.sipay.es/fpay/v1/static/bundle/fastpay.js`
 
@@ -17,6 +17,12 @@ interface SipayCheckoutProps {
   onPaymentError?: (error: any) => void
 }
 
+declare global {
+  interface Window {
+    processSipayPayment?: (data: any) => void
+  }
+}
+
 export default function SipayCheckout({
   email,
   amount,
@@ -26,27 +32,20 @@ export default function SipayCheckout({
   onPaymentSuccess,
   onPaymentError
 }: SipayCheckoutProps) {
-  const [scriptLoaded, setScriptLoaded] = useState(false)
-  const [iframeRendered, setIframeRendered] = useState(false)
-  const containerRef = useRef<HTMLDivElement>(null)
-  const observerRef = useRef<MutationObserver | null>(null)
-  const clickedRef = useRef(false)
-  const callbackSetRef = useRef(false)
+  const startedRef = useRef(false)
+  const [scriptReady, setScriptReady] = useState(false)
 
-  // Configurar callback global ANTES de que FastPay se cargue
+  // Configurar callback global
   useEffect(() => {
-    if (callbackSetRef.current) return
-    callbackSetRef.current = true
-
-    window.processSipayPayment = (response: any) => {
-      console.log('💳 Sipay callback recibido:', response)
+    window.processSipayPayment = (data: any) => {
+      console.log('💳 Sipay callback:', data)
       
-      if (response.type === 'success' && response.request_id) {
-        onPaymentSuccess(response)
+      if (data.type === 'success' && data.request_id) {
+        onPaymentSuccess(data)
       } else {
-        const error = response.description || 'Error en el pago'
+        const error = data.description || 'Error en el pago'
         console.error('❌ Error Sipay:', error)
-        onPaymentError?.(response)
+        onPaymentError?.(data)
       }
     }
 
@@ -55,194 +54,77 @@ export default function SipayCheckout({
     }
   }, [onPaymentSuccess, onPaymentError])
 
-  // Detectar y auto-clickear el botón FastPay
+  // Auto-click cuando el script esté listo
   useEffect(() => {
-    if (!scriptLoaded || !containerRef.current || clickedRef.current) return
+    if (!scriptReady) return
+    if (startedRef.current) return
 
-    console.log('🔍 Buscando botón FastPay...')
+    console.log('✅ Script listo, preparando checkout...')
 
-    const tryClickButton = () => {
-      const button = containerRef.current?.querySelector('.fastpay-btn') as HTMLElement
-      
-      if (button && !clickedRef.current) {
-        clickedRef.current = true
-        console.log('✅ Botón FastPay detectado!')
-        
-        // Limpiar observer si existe
-        if (observerRef.current) {
-          observerRef.current.disconnect()
-        }
-        
-        // Click inmediato
-        setTimeout(() => {
-          console.log('🎯 Ejecutando click en botón FastPay...')
-          button.click()
-          
-          // Verificar iframe después del click
-          setTimeout(() => {
-            const iframe = document.querySelector('iframe[src*="sipay"]')
-            if (iframe) {
-              console.log('✅ ¡ÉXITO! Iframe de Sipay renderizado')
-              setIframeRendered(true)
-            } else {
-              console.warn('⚠️ Iframe no detectado, intentando de nuevo...')
-              // Segundo intento
-              button.click()
-              setTimeout(() => {
-                const iframe2 = document.querySelector('iframe[src*="sipay"]')
-                if (iframe2) {
-                  console.log('✅ Iframe renderizado en segundo intento')
-                  setIframeRendered(true)
-                } else {
-                  console.error('❌ Iframe no se pudo renderizar')
-                }
-              }, 2000)
-            }
-          }, 2000)
-        }, 300)
-        
-        return true
-      }
-      return false
+    // Ocultar el botón (Sipay genera UI sobre .fastpay-btn)
+    const style = document.createElement('style')
+    style.innerHTML = `.fastpay-btn{display:none !important;}`
+    document.head.appendChild(style)
+
+    const start = () => {
+      if (startedRef.current) return true
+      const btn = document.querySelector<HTMLButtonElement>('button.fastpay-btn')
+      if (!btn) return false
+
+      startedRef.current = true
+      console.log('🎯 Ejecutando click en botón FastPay...')
+      btn.click() // dispara el render del iframe interno
+      console.log('✅ Click ejecutado - Sipay renderizará el iframe automáticamente')
+      return true
     }
 
-    // Intentar inmediatamente por si el botón ya existe
-    if (tryClickButton()) return
+    if (start()) return
 
-    // Si no existe, usar MutationObserver
-    console.log('📡 Iniciando MutationObserver...')
-    observerRef.current = new MutationObserver((mutations) => {
-      console.log('🔄 DOM cambió, verificando botón...')
-      tryClickButton()
-    })
+    console.log('📡 Esperando botón FastPay...')
+    const obs = new MutationObserver(() => start())
+    obs.observe(document.body, { childList: true, subtree: true })
 
-    // Observar cambios en el contenedor
-    observerRef.current.observe(containerRef.current, {
-      childList: true,
-      subtree: true,
-      attributes: true
-    })
-
-    // Timeout de seguridad - si después de 10 segundos no detectó nada
-    const timeoutId = setTimeout(() => {
-      console.log('⏰ Timeout alcanzado, verificando una última vez...')
-      if (!tryClickButton()) {
-        console.error('❌ No se pudo detectar el botón FastPay después de 10 segundos')
-        const buttons = containerRef.current?.querySelectorAll('button')
-        console.log('Botones encontrados:', buttons?.length)
-        buttons?.forEach((btn, i) => {
-          console.log(`Botón ${i}:`, btn.className, btn.innerHTML.substring(0, 50))
-        })
-      }
-    }, 10000)
-
-    // Cleanup
     return () => {
-      observerRef.current?.disconnect()
-      clearTimeout(timeoutId)
+      obs.disconnect()
+      if (style.parentNode) {
+        document.head.removeChild(style)
+      }
     }
-  }, [scriptLoaded])
+  }, [scriptReady])
 
   return (
     <>
-      {/* Script de Sipay FastPay */}
       <Script
         src={SIPAY_SCRIPT_URL}
         strategy="afterInteractive"
         onLoad={() => {
           console.log('✅ Sipay FastPay script cargado')
-          setScriptLoaded(true)
+          setScriptReady(true)
         }}
         onError={(e) => {
           console.error('❌ Error cargando Sipay script:', e)
         }}
       />
 
-      <style jsx global>{`
-        /* Ocultar el botón FastPay - solo queremos el iframe */
-        .fastpay-btn {
-          display: none !important;
-        }
-        
-        /* Estilos del contenedor del iframe */
-        .sipay-iframe-container {
-          min-height: 600px;
-          display: flex;
-          justify-content: center;
-          align-items: flex-start;
-        }
-        
-        /* Asegurar que el iframe de Sipay se vea correctamente */
-        iframe[src*="sipay"] {
-          border: none;
-          width: 100%;
-          min-width: 430px;
-          min-height: 600px;
-        }
-      `}</style>
+      <button
+        type="button"
+        className="fastpay-btn"
+        data-key={merchantKey}
+        data-amount={amount.toString()}
+        data-currency={currency}
+        data-template="v4"
+        data-callback="processSipayPayment"
+        data-paymentbutton="Pagar"
+        data-cardholdername="true"
+        data-lang={lang}
+        data-hiddenprice="false"
+        data-notab="1"
+      >
+        Pagar
+      </button>
 
-      <div className="sipay-checkout-wrapper">
-        {/* Loading indicator */}
-        {!iframeRendered && (
-          <div className="sipay-loading" style={{
-            textAlign: 'center',
-            padding: '3rem',
-            color: '#666'
-          }}>
-            <div style={{
-              width: '48px',
-              height: '48px',
-              border: '4px solid #f3f3f3',
-              borderTop: '4px solid #07C59A',
-              borderRadius: '50%',
-              animation: 'spin 1s linear infinite',
-              margin: '0 auto 1rem'
-            }}></div>
-            <p>Cargando pasarela de pago segura...</p>
-            <p style={{ fontSize: '0.875rem', color: '#999', marginTop: '0.5rem' }}>
-              Powered by Sipay
-            </p>
-          </div>
-        )}
-
-        {/* Contenedor donde FastPay insertará el iframe */}
-        <div 
-          ref={containerRef}
-          className="sipay-iframe-container"
-          style={{ display: iframeRendered ? 'block' : 'none' }}
-        >
-          {/* Botón FastPay - FastPay lo busca por clase .fastpay-btn */}
-          <button
-            className="fastpay-btn"
-            data-key={merchantKey}
-            data-amount={amount.toString()}
-            data-currency={currency}
-            data-template="v4"
-            data-callback="processSipayPayment"
-            data-lang={lang}
-            data-cardholdername="true"
-            data-paymentbutton="Pagar"
-            data-hiddenprice="false"
-          >
-            Pagar
-          </button>
-        </div>
-      </div>
-
-      <style jsx>{`
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-      `}</style>
+      {/* Espacio para el iframe - evita colapso del layout */}
+      <div style={{ minHeight: 650 }} />
     </>
   )
 }
-
-// Declaración global para TypeScript
-declare global {
-  interface Window {
-    processSipayPayment?: (response: any) => void
-  }
-}
-
