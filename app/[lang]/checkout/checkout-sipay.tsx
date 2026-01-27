@@ -18,6 +18,7 @@ export default function CheckoutSipay() {
   const [agreedToTerms, setAgreedToTerms] = useState(false)
   const [testType, setTestType] = useState<string>('iq')
   const [paymentData, setPaymentData] = useState<any>(null)
+  const [paymentData, setPaymentData] = useState<any>(null)
   const [scriptLoaded, setScriptLoaded] = useState(false)
 
   // Configuración de mensajes según el tipo de test
@@ -134,36 +135,17 @@ export default function CheckoutSipay() {
           console.log('📨 Respuesta de Sipay FastPay:', response)
           
           if (response.type === 'success' && response.request_id) {
-            // Redirigir a página de resultado
-            const resultUrl = `${window.location.origin}/${lang}/sipay-result?request_id=${response.request_id}&order_id=${data.orderId}`
-            window.location.href = resultUrl
+            await processPaymentWithRequestId(data.orderId, response.request_id, data.amount, response)
           } else {
             setError(response.description || 'Error capturando los datos de la tarjeta')
             setIsProcessing(false)
           }
         }
 
-        // Guardar datos para renderizar
+        // Guardar datos para renderizar el formulario
         setPaymentData(data)
-
-        // Cargar script FastPay SI NO está cargado
-        if (!document.querySelector('script[src*="fastpay.js"]')) {
-          const script = document.createElement('script')
-          script.type = 'text/javascript'
-          script.src = 'https://sandbox.sipay.es/fpay/v1/static/bundle/fastpay.js'
-          script.async = false
-          script.onload = () => {
-            console.log('✅ Script FastPay cargado')
-            setScriptLoaded(true)
-          }
-          script.onerror = () => {
-            console.error('❌ Error cargando FastPay')
-            setError('Error cargando el sistema de pago')
-          }
-          document.head.appendChild(script)
-        } else {
-          setScriptLoaded(true)
-        }
+        
+        console.log('🎯 FastPay ya está cargado en el layout - El iframe debería renderizarse automáticamente')
         
         
       } catch (error: any) {
@@ -313,47 +295,6 @@ export default function CheckoutSipay() {
 
     loadSipayPayment()
   }, [email, userIQ, userName, lang, router])
-
-  // useEffect para verificar si FastPay procesó el botón
-  useEffect(() => {
-    if (!paymentData || !scriptLoaded) return
-
-    console.log('🔍 Verificando si FastPay procesó el botón...')
-    
-    const checkInterval = setInterval(() => {
-      const iframe = document.querySelector('iframe[src*="sipay"]')
-      if (iframe) {
-        console.log('✅ ¡Iframe de FastPay detectado!')
-        clearInterval(checkInterval)
-      }
-    }, 500)
-
-    // Timeout de 10 segundos
-    setTimeout(() => {
-      clearInterval(checkInterval)
-      const iframe = document.querySelector('iframe[src*="sipay"]')
-      if (!iframe) {
-        console.error('❌ FastPay NO renderizó iframe después de 10 segundos')
-        console.error('🔧 Usando solución de respaldo: redirección a página HTML estática')
-        
-        // Fallback: redirigir a página HTML estática
-        const origin = window.location.origin
-        const checkoutUrl = `${origin}/sipay-checkout.html?` + new URLSearchParams({
-          orderId: paymentData.orderId,
-          email: email,
-          amount: paymentData.amount.toString(),
-          key: paymentData.sipayConfig.key,
-          returnUrl: `${origin}/${lang}/sipay-result`,
-          cancelUrl: paymentData.cancelUrl,
-          lang: lang || 'es'
-        }).toString()
-        
-        window.location.href = checkoutUrl
-      }
-    }, 10000)
-
-    return () => clearInterval(checkInterval)
-  }, [paymentData, scriptLoaded, email, lang])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

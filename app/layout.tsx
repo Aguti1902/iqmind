@@ -23,6 +23,12 @@ export default function RootLayout({
     <html lang="es">
       <head>
         <link rel="icon" href="/images/FAVICON2.png" type="image/png" />
+        {/* Script de FastPay cargado GLOBALMENTE para toda la app */}
+        <script
+          type="text/javascript"
+          src="https://sandbox.sipay.es/fpay/v1/static/bundle/fastpay.js"
+          async={false}
+        />
       </head>
       <body className={inter.className}>
         <GoogleAnalytics />
