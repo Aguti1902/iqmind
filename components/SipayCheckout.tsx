@@ -61,42 +61,85 @@ export default function SipayCheckout({
 
     console.log('🔍 Buscando botón FastPay...')
 
-    // Usar MutationObserver para detectar cuando FastPay crea el botón
-    observerRef.current = new MutationObserver((mutations) => {
+    const tryClickButton = () => {
       const button = containerRef.current?.querySelector('.fastpay-btn') as HTMLElement
       
       if (button && !clickedRef.current) {
         clickedRef.current = true
-        console.log('✅ Botón FastPay detectado, auto-clicking...')
+        console.log('✅ Botón FastPay detectado!')
         
-        // Esperar un tick para asegurar que FastPay terminó de inicializar
+        // Limpiar observer si existe
+        if (observerRef.current) {
+          observerRef.current.disconnect()
+        }
+        
+        // Click inmediato
         setTimeout(() => {
+          console.log('🎯 Ejecutando click en botón FastPay...')
           button.click()
-          console.log('🎯 Click ejecutado')
           
-          // Verificar si el iframe se renderizó
+          // Verificar iframe después del click
           setTimeout(() => {
             const iframe = document.querySelector('iframe[src*="sipay"]')
             if (iframe) {
-              console.log('✅ Iframe de Sipay renderizado')
+              console.log('✅ ¡ÉXITO! Iframe de Sipay renderizado')
               setIframeRendered(true)
             } else {
-              console.warn('⚠️ Iframe no detectado después del click')
+              console.warn('⚠️ Iframe no detectado, intentando de nuevo...')
+              // Segundo intento
+              button.click()
+              setTimeout(() => {
+                const iframe2 = document.querySelector('iframe[src*="sipay"]')
+                if (iframe2) {
+                  console.log('✅ Iframe renderizado en segundo intento')
+                  setIframeRendered(true)
+                } else {
+                  console.error('❌ Iframe no se pudo renderizar')
+                }
+              }, 2000)
             }
-          }, 1500)
-        }, 100)
+          }, 2000)
+        }, 300)
+        
+        return true
       }
+      return false
+    }
+
+    // Intentar inmediatamente por si el botón ya existe
+    if (tryClickButton()) return
+
+    // Si no existe, usar MutationObserver
+    console.log('📡 Iniciando MutationObserver...')
+    observerRef.current = new MutationObserver((mutations) => {
+      console.log('🔄 DOM cambió, verificando botón...')
+      tryClickButton()
     })
 
     // Observar cambios en el contenedor
     observerRef.current.observe(containerRef.current, {
       childList: true,
-      subtree: true
+      subtree: true,
+      attributes: true
     })
+
+    // Timeout de seguridad - si después de 10 segundos no detectó nada
+    const timeoutId = setTimeout(() => {
+      console.log('⏰ Timeout alcanzado, verificando una última vez...')
+      if (!tryClickButton()) {
+        console.error('❌ No se pudo detectar el botón FastPay después de 10 segundos')
+        const buttons = containerRef.current?.querySelectorAll('button')
+        console.log('Botones encontrados:', buttons?.length)
+        buttons?.forEach((btn, i) => {
+          console.log(`Botón ${i}:`, btn.className, btn.innerHTML.substring(0, 50))
+        })
+      }
+    }, 10000)
 
     // Cleanup
     return () => {
       observerRef.current?.disconnect()
+      clearTimeout(timeoutId)
     }
   }, [scriptLoaded])
 
