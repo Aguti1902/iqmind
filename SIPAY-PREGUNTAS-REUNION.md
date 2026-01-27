@@ -71,6 +71,35 @@ Hemos creado un archivo HTML standalone (`test_fpay.html`) con la estructura exa
 - El script `fastpay.js` se carga correctamente (200 OK)
 - `window.FastPay` es `undefined` (FastPay no se inicializa)
 - No hay errores en la consola
+- **IMPORTANTE**: Según documentación, `request_id` expira en 5 minutos
+- La documentación oficial NO menciona React/SPAs en ningún lugar
+- El "Ejemplo completo" de la documentación no está visible/accesible
+
+---
+
+## 📚 Revisión de Documentación Oficial
+
+Hemos revisado exhaustivamente la documentación oficial: https://developer.sipay.es/docs/documentation/online/selling/only_card/
+
+### Lo que la documentación SÍ dice:
+
+✅ **Script en `<head>`**: "Se recomienda incluir el fichero javascript en la etiqueta `<head>`"  
+✅ **Viewport meta**: Necesario para responsive  
+✅ **Atributos data-\***: Todos documentados claramente  
+✅ **data-callback vs data-redirect**: Son mutuamente excluyentes  
+✅ **request_id expira en 5 minutos**: Tiempo límite para procesar el pago  
+✅ **Dimensiones del iframe**: 430x600 px en pantalla completa  
+
+### Lo que la documentación NO dice:
+
+❌ **Nada sobre React/Vue/Angular**  
+❌ **Nada sobre SPAs (Single Page Applications)**  
+❌ **Nada sobre integración en frameworks modernos**  
+❌ **El "Ejemplo completo" no está visible en la página**  
+❌ **No hay guía para timing de inicialización**  
+❌ **No menciona cómo FastPay detecta los botones**  
+
+**Conclusión**: La documentación **asume HTML estático puro** sin considerar arquitecturas modernas de frontend.
 
 ---
 
@@ -180,7 +209,23 @@ window.addEventListener('fastpay:ready', () => {
 
 ---
 
-### 10. Soporte Técnico Directo
+### 10. Ejemplo Completo de la Documentación
+
+**Pregunta**: En la página https://developer.sipay.es/docs/documentation/online/selling/only_card/ se menciona un "Ejemplo completo" al final, pero no se muestra el código. ¿Pueden proporcionárnoslo?
+
+**Por qué es importante**: Queremos asegurarnos de que no estamos pasando por alto ningún detalle de implementación.
+
+---
+
+### 11. Integración en Frameworks Modernos
+
+**Pregunta**: ¿Por qué la documentación oficial NO menciona React, Vue, Angular o ningún framework moderno? ¿FastPay está diseñado solo para HTML estático?
+
+**Observación**: La documentación asume HTML puro en todos los ejemplos. No hay guías para SPAs.
+
+---
+
+### 12. Soporte Técnico Directo
 
 **Pregunta**: ¿Pueden ayudarnos con la integración directamente? ¿Tienen servicio de implementación?
 

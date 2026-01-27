@@ -26,6 +26,20 @@ Estamos integrando FastPay en nuestra aplicación y necesitamos asistencia técn
 - Hosting: Vercel
 - Entorno: Sandbox → Producción
 
+## Documentación Revisada
+
+Hemos revisado exhaustivamente la documentación oficial:
+https://developer.sipay.es/docs/documentation/online/selling/only_card/
+
+Implementamos **EXACTAMENTE** lo que indica:
+- ✅ Script en `<head>`
+- ✅ Viewport meta tag
+- ✅ Botón con `class="fastpay-btn"`
+- ✅ Todos los atributos `data-*` correctos
+- ✅ Callback function definida
+
+**Observación importante**: La documentación NO menciona React, SPAs o frameworks modernos en ningún lugar. Solo muestra ejemplos de HTML estático.
+
 ## Intentos Realizados
 
 Hemos probado múltiples approaches técnicos:
