@@ -17,6 +17,7 @@ export default function CheckoutSipay() {
   const [error, setError] = useState('')
   const [agreedToTerms, setAgreedToTerms] = useState(false)
   const [testType, setTestType] = useState<string>('iq')
+  const [fastPayReady, setFastPayReady] = useState(false)
 
   // Configuración de mensajes según el tipo de test
   const testConfig: any = {
@@ -58,6 +59,31 @@ export default function CheckoutSipay() {
     }
   }
 
+  // Cargar script de FastPay PRIMERO (antes de cualquier otra cosa)
+  useEffect(() => {
+    const existingScript = document.querySelector('script[src*="fastpay.js"]')
+    
+    if (!existingScript) {
+      console.log('🔄 Cargando script FastPay...')
+      const script = document.createElement('script')
+      script.type = 'text/javascript'
+      script.src = 'https://sandbox.sipay.es/fpay/v1/static/bundle/fastpay.js'
+      script.async = false // Síncrono para que se cargue completamente
+      script.onload = () => {
+        console.log('✅ Script FastPay cargado')
+        setFastPayReady(true)
+      }
+      script.onerror = () => {
+        console.error('❌ Error cargando script FastPay')
+      }
+      // Agregar al head como en el ejemplo de Sipay
+      document.head.appendChild(script)
+    } else {
+      console.log('✅ Script FastPay ya estaba cargado')
+      setFastPayReady(true)
+    }
+  }, [])
+
   useEffect(() => {
     const iq = localStorage.getItem('userIQ')
     const savedEmail = localStorage.getItem('userEmail')
@@ -75,9 +101,9 @@ export default function CheckoutSipay() {
     }
   }, [router, lang])
 
-  // Cargar SDK de Sipay y crear formulario de pago
+  // Cargar SDK de Sipay y crear formulario de pago (SOLO cuando FastPay esté listo)
   useEffect(() => {
-    if (!email || !userIQ) return
+    if (!email || !userIQ || !fastPayReady) return
 
     const loadSipayPayment = async () => {
       try {
@@ -137,73 +163,31 @@ export default function CheckoutSipay() {
           }
         }
 
-        // PASO 1: Crear el botón PRIMERO (FastPay necesita que exista antes de cargar el script)
+        // FastPay ya está cargado (en el useEffect anterior)
+        // Solo crear el botón y esperar a que FastPay lo procese
+        console.log('🔧 Creando botón FastPay (el script ya está cargado)...')
         initializeFastPayButton(data)
-
-        // PASO 2: Cargar FastPay SDK (detectará el botón automáticamente)
-        if (typeof window !== 'undefined') {
-          const existingScript = document.querySelector('script[src*="fastpay.js"]')
+        
+        // Verificar después de 2 segundos si el iframe se renderizó
+        setTimeout(() => {
+          const container = document.getElementById('sipay-payment-form')
+          const button = container?.querySelector('.fastpay-btn')
+          const iframe = container?.querySelector('iframe')
           
-          if (!existingScript) {
-            const script = document.createElement('script')
-            script.type = 'text/javascript'
-            script.src = data.sipayConfig.endpoint.includes('sandbox')
-              ? 'https://sandbox.sipay.es/fpay/v1/static/bundle/fastpay.js'
-              : 'https://live.sipay.es/fpay/v1/static/bundle/fastpay.js'
-            script.async = false // Cambiado a síncrono
-            script.onload = () => {
-              console.log('✅ FastPay SDK cargado')
-              
-              // Verificar si FastPay está disponible como objeto global
-              if (typeof (window as any).FastPay !== 'undefined') {
-                console.log('✅ FastPay está disponible como objeto global')
-                
-                // Intentar inicialización manual
-                try {
-                  const fastpay = (window as any).FastPay
-                  if (fastpay && fastpay.init) {
-                    console.log('🔧 Intentando inicializar FastPay manualmente...')
-                    fastpay.init()
-                  }
-                } catch (e) {
-                  console.log('ℹ️ FastPay no tiene método init(), debe detectar automáticamente')
-                }
-              } else {
-                console.warn('⚠️ FastPay NO está disponible como objeto global')
-              }
-              
-              // Verificar después de 2 segundos si el iframe se renderizó
-              setTimeout(() => {
-                const container = document.getElementById('sipay-payment-form')
-                const button = document.getElementById('sipay-fastpay-button')
-                const iframe = container?.querySelector('iframe')
-                
-                console.log('🔍 Estado después de cargar FastPay:', {
-                  contenedorExiste: !!container,
-                  botonExiste: !!button,
-                  botonClase: button?.className,
-                  iframeRenderizado: !!iframe,
-                  htmlContenido: container?.innerHTML.substring(0, 300)
-                })
-                
-                if (!iframe) {
-                  console.error('❌ FastPay NO renderizó el iframe.')
-                  console.error('🔑 Verifica que data-key="clicklabsdigital" sea correcto para sandbox')
-                  console.error('📋 Ejemplo de Sipay usa: data-key="sipay-test-team"')
-                  console.error('💡 Contacta a Sipay para confirmar la KEY correcta')
-                }
-              }, 2000)
-            }
-            script.onerror = () => {
-              console.error('❌ Error cargando FastPay SDK')
-              setError('Error cargando el sistema de pago. Por favor recarga la página.')
-            }
-            // Importante: agregar al head según documentación de Sipay
-            document.head.appendChild(script)
+          console.log('🔍 Estado después de 2 segundos:', {
+            contenedorExiste: !!container,
+            botonExiste: !!button,
+            iframeRenderizado: !!iframe,
+            htmlContenido: container?.innerHTML.substring(0, 500)
+          })
+          
+          if (!iframe) {
+            console.error('❌ FastPay NO renderizó el iframe después de 2 segundos')
+            console.error('📋 HTML del contenedor:', container?.innerHTML)
           } else {
-            console.log('✅ FastPay SDK ya estaba cargado')
+            console.log('✅ ¡Iframe renderizado correctamente!')
           }
-        }
+        }, 2000)
         
         
       } catch (error: any) {
@@ -220,7 +204,7 @@ export default function CheckoutSipay() {
           return
         }
 
-        console.log('🔧 Inicializando botón FastPay:', {
+        console.log('🔧 Inicializando botón FastPay según ejemplo oficial de Sipay:', {
           key: data.sipayConfig.key,
           amount: Math.round(data.amount * 100),
           currency: 'EUR',
@@ -230,47 +214,40 @@ export default function CheckoutSipay() {
         // Limpiar contenedor
         container.innerHTML = ''
 
-        // Aplicar estilos al contenedor según documentación de Sipay
+        // Aplicar estilos EXACTOS del ejemplo oficial de Sipay
+        container.style.display = 'flex'
+        container.style.justifyContent = 'center'
         container.style.minHeight = '600px'
-        container.style.minWidth = '430px'
-        container.style.width = '100%'
 
-        // Crear botón de FastPay con atributos data-* según ejemplo oficial
+        // Crear wrapper interior (como en el ejemplo)
+        const wrapper = document.createElement('div')
+        wrapper.style.minWidth = '430px'
+
+        // Crear botón EXACTO del ejemplo oficial de Sipay
         const button = document.createElement('button')
-        button.type = 'button'
-        button.id = 'sipay-fastpay-button'
+        button.className = 'fastpay-btn' // SIN id, como en el ejemplo
         
-        // ⚠️ CRÍTICO: class="fastpay-btn" es necesario para que FastPay lo detecte
-        button.className = 'fastpay-btn'
-        
-        // Atributos obligatorios según ejemplo oficial de Sipay
+        // Atributos EXACTOS del ejemplo (sin data-notab)
         button.setAttribute('data-key', data.sipayConfig.key)
         button.setAttribute('data-amount', Math.round(data.amount * 100).toString())
         button.setAttribute('data-currency', 'EUR')
         button.setAttribute('data-template', 'v4')
         button.setAttribute('data-callback', 'processSipayPayment')
-        button.setAttribute('data-lang', lang || 'es')
-        button.setAttribute('data-cardholdername', 'true')
         button.setAttribute('data-paymentbutton', 'Pagar')
+        button.setAttribute('data-cardholdername', 'true')
         button.setAttribute('data-hiddenprice', 'false')
-        button.setAttribute('data-notab', '1') // Importante para iframe embebido
-        
-        // Agregar texto al botón (puede ser necesario para FastPay)
-        button.textContent = 'Pagar'
+        button.setAttribute('data-lang', lang || 'es')
+        // NO usar data-notab (no está en el ejemplo oficial)
 
-        container.appendChild(button)
+        wrapper.appendChild(button)
+        container.appendChild(wrapper)
         
-        console.log('✅ Botón FastPay creado con class="fastpay-btn"')
-        console.log('📋 Atributos completos:', {
+        console.log('✅ Botón FastPay creado según ejemplo oficial')
+        console.log('📋 Atributos:', {
           'class': button.className,
           'data-key': button.getAttribute('data-key'),
-          'data-amount': button.getAttribute('data-amount'),
-          'data-currency': button.getAttribute('data-currency'),
-          'data-template': button.getAttribute('data-template'),
-          'data-callback': button.getAttribute('data-callback'),
-          'data-notab': button.getAttribute('data-notab')
+          'data-amount': button.getAttribute('data-amount')
         })
-        console.log('⏳ FastPay debería detectar el botón y renderizar el iframe...')
 
       } catch (error: any) {
         console.error('❌ Error inicializando FastPay:', error)
@@ -418,7 +395,7 @@ export default function CheckoutSipay() {
     }
 
     loadSipayPayment()
-  }, [email, userIQ, userName, lang, router])
+  }, [email, userIQ, userName, lang, router, fastPayReady])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
