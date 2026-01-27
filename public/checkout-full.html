@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - MindMetric</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Sipay FastPay Script -->
+    <script type="text/javascript" src="https://sandbox.sipay.es/fpay/v1/static/bundle/fastpay.js"></script>
+    
+    <style>
+        /* Custom animations */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-white min-h-screen">
+
+    <!-- Header Minimal -->
+    <header class="bg-white shadow-sm py-4 px-6">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-[#07C59A] to-[#113240] rounded-lg flex items-center justify-center text-white font-bold">
+                    M
+                </div>
+                <span class="text-xl font-bold text-gray-900">MindMetric</span>
+            </div>
+            <div class="flex items-center gap-2 text-sm text-gray-600">
+                <i class="fas fa-lock text-green-500"></i>
+                <span id="secure-payment-text">Pago Seguro</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto max-w-6xl py-12 px-4">
+        <div class="grid lg:grid-cols-2 gap-12">
+            
+            <!-- Columna Izquierda - Información -->
+            <div class="space-y-8 order-2 lg:order-1">
+                <!-- Hero Section -->
+                <div class="bg-gradient-to-br from-[#07C59A] to-[#113240] rounded-2xl p-8 text-white">
+                    <div class="flex items-center gap-3 mb-4">
+                        <i class="fas fa-brain text-4xl"></i>
+                        <div>
+                            <h1 class="text-2xl font-bold" id="hero-title">Tu Resultado del Test de CI</h1>
+                            <p class="text-white/80" id="hero-subtitle">Análisis completo y detallado</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Características -->
+                <div class="bg-white rounded-2xl shadow-lg p-8">
+                    <h3 class="text-xl font-bold text-gray-900 mb-6" id="features-title">¿Qué incluye tu resultado?</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-check-circle text-[#07C59A] text-xl mt-1"></i>
+                            <div>
+                                <h4 class="font-semibold text-gray-900" id="feature-1-title">Tu Coeficiente Intelectual</h4>
+                                <p class="text-sm text-gray-600" id="feature-1-desc">Puntuación precisa basada en el test</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-check-circle text-[#07C59A] text-xl mt-1"></i>
+                            <div>
+                                <h4 class="font-semibold text-gray-900" id="feature-2-title">Análisis por Categorías</h4>
+                                <p class="text-sm text-gray-600" id="feature-2-desc">Desglose detallado de tus habilidades</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-check-circle text-[#07C59A] text-xl mt-1"></i>
+                            <div>
+                                <h4 class="font-semibold text-gray-900" id="feature-3-title">Comparativa Poblacional</h4>
+                                <p class="text-sm text-gray-600" id="feature-3-desc">Cómo te comparas con otros</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-check-circle text-[#07C59A] text-xl mt-1"></i>
+                            <div>
+                                <h4 class="font-semibold text-gray-900" id="feature-4-title">Certificado Oficial</h4>
+                                <p class="text-sm text-gray-600" id="feature-4-desc">Descargable en PDF</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trial Info -->
+                <div class="bg-blue-50 border-2 border-blue-200 rounded-xl p-6">
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-info-circle text-blue-600 text-2xl"></i>
+                        <div>
+                            <h4 class="font-bold text-blue-900 mb-2" id="trial-title">Acceso Premium por 2 días GRATIS</h4>
+                            <p class="text-sm text-blue-800" id="trial-desc">
+                                Prueba todas las funciones premium sin compromiso. Cancela en cualquier momento.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Columna Derecha - Formulario -->
+            <div class="lg:sticky lg:top-8 h-fit order-1 lg:order-2">
+                <div class="bg-white rounded-2xl shadow-2xl p-8">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6 text-center" id="form-title">
+                        Pago Seguro
+                    </h3>
+
+                    <form id="checkout-form" class="space-y-6">
+                        <!-- Email -->
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-2" id="email-label">
+                                Email
+                            </label>
+                            <input
+                                type="email"
+                                id="email-input"
+                                placeholder="tu@email.com"
+                                class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#07C59A] focus:border-transparent"
+                                required
+                            />
+                        </div>
+
+                        <!-- Resumen -->
+                        <div class="bg-gray-50 rounded-xl p-6">
+                            <h4 class="font-bold text-gray-900 mb-4" id="summary-title">Resumen del Pedido</h4>
+                            <div class="space-y-3">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-700" id="test-result-label">Resultado del Test</span>
+                                    <span class="font-semibold">0,50€</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <div>
+                                        <span class="text-gray-700 block" id="trial-label">Trial Premium (2 días)</span>
+                                        <span class="text-xs text-gray-500" id="after-trial-label">Después 9,99€/mes</span>
+                                    </div>
+                                    <span class="font-semibold text-green-600" id="free-label">GRATIS</span>
+                                </div>
+                                <div class="border-t-2 pt-3 flex justify-between items-center">
+                                    <span class="text-lg font-bold text-gray-900" id="total-today-label">Total Hoy</span>
+                                    <span class="text-3xl font-bold text-[#07C59A]">0,50€</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Formulario de Pago Sipay -->
+                        <div class="border-2 border-gray-200 rounded-xl p-6 bg-gray-50" style="min-height: 600px;">
+                            <h4 class="font-bold text-gray-900 mb-4" id="card-data-label">Datos de la Tarjeta</h4>
+                            
+                            <div id="sipay-payment-container" style="display: flex; justify-content: center; min-height: 550px;">
+                                <!-- Loading inicial -->
+                                <div id="loading-indicator" class="text-center py-12">
+                                    <div class="w-16 h-16 border-4 border-[#07C59A] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                                    <p class="text-gray-600 mb-2" id="loading-text">Cargando formulario de pago seguro...</p>
+                                    <p class="text-xs text-gray-500">Powered by Sipay</p>
+                                </div>
+                                
+                                <!-- El botón FastPay se insertará aquí -->
+                                <div id="fastpay-button-container" style="display: none; min-width: 430px;">
+                                    <!-- FastPay button -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Error Message -->
+                        <div id="error-message" class="bg-red-50 border-2 border-red-200 text-red-800 px-4 py-3 rounded-lg text-sm" style="display: none;">
+                        </div>
+
+                        <!-- Términos -->
+                        <div>
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    id="terms-checkbox"
+                                    class="mt-1 w-5 h-5 text-[#07C59A] border-gray-300 rounded focus:ring-[#07C59A]"
+                                    required
+                                />
+                                <span class="text-sm text-gray-700" id="terms-text">
+                                    Acepto los <a href="#" id="terms-link" class="text-[#07C59A] underline font-semibold">términos y condiciones</a>. 
+                                    Después del trial de 2 días, se cobrará automáticamente 9,99€/mes. Cancela cuando quieras.
+                                </span>
+                            </label>
+                        </div>
+
+                        <!-- Botón de Pago (oculto porque FastPay lo maneja) -->
+                        <!-- El formulario FastPay tiene su propio botón de pago integrado -->
+
+                        <!-- Badges de Seguridad -->
+                        <div class="text-center">
+                            <div class="flex items-center justify-center gap-4 text-sm text-gray-600 mb-2">
+                                <div class="flex items-center gap-1">
+                                    <i class="fas fa-lock text-green-500"></i>
+                                    <span id="secure-payment-badge">Pago 100% Seguro</span>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <i class="fas fa-check-circle text-green-500"></i>
+                                    <span id="protected-badge">Protegido por Sipay</span>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-500" id="encrypted-text">
+                                Tus datos están encriptados y protegidos
+                            </p>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Garantía -->
+                <div class="mt-6 bg-yellow-50 border-2 border-yellow-200 rounded-xl p-6 text-center">
+                    <div class="text-4xl mb-2">🛡️</div>
+                    <h4 class="font-bold text-yellow-900 mb-2" id="guarantee-title">Garantía de Devolución</h4>
+                    <p class="text-sm text-yellow-800" id="guarantee-text">
+                        Si no estás satisfecho, te devolvemos tu dinero. 
+                        <a href="#" id="policy-link" class="underline font-semibold ml-1">Ver política</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-8 mt-12">
+        <div class="container mx-auto text-center">
+            <p class="text-gray-400 text-sm">© 2026 MindMetric. <span id="footer-rights">Todos los derechos reservados.</span></p>
+        </div>
+    </footer>
+
+    <script>
+        // ============================================
+        // TRADUCCIONES MULTIIDIOMA
+        // ============================================
+        const translations = {
+            es: {
+                securePayment: 'Pago Seguro',
+                heroTitle: 'Tu Resultado del Test de CI',
+                heroSubtitle: 'Análisis completo y detallado',
+                featuresTitle: '¿Qué incluye tu resultado?',
+                feature1Title: 'Tu Coeficiente Intelectual',
+                feature1Desc: 'Puntuación precisa basada en el test',
+                feature2Title: 'Análisis por Categorías',
+                feature2Desc: 'Desglose detallado de tus habilidades',
+                feature3Title: 'Comparativa Poblacional',
+                feature3Desc: 'Cómo te comparas con otros',
+                feature4Title: 'Certificado Oficial',
+                feature4Desc: 'Descargable en PDF',
+                trialTitle: 'Acceso Premium por 2 días GRATIS',
+                trialDesc: 'Prueba todas las funciones premium sin compromiso. Cancela en cualquier momento.',
+                formTitle: 'Pago Seguro',
+                emailLabel: 'Email',
+                summaryTitle: 'Resumen del Pedido',
+                testResultLabel: 'Resultado del Test',
+                trialLabel: 'Trial Premium (2 días)',
+                afterTrialLabel: 'Después 9,99€/mes',
+                freeLabel: 'GRATIS',
+                totalTodayLabel: 'Total Hoy',
+                cardDataLabel: 'Datos de la Tarjeta',
+                loadingText: 'Cargando formulario de pago seguro...',
+                termsText: 'Acepto los <a href="/es/terminos" class="text-[#07C59A] underline font-semibold">términos y condiciones</a>. Después del trial de 2 días, se cobrará automáticamente 9,99€/mes. Cancela cuando quieras.',
+                securePaymentBadge: 'Pago 100% Seguro',
+                protectedBadge: 'Protegido por Sipay',
+                encryptedText: 'Tus datos están encriptados y protegidos',
+                guaranteeTitle: 'Garantía de Devolución',
+                guaranteeText: 'Si no estás satisfecho, te devolvemos tu dinero.',
+                policyLink: 'Ver política',
+                footerRights: 'Todos los derechos reservados.'
+            },
+            en: {
+                securePayment: 'Secure Payment',
+                heroTitle: 'Your IQ Test Result',
+                heroSubtitle: 'Complete and detailed analysis',
+                featuresTitle: 'What does your result include?',
+                feature1Title: 'Your IQ Score',
+                feature1Desc: 'Accurate score based on the test',
+                feature2Title: 'Category Analysis',
+                feature2Desc: 'Detailed breakdown of your skills',
+                feature3Title: 'Population Comparison',
+                feature3Desc: 'How you compare to others',
+                feature4Title: 'Official Certificate',
+                feature4Desc: 'Downloadable in PDF',
+                trialTitle: 'Premium Access for 2 days FREE',
+                trialDesc: 'Try all premium features with no commitment. Cancel anytime.',
+                formTitle: 'Secure Payment',
+                emailLabel: 'Email',
+                summaryTitle: 'Order Summary',
+                testResultLabel: 'Test Result',
+                trialLabel: 'Premium Trial (2 days)',
+                afterTrialLabel: 'Then €9.99/month',
+                freeLabel: 'FREE',
+                totalTodayLabel: 'Total Today',
+                cardDataLabel: 'Card Details',
+                loadingText: 'Loading secure payment form...',
+                termsText: 'I accept the <a href="/en/terminos" class="text-[#07C59A] underline font-semibold">terms and conditions</a>. After the 2-day trial, €9.99/month will be charged automatically. Cancel anytime.',
+                securePaymentBadge: '100% Secure Payment',
+                protectedBadge: 'Protected by Sipay',
+                encryptedText: 'Your data is encrypted and protected',
+                guaranteeTitle: 'Money-Back Guarantee',
+                guaranteeText: 'If you\'re not satisfied, we\'ll refund your money.',
+                policyLink: 'View policy',
+                footerRights: 'All rights reserved.'
+            },
+            fr: {
+                securePayment: 'Paiement Sécurisé',
+                heroTitle: 'Votre Résultat au Test de QI',
+                heroSubtitle: 'Analyse complète et détaillée',
+                featuresTitle: 'Qu\'est-ce qui est inclus dans votre résultat?',
+                feature1Title: 'Votre Quotient Intellectuel',
+                feature1Desc: 'Score précis basé sur le test',
+                feature2Title: 'Analyse par Catégories',
+                feature2Desc: 'Détail de vos compétences',
+                feature3Title: 'Comparaison Population',
+                feature3Desc: 'Comment vous vous comparez aux autres',
+                feature4Title: 'Certificat Officiel',
+                feature4Desc: 'Téléchargeable en PDF',
+                trialTitle: 'Accès Premium pendant 2 jours GRATUIT',
+                trialDesc: 'Essayez toutes les fonctions premium sans engagement. Annulez à tout moment.',
+                formTitle: 'Paiement Sécurisé',
+                emailLabel: 'Email',
+                summaryTitle: 'Résumé de la Commande',
+                testResultLabel: 'Résultat du Test',
+                trialLabel: 'Essai Premium (2 jours)',
+                afterTrialLabel: 'Puis 9,99€/mois',
+                freeLabel: 'GRATUIT',
+                totalTodayLabel: 'Total Aujourd\'hui',
+                cardDataLabel: 'Données de la Carte',
+                loadingText: 'Chargement du formulaire de paiement sécurisé...',
+                termsText: 'J\'accepte les <a href="/fr/terminos" class="text-[#07C59A] underline font-semibold">termes et conditions</a>. Après l\'essai de 2 jours, 9,99€/mois seront facturés automatiquement. Annulez à tout moment.',
+                securePaymentBadge: 'Paiement 100% Sécurisé',
+                protectedBadge: 'Protégé par Sipay',
+                encryptedText: 'Vos données sont cryptées et protégées',
+                guaranteeTitle: 'Garantie de Remboursement',
+                guaranteeText: 'Si vous n\'êtes pas satisfait, nous vous remboursons.',
+                policyLink: 'Voir la politique',
+                footerRights: 'Tous droits réservés.'
+            }
+        }
+
+        // ============================================
+        // OBTENER PARÁMETROS DE URL
+        // ============================================
+        function getUrlParam(name) {
+            const urlParams = new URLSearchParams(window.location.search)
+            return urlParams.get(name) || ''
+        }
+
+        const lang = getUrlParam('lang') || 'es'
+        const email = getUrlParam('email') || ''
+        const testData = getUrlParam('testData') || '{}'
+        const amount = 0.50
+        const sipayKey = 'clicklabsdigital' // Sandbox key
+
+        // ============================================
+        // APLICAR TRADUCCIONES
+        // ============================================
+        function applyTranslations() {
+            const t = translations[lang] || translations['es']
+            
+            // Aplicar todas las traducciones
+            document.getElementById('secure-payment-text').textContent = t.securePayment
+            document.getElementById('hero-title').textContent = t.heroTitle
+            document.getElementById('hero-subtitle').textContent = t.heroSubtitle
+            document.getElementById('features-title').textContent = t.featuresTitle
+            document.getElementById('feature-1-title').textContent = t.feature1Title
+            document.getElementById('feature-1-desc').textContent = t.feature1Desc
+            document.getElementById('feature-2-title').textContent = t.feature2Title
+            document.getElementById('feature-2-desc').textContent = t.feature2Desc
+            document.getElementById('feature-3-title').textContent = t.feature3Title
+            document.getElementById('feature-3-desc').textContent = t.feature3Desc
+            document.getElementById('feature-4-title').textContent = t.feature4Title
+            document.getElementById('feature-4-desc').textContent = t.feature4Desc
+            document.getElementById('trial-title').textContent = t.trialTitle
+            document.getElementById('trial-desc').textContent = t.trialDesc
+            document.getElementById('form-title').textContent = t.formTitle
+            document.getElementById('email-label').textContent = t.emailLabel
+            document.getElementById('summary-title').textContent = t.summaryTitle
+            document.getElementById('test-result-label').textContent = t.testResultLabel
+            document.getElementById('trial-label').textContent = t.trialLabel
+            document.getElementById('after-trial-label').textContent = t.afterTrialLabel
+            document.getElementById('free-label').textContent = t.freeLabel
+            document.getElementById('total-today-label').textContent = t.totalTodayLabel
+            document.getElementById('card-data-label').textContent = t.cardDataLabel
+            document.getElementById('loading-text').textContent = t.loadingText
+            document.getElementById('terms-text').innerHTML = t.termsText
+            document.getElementById('secure-payment-badge').textContent = t.securePaymentBadge
+            document.getElementById('protected-badge').textContent = t.protectedBadge
+            document.getElementById('encrypted-text').textContent = t.encryptedText
+            document.getElementById('guarantee-title').textContent = t.guaranteeTitle
+            document.getElementById('guarantee-text').innerHTML = t.guaranteeText + ' <a href="#" id="policy-link" class="underline font-semibold ml-1">' + t.policyLink + '</a>'
+            document.getElementById('footer-rights').textContent = t.footerRights
+
+            // Set email input value
+            if (email) {
+                document.getElementById('email-input').value = email
+            }
+        }
+
+        // ============================================
+        // INICIALIZAR FASTPAY
+        // ============================================
+        function initializeFastPay() {
+            console.log('🚀 Inicializando FastPay en HTML puro')
+            
+            // Crear sesión de pago en el backend
+            fetch('/api/sipay/create-payment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: document.getElementById('email-input').value || email,
+                    amount: amount,
+                    lang: lang,
+                    testData: JSON.parse(testData)
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('✅ Sesión de pago creada:', data)
+                
+                // Ocultar loading
+                document.getElementById('loading-indicator').style.display = 'none'
+                
+                // Mostrar contenedor FastPay
+                const container = document.getElementById('fastpay-button-container')
+                container.style.display = 'block'
+                
+                // Crear botón FastPay
+                const button = document.createElement('button')
+                button.className = 'fastpay-btn'
+                button.setAttribute('data-key', data.sipayConfig.key)
+                button.setAttribute('data-amount', Math.round(amount * 100).toString())
+                button.setAttribute('data-currency', 'EUR')
+                button.setAttribute('data-template', 'v4')
+                button.setAttribute('data-callback', 'processSipayCallback')
+                button.setAttribute('data-paymentbutton', 'Pagar')
+                button.setAttribute('data-cardholdername', 'true')
+                button.setAttribute('data-remember', 'checkbox')
+                button.setAttribute('data-remembertext', 'Recordar tarjeta')
+                button.setAttribute('data-hiddenprice', 'false')
+                button.setAttribute('data-lang', lang)
+                
+                container.appendChild(button)
+                
+                console.log('✅ Botón FastPay creado - Esperando que se transforme en iframe...')
+                
+                // Verificar si se renderiza el iframe
+                setTimeout(() => {
+                    const iframe = document.querySelector('iframe[src*="sipay"]')
+                    if (iframe) {
+                        console.log('✅ ¡Iframe FastPay renderizado correctamente en HTML puro!')
+                    } else {
+                        console.error('❌ Iframe NO renderizado incluso en HTML puro')
+                        showError('Error cargando el formulario de pago. Por favor, recarga la página.')
+                    }
+                }, 3000)
+            })
+            .catch(error => {
+                console.error('❌ Error creando sesión de pago:', error)
+                showError('Error al inicializar el pago. Por favor, intenta de nuevo.')
+            })
+        }
+
+        // ============================================
+        // CALLBACK DE FASTPAY
+        // ============================================
+        window.processSipayCallback = function(response) {
+            console.log('📨 Callback de FastPay recibido:', response)
+            
+            if (response.type === 'success' && response.request_id) {
+                console.log('✅ Pago exitoso, redirigiendo...')
+                
+                // Redirigir a la página de resultado
+                const origin = window.location.origin
+                const resultUrl = `${origin}/${lang}/sipay-result?request_id=${response.request_id}&order_id=${getUrlParam('orderId')}&email=${encodeURIComponent(document.getElementById('email-input').value)}&amount=${amount}&testData=${encodeURIComponent(testData)}`
+                
+                window.location.href = resultUrl
+            } else {
+                console.error('❌ Error en el pago:', response)
+                showError(response.description || 'Error procesando el pago. Por favor, intenta de nuevo.')
+            }
+        }
+
+        // ============================================
+        // MOSTRAR ERROR
+        // ============================================
+        function showError(message) {
+            const errorDiv = document.getElementById('error-message')
+            errorDiv.textContent = message
+            errorDiv.style.display = 'block'
+            document.getElementById('loading-indicator').style.display = 'none'
+        }
+
+        // ============================================
+        // INICIALIZAR AL CARGAR
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🔧 Checkout HTML cargado')
+            console.log('📋 Parámetros:', { lang, email, amount, testData })
+            
+            // Aplicar traducciones
+            applyTranslations()
+            
+            // Inicializar FastPay
+            initializeFastPay()
+        })
+    </script>
+</body>
+</html>
+
