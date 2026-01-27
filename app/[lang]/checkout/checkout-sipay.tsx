@@ -145,7 +145,43 @@ export default function CheckoutSipay() {
         setPaymentData(data)
         
         console.log('🎯 FastPay ya está cargado en el layout - El iframe debería renderizarse automáticamente')
+        console.log('📊 Datos de pago guardados:', {
+          orderId: data.orderId,
+          amount: data.amount,
+          sipayKey: data.sipayConfig?.key,
+          hasCallback: typeof (window as any).processSipayPayment === 'function'
+        })
         
+        // Verificar estado del script y DOM después de 1 segundo
+        setTimeout(() => {
+          console.log('🔍 === DEBUG COMPLETO ===')
+          console.log('1. ¿Script fastpay.js cargado?', !!document.querySelector('script[src*="fastpay.js"]'))
+          console.log('2. ¿Objeto FastPay existe?', typeof (window as any).FastPay)
+          console.log('3. ¿Botón en DOM?', !!document.querySelector('.fastpay-btn'))
+          console.log('4. HTML del contenedor:', document.getElementById('sipay-payment-form')?.innerHTML.substring(0, 200))
+          console.log('5. ¿Iframe renderizado?', !!document.querySelector('iframe[src*="sipay"]'))
+          
+          const button = document.querySelector('.fastpay-btn')
+          if (button) {
+            console.log('6. Atributos del botón:')
+            Array.from(button.attributes).forEach(attr => {
+              console.log(`   - ${attr.name}: ${attr.value}`)
+            })
+          }
+          
+          console.log('======================')
+        }, 1000)
+        
+        // Verificar después de 3 segundos
+        setTimeout(() => {
+          const iframe = document.querySelector('iframe[src*="sipay"]')
+          if (!iframe) {
+            console.error('❌ DESPUÉS DE 3 SEGUNDOS: Iframe NO detectado')
+            console.error('🔧 Posible causa: FastPay no compatible con React')
+          } else {
+            console.log('✅ DESPUÉS DE 3 SEGUNDOS: Iframe SÍ detectado')
+          }
+        }, 3000)
         
       } catch (error: any) {
         console.error('Error:', error)
@@ -294,6 +330,86 @@ export default function CheckoutSipay() {
 
     loadSipayPayment()
   }, [email, userIQ, userName, lang, router])
+
+  // useEffect para logs exhaustivos cuando cambia paymentData
+  useEffect(() => {
+    if (!paymentData) {
+      console.log('⚪ paymentData es null - esperando datos...')
+      return
+    }
+
+    console.log('🟢 paymentData actualizado - iniciando verificación exhaustiva')
+    console.log('📦 paymentData completo:', paymentData)
+
+    // Verificar inmediatamente
+    const checkFastPayImmediately = () => {
+      console.log('🔍 [Verificación Inmediata]')
+      console.log('  - FastPay global:', typeof (window as any).FastPay)
+      console.log('  - Script en DOM:', !!document.querySelector('script[src*="fastpay.js"]'))
+      console.log('  - Callback definido:', typeof (window as any).processSipayPayment)
+    }
+
+    checkFastPayImmediately()
+
+    // Verificar después de que React termine de renderizar
+    const timer1 = setTimeout(() => {
+      console.log('🔍 [Después de 100ms - React debería haber renderizado]')
+      const container = document.getElementById('sipay-payment-form')
+      const button = document.querySelector('.fastpay-btn')
+      
+      console.log('  - Contenedor existe:', !!container)
+      console.log('  - Botón existe:', !!button)
+      
+      if (button) {
+        console.log('  - Botón HTML:', (button as HTMLElement).outerHTML)
+        console.log('  - Clases del botón:', button.className)
+        console.log('  - data-key:', button.getAttribute('data-key'))
+        console.log('  - data-amount:', button.getAttribute('data-amount'))
+        console.log('  - data-callback:', button.getAttribute('data-callback'))
+      } else {
+        console.error('  ❌ Botón NO encontrado en el DOM')
+      }
+
+      const iframe = document.querySelector('iframe[src*="sipay"]')
+      console.log('  - Iframe existe:', !!iframe)
+      if (iframe) {
+        console.log('  - Iframe src:', (iframe as HTMLIFrameElement).src)
+      }
+    }, 100)
+
+    // Verificar después de 1 segundo
+    const timer2 = setTimeout(() => {
+      console.log('🔍 [Después de 1 segundo]')
+      const iframe = document.querySelector('iframe[src*="sipay"]')
+      if (iframe) {
+        console.log('  ✅ Iframe renderizado!')
+      } else {
+        console.error('  ❌ Iframe NO renderizado - FastPay NO transformó el botón')
+        console.error('  💡 Esto confirma que FastPay NO funciona en React/Next.js')
+      }
+    }, 1000)
+
+    // Verificar después de 3 segundos
+    const timer3 = setTimeout(() => {
+      console.log('🔍 [Verificación Final - 3 segundos]')
+      const iframe = document.querySelector('iframe[src*="sipay"]')
+      if (!iframe) {
+        console.error('  ❌ CONFIRMADO: FastPay NO es compatible con React')
+        console.error('  📋 Resumen:')
+        console.error('    - Script cargado: ✅')
+        console.error('    - Botón en DOM: ✅')
+        console.error('    - Atributos correctos: ✅')
+        console.error('    - Iframe renderizado: ❌')
+        console.error('  💬 FastPay simplemente NO detecta el botón en React')
+      }
+    }, 3000)
+
+    return () => {
+      clearTimeout(timer1)
+      clearTimeout(timer2)
+      clearTimeout(timer3)
+    }
+  }, [paymentData])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -521,24 +637,31 @@ export default function CheckoutSipay() {
                       <div 
                         style={{ display: 'flex', justifyContent: 'center', minHeight: '600px' }}
                         dangerouslySetInnerHTML={{
-                          __html: `
-                            <div style="min-width: 430px">
-                              <button 
-                                class="fastpay-btn"
-                                data-key="${paymentData.sipayConfig.key}"
-                                data-amount="${Math.round(paymentData.amount * 100)}"
-                                data-currency="EUR"
-                                data-template="v4"
-                                data-callback="processSipayPayment"
-                                data-paymentbutton="Pagar"
-                                data-cardholdername="true"
-                                data-remember="checkbox"
-                                data-remembertext="Recordar tarjeta"
-                                data-hiddenprice="false"
-                                data-lang="${lang || 'es'}">
-                              </button>
-                            </div>
-                          `
+                          __html: (() => {
+                            const html = `
+                              <div style="min-width: 430px">
+                                <button 
+                                  class="fastpay-btn"
+                                  data-key="${paymentData.sipayConfig.key}"
+                                  data-amount="${Math.round(paymentData.amount * 100)}"
+                                  data-currency="EUR"
+                                  data-template="v4"
+                                  data-callback="processSipayPayment"
+                                  data-paymentbutton="Pagar"
+                                  data-cardholdername="true"
+                                  data-remember="checkbox"
+                                  data-remembertext="Recordar tarjeta"
+                                  data-hiddenprice="false"
+                                  data-lang="${lang || 'es'}">
+                                </button>
+                              </div>
+                            `
+                            console.log('🎨 [RENDER] HTML que se va a inyectar:', html)
+                            console.log('🎨 [RENDER] Sipay Key:', paymentData.sipayConfig.key)
+                            console.log('🎨 [RENDER] Amount (centavos):', Math.round(paymentData.amount * 100))
+                            console.log('🎨 [RENDER] Language:', lang || 'es')
+                            return html
+                          })()
                         }}
                       />
                     )}

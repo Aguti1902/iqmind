@@ -28,6 +28,28 @@ export default function RootLayout({
           type="text/javascript"
           src="https://sandbox.sipay.es/fpay/v1/static/bundle/fastpay.js"
           async={false}
+          onLoad={() => console.log('✅ [LAYOUT] Script FastPay cargado desde layout')}
+          onError={() => console.error('❌ [LAYOUT] Error cargando script FastPay')}
+        />
+        {/* Script de verificación inmediata */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              console.log('🚀 [LAYOUT] Verificación inicial del script FastPay')
+              window.addEventListener('load', function() {
+                setTimeout(function() {
+                  console.log('🔍 [LAYOUT] Estado después de window.load:')
+                  console.log('  - FastPay global:', typeof window.FastPay)
+                  console.log('  - Script en DOM:', !!document.querySelector('script[src*="fastpay.js"]'))
+                  var script = document.querySelector('script[src*="fastpay.js"]')
+                  if (script) {
+                    console.log('  - Script loaded:', script.loaded || 'unknown')
+                    console.log('  - Script readyState:', script.readyState || 'unknown')
+                  }
+                }, 500)
+              })
+            `
+          }}
         />
       </head>
       <body className={inter.className}>
