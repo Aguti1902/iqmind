@@ -2,7 +2,7 @@
 
 import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
-import SipayCheckout from '@/components/SipayCheckout'
+import SipayInline from '@/components/SipayInline'
 
 // Deshabilitar pre-rendering estático
 export const dynamic = 'force-dynamic'
@@ -344,17 +344,19 @@ function CheckoutPaymentContent() {
                       </div>
                     </div>
 
-                    {/* Sipay Payment Component */}
+                    {/* Sipay Payment Component: iframe con HTML estático en /public/fastpay-standalone.html */}
                     <div className="border-2 border-gray-200 rounded-xl p-6 bg-gray-50">
                       <h4 className="font-bold text-gray-900 mb-4">Datos de la Tarjeta</h4>
-                      
-                      <SipayCheckout
-                        email={email}
-                        amount={50} // 0.50€ en céntimos
+                      <SipayInline
                         merchantKey={paymentData.sipayConfig?.key || 'clicklabsdigital'}
+                        amount={50}
+                        currency="EUR"
+                        template="v4"
                         lang={lang}
-                        onPaymentSuccess={handlePaymentSuccess}
-                        onPaymentError={handlePaymentError}
+                        env={paymentData.sipayConfig?.endpoint?.includes('live') ? 'live' : 'sandbox'}
+                        onRequestId={(requestId, payload) =>
+                          handlePaymentSuccess({ request_id: requestId, ...(typeof payload === 'object' && payload !== null ? payload : {}) })
+                        }
                       />
                     </div>
 
