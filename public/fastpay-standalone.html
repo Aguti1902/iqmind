@@ -6,9 +6,9 @@
   <title>FastPay - Formulario de pago</title>
   <style>
     * { box-sizing: border-box; }
-    html, body {
-      margin: 0;
-      padding: 0;
+    html, body { 
+      margin: 0; 
+      padding: 0; 
       width: 100%;
       height: 100%;
       overflow-x: hidden;
@@ -16,6 +16,16 @@
     body { min-height: 100vh; }
     .fastpay-btn { display: none; }
   </style>
+  <script>
+    // Leer parámetros de URL ANTES de que el DOM esté listo
+    var urlParams = new URLSearchParams(window.location.search);
+    var fpKey = urlParams.get('key') || 'clicklabsdigital';
+    var fpAmount = urlParams.get('amount') || '50';
+    var fpCurrency = urlParams.get('currency') || 'EUR';
+    var fpTemplate = urlParams.get('template') || 'v4';
+    var fpLang = urlParams.get('lang') || 'es';
+    var fpEnv = urlParams.get('env') || 'sandbox';
+  </script>
 </head>
 <body>
   <button
@@ -28,71 +38,65 @@
     data-template="v4"
     data-callback="onFastPayDone"
     data-lang="es"
-  ></button>
-
+    data-paymentbutton="Pagar"
+    data-cardholdername="false"
+    data-notab="true"
+  >
+    Pagar
+  </button>
+  
   <script>
-    (function() {
-      var params = new URLSearchParams(window.location.search);
-      var btn = document.getElementById('fp-btn');
-      if (btn) {
-        var key = params.get('key');
-        var amount = params.get('amount');
-        var currency = params.get('currency');
-        var template = params.get('template');
-        var lang = params.get('lang');
-        if (key) btn.setAttribute('data-key', key);
-        if (amount !== null && amount !== '') btn.setAttribute('data-amount', amount);
-        if (currency) btn.setAttribute('data-currency', currency);
-        if (template) btn.setAttribute('data-template', template);
-        if (lang) btn.setAttribute('data-lang', lang);
+    // Setear atributos con los valores de query params
+    var btn = document.getElementById('fp-btn');
+    if (btn) {
+      btn.setAttribute('data-key', fpKey);
+      btn.setAttribute('data-amount', fpAmount);
+      btn.setAttribute('data-currency', fpCurrency);
+      btn.setAttribute('data-template', fpTemplate);
+      btn.setAttribute('data-lang', fpLang);
+    }
+    
+    function onFastPayDone(data) {
+      console.log('FastPay callback', data);
+      if (window.parent !== window) {
+        window.parent.postMessage({ 
+          type: 'sipay_fastpay_done', 
+          request_id: data && data.request_id ? data.request_id : null, 
+          payload: data 
+        }, '*');
+      } else {
+        alert('request_id: ' + (data && data.request_id ? data.request_id : 'N/A'));
       }
-
-      window.onFastPayDone = function(data) {
-        if (window.parent !== window) {
-          window.parent.postMessage({
-            type: 'sipay_fastpay_done',
-            request_id: (data && data.request_id) ? data.request_id : null,
-            payload: data
-          }, '*');
-        } else {
-          if (data && data.request_id) console.log('request_id:', data.request_id);
-        }
-      };
-    })();
+    }
   </script>
+  
+  <!-- Script de Sipay hardcodeado en el HTML (orden correcto garantizado) -->
+  <script id="sipay-script"></script>
   <script>
-    (function() {
-      var params = new URLSearchParams(window.location.search);
-      var env = (params.get('env') || 'sandbox').toLowerCase();
-      var scriptUrl = env === 'live'
-        ? 'https://live.sipay.es/fpay/v1/static/bundle/fastpay.js'
-        : 'https://sandbox.sipay.es/fpay/v1/static/bundle/fastpay.js';
-
-      function openFastPay() {
-        var btn = document.querySelector('.fastpay-btn');
-        if (btn) btn.click();
+    // Insertar script de Sipay según el entorno
+    var scriptUrl = fpEnv === 'live' 
+      ? 'https://live.sipay.es/fpay/v1/static/bundle/fastpay.js'
+      : 'https://sandbox.sipay.es/fpay/v1/static/bundle/fastpay.js';
+    document.getElementById('sipay-script').src = scriptUrl;
+  </script>
+  
+  <script>
+    function openFastPay() {
+      var btn = document.querySelector(".fastpay-btn");
+      if (btn) {
+        console.log('Clicking FastPay button...');
+        btn.click();
       }
-      function scheduleOpen() {
-        setTimeout(openFastPay, 600);
-      }
-      function runWhenReady() {
-        if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', scheduleOpen);
-        } else {
-          scheduleOpen();
-        }
-      }
-
-      var s = document.createElement('script');
-      s.type = 'text/javascript';
-      s.src = scriptUrl;
-      s.onload = runWhenReady;
-      s.onerror = function() {
-        console.error('FastPay script failed to load');
-        runWhenReady();
-      };
-      document.body.appendChild(s);
-    })();
+    }
+    function scheduleOpen() {
+      // Dar tiempo a FastPay a crear su DOM interno antes del click programático
+      setTimeout(openFastPay, 600);
+    }
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", scheduleOpen);
+    } else {
+      scheduleOpen();
+    }
   </script>
 </body>
 </html>
