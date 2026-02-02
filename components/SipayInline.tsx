@@ -76,7 +76,10 @@ export default function SipayInline({
     lang,
     env,
   }).toString()
-  const iframeSrc = `/fastpay-standalone.html?${query}`
+  
+  // Construir URL absoluta para evitar que Next.js la resuelva con el prefijo [lang]
+  const origin = typeof window !== 'undefined' ? window.location.origin : ''
+  const iframeSrc = `${origin}/fastpay-standalone.html?${query}`
 
   return (
     <div
