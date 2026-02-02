@@ -511,7 +511,7 @@ export default function CheckoutSipay() {
                   </div>
 
                   {/* Formulario de Pago Sipay (enfoque oficial iframe_2026: iframe + postMessage) */}
-                  <div className="border-2 border-gray-200 rounded-xl p-6 bg-gray-50 min-h-[350px]">
+                  <div className="border-2 border-gray-200 rounded-xl p-6 bg-gray-50">
                     <h4 className="font-bold text-gray-900 mb-4">Datos de la Tarjeta</h4>
                     
                     {!paymentData ? (
@@ -521,7 +521,16 @@ export default function CheckoutSipay() {
                         <p className="text-xs text-gray-500">Powered by Sipay</p>
                       </div>
                     ) : (
-                      <div className="flex justify-center" style={{ minHeight: 480 }}>
+                      <div style={{
+                        width: '500px',
+                        maxWidth: '100%',
+                        height: '700px',
+                        margin: '0 auto',
+                        overflow: 'auto',
+                        borderRadius: '8px',
+                        border: '1px solid #e0e0e0',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                      }}>
                         <iframe
                           src={`/fastpay-standalone.html?${new URLSearchParams({
                             key: paymentData.sipayConfig?.key || 'clicklabsdigital',
@@ -530,8 +539,12 @@ export default function CheckoutSipay() {
                             lang: lang || 'es',
                           })}`}
                           title="Formulario de pago Sipay"
-                          className="rounded-lg border border-gray-200"
-                          style={{ width: 430, height: 700, maxWidth: '100%' }}
+                          style={{
+                            display: 'block',
+                            width: '430px',
+                            height: '700px',
+                            border: 'none',
+                          }}
                         />
                       </div>
                     )}

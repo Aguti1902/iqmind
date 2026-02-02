@@ -1,0 +1,46 @@
+{
+  "name": "mindmetric",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "verify-stripe": "node verify-stripe-setup.js",
+    "update-trial": "node update-trial-days.js",
+    "create-test-user": "node create-test-user.js"
+  },
+  "dependencies": {
+    "@sendgrid/mail": "^8.1.6",
+    "@stripe/react-stripe-js": "^5.2.0",
+    "@stripe/stripe-js": "^8.0.0",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/pg": "^8.15.5",
+    "@vercel/postgres": "^0.10.0",
+    "bcryptjs": "^3.0.2",
+    "jsonwebtoken": "^9.0.2",
+    "jspdf": "^3.0.3",
+    "next": "^14.2.35",
+    "next-intl": "^4.3.12",
+    "pg": "^8.16.3",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "react-icons": "^5.0.1",
+    "recharts": "^2.12.0",
+    "stripe": "^14.25.0",
+    "zustand": "^5.0.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "autoprefixer": "^10.4.18",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "^14.2.0",
+    "postcss": "^8.4.35",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.3.3"
+  }
+}
