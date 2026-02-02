@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FastPay - Formulario de pago</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow-x: hidden;
+    }
+    body { min-height: 100vh; }
+    .fastpay-btn { display: none; }
+  </style>
+</head>
+<body>
+  <button
+    type="button"
+    class="fastpay-btn"
+    id="fastpay-btn"
+    data-key=""
+    data-amount="50"
+    data-currency="EUR"
+    data-template="v4"
+    data-callback="onFastPayDone"
+    data-lang="es"
+    data-paymentbutton="Pagar 0,50 €"
+    data-cardholdername="true"
+    data-remember="checkbox"
+    data-remembertext="Recordar tarjeta"
+    data-hiddenprice="false"
+    data-notab="true"
+  >
+    Pagar
+  </button>
+  <script>
+    (function() {
+      var params = new URLSearchParams(window.location.search);
+      var key = params.get('key') || 'clicklabsdigital';
+      var amount = params.get('amount') || '50';
+      var orderId = params.get('orderId') || '';
+      var lang = params.get('lang') || 'es';
+      var btn = document.getElementById('fastpay-btn');
+      if (btn) {
+        btn.setAttribute('data-key', key);
+        btn.setAttribute('data-amount', amount);
+        btn.setAttribute('data-lang', lang);
+        btn.setAttribute('data-paymentbutton', 'Pagar ' + (Number(amount) / 100).toFixed(2).replace('.', ',') + ' €');
+      }
+    })();
+    function onFastPayDone(data) {
+      console.log('FastPay callback', data);
+      var params = new URLSearchParams(window.location.search);
+      var orderId = params.get('orderId') || '';
+      var amountCents = params.get('amount') || '50';
+      if (window.parent !== window) {
+        window.parent.postMessage({
+          type: 'sipay_fastpay_done',
+          request_id: data && data.request_id ? data.request_id : null,
+          orderId: orderId,
+          amountCents: amountCents,
+          payload: data
+        }, '*');
+      } else {
+        alert('request_id: ' + (data && data.request_id ? data.request_id : 'N/A'));
+      }
+    }
+  </script>
+  <!-- Script al final para que el botón ya exista en el DOM cuando se ejecuta (recomendación Sipay) -->
+  <script type="text/javascript" src="https://sandbox.sipay.es/fpay/v1/static/bundle/fastpay.js"></script>
+  <script>
+    function openFastPay() {
+      var btn = document.querySelector('.fastpay-btn');
+      if (btn) btn.click();
+    }
+    function scheduleOpen() {
+      setTimeout(openFastPay, 600);
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', scheduleOpen);
+    } else {
+      scheduleOpen();
+    }
+  </script>
+</body>
+</html>
