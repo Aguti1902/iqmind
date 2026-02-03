@@ -55,6 +55,32 @@
     Pagar
   </button>
   <script>
+    // IMPORTANTE: El callback DEBE estar en window ANTES de cargar fastpay.js
+    window.onFastPayDone = function(data) {
+      console.log('✅ FastPay callback received:', data);
+      if (window.parent !== window) {
+        window.parent.postMessage({ 
+          type: 'sipay_fastpay_done', 
+          request_id: data && data.request_id ? data.request_id : null, 
+          payload: data 
+        }, '*');
+      } else {
+        alert('request_id: ' + (data && data.request_id ? data.request_id : 'N/A'));
+      }
+    };
+    
+    // Listener para capturar CUALQUIER mensaje de Sipay
+    window.addEventListener('message', function(event) {
+      console.log('📨 Message received:', event.origin, event.data);
+      // Si viene de Sipay, también procesarlo
+      if (event.origin && event.origin.includes('sipay.es')) {
+        console.log('📨 Sipay message:', event.data);
+        if (event.data && event.data.request_id) {
+          window.onFastPayDone(event.data);
+        }
+      }
+    });
+    
     // Leer parámetros de URL y aplicarlos al botón
     (function() {
       var params = new URLSearchParams(window.location.search);
@@ -70,17 +96,9 @@
         if (currency) btn.setAttribute('data-currency', currency);
         if (template) btn.setAttribute('data-template', template);
         if (lang) btn.setAttribute('data-lang', lang);
+        console.log('FastPay config:', { key, amount, currency, template, lang });
       }
     })();
-    
-    function onFastPayDone(data) {
-      console.log('FastPay callback', data);
-      if (window.parent !== window) {
-        window.parent.postMessage({ type: 'sipay_fastpay_done', request_id: data && data.request_id ? data.request_id : null, payload: data }, '*');
-      } else {
-        alert('request_id: ' + (data && data.request_id ? data.request_id : 'N/A'));
-      }
-    }
   </script>
   <!-- Script al final para que el botón ya exista en el DOM cuando se ejecuta -->
   <script type="text/javascript" src="https://sandbox.sipay.es/fpay/v1/static/bundle/fastpay.js"></script>
