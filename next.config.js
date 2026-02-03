@@ -25,7 +25,7 @@ const nextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value: "frame-ancestors 'self' https://mindmetric.io https://*.mindmetric.io; script-src 'self' 'unsafe-inline' https://sandbox.sipay.es https://live.sipay.es; frame-src 'self' https://sandbox.sipay.es https://live.sipay.es;",
+            value: "default-src 'self' https://*.sipay.es; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.sipay.es; style-src 'self' 'unsafe-inline' https://*.sipay.es; frame-src 'self' https://*.sipay.es; connect-src 'self' https://*.sipay.es; img-src 'self' data: https://*.sipay.es; frame-ancestors 'self' https://mindmetric.io https://*.mindmetric.io;",
           },
         ],
       },
