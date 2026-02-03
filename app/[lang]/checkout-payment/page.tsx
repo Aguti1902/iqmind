@@ -310,43 +310,43 @@ function CheckoutPaymentContent() {
                 ) : paymentData ? (
                   <>
                     {/* Email Display */}
-                    <div className="mb-6">
-                      <label className="block text-gray-700 font-semibold mb-2">
+                    <div className="mb-4">
+                      <label className="block text-gray-700 font-semibold mb-1 text-sm">
                         Email
                       </label>
                       <input
                         type="email"
                         value={email}
                         readOnly
-                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg bg-gray-50"
+                        className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg bg-gray-50 text-sm"
                       />
                     </div>
 
                     {/* Order Summary */}
-                    <div className="bg-gray-50 rounded-xl p-6 mb-6">
-                      <h4 className="font-bold text-gray-900 mb-4">Resumen del Pedido</h4>
-                      <div className="space-y-3">
-                        <div className="flex justify-between">
+                    <div className="bg-gray-50 rounded-xl p-4 mb-4">
+                      <h4 className="font-bold text-gray-900 mb-2 text-sm">Resumen del Pedido</h4>
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
                           <span className="text-gray-700">Resultado del Test</span>
                           <span className="font-semibold">0,50€</span>
                         </div>
-                        <div className="flex justify-between">
+                        <div className="flex justify-between text-sm">
                           <div>
                             <span className="text-gray-700 block">Trial Premium (2 días)</span>
                             <span className="text-xs text-gray-500">Después 9,99€/mes</span>
                           </div>
                           <span className="font-semibold text-green-600">GRATIS</span>
                         </div>
-                        <div className="border-t-2 pt-3 flex justify-between items-center">
-                          <span className="text-lg font-bold text-gray-900">Total Hoy</span>
-                          <span className="text-3xl font-bold text-[#07C59A]">0,50€</span>
+                        <div className="border-t-2 pt-2 flex justify-between items-center">
+                          <span className="font-bold text-gray-900">Total Hoy</span>
+                          <span className="text-2xl font-bold text-[#07C59A]">0,50€</span>
                         </div>
                       </div>
                     </div>
 
                     {/* Sipay Payment Component: iframe con HTML estático en /public/fastpay-standalone.html */}
-                    <div className="border-2 border-gray-200 rounded-xl p-6 bg-gray-50">
-                      <h4 className="font-bold text-gray-900 mb-4">Datos de la Tarjeta</h4>
+                    <div className="border-2 border-gray-200 rounded-xl p-4 bg-gray-50">
+                      <h4 className="font-bold text-gray-900 mb-2">Datos de la Tarjeta</h4>
                       <SipayInline
                         merchantKey={paymentData.sipayConfig?.key || 'clicklabsdigital'}
                         amount={50}
@@ -357,28 +357,13 @@ function CheckoutPaymentContent() {
                         onRequestId={(requestId, payload) =>
                           handlePaymentSuccess({ request_id: requestId, ...(typeof payload === 'object' && payload !== null ? payload : {}) })
                         }
+                        height={520}
                       />
                     </div>
 
-                    {/* Terms */}
-                    <div className="mt-6">
-                      <label className="flex items-start gap-3 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          id="terms-checkbox"
-                          className="mt-1 w-5 h-5 text-[#07C59A] border-gray-300 rounded focus:ring-[#07C59A]"
-                          required
-                        />
-                        <span className="text-sm text-gray-700">
-                          Acepto los <a href={`/${lang}/terminos`} target="_blank" className="text-[#07C59A] underline font-semibold">términos y condiciones</a>.
-                          Después del trial de 2 días, se cobrará automáticamente 9,99€/mes. Cancela cuando quieras.
-                        </span>
-                      </label>
-                    </div>
-
                     {/* Security Badges */}
-                    <div className="text-center mt-6">
-                      <div className="flex items-center justify-center gap-4 text-sm text-gray-600 mb-2">
+                    <div className="text-center mt-3">
+                      <div className="flex items-center justify-center gap-3 text-xs text-gray-600">
                         <div className="flex items-center gap-1">
                           <i className="fas fa-lock text-green-500"></i>
                           <span>Pago 100% Seguro</span>
@@ -388,22 +373,18 @@ function CheckoutPaymentContent() {
                           <span>Protegido por Sipay</span>
                         </div>
                       </div>
-                      <p className="text-xs text-gray-500">
-                        Tus datos están encriptados y protegidos
-                      </p>
                     </div>
                   </>
                 ) : null}
               </div>
 
               {/* Guarantee */}
-              <div className="mt-6 bg-yellow-50 border-2 border-yellow-200 rounded-xl p-6 text-center">
-                <div className="text-4xl mb-2">🛡️</div>
-                <h4 className="font-bold text-yellow-900 mb-2">Garantía de Devolución</h4>
-                <p className="text-sm text-yellow-800">
-                  Si no estás satisfecho, te devolvemos tu dinero.
-                  <a href={`/${lang}/reembolso`} className="underline font-semibold ml-1">Ver política</a>
-                </p>
+              <div className="mt-4 bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-center">
+                <div className="flex items-center justify-center gap-2">
+                  <span className="text-xl">🛡️</span>
+                  <span className="font-semibold text-yellow-900 text-sm">Garantía de Devolución</span>
+                  <a href={`/${lang}/reembolso`} className="text-xs text-yellow-700 underline">Ver política</a>
+                </div>
               </div>
             </div>
           </div>

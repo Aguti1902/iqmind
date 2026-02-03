@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import MinimalHeader from '@/components/MinimalHeader'
 import Footer from '@/components/Footer'
@@ -19,7 +19,6 @@ export default function CheckoutSipay() {
   const [testType, setTestType] = useState<string>('iq')
   const [paymentData, setPaymentData] = useState<any>(null)
   const [scriptLoaded, setScriptLoaded] = useState(false)
-  const processPaymentRef = useRef<(orderId: string, requestId: string, amount: number, payload: any) => void>(() => {})
 
   // Configuración de mensajes según el tipo de test
   const testConfig: any = {
@@ -130,9 +129,60 @@ export default function CheckoutSipay() {
 
         console.log('✅ Sesión de pago creada:', data)
 
-        // Enfoque oficial Sipay (iframe_2026): el formulario FastPay va en un iframe
-        // que carga una página HTML estática; el resultado llega por postMessage.
+        // Definir callback global
+        ;(window as any).processSipayPayment = async (response: any) => {
+          console.log('📨 Respuesta de Sipay FastPay:', response)
+          
+          if (response.type === 'success' && response.request_id) {
+            await processPaymentWithRequestId(data.orderId, response.request_id, data.amount, response)
+          } else {
+            setError(response.description || 'Error capturando los datos de la tarjeta')
+            setIsProcessing(false)
+          }
+        }
+
+        // Guardar datos para renderizar el formulario
         setPaymentData(data)
+        
+        console.log('🎯 FastPay ya está cargado en el layout - El iframe debería renderizarse automáticamente')
+        console.log('📊 Datos de pago guardados:', {
+          orderId: data.orderId,
+          amount: data.amount,
+          sipayKey: data.sipayConfig?.key,
+          hasCallback: typeof (window as any).processSipayPayment === 'function'
+        })
+        
+        // Verificar estado del script y DOM después de 1 segundo
+        setTimeout(() => {
+          console.log('🔍 === DEBUG COMPLETO ===')
+          console.log('1. ¿Script fastpay.js cargado?', !!document.querySelector('script[src*="fastpay.js"]'))
+          console.log('2. ¿Objeto FastPay existe?', typeof (window as any).FastPay)
+          console.log('3. ¿Botón en DOM?', !!document.querySelector('.fastpay-btn'))
+          console.log('4. HTML del contenedor:', document.getElementById('sipay-payment-form')?.innerHTML.substring(0, 200))
+          console.log('5. ¿Iframe renderizado?', !!document.querySelector('iframe[src*="sipay"]'))
+          
+          const button = document.querySelector('.fastpay-btn')
+          if (button) {
+            console.log('6. Atributos del botón:')
+            Array.from(button.attributes).forEach(attr => {
+              console.log(`   - ${attr.name}: ${attr.value}`)
+            })
+          }
+          
+          console.log('======================')
+        }, 1000)
+        
+        // Verificar después de 3 segundos
+        setTimeout(() => {
+          const iframe = document.querySelector('iframe[src*="sipay"]')
+          if (!iframe) {
+            console.error('❌ DESPUÉS DE 3 SEGUNDOS: Iframe NO detectado')
+            console.error('🔧 Posible causa: FastPay no compatible con React')
+          } else {
+            console.log('✅ DESPUÉS DE 3 SEGUNDOS: Iframe SÍ detectado')
+          }
+        }, 3000)
+        
       } catch (error: any) {
         console.error('Error:', error)
         setError(error.message || 'Error cargando el formulario de pago')
@@ -183,7 +233,6 @@ export default function CheckoutSipay() {
         setIsProcessing(false)
       }
     }
-    processPaymentRef.current = processPaymentWithRequestId
 
     const initializeSipayForm_OLD = (data: any) => {
       try {
@@ -282,25 +331,88 @@ export default function CheckoutSipay() {
     loadSipayPayment()
   }, [email, userIQ, userName, lang, router])
 
-  // Listener postMessage: enfoque oficial Sipay (iframe_2026) — el iframe envía sipay_fastpay_done
+  // useEffect para logs exhaustivos cuando cambia paymentData
   useEffect(() => {
-    const handler = (event: MessageEvent) => {
-      if (event.data?.type !== 'sipay_fastpay_done' || !event.data?.request_id) return
-      const orderId = event.data.orderId
-      const requestId = event.data.request_id
-      const amountCents = event.data.amountCents || '50'
-      const amount = Number(amountCents) / 100
-      const payload = event.data.payload
-      processPaymentRef.current(orderId, requestId, amount, payload)
+    if (!paymentData) {
+      console.log('⚪ paymentData es null - esperando datos...')
+      return
     }
-    window.addEventListener('message', handler)
-    return () => window.removeEventListener('message', handler)
-  }, [])
+
+    console.log('🟢 paymentData actualizado - iniciando verificación exhaustiva')
+    console.log('📦 paymentData completo:', paymentData)
+
+    // Verificar inmediatamente
+    const checkFastPayImmediately = () => {
+      console.log('🔍 [Verificación Inmediata]')
+      console.log('  - FastPay global:', typeof (window as any).FastPay)
+      console.log('  - Script en DOM:', !!document.querySelector('script[src*="fastpay.js"]'))
+      console.log('  - Callback definido:', typeof (window as any).processSipayPayment)
+    }
+
+    checkFastPayImmediately()
+
+    // Verificar después de que React termine de renderizar
+    const timer1 = setTimeout(() => {
+      console.log('🔍 [Después de 100ms - React debería haber renderizado]')
+      const container = document.getElementById('sipay-payment-form')
+      const button = document.querySelector('.fastpay-btn')
+      
+      console.log('  - Contenedor existe:', !!container)
+      console.log('  - Botón existe:', !!button)
+      
+      if (button) {
+        console.log('  - Botón HTML:', (button as HTMLElement).outerHTML)
+        console.log('  - Clases del botón:', button.className)
+        console.log('  - data-key:', button.getAttribute('data-key'))
+        console.log('  - data-amount:', button.getAttribute('data-amount'))
+        console.log('  - data-callback:', button.getAttribute('data-callback'))
+      } else {
+        console.error('  ❌ Botón NO encontrado en el DOM')
+      }
+
+      const iframe = document.querySelector('iframe[src*="sipay"]')
+      console.log('  - Iframe existe:', !!iframe)
+      if (iframe) {
+        console.log('  - Iframe src:', (iframe as HTMLIFrameElement).src)
+      }
+    }, 100)
+
+    // Verificar después de 1 segundo
+    const timer2 = setTimeout(() => {
+      console.log('🔍 [Después de 1 segundo]')
+      const iframe = document.querySelector('iframe[src*="sipay"]')
+      if (iframe) {
+        console.log('  ✅ Iframe renderizado!')
+      } else {
+        console.error('  ❌ Iframe NO renderizado - FastPay NO transformó el botón')
+        console.error('  💡 Esto confirma que FastPay NO funciona en React/Next.js')
+      }
+    }, 1000)
+
+    // Verificar después de 3 segundos
+    const timer3 = setTimeout(() => {
+      console.log('🔍 [Verificación Final - 3 segundos]')
+      const iframe = document.querySelector('iframe[src*="sipay"]')
+      if (!iframe) {
+        console.error('  ❌ CONFIRMADO: FastPay NO es compatible con React')
+        console.error('  📋 Resumen:')
+        console.error('    - Script cargado: ✅')
+        console.error('    - Botón en DOM: ✅')
+        console.error('    - Atributos correctos: ✅')
+        console.error('    - Iframe renderizado: ❌')
+        console.error('  💬 FastPay simplemente NO detecta el botón en React')
+      }
+    }, 3000)
+
+    return () => {
+      clearTimeout(timer1)
+      clearTimeout(timer2)
+      clearTimeout(timer3)
+    }
+  }, [paymentData])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Con el enfoque iframe (Sipay iframe_2026) el pago se hace dentro del iframe; no usamos submit.
-    if (paymentData) return
 
     if (!agreedToTerms) {
       setError(t?.checkout?.termsRequired || 'Debes aceptar los términos y condiciones')
@@ -312,6 +424,7 @@ export default function CheckoutSipay() {
       return
     }
 
+    // Verificar que la instancia de Sipay esté lista
     const sipayInstance = (window as any).sipayInstance
     if (!sipayInstance) {
       setError('Formulario de pago no inicializado. Por favor recarga la página.')
@@ -510,8 +623,8 @@ export default function CheckoutSipay() {
                     </div>
                   </div>
 
-                  {/* Formulario de Pago Sipay (enfoque oficial iframe_2026: iframe + postMessage) */}
-                  <div className="border-2 border-gray-200 rounded-xl p-6 bg-gray-50">
+                  {/* Formulario de Pago de Sipay */}
+                  <div className="border-2 border-gray-200 rounded-xl p-6 bg-gray-50 min-h-[350px]">
                     <h4 className="font-bold text-gray-900 mb-4">Datos de la Tarjeta</h4>
                     
                     {!paymentData ? (
@@ -521,31 +634,13 @@ export default function CheckoutSipay() {
                         <p className="text-xs text-gray-500">Powered by Sipay</p>
                       </div>
                     ) : (
-                      <div style={{
-                        width: '500px',
-                        maxWidth: '100%',
-                        height: '700px',
-                        margin: '0 auto',
-                        overflow: 'auto',
-                        borderRadius: '8px',
-                        border: '1px solid #e0e0e0',
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-                      }}>
-                        <iframe
-                          src={`/fastpay-standalone.html?${new URLSearchParams({
-                            key: paymentData.sipayConfig?.key || 'clicklabsdigital',
-                            amount: String(Math.round((paymentData.amount || 0.5) * 100)),
-                            orderId: paymentData.orderId,
-                            lang: lang || 'es',
-                          })}`}
-                          title="Formulario de pago Sipay"
-                          style={{
-                            display: 'block',
-                            width: '430px',
-                            height: '700px',
-                            border: 'none',
-                          }}
-                        />
+                      <div className="text-center py-12">
+                        <p className="text-gray-600 mb-4">
+                          El checkout ha sido migrado a HTML estático.
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          Redirigiendo...
+                        </p>
                       </div>
                     )}
                   </div>
@@ -573,35 +668,28 @@ export default function CheckoutSipay() {
                     </label>
                   </div>
 
-                  {/* Botón de Pago (oculto cuando el iframe está visible; el pago es dentro del iframe) */}
-                  {!paymentData && (
-                    <button
-                      type="submit"
-                      disabled={isProcessing || !agreedToTerms}
-                      className={`w-full py-4 rounded-xl font-bold text-lg transition-all duration-200 flex items-center justify-center gap-3 ${
-                        isProcessing || !agreedToTerms
-                          ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                          : 'bg-[#113240] text-white hover:bg-[#052547] shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
-                      }`}
-                    >
-                      {isProcessing ? (
-                        <>
-                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                          Procesando...
-                        </>
-                      ) : (
-                        <>
-                          <FaLock />
-                          Pagar 0,50€ Ahora
-                        </>
-                      )}
-                    </button>
-                  )}
-                  {paymentData && (
-                    <p className="text-center text-sm text-gray-600 py-2">
-                      Introduce los datos de tu tarjeta en el formulario seguro de arriba.
-                    </p>
-                  )}
+                  {/* Botón de Pago */}
+                  <button
+                    type="submit"
+                    disabled={isProcessing || !agreedToTerms}
+                    className={`w-full py-4 rounded-xl font-bold text-lg transition-all duration-200 flex items-center justify-center gap-3 ${
+                      isProcessing || !agreedToTerms
+                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        : 'bg-[#113240] text-white hover:bg-[#052547] shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
+                    }`}
+                  >
+                    {isProcessing ? (
+                      <>
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                        Procesando...
+                      </>
+                    ) : (
+                      <>
+                        <FaLock />
+                        Pagar 0,50€ Ahora
+                      </>
+                    )}
+                  </button>
 
                   {/* Badges de Seguridad */}
                   <div className="text-center">
