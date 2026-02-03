@@ -390,7 +390,7 @@ export const db = {
       [
         testResult.id, 
         testResult.userId, 
-        testResult.iq,
+        Math.round(testResult.iq), // Redondear IQ a entero
         testResult.correctAnswers, 
         testResult.timeElapsed,
         JSON.stringify(testResult.answers), 
