@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getSipayClient } from '@/lib/sipay-client'
 import { db } from '@/lib/database-postgres'
 import { checkRateLimit, getClientIP, rateLimitResponse } from '@/lib/api-security'
+import { sendEmail, emailTemplates } from '@/lib/email-service'
 
 export const dynamic = 'force-dynamic'
 
@@ -133,13 +134,48 @@ export async function POST(request: NextRequest) {
       console.log('✅ Token de tarjeta guardado')
     }
 
+    // Calcular fecha de fin del trial (2 días)
+    const trialEndDate = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
+    
     // Actualizar estado del usuario
     await db.updateUser(user.id, {
       subscriptionStatus: 'trial',
-      trialEndDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 días
+      trialEndDate: trialEndDate.toISOString(),
     })
 
     console.log('✅ Pago procesado exitosamente')
+
+    // Obtener el IQ del usuario (si existe)
+    const testResults = await db.getTestResultsByUserId(user.id)
+    const latestResult = testResults && testResults.length > 0 ? testResults[0] : null
+    const userIQ = latestResult?.iq || 100
+
+    // Enviar emails
+    const userName = user.name || userEmail.split('@')[0]
+    const trialEndFormatted = trialEndDate.toLocaleDateString(paymentLang === 'es' ? 'es-ES' : 'en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+
+    // 1. Email de pago confirmado
+    try {
+      const paymentEmail = emailTemplates.paymentSuccess(userEmail, userName, userIQ, paymentLang)
+      await sendEmail(paymentEmail)
+      console.log('📧 Email de pago enviado')
+    } catch (e) {
+      console.error('⚠️ Error enviando email de pago:', e)
+    }
+
+    // 2. Email de trial iniciado
+    try {
+      const trialEmail = emailTemplates.trialStarted(userEmail, userName, trialEndFormatted, paymentLang)
+      await sendEmail(trialEmail)
+      console.log('📧 Email de trial enviado')
+    } catch (e) {
+      console.error('⚠️ Error enviando email de trial:', e)
+    }
 
     return NextResponse.json({
       success: true,
@@ -151,6 +187,7 @@ export async function POST(request: NextRequest) {
       authorizationCode: response.authorization_code,
       amount: response.amount,
       status: response.transaction_status,
+      trialEndDate: trialEndDate.toISOString(),
     })
 
   } catch (error: any) {
