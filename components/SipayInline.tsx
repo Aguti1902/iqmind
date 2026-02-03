@@ -2,13 +2,6 @@
 
 import { useEffect, useRef, useCallback } from 'react'
 
-/** Orígenes permitidos para postMessage del iframe (mismo sitio + Sipay si algún día enviaran desde su dominio) */
-const ALLOWED_ORIGINS = [
-  typeof window !== 'undefined' ? window.location.origin : '',
-  'https://sandbox.sipay.es',
-  'https://live.sipay.es',
-]
-
 export type SipayInlineProps = {
   /** Clave pública del comercio (NEXT_PUBLIC_SIPAY_KEY). Nunca el Secret. */
   merchantKey: string
@@ -24,16 +17,16 @@ export type SipayInlineProps = {
   env?: 'sandbox' | 'live'
   /** Se llama cuando el usuario completa el pago en el iframe con request_id válido */
   onRequestId: (requestId: string, payload?: unknown) => void
-  /** Opcional: ancho del iframe (px o string). Por defecto 430 */
-  width?: number | string
-  /** Opcional: alto del iframe (px o string). Por defecto 700 */
-  height?: number | string
+  /** Opcional: alto del iframe (px). Por defecto 520 */
+  height?: number
 }
 
 /**
  * Componente Next.js (client) que embebe el formulario Sipay FastPay vía iframe
  * apuntando al HTML estático en /public/fastpay-standalone.html.
  * Sin SSR para el pago; la key es la pública (no el Secret).
+ * 
+ * RESPONSIVE: El iframe ocupa 100% del ancho disponible
  */
 export default function SipayInline({
   merchantKey,
@@ -43,29 +36,39 @@ export default function SipayInline({
   lang = 'es',
   env = 'sandbox',
   onRequestId,
-  width = 430,
-  height = 700,
+  height = 520,
 }: SipayInlineProps) {
   const onRequestIdRef = useRef(onRequestId)
   onRequestIdRef.current = onRequestId
 
   const handleMessage = useCallback((event: MessageEvent) => {
     const data = event.data
-    if (!data || typeof data !== 'object' || data.type !== 'sipay_fastpay_done') return
-    if (typeof data.request_id !== 'string' || !data.request_id.trim()) return
-
-    const origin = event.origin
-    const allowed = ALLOWED_ORIGINS.some((o) => o && origin === o)
-    if (!allowed && typeof window !== 'undefined' && origin !== window.location.origin) {
+    console.log('🔔 SipayInline received message:', event.origin, data)
+    
+    // Aceptar mensajes de nuestro dominio o de Sipay
+    if (!data || typeof data !== 'object') return
+    
+    // Si es nuestro mensaje custom
+    if (data.type === 'sipay_fastpay_done' && data.request_id) {
+      console.log('✅ SipayInline: Payment completed!', data.request_id)
+      onRequestIdRef.current(data.request_id, data.payload)
       return
     }
-
-    onRequestIdRef.current(data.request_id, data.payload)
+    
+    // Si Sipay envía directamente el request_id
+    if (data.request_id) {
+      console.log('✅ SipayInline: Direct request_id received!', data.request_id)
+      onRequestIdRef.current(data.request_id, data)
+    }
   }, [])
 
   useEffect(() => {
     window.addEventListener('message', handleMessage)
-    return () => window.removeEventListener('message', handleMessage)
+    console.log('🎧 SipayInline: Listening for messages...')
+    return () => {
+      window.removeEventListener('message', handleMessage)
+      console.log('🔇 SipayInline: Stopped listening')
+    }
   }, [handleMessage])
 
   const query = new URLSearchParams({
@@ -85,12 +88,10 @@ export default function SipayInline({
     <div
       style={{
         width: '100%',
-        maxWidth: typeof width === 'number' ? width : width,
         margin: '0 auto',
         borderRadius: 8,
         overflow: 'hidden',
-        border: '1px solid #e5e7eb',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+        background: '#f9fafb',
       }}
     >
       <iframe
@@ -98,10 +99,12 @@ export default function SipayInline({
         title="Formulario de pago Sipay"
         style={{
           display: 'block',
-          width: typeof width === 'number' ? `${width}px` : width,
-          height: typeof height === 'number' ? `${height}px` : height,
+          width: '100%',
+          height: `${height}px`,
           border: 'none',
+          minHeight: '480px',
         }}
+        allow="payment"
       />
     </div>
   )

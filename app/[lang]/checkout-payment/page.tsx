@@ -345,8 +345,8 @@ function CheckoutPaymentContent() {
                     </div>
 
                     {/* Sipay Payment Component: iframe con HTML estático en /public/fastpay-standalone.html */}
-                    <div className="border-2 border-gray-200 rounded-xl p-4 bg-gray-50">
-                      <h4 className="font-bold text-gray-900 mb-2">Datos de la Tarjeta</h4>
+                    <div className="border-2 border-gray-200 rounded-xl p-2 sm:p-4 bg-gray-50">
+                      <h4 className="font-bold text-gray-900 mb-2 text-sm sm:text-base">Datos de la Tarjeta</h4>
                       <SipayInline
                         merchantKey={paymentData.sipayConfig?.key || 'clicklabsdigital'}
                         amount={50}
@@ -354,10 +354,11 @@ function CheckoutPaymentContent() {
                         template="v4"
                         lang={lang}
                         env={paymentData.sipayConfig?.endpoint?.includes('live') ? 'live' : 'sandbox'}
-                        onRequestId={(requestId, payload) =>
+                        onRequestId={(requestId, payload) => {
+                          console.log('🎉 Payment success! request_id:', requestId)
                           handlePaymentSuccess({ request_id: requestId, ...(typeof payload === 'object' && payload !== null ? payload : {}) })
-                        }
-                        height={520}
+                        }}
+                        height={540}
                       />
                     </div>
 
