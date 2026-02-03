@@ -135,6 +135,7 @@ function CheckoutPaymentContent() {
           email: email,
           amount: 0.50,
           lang: lang,
+          testType: testType, // Enviar tipo de test para email correcto
         }),
       })
 

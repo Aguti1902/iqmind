@@ -1075,5 +1075,260 @@ export const emailTemplates = {
       </html>
     `
   }),
+
+  // ============================================
+  // EMAILS POR TIPO DE TEST
+  // ============================================
+
+  // Test de Personalidad
+  personalityTestResult: (email: string, userName: string, lang: string, traits?: any) => ({
+    to: email,
+    subject: lang === 'es'
+      ? '🎯 Tu Perfil de Personalidad está listo!'
+      : '🎯 Your Personality Profile is ready!',
+    html: `
+      <!DOCTYPE html>
+      <html>
+      <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+      <body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f5f5;">
+        <table style="width:100%;border-collapse:collapse;">
+          <tr><td align="center" style="padding:40px 20px;">
+            <table style="max-width:600px;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 6px rgba(0,0,0,0.1);">
+              <tr><td style="background:linear-gradient(135deg,#8B5CF6 0%,#6D28D9 100%);padding:40px 30px;text-align:center;">
+                <img src="https://www.mindmetric.io/images/MINDMETRIC/Logo_blanco.png" alt="MindMetric" style="height:32px;margin:0 auto 20px;display:block;"/>
+                <h1 style="color:#fff;margin:0;font-size:28px;">🎯 ${lang === 'es' ? 'Tu Perfil de Personalidad' : 'Your Personality Profile'}</h1>
+              </td></tr>
+              <tr><td style="padding:40px 30px;text-align:center;">
+                <h2 style="color:#113240;margin:0 0 20px;">${lang === 'es' ? '¡Hola' : 'Hello'}, ${userName}!</h2>
+                <p style="color:#4a5568;font-size:16px;line-height:1.6;margin:0 0 30px;">
+                  ${lang === 'es' 
+                    ? 'Has completado el Test de Personalidad Big Five. Tu perfil detallado te espera.'
+                    : 'You have completed the Big Five Personality Test. Your detailed profile awaits.'}
+                </p>
+                <div style="background:linear-gradient(135deg,#8B5CF6 0%,#6D28D9 100%);border-radius:16px;padding:30px;margin:30px 0;color:#fff;">
+                  <p style="margin:0;font-size:18px;font-weight:600;">
+                    ${lang === 'es' ? '5 Rasgos Analizados' : '5 Traits Analyzed'}
+                  </p>
+                  <p style="margin:10px 0 0;font-size:14px;opacity:0.9;">
+                    ${lang === 'es' 
+                      ? 'Apertura • Responsabilidad • Extroversión • Amabilidad • Neuroticismo'
+                      : 'Openness • Conscientiousness • Extraversion • Agreeableness • Neuroticism'}
+                  </p>
+                </div>
+                <a href="https://mindmetric.io/${lang}/resultado?testType=personality" style="display:inline-block;background:linear-gradient(135deg,#8B5CF6 0%,#6D28D9 100%);color:#fff;text-decoration:none;padding:16px 40px;border-radius:8px;font-weight:600;font-size:16px;">
+                  ${lang === 'es' ? 'Ver Mi Perfil Completo' : 'View My Complete Profile'}
+                </a>
+              </td></tr>
+              <tr><td style="background:#f7fafc;padding:30px;text-align:center;border-top:1px solid #e2e8f0;">
+                <p style="color:#718096;font-size:12px;margin:0;">© ${new Date().getFullYear()} MindMetric</p>
+              </td></tr>
+            </table>
+          </td></tr>
+        </table>
+      </body>
+      </html>
+    `
+  }),
+
+  // Test de TDAH
+  adhdTestResult: (email: string, userName: string, lang: string, score?: number) => ({
+    to: email,
+    subject: lang === 'es'
+      ? '🎯 Tu Evaluación de TDAH está lista!'
+      : '🎯 Your ADHD Assessment is ready!',
+    html: `
+      <!DOCTYPE html>
+      <html>
+      <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+      <body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f5f5;">
+        <table style="width:100%;border-collapse:collapse;">
+          <tr><td align="center" style="padding:40px 20px;">
+            <table style="max-width:600px;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 6px rgba(0,0,0,0.1);">
+              <tr><td style="background:linear-gradient(135deg,#F59E0B 0%,#D97706 100%);padding:40px 30px;text-align:center;">
+                <img src="https://www.mindmetric.io/images/MINDMETRIC/Logo_blanco.png" alt="MindMetric" style="height:32px;margin:0 auto 20px;display:block;"/>
+                <h1 style="color:#fff;margin:0;font-size:28px;">🎯 ${lang === 'es' ? 'Evaluación de TDAH' : 'ADHD Assessment'}</h1>
+              </td></tr>
+              <tr><td style="padding:40px 30px;text-align:center;">
+                <h2 style="color:#113240;margin:0 0 20px;">${lang === 'es' ? '¡Hola' : 'Hello'}, ${userName}!</h2>
+                <p style="color:#4a5568;font-size:16px;line-height:1.6;margin:0 0 30px;">
+                  ${lang === 'es' 
+                    ? 'Has completado la evaluación de síntomas de TDAH. Tu análisis detallado está disponible.'
+                    : 'You have completed the ADHD symptoms assessment. Your detailed analysis is available.'}
+                </p>
+                <div style="background:linear-gradient(135deg,#F59E0B 0%,#D97706 100%);border-radius:16px;padding:30px;margin:30px 0;color:#fff;">
+                  <p style="margin:0;font-size:18px;font-weight:600;">
+                    ${lang === 'es' ? 'Áreas Evaluadas' : 'Areas Evaluated'}
+                  </p>
+                  <p style="margin:10px 0 0;font-size:14px;opacity:0.9;">
+                    ${lang === 'es' 
+                      ? 'Inatención • Hiperactividad • Impulsividad'
+                      : 'Inattention • Hyperactivity • Impulsivity'}
+                  </p>
+                </div>
+                <a href="https://mindmetric.io/${lang}/resultado?testType=adhd" style="display:inline-block;background:linear-gradient(135deg,#F59E0B 0%,#D97706 100%);color:#fff;text-decoration:none;padding:16px 40px;border-radius:8px;font-weight:600;font-size:16px;">
+                  ${lang === 'es' ? 'Ver Mi Evaluación' : 'View My Assessment'}
+                </a>
+              </td></tr>
+              <tr><td style="background:#f7fafc;padding:30px;text-align:center;border-top:1px solid #e2e8f0;">
+                <p style="color:#718096;font-size:12px;margin:0;">© ${new Date().getFullYear()} MindMetric</p>
+              </td></tr>
+            </table>
+          </td></tr>
+        </table>
+      </body>
+      </html>
+    `
+  }),
+
+  // Test de Ansiedad
+  anxietyTestResult: (email: string, userName: string, lang: string, level?: string) => ({
+    to: email,
+    subject: lang === 'es'
+      ? '💙 Tu Evaluación de Ansiedad está lista!'
+      : '💙 Your Anxiety Assessment is ready!',
+    html: `
+      <!DOCTYPE html>
+      <html>
+      <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+      <body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f5f5;">
+        <table style="width:100%;border-collapse:collapse;">
+          <tr><td align="center" style="padding:40px 20px;">
+            <table style="max-width:600px;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 6px rgba(0,0,0,0.1);">
+              <tr><td style="background:linear-gradient(135deg,#3B82F6 0%,#1D4ED8 100%);padding:40px 30px;text-align:center;">
+                <img src="https://www.mindmetric.io/images/MINDMETRIC/Logo_blanco.png" alt="MindMetric" style="height:32px;margin:0 auto 20px;display:block;"/>
+                <h1 style="color:#fff;margin:0;font-size:28px;">💙 ${lang === 'es' ? 'Evaluación de Ansiedad' : 'Anxiety Assessment'}</h1>
+              </td></tr>
+              <tr><td style="padding:40px 30px;text-align:center;">
+                <h2 style="color:#113240;margin:0 0 20px;">${lang === 'es' ? '¡Hola' : 'Hello'}, ${userName}!</h2>
+                <p style="color:#4a5568;font-size:16px;line-height:1.6;margin:0 0 30px;">
+                  ${lang === 'es' 
+                    ? 'Has completado la evaluación de niveles de ansiedad. Tus resultados están listos para revisar.'
+                    : 'You have completed the anxiety levels assessment. Your results are ready to review.'}
+                </p>
+                <div style="background:linear-gradient(135deg,#3B82F6 0%,#1D4ED8 100%);border-radius:16px;padding:30px;margin:30px 0;color:#fff;">
+                  <p style="margin:0;font-size:18px;font-weight:600;">
+                    ${lang === 'es' ? 'Análisis Completo' : 'Complete Analysis'}
+                  </p>
+                  <p style="margin:10px 0 0;font-size:14px;opacity:0.9;">
+                    ${lang === 'es' 
+                      ? 'Síntomas físicos • Síntomas cognitivos • Recomendaciones'
+                      : 'Physical symptoms • Cognitive symptoms • Recommendations'}
+                  </p>
+                </div>
+                <a href="https://mindmetric.io/${lang}/resultado?testType=anxiety" style="display:inline-block;background:linear-gradient(135deg,#3B82F6 0%,#1D4ED8 100%);color:#fff;text-decoration:none;padding:16px 40px;border-radius:8px;font-weight:600;font-size:16px;">
+                  ${lang === 'es' ? 'Ver Mi Evaluación' : 'View My Assessment'}
+                </a>
+              </td></tr>
+              <tr><td style="background:#f7fafc;padding:30px;text-align:center;border-top:1px solid #e2e8f0;">
+                <p style="color:#718096;font-size:12px;margin:0;">© ${new Date().getFullYear()} MindMetric</p>
+              </td></tr>
+            </table>
+          </td></tr>
+        </table>
+      </body>
+      </html>
+    `
+  }),
+
+  // Test de Depresión
+  depressionTestResult: (email: string, userName: string, lang: string, level?: string) => ({
+    to: email,
+    subject: lang === 'es'
+      ? '🌟 Tu Evaluación de Depresión está lista!'
+      : '🌟 Your Depression Assessment is ready!',
+    html: `
+      <!DOCTYPE html>
+      <html>
+      <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+      <body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f5f5;">
+        <table style="width:100%;border-collapse:collapse;">
+          <tr><td align="center" style="padding:40px 20px;">
+            <table style="max-width:600px;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 6px rgba(0,0,0,0.1);">
+              <tr><td style="background:linear-gradient(135deg,#6366F1 0%,#4F46E5 100%);padding:40px 30px;text-align:center;">
+                <img src="https://www.mindmetric.io/images/MINDMETRIC/Logo_blanco.png" alt="MindMetric" style="height:32px;margin:0 auto 20px;display:block;"/>
+                <h1 style="color:#fff;margin:0;font-size:28px;">🌟 ${lang === 'es' ? 'Evaluación de Depresión' : 'Depression Assessment'}</h1>
+              </td></tr>
+              <tr><td style="padding:40px 30px;text-align:center;">
+                <h2 style="color:#113240;margin:0 0 20px;">${lang === 'es' ? '¡Hola' : 'Hello'}, ${userName}!</h2>
+                <p style="color:#4a5568;font-size:16px;line-height:1.6;margin:0 0 30px;">
+                  ${lang === 'es' 
+                    ? 'Has completado la evaluación de síntomas depresivos. Tu análisis detallado está disponible.'
+                    : 'You have completed the depressive symptoms assessment. Your detailed analysis is available.'}
+                </p>
+                <div style="background:linear-gradient(135deg,#6366F1 0%,#4F46E5 100%);border-radius:16px;padding:30px;margin:30px 0;color:#fff;">
+                  <p style="margin:0;font-size:18px;font-weight:600;">
+                    ${lang === 'es' ? 'Áreas Evaluadas' : 'Areas Evaluated'}
+                  </p>
+                  <p style="margin:10px 0 0;font-size:14px;opacity:0.9;">
+                    ${lang === 'es' 
+                      ? 'Estado de ánimo • Energía • Patrones de sueño • Recomendaciones'
+                      : 'Mood • Energy • Sleep patterns • Recommendations'}
+                  </p>
+                </div>
+                <a href="https://mindmetric.io/${lang}/resultado?testType=depression" style="display:inline-block;background:linear-gradient(135deg,#6366F1 0%,#4F46E5 100%);color:#fff;text-decoration:none;padding:16px 40px;border-radius:8px;font-weight:600;font-size:16px;">
+                  ${lang === 'es' ? 'Ver Mi Evaluación' : 'View My Assessment'}
+                </a>
+              </td></tr>
+              <tr><td style="background:#f7fafc;padding:30px;text-align:center;border-top:1px solid #e2e8f0;">
+                <p style="color:#718096;font-size:12px;margin:0;">© ${new Date().getFullYear()} MindMetric</p>
+              </td></tr>
+            </table>
+          </td></tr>
+        </table>
+      </body>
+      </html>
+    `
+  }),
+
+  // Test de Inteligencia Emocional (EQ)
+  eqTestResult: (email: string, userName: string, lang: string, score?: number) => ({
+    to: email,
+    subject: lang === 'es'
+      ? '❤️ Tu Evaluación de Inteligencia Emocional está lista!'
+      : '❤️ Your Emotional Intelligence Assessment is ready!',
+    html: `
+      <!DOCTYPE html>
+      <html>
+      <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+      <body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f5f5;">
+        <table style="width:100%;border-collapse:collapse;">
+          <tr><td align="center" style="padding:40px 20px;">
+            <table style="max-width:600px;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 6px rgba(0,0,0,0.1);">
+              <tr><td style="background:linear-gradient(135deg,#EC4899 0%,#DB2777 100%);padding:40px 30px;text-align:center;">
+                <img src="https://www.mindmetric.io/images/MINDMETRIC/Logo_blanco.png" alt="MindMetric" style="height:32px;margin:0 auto 20px;display:block;"/>
+                <h1 style="color:#fff;margin:0;font-size:28px;">❤️ ${lang === 'es' ? 'Inteligencia Emocional' : 'Emotional Intelligence'}</h1>
+              </td></tr>
+              <tr><td style="padding:40px 30px;text-align:center;">
+                <h2 style="color:#113240;margin:0 0 20px;">${lang === 'es' ? '¡Hola' : 'Hello'}, ${userName}!</h2>
+                <p style="color:#4a5568;font-size:16px;line-height:1.6;margin:0 0 30px;">
+                  ${lang === 'es' 
+                    ? 'Has completado la evaluación de Inteligencia Emocional. Descubre tus fortalezas emocionales.'
+                    : 'You have completed the Emotional Intelligence assessment. Discover your emotional strengths.'}
+                </p>
+                <div style="background:linear-gradient(135deg,#EC4899 0%,#DB2777 100%);border-radius:16px;padding:30px;margin:30px 0;color:#fff;">
+                  <p style="margin:0;font-size:18px;font-weight:600;">
+                    ${lang === 'es' ? 'Áreas Evaluadas' : 'Areas Evaluated'}
+                  </p>
+                  <p style="margin:10px 0 0;font-size:14px;opacity:0.9;">
+                    ${lang === 'es' 
+                      ? 'Autoconciencia • Autorregulación • Empatía • Habilidades sociales'
+                      : 'Self-awareness • Self-regulation • Empathy • Social skills'}
+                  </p>
+                </div>
+                <a href="https://mindmetric.io/${lang}/resultado?testType=eq" style="display:inline-block;background:linear-gradient(135deg,#EC4899 0%,#DB2777 100%);color:#fff;text-decoration:none;padding:16px 40px;border-radius:8px;font-weight:600;font-size:16px;">
+                  ${lang === 'es' ? 'Ver Mi Evaluación' : 'View My Assessment'}
+                </a>
+              </td></tr>
+              <tr><td style="background:#f7fafc;padding:30px;text-align:center;border-top:1px solid #e2e8f0;">
+                <p style="color:#718096;font-size:12px;margin:0;">© ${new Date().getFullYear()} MindMetric</p>
+              </td></tr>
+            </table>
+          </td></tr>
+        </table>
+      </body>
+      </html>
+    `
+  }),
 }
+
 

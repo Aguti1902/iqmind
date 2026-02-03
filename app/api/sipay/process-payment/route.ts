@@ -33,7 +33,8 @@ export async function POST(request: NextRequest) {
       email,
       amount,
       description,
-      lang
+      lang,
+      testType = 'iq' // Tipo de test: iq, personality, adhd, anxiety, depression, eq
     } = await request.json()
 
     console.log('💳 Procesando pago con Sipay:', { orderId, requestId, email, amount })
@@ -159,13 +160,32 @@ export async function POST(request: NextRequest) {
       day: 'numeric',
     })
 
-    // 1. Email de pago confirmado
+    // 1. Email según tipo de test
     try {
-      const paymentEmail = emailTemplates.paymentSuccess(userEmail, userName, userIQ, paymentLang)
-      await sendEmail(paymentEmail)
-      console.log('📧 Email de pago enviado')
+      let testEmail
+      switch (testType) {
+        case 'personality':
+          testEmail = emailTemplates.personalityTestResult(userEmail, userName, paymentLang)
+          break
+        case 'adhd':
+          testEmail = emailTemplates.adhdTestResult(userEmail, userName, paymentLang)
+          break
+        case 'anxiety':
+          testEmail = emailTemplates.anxietyTestResult(userEmail, userName, paymentLang)
+          break
+        case 'depression':
+          testEmail = emailTemplates.depressionTestResult(userEmail, userName, paymentLang)
+          break
+        case 'eq':
+          testEmail = emailTemplates.eqTestResult(userEmail, userName, paymentLang)
+          break
+        default: // iq
+          testEmail = emailTemplates.paymentSuccess(userEmail, userName, userIQ, paymentLang)
+      }
+      await sendEmail(testEmail)
+      console.log(`📧 Email de test ${testType} enviado`)
     } catch (e) {
-      console.error('⚠️ Error enviando email de pago:', e)
+      console.error('⚠️ Error enviando email de test:', e)
     }
 
     // 2. Email de trial iniciado
