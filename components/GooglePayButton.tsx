@@ -1,9 +1,13 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 
-// Google Pay Merchant ID proporcionado por Sipay
+/**
+ * Google Pay Merchant ID proporcionado por Sipay (para PRODUCCIÓN)
+ * En TEST no se usa merchantId
+ */
 const GOOGLE_PAY_MERCHANT_ID = '18013341542947814368'
+const SIPAY_GATEWAY_MERCHANT_ID = 'clicklabsdigital' // Key de Sipay
 
 declare global {
   interface Window {
@@ -23,6 +27,7 @@ type GooglePayButtonProps = {
   onSuccess: (token: string) => void
   onError: (error: Error) => void
   disabled?: boolean
+  env?: 'sandbox' | 'live'
 }
 
 export default function GooglePayButton({
@@ -31,10 +36,15 @@ export default function GooglePayButton({
   onSuccess,
   onError,
   disabled = false,
+  env = 'sandbox',
 }: GooglePayButtonProps) {
   const [paymentsClient, setPaymentsClient] = useState<any>(null)
   const [isReady, setIsReady] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const onSuccessRef = useRef(onSuccess)
+  onSuccessRef.current = onSuccess
+
+  const isProduction = env === 'live'
 
   // Configuración base de Google Pay
   const baseRequest = {
@@ -46,7 +56,7 @@ export default function GooglePayButton({
     type: 'PAYMENT_GATEWAY',
     parameters: {
       gateway: 'sipay',
-      gatewayMerchantId: 'clicklabsdigital', // Key de Sipay
+      gatewayMerchantId: SIPAY_GATEWAY_MERCHANT_ID,
     },
   }
 
@@ -60,7 +70,7 @@ export default function GooglePayButton({
   }
 
   const getGooglePaymentDataRequest = useCallback(() => {
-    return {
+    const request: any = {
       ...baseRequest,
       allowedPaymentMethods: [cardPaymentMethod],
       transactionInfo: {
@@ -70,12 +80,17 @@ export default function GooglePayButton({
         countryCode: 'ES',
       },
       merchantInfo: {
-        merchantId: GOOGLE_PAY_MERCHANT_ID,
         merchantName: 'MindMetric',
       },
-      callbackIntents: ['PAYMENT_AUTHORIZATION'],
     }
-  }, [amount, currency])
+
+    // Solo añadir merchantId en producción
+    if (isProduction) {
+      request.merchantInfo.merchantId = GOOGLE_PAY_MERCHANT_ID
+    }
+
+    return request
+  }, [amount, currency, isProduction])
 
   useEffect(() => {
     // Cargar el script de Google Pay
@@ -94,15 +109,17 @@ export default function GooglePayButton({
     if (!window.google?.payments) return
 
     const client = new window.google.payments.api.PaymentsClient({
-      environment: process.env.NODE_ENV === 'production' ? 'PRODUCTION' : 'TEST',
+      environment: isProduction ? 'PRODUCTION' : 'TEST',
       paymentDataCallbacks: {
         onPaymentAuthorized: (paymentData: any) => {
           return new Promise((resolve) => {
             try {
               const token = paymentData.paymentMethodData.tokenizationData.token
-              onSuccess(token)
+              console.log('🔍 Google Pay token:', token)
+              onSuccessRef.current(token)
               resolve({ transactionState: 'SUCCESS' })
             } catch (error) {
+              console.error('❌ Google Pay error:', error)
               resolve({ transactionState: 'ERROR', error: { reason: 'PAYMENT_DATA_INVALID' } })
             }
           })
@@ -113,9 +130,21 @@ export default function GooglePayButton({
     setPaymentsClient(client)
 
     // Verificar si Google Pay está disponible
+    const isReadyToPayRequest = {
+      ...baseRequest,
+      allowedPaymentMethods: [{
+        type: 'CARD',
+        parameters: {
+          allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+          allowedCardNetworks: ['MASTERCARD', 'VISA'],
+        },
+      }],
+    }
+
     client
-      .isReadyToPay({ ...baseRequest, allowedPaymentMethods: [cardPaymentMethod] })
+      .isReadyToPay(isReadyToPayRequest)
       .then((response: any) => {
+        console.log('🔍 Google Pay isReadyToPay:', response)
         if (response.result) {
           setIsReady(true)
         }
@@ -132,9 +161,11 @@ export default function GooglePayButton({
 
     try {
       const paymentDataRequest = getGooglePaymentDataRequest()
-      const paymentData = await paymentsClient.loadPaymentData(paymentDataRequest)
+      console.log('🔍 Google Pay request:', paymentDataRequest)
+      await paymentsClient.loadPaymentData(paymentDataRequest)
       // El callback onPaymentAuthorized se encarga del resto
     } catch (error: any) {
+      console.error('❌ Google Pay loadPaymentData error:', error)
       if (error.statusCode !== 'CANCELED') {
         onError(error)
       }
@@ -143,7 +174,11 @@ export default function GooglePayButton({
     }
   }
 
-  if (!isReady) return null
+  // En sandbox, Google Pay puede no funcionar si no está configurado
+  // Mostrar mensaje informativo
+  if (!isReady) {
+    return null
+  }
 
   return (
     <button

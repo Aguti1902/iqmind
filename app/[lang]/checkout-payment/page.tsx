@@ -399,6 +399,7 @@ function CheckoutPaymentContent() {
                         currency="EUR"
                         onSuccess={handleGooglePaySuccess}
                         onError={handlePaymentError}
+                        env={paymentData.sipayConfig?.endpoint?.includes('live') ? 'live' : 'sandbox'}
                       />
                       <ApplePayButton
                         amount={0.50}
