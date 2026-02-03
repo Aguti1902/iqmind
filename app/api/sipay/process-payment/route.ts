@@ -152,7 +152,7 @@ export async function POST(request: NextRequest) {
     const userIQ = latestResult?.iq || 100
 
     // Enviar emails
-    const userName = user.name || userEmail.split('@')[0]
+    const userName = (user as any).name || userEmail.split('@')[0]
     const trialEndFormatted = trialEndDate.toLocaleDateString(paymentLang === 'es' ? 'es-ES' : 'en-US', {
       weekday: 'long',
       year: 'numeric',
