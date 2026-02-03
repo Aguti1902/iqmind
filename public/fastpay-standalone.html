@@ -16,23 +16,12 @@
     body { min-height: 100vh; }
     .fastpay-btn { display: none; }
   </style>
-  <script>
-    // Leer parámetros de URL ANTES de que el DOM esté listo
-    var urlParams = new URLSearchParams(window.location.search);
-    var fpKey = urlParams.get('key') || 'clicklabsdigital';
-    var fpAmount = urlParams.get('amount') || '50';
-    var fpCurrency = urlParams.get('currency') || 'EUR';
-    var fpTemplate = urlParams.get('template') || 'v4';
-    var fpLang = urlParams.get('lang') || 'es';
-    var fpEnv = urlParams.get('env') || 'sandbox';
-  </script>
 </head>
 <body>
   <button
     type="button"
     class="fastpay-btn"
-    id="fp-btn"
-    data-key=""
+    data-key="clicklabsdigital"
     data-amount="50"
     data-currency="EUR"
     data-template="v4"
@@ -44,49 +33,40 @@
   >
     Pagar
   </button>
-  
   <script>
-    // Setear atributos con los valores de query params
-    var btn = document.getElementById('fp-btn');
-    if (btn) {
-      btn.setAttribute('data-key', fpKey);
-      btn.setAttribute('data-amount', fpAmount);
-      btn.setAttribute('data-currency', fpCurrency);
-      btn.setAttribute('data-template', fpTemplate);
-      btn.setAttribute('data-lang', fpLang);
-    }
+    // Leer parámetros de URL y aplicarlos al botón
+    (function() {
+      var params = new URLSearchParams(window.location.search);
+      var btn = document.querySelector('.fastpay-btn');
+      if (btn) {
+        var key = params.get('key');
+        var amount = params.get('amount');
+        var currency = params.get('currency');
+        var template = params.get('template');
+        var lang = params.get('lang');
+        if (key) btn.setAttribute('data-key', key);
+        if (amount) btn.setAttribute('data-amount', amount);
+        if (currency) btn.setAttribute('data-currency', currency);
+        if (template) btn.setAttribute('data-template', template);
+        if (lang) btn.setAttribute('data-lang', lang);
+      }
+    })();
     
     function onFastPayDone(data) {
       console.log('FastPay callback', data);
       if (window.parent !== window) {
-        window.parent.postMessage({ 
-          type: 'sipay_fastpay_done', 
-          request_id: data && data.request_id ? data.request_id : null, 
-          payload: data 
-        }, '*');
+        window.parent.postMessage({ type: 'sipay_fastpay_done', request_id: data && data.request_id ? data.request_id : null, payload: data }, '*');
       } else {
         alert('request_id: ' + (data && data.request_id ? data.request_id : 'N/A'));
       }
     }
   </script>
-  
-  <!-- Script de Sipay hardcodeado en el HTML (orden correcto garantizado) -->
-  <script id="sipay-script"></script>
-  <script>
-    // Insertar script de Sipay según el entorno
-    var scriptUrl = fpEnv === 'live' 
-      ? 'https://live.sipay.es/fpay/v1/static/bundle/fastpay.js'
-      : 'https://sandbox.sipay.es/fpay/v1/static/bundle/fastpay.js';
-    document.getElementById('sipay-script').src = scriptUrl;
-  </script>
-  
+  <!-- Script al final para que el botón ya exista en el DOM cuando se ejecuta -->
+  <script type="text/javascript" src="https://sandbox.sipay.es/fpay/v1/static/bundle/fastpay.js"></script>
   <script>
     function openFastPay() {
       var btn = document.querySelector(".fastpay-btn");
-      if (btn) {
-        console.log('Clicking FastPay button...');
-        btn.click();
-      }
+      if (btn) btn.click();
     }
     function scheduleOpen() {
       // Dar tiempo a FastPay a crear su DOM interno antes del click programático

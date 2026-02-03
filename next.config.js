@@ -15,6 +15,20 @@ const nextConfig = {
           },
         ],
       },
+      // Headers para archivos HTML estáticos (Sipay FastPay iframe)
+      {
+        source: '/:path*.html',
+        headers: [
+          {
+            key: 'X-Frame-Options',
+            value: 'SAMEORIGIN',
+          },
+          {
+            key: 'Content-Security-Policy',
+            value: "frame-ancestors 'self' https://mindmetric.io https://*.mindmetric.io; script-src 'self' 'unsafe-inline' https://sandbox.sipay.es https://live.sipay.es; frame-src 'self' https://sandbox.sipay.es https://live.sipay.es;",
+          },
+        ],
+      },
     ]
   },
 }
