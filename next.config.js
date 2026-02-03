@@ -25,7 +25,7 @@ const nextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self' https://*.sipay.es; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.sipay.es; style-src 'self' 'unsafe-inline' https://*.sipay.es; frame-src 'self' https://*.sipay.es; connect-src 'self' https://*.sipay.es; img-src 'self' data: https://*.sipay.es; frame-ancestors 'self' https://mindmetric.io https://*.mindmetric.io;",
+            value: "default-src 'self' https://*.sipay.es https://fonts.googleapis.com https://fonts.gstatic.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.sipay.es; style-src 'self' 'unsafe-inline' https://*.sipay.es https://fonts.googleapis.com; style-src-elem 'self' 'unsafe-inline' https://*.sipay.es https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://*.sipay.es; frame-src 'self' https://*.sipay.es; connect-src 'self' https://*.sipay.es; img-src 'self' data: https://*.sipay.es; frame-ancestors 'self' https://mindmetric.io https://*.mindmetric.io;",
           },
         ],
       },
