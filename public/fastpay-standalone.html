@@ -12,9 +12,30 @@
       width: 100%;
       height: 100%;
       overflow-x: hidden;
+      background: #f9fafb;
     }
-    body { min-height: 100vh; }
+    body { 
+      min-height: 100vh;
+      padding: 16px;
+    }
     .fastpay-btn { display: none; }
+    
+    /* Estilos para el formulario de Sipay - añadir espacio antes del botón */
+    .sipay-form-container,
+    .fpay-container,
+    [class*="sipay"],
+    [class*="fpay"] {
+      padding-bottom: 0 !important;
+    }
+    
+    /* Espacio adicional antes del botón de pagar */
+    button[type="submit"],
+    .sipay-submit-btn,
+    .fpay-submit,
+    [class*="submit"],
+    [class*="pay-btn"] {
+      margin-top: 24px !important;
+    }
   </style>
 </head>
 <body>
@@ -30,7 +51,6 @@
     data-paymentbutton="Pagar"
     data-cardholdername="false"
     data-notab="true"
-    data-autosave="true"
   >
     Pagar
   </button>
@@ -67,17 +87,30 @@
   <script>
     function openFastPay() {
       var btn = document.querySelector(".fastpay-btn");
-      if (btn) btn.click();
+      if (btn) {
+        console.log('FastPay: clicking button...');
+        btn.click();
+      } else {
+        console.error('FastPay: button not found');
+      }
     }
     function scheduleOpen() {
-      // Dar tiempo a FastPay a crear su DOM interno antes del click programático
-      setTimeout(openFastPay, 600);
+      // Dar más tiempo a FastPay a crear su DOM interno antes del click programático
+      console.log('FastPay: scheduling open in 800ms...');
+      setTimeout(openFastPay, 800);
     }
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", scheduleOpen);
     } else {
       scheduleOpen();
     }
+    
+    // Verificar que el formulario de Sipay se cargó correctamente
+    setTimeout(function() {
+      var iframes = document.querySelectorAll('iframe');
+      var forms = document.querySelectorAll('form');
+      console.log('FastPay debug - iframes:', iframes.length, 'forms:', forms.length);
+    }, 2000);
   </script>
 </body>
 </html>
