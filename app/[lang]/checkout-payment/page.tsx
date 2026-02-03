@@ -3,6 +3,8 @@
 import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import SipayInline from '@/components/SipayInline'
+import GooglePayButton from '@/components/GooglePayButton'
+import ApplePayButton from '@/components/ApplePayButton'
 
 // Deshabilitar pre-rendering estático
 export const dynamic = 'force-dynamic'
@@ -154,6 +156,70 @@ function CheckoutPaymentContent() {
   const handlePaymentError = (error: any) => {
     console.error('❌ Error en el pago:', error)
     setError(error.description || 'Error procesando el pago. Por favor, intenta de nuevo.')
+  }
+
+  // Handler para Google Pay
+  const handleGooglePaySuccess = async (token: string) => {
+    console.log('🔍 Google Pay token recibido')
+    try {
+      const response = await fetch('/api/sipay/google-pay', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          googlePayToken: token,
+          email,
+          userName: email.split('@')[0],
+          amount: 0.50,
+          userIQ: localStorage.getItem('userIQ') || 100,
+          lang,
+          testType,
+        }),
+      })
+
+      const data = await response.json()
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Error en Google Pay')
+      }
+
+      console.log('✅ Google Pay exitoso:', data)
+      router.push('/' + lang + '/resultado?order_id=' + data.orderId)
+    } catch (error: any) {
+      console.error('❌ Error Google Pay:', error)
+      setError(error.message || 'Error con Google Pay')
+    }
+  }
+
+  // Handler para Apple Pay
+  const handleApplePaySuccess = async (token: string) => {
+    console.log('🍎 Apple Pay token recibido')
+    try {
+      const response = await fetch('/api/sipay/apple-pay', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          applePayToken: token,
+          email,
+          userName: email.split('@')[0],
+          amount: 0.50,
+          userIQ: localStorage.getItem('userIQ') || 100,
+          lang,
+          testType,
+        }),
+      })
+
+      const data = await response.json()
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Error en Apple Pay')
+      }
+
+      console.log('✅ Apple Pay exitoso:', data)
+      router.push('/' + lang + '/resultado?order_id=' + data.orderId)
+    } catch (error: any) {
+      console.error('❌ Error Apple Pay:', error)
+      setError(error.message || 'Error con Apple Pay')
+    }
   }
 
   const config = testConfig[testType] || testConfig['iq']
@@ -324,6 +390,29 @@ function CheckoutPaymentContent() {
                           <span className="text-2xl font-bold text-[#07C59A]">0,50€</span>
                         </div>
                       </div>
+                    </div>
+
+                    {/* Botones de pago rápido: Google Pay y Apple Pay */}
+                    <div className="space-y-3 mb-4">
+                      <GooglePayButton
+                        amount={0.50}
+                        currency="EUR"
+                        onSuccess={handleGooglePaySuccess}
+                        onError={handlePaymentError}
+                      />
+                      <ApplePayButton
+                        amount={0.50}
+                        currency="EUR"
+                        onSuccess={handleApplePaySuccess}
+                        onError={handlePaymentError}
+                      />
+                    </div>
+
+                    {/* Separador */}
+                    <div className="flex items-center gap-4 my-4">
+                      <div className="flex-1 h-px bg-gray-300"></div>
+                      <span className="text-sm text-gray-500">o paga con tarjeta</span>
+                      <div className="flex-1 h-px bg-gray-300"></div>
                     </div>
 
                     {/* Sipay Payment Component: iframe con HTML estático en /public/fastpay-standalone.html */}
