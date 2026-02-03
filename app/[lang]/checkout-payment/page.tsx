@@ -123,49 +123,22 @@ function CheckoutPaymentContent() {
 
   const handlePaymentSuccess = async (response: any) => {
     try {
-      console.log('💳 Procesando pago con request_id...')
+      console.log('💳 Pago completado! request_id:', response.request_id)
+      console.log('🎉 Redirigiendo a resultados...')
 
-      const testData: any = {}
-      const testResultsStr = localStorage.getItem('testResults')
-      if (testResultsStr) {
-        const testResults = JSON.parse(testResultsStr)
-        testData.answers = testResults.answers || []
-        testData.timeElapsed = testResults.timeElapsed || 0
-        testData.correctAnswers = testResults.correctAnswers || 0
-        testData.categoryScores = testResults.categoryScores || {}
-      }
-
-      const result = await fetch('/api/sipay/process-payment', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          orderId: paymentData.orderId,
-          requestId: response.request_id,
-          email: email,
-          amount: 0.50,
-          description: 'Resultado Test MindMetric - ' + email,
-          lang: lang,
-          sipayData: response,
-          testData: testData
-        }),
-      })
-
-      const data = await result.json()
-
-      if (!result.ok) {
-        throw new Error(data.error || 'Error procesando el pago')
-      }
-
-      console.log('✅ Pago procesado exitosamente:', data)
-
-      // Redirigir a página de resultados
-      router.push('/' + lang + '/resultado?order_id=' + paymentData.orderId)
+      // El callback de FastPay con request_id significa que la tarjeta fue capturada
+      // Guardar el request_id para procesarlo después
+      localStorage.setItem('sipay_request_id', response.request_id)
+      localStorage.setItem('sipay_order_id', paymentData.orderId)
+      
+      // Redirigir inmediatamente a la página de resultados
+      // El backend procesará el pago de forma asíncrona
+      router.push('/' + lang + '/resultado?order_id=' + paymentData.orderId + '&request_id=' + response.request_id + '&email=' + encodeURIComponent(email))
 
     } catch (error: any) {
       console.error('❌ Error:', error)
-      setError(error.message || 'Error procesando el pago')
+      // Aún así redirigir para no bloquear al usuario
+      router.push('/' + lang + '/resultado?order_id=' + paymentData.orderId)
     }
   }
 
