@@ -1,122 +1,134 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-  <title>FastPay - Formulario de pago</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Pago Seguro</title>
   <style>
-    * { box-sizing: border-box; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { 
-      margin: 0; 
-      padding: 0; 
-      width: 100%;
-      height: 100%;
-      overflow-x: hidden;
+      width: 100%; 
+      min-height: 100%; 
       background: transparent;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
-    body { 
-      min-height: 100%;
-      padding: 8px;
-    }
-    .fastpay-btn { display: none; }
+    body { padding: 4px; }
     
-    /* Hacer que el iframe de Sipay sea responsive */
-    iframe {
+    /* Ocultar el botón trigger */
+    #sipay-trigger { 
+      position: absolute; 
+      left: -9999px; 
+      opacity: 0; 
+      pointer-events: none;
+    }
+    
+    /* Hacer responsive el contenido de Sipay */
+    iframe, .sipay-container, [class*="sipay"], [class*="fpay"] {
       width: 100% !important;
       max-width: 100% !important;
     }
   </style>
+  
+  <script>
+    // ============================================
+    // 1. DEFINIR CALLBACK ANTES DE TODO
+    // ============================================
+    function onFastPayDone(response) {
+      console.log('✅ SIPAY CALLBACK:', response);
+      
+      // Enviar al padre (Next.js)
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage({
+          type: 'sipay_fastpay_done',
+          request_id: response?.request_id || null,
+          payload: response
+        }, '*');
+        console.log('📤 Mensaje enviado al padre');
+      }
+    }
+    
+    // También exponerlo en window por si Sipay lo busca ahí
+    window.onFastPayDone = onFastPayDone;
+  </script>
 </head>
 <body>
+  <!-- Botón oculto que Sipay necesita para inicializarse -->
   <button
+    id="sipay-trigger"
     type="button"
     class="fastpay-btn"
     data-key="clicklabsdigital"
     data-amount="50"
     data-currency="EUR"
     data-template="v4"
-    data-callback="onFastPayDone"
     data-lang="es"
-    data-paymentbutton="Pagar"
-    data-cardholdername="false"
+    data-callback="onFastPayDone"
     data-notab="true"
-  >
-    Pagar
-  </button>
+    data-cardholdername="false"
+  >Pagar</button>
+
+  <!-- Cargar SDK de Sipay -->
+  <script src="https://sandbox.sipay.es/fpay/v1/static/bundle/fastpay.js"></script>
+  
   <script>
-    // IMPORTANTE: El callback DEBE estar en window ANTES de cargar fastpay.js
-    window.onFastPayDone = function(data) {
-      console.log('✅ FastPay callback received:', data);
-      if (window.parent !== window) {
-        window.parent.postMessage({ 
-          type: 'sipay_fastpay_done', 
-          request_id: data && data.request_id ? data.request_id : null, 
-          payload: data 
-        }, '*');
-      } else {
-        alert('request_id: ' + (data && data.request_id ? data.request_id : 'N/A'));
-      }
-    };
-    
-    // Listener para capturar CUALQUIER mensaje de Sipay
-    window.addEventListener('message', function(event) {
-      console.log('📨 Message received:', event.origin, event.data);
-      // Si viene de Sipay, también procesarlo
-      if (event.origin && event.origin.includes('sipay.es')) {
-        console.log('📨 Sipay message:', event.data);
-        if (event.data && event.data.request_id) {
-          window.onFastPayDone(event.data);
-        }
-      }
-    });
-    
-    // Leer parámetros de URL y aplicarlos al botón
+    // ============================================
+    // 2. LEER PARÁMETROS Y CONFIGURAR
+    // ============================================
     (function() {
       var params = new URLSearchParams(window.location.search);
-      var btn = document.querySelector('.fastpay-btn');
+      var btn = document.getElementById('sipay-trigger');
+      
       if (btn) {
-        var key = params.get('key');
-        var amount = params.get('amount');
-        var currency = params.get('currency');
-        var template = params.get('template');
-        var lang = params.get('lang');
-        if (key) btn.setAttribute('data-key', key);
-        if (amount) btn.setAttribute('data-amount', amount);
-        if (currency) btn.setAttribute('data-currency', currency);
-        if (template) btn.setAttribute('data-template', template);
-        if (lang) btn.setAttribute('data-lang', lang);
-        console.log('FastPay config:', { key, amount, currency, template, lang });
+        // Aplicar parámetros de la URL
+        var key = params.get('key') || 'clicklabsdigital';
+        var amount = params.get('amount') || '50';
+        var currency = params.get('currency') || 'EUR';
+        var template = params.get('template') || 'v4';
+        var lang = params.get('lang') || 'es';
+        
+        btn.setAttribute('data-key', key);
+        btn.setAttribute('data-amount', amount);
+        btn.setAttribute('data-currency', currency);
+        btn.setAttribute('data-template', template);
+        btn.setAttribute('data-lang', lang);
+        
+        console.log('⚙️ Sipay config:', { key, amount, currency, template, lang });
       }
     })();
-  </script>
-  <!-- Script al final para que el botón ya exista en el DOM cuando se ejecuta -->
-  <script type="text/javascript" src="https://sandbox.sipay.es/fpay/v1/static/bundle/fastpay.js"></script>
-  <script>
-    function openFastPay() {
-      var btn = document.querySelector(".fastpay-btn");
+    
+    // ============================================
+    // 3. AUTO-CLICK PARA MOSTRAR FORMULARIO
+    // ============================================
+    function triggerSipay() {
+      var btn = document.getElementById('sipay-trigger');
       if (btn) {
-        console.log('FastPay: clicking button...');
+        console.log('🖱️ Triggering Sipay...');
         btn.click();
-      } else {
-        console.error('FastPay: button not found');
       }
     }
-    function scheduleOpen() {
-      // Dar más tiempo a FastPay a crear su DOM interno antes del click programático
-      console.log('FastPay: scheduling open in 800ms...');
-      setTimeout(openFastPay, 800);
-    }
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", scheduleOpen);
+    
+    // Esperar a que Sipay esté listo y hacer click
+    if (document.readyState === 'complete') {
+      setTimeout(triggerSipay, 500);
     } else {
-      scheduleOpen();
+      window.addEventListener('load', function() {
+        setTimeout(triggerSipay, 500);
+      });
     }
     
-    // Verificar que el formulario de Sipay se cargó correctamente
+    // ============================================
+    // 4. DEBUG: Verificar estado después de 2s
+    // ============================================
     setTimeout(function() {
       var iframes = document.querySelectorAll('iframe');
       var forms = document.querySelectorAll('form');
-      console.log('FastPay debug - iframes:', iframes.length, 'forms:', forms.length);
+      console.log('📊 Debug - iframes:', iframes.length, 'forms:', forms.length);
+      
+      // Si no hay iframes, el formulario no se cargó
+      if (iframes.length === 0) {
+        console.warn('⚠️ Sipay no cargó el formulario. Intentando de nuevo...');
+        triggerSipay();
+      }
     }, 2000);
   </script>
 </body>
