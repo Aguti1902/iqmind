@@ -416,37 +416,20 @@ function CheckoutPaymentContent() {
                       <div className="flex-1 h-px bg-gray-300"></div>
                     </div>
 
-                    {/* Sipay Payment Component: iframe con HTML estático en /public/fastpay-standalone.html */}
-                    <div className="border-2 border-gray-200 rounded-xl p-2 sm:p-4 bg-gray-50">
-                      <h4 className="font-bold text-gray-900 mb-2 text-sm sm:text-base">Datos de la Tarjeta</h4>
-                      <SipayInline
-                        merchantKey={paymentData.sipayConfig?.key || 'clicklabsdigital'}
-                        amount={50}
-                        currency="EUR"
-                        template="v4"
-                        lang={lang}
-                        env={paymentData.sipayConfig?.endpoint?.includes('live') ? 'live' : 'sandbox'}
-                        onRequestId={(requestId, payload) => {
-                          console.log('🎉 Payment success! request_id:', requestId)
-                          handlePaymentSuccess({ request_id: requestId, ...(typeof payload === 'object' && payload !== null ? payload : {}) })
-                        }}
-                        height={620}
-                      />
-                    </div>
-
-                    {/* Security Badges */}
-                    <div className="text-center mt-3">
-                      <div className="flex items-center justify-center gap-3 text-xs text-gray-600">
-                        <div className="flex items-center gap-1">
-                          <i className="fas fa-lock text-green-500"></i>
-                          <span>Pago 100% Seguro</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <i className="fas fa-check-circle text-green-500"></i>
-                          <span>Protegido por Sipay</span>
-                        </div>
-                      </div>
-                    </div>
+                    {/* Sipay Payment Component */}
+                    <SipayInline
+                      merchantKey={paymentData.sipayConfig?.key || 'clicklabsdigital'}
+                      amount={50}
+                      currency="EUR"
+                      template="v4"
+                      lang={lang}
+                      env={paymentData.sipayConfig?.endpoint?.includes('live') ? 'live' : 'sandbox'}
+                      onRequestId={(requestId, payload) => {
+                        console.log('🎉 Payment success! request_id:', requestId)
+                        handlePaymentSuccess({ request_id: requestId, ...(typeof payload === 'object' && payload !== null ? payload : {}) })
+                      }}
+                      height={550}
+                    />
                   </>
                 ) : null}
               </div>

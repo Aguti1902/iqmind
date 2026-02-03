@@ -85,27 +85,18 @@ export default function SipayInline({
   const iframeSrc = `${origin}/fastpay-standalone.html?${query}`
 
   return (
-    <div
+    <iframe
+      src={iframeSrc}
+      title="Formulario de pago"
       style={{
+        display: 'block',
         width: '100%',
-        margin: '0 auto',
-        borderRadius: 8,
-        overflow: 'hidden',
-        background: '#ffffff',
+        height: `${height}px`,
+        border: 'none',
+        minHeight: '500px',
+        background: 'transparent',
       }}
-    >
-      <iframe
-        src={iframeSrc}
-        title="Formulario de pago Sipay"
-        style={{
-          display: 'block',
-          width: '100%',
-          height: `${height}px`,
-          border: 'none',
-          minHeight: '600px',
-        }}
-        allow="payment"
-      />
-    </div>
+      allow="payment"
+    />
   )
 }

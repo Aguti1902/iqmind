@@ -3,10 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Pago Seguro - MindMetric</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <title>Pago Seguro</title>
   <style>
     * { 
       box-sizing: border-box; 
@@ -19,13 +16,12 @@
       min-height: 100%;
       overflow-x: hidden;
       overflow-y: auto;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #f8fffe 0%, #f0fdf9 100%);
+      background: transparent;
     }
     
     body { 
-      min-height: 580px;
-      padding: 16px;
+      min-height: 500px;
+      padding: 0;
     }
     
     /* Ocultar el botón de Sipay */
@@ -33,196 +29,17 @@
       display: none !important; 
     }
     
-    /* Contenedor principal con estilo MindMetric */
-    .payment-container {
-      max-width: 100%;
-      margin: 0 auto;
-    }
-    
-    /* Header con seguridad */
-    .security-header {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 12px 16px;
-      background: linear-gradient(135deg, #07C59A 0%, #05a883 100%);
-      border-radius: 12px 12px 0 0;
-      color: white;
-      font-size: 14px;
-      font-weight: 600;
-    }
-    
-    .security-header svg {
-      width: 18px;
-      height: 18px;
-    }
-    
-    /* Contenedor del formulario */
-    .form-wrapper {
-      background: white;
-      border-radius: 0 0 12px 12px;
-      box-shadow: 0 4px 20px rgba(7, 197, 154, 0.1);
-      overflow: hidden;
-    }
-    
-    /* Estilos para sobreescribir el iframe de Sipay */
+    /* Estilos para el iframe de Sipay */
     iframe {
       width: 100% !important;
-      min-height: 420px !important;
+      min-height: 450px !important;
       border: none !important;
       display: block;
-    }
-    
-    /* Footer con logos de tarjetas */
-    .cards-footer {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      padding: 16px;
-      background: #f8fffe;
-      border-top: 1px solid #e5f5f1;
-    }
-    
-    .card-logo {
-      height: 24px;
-      opacity: 0.7;
-    }
-    
-    .cards-footer span {
-      font-size: 12px;
-      color: #6b7280;
-    }
-    
-    /* Badges de seguridad */
-    .security-badges {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      padding: 12px 16px;
-      background: white;
-      border-top: 1px solid #f0f0f0;
-    }
-    
-    .badge {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      color: #6b7280;
-    }
-    
-    .badge svg {
-      width: 14px;
-      height: 14px;
-      color: #07C59A;
-    }
-
-    /* Animación de carga */
-    .loading-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(255, 255, 255, 0.9);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      transition: opacity 0.3s ease;
-    }
-    
-    .loading-overlay.hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
-    
-    .spinner {
-      width: 40px;
-      height: 40px;
-      border: 3px solid #e5f5f1;
-      border-top-color: #07C59A;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-    
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-    
-    .loading-text {
-      margin-top: 12px;
-      font-size: 14px;
-      color: #113240;
-      font-weight: 500;
+      background: transparent;
     }
   </style>
 </head>
 <body>
-  <!-- Overlay de carga -->
-  <div class="loading-overlay" id="loadingOverlay">
-    <div class="spinner"></div>
-    <p class="loading-text">Cargando formulario seguro...</p>
-  </div>
-
-  <div class="payment-container">
-    <!-- Header de seguridad -->
-    <div class="security-header">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-      </svg>
-      <span>Pago 100% Seguro y Encriptado</span>
-    </div>
-    
-    <!-- Contenedor del formulario Sipay -->
-    <div class="form-wrapper" id="formWrapper">
-      <!-- El iframe de Sipay se renderiza aquí -->
-    </div>
-    
-    <!-- Footer con tarjetas aceptadas -->
-    <div class="cards-footer">
-      <span>Aceptamos:</span>
-      <svg height="24" viewBox="0 0 750 471" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M278.198 334.228h-54.787l34.247-211.453h54.787L278.198 334.228z" fill="#00579f"/>
-        <path d="M506.677 126.913c-10.847-4.288-27.972-8.935-49.293-8.935-54.4 0-92.722 28.95-93.062 70.407-.34 30.654 27.326 47.779 48.2 57.963 21.466 10.44 28.65 17.095 28.538 26.433-.114 14.278-17.127 20.822-32.951 20.822-22.083 0-33.804-3.242-51.913-11.214l-7.129-3.389-7.729 47.793c12.881 5.957 36.714 11.136 61.49 11.41 57.839 0 95.386-28.608 95.839-72.82.227-24.248-14.465-42.7-46.235-57.938-19.253-9.871-31.037-16.468-30.923-26.474 0-8.87 9.984-18.345 31.548-18.345 18.003-.284 31.037 3.845 41.202 8.134l4.934 2.468 7.484-46.305v-.01z" fill="#00579f"/>
-        <path d="M562.864 122.775h-42.547c-13.165 0-23.01 3.788-28.783 17.665l-81.623 194.788h57.761s9.449-26.277 11.563-31.98h70.614c1.657 7.446 6.704 31.98 6.704 31.98h51.036l-44.725-212.453zm-67.92 137.092c4.558-12.314 22.037-59.849 22.037-59.849-.34.567 4.535-12.37 7.334-20.403l3.743 18.398s10.599 51.083 12.826 61.854h-45.94z" fill="#00579f"/>
-        <path d="M162.478 122.775l-53.954 144.48-5.745-29.376c-10.08-34.248-41.437-71.36-76.523-89.934l49.293 185.217h58.06l86.363-210.387h-57.494z" fill="#00579f"/>
-        <path d="M65.048 122.775H1.139L.5 126.223c68.772 17.608 114.335 60.107 133.247 111.214l-19.193-97.254c-3.321-13.42-12.996-17.21-25.506-17.408z" fill="#faa61a"/>
-      </svg>
-      <svg height="24" viewBox="0 0 750 471" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M471.738 235.548c0 99.418-80.603 180.021-180.021 180.021-99.418 0-180.021-80.603-180.021-180.021 0-99.418 80.603-180.021 180.021-180.021 99.418 0 180.021 80.603 180.021 180.021z" fill="#eb001b"/>
-        <path d="M638.283 235.548c0 99.418-80.603 180.021-180.021 180.021-99.418 0-180.021-80.603-180.021-180.021 0-99.418 80.603-180.021 180.021-180.021 99.418 0 180.021 80.603 180.021 180.021z" fill="#f79e1b"/>
-        <path d="M374.312 98.64c-49.508 39.078-81.262 99.418-81.262 167.027 0 67.61 31.754 127.95 81.262 167.027 49.508-39.077 81.262-99.418 81.262-167.027 0-67.61-31.754-127.949-81.262-167.027z" fill="#ff5f00"/>
-      </svg>
-    </div>
-    
-    <!-- Badges de seguridad -->
-    <div class="security-badges">
-      <div class="badge">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-        </svg>
-        <span>SSL Seguro</span>
-      </div>
-      <div class="badge">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        <span>PCI DSS</span>
-      </div>
-      <div class="badge">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-        </svg>
-        <span>3D Secure</span>
-      </div>
-    </div>
-  </div>
-
   <!-- Botón oculto que Sipay necesita -->
   <button
     type="button"
@@ -261,23 +78,18 @@
         // Actualizar texto del botón según el importe
         var amountNum = amount ? (parseInt(amount) / 100).toFixed(2).replace('.', ',') : '0,50';
         btn.setAttribute('data-paymentbutton', 'Pagar ' + amountNum + ' €');
-        
-        console.log('[MindMetric] Config aplicada:', { key: key || 'clicklabsdigital', amount: amount || '50' });
       }
     })();
 
     // Callback cuando el pago se completa
     function onFastPayDone(data) {
-      console.log('[MindMetric] ✅ Pago completado:', data);
+      console.log('[Payment] ✅ Completado:', data);
       if (window.parent !== window) {
         window.parent.postMessage({ 
           type: 'sipay_fastpay_done', 
           request_id: data && data.request_id ? data.request_id : null, 
           payload: data 
         }, '*');
-        console.log('[MindMetric] 📤 Datos enviados');
-      } else {
-        alert('request_id: ' + (data && data.request_id ? data.request_id : 'N/A'));
       }
     }
   </script>
@@ -288,22 +100,11 @@
   <script>
     function openFastPay() {
       var btn = document.querySelector(".fastpay-btn");
-      if (btn) {
-        console.log('[MindMetric] 🖱️ Iniciando formulario...');
-        btn.click();
-      }
+      if (btn) btn.click();
     }
     
     function scheduleOpen() {
-      console.log('[MindMetric] ⏳ Cargando...');
-      setTimeout(function() {
-        openFastPay();
-        // Ocultar loading después de que el formulario se cargue
-        setTimeout(function() {
-          var overlay = document.getElementById('loadingOverlay');
-          if (overlay) overlay.classList.add('hidden');
-        }, 800);
-      }, 600);
+      setTimeout(openFastPay, 600);
     }
     
     if (document.readyState === "loading") {
@@ -311,12 +112,6 @@
     } else {
       scheduleOpen();
     }
-    
-    // Verificar carga
-    setTimeout(function() {
-      var iframes = document.querySelectorAll('iframe');
-      console.log('[MindMetric] 📊 Formulario cargado:', iframes.length > 0);
-    }, 2000);
   </script>
 </body>
 </html>
