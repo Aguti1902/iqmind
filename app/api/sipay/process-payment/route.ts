@@ -1,15 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSipayClient } from '@/lib/sipay-client'
 import { db } from '@/lib/database-postgres'
+import { checkRateLimit, getClientIP, rateLimitResponse } from '@/lib/api-security'
 
 export const dynamic = 'force-dynamic'
 
 /**
  * Procesar pago con Sipay después de obtener el token de la tarjeta
  * Autorización + Tokenización para suscripciones futuras
+ * 
+ * SEGURIDAD:
+ * - Rate limiting: 3 peticiones por minuto por IP
+ * - Validación de orderId y requestId/cardToken
+ * - El requestId de Sipay expira en 5 minutos (protección adicional)
  */
 export async function POST(request: NextRequest) {
   try {
+    // Rate limiting por IP (más estricto para pagos)
+    const clientIP = getClientIP(request)
+    const rateLimit = checkRateLimit(`process-payment:${clientIP}`, 3, 60000) // 3 req/min
+    
+    if (!rateLimit.allowed) {
+      console.warn(`⚠️ Rate limit excedido para IP: ${clientIP}`)
+      return rateLimitResponse(rateLimit.resetIn)
+    }
+
     const {
       orderId,
       requestId, // request_id de FastPay
@@ -20,7 +35,7 @@ export async function POST(request: NextRequest) {
       lang
     } = await request.json()
 
-    console.log('💳 Procesando pago con Sipay:', { orderId, requestId, cardToken, email, amount })
+    console.log('💳 Procesando pago con Sipay:', { orderId, requestId, email, amount })
 
     if (!orderId) {
       return NextResponse.json(
@@ -32,6 +47,14 @@ export async function POST(request: NextRequest) {
     if (!requestId && !cardToken) {
       return NextResponse.json(
         { error: 'Se requiere requestId o cardToken' },
+        { status: 400 }
+      )
+    }
+    
+    // Validar formato de orderId (debe empezar con order_)
+    if (!orderId.startsWith('order_')) {
+      return NextResponse.json(
+        { error: 'Formato de orderId inválido' },
         { status: 400 }
       )
     }

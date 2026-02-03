@@ -1,15 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSipayClient } from '@/lib/sipay-client'
 import { db } from '@/lib/database-postgres'
+import { verifyInternalApiKey } from '@/lib/api-security'
 
 export const dynamic = 'force-dynamic'
 
 /**
  * Procesar pago recurrente con Sipay usando token guardado
  * MIT (Merchant Initiated Transaction) - Sin presencia del cliente
+ * 
+ * SEGURIDAD:
+ * - ⚠️ ENDPOINT CRÍTICO - Solo accesible con API key interna
+ * - Solo el cron job o llamadas internas pueden usar este endpoint
+ * - Nunca exponer al frontend
  */
 export async function POST(request: NextRequest) {
   try {
+    // SEGURIDAD: Verificar API key interna (solo cron/server puede llamar)
+    const isAuthorized = verifyInternalApiKey(request)
+    
+    if (!isAuthorized) {
+      console.error('❌ Intento de acceso no autorizado a recurring-payment')
+      return NextResponse.json(
+        { error: 'No autorizado. Este endpoint requiere autenticación interna.' },
+        { status: 401 }
+      )
+    }
+
     const { email, amount, description } = await request.json()
 
     console.log('🔄 Procesando pago recurrente con Sipay:', { email, amount })
@@ -19,6 +36,11 @@ export async function POST(request: NextRequest) {
         { error: 'Email y monto requeridos' },
         { status: 400 }
       )
+    }
+    
+    // Validar que el monto sea el esperado (9.99€)
+    if (amount !== 9.99) {
+      console.warn(`⚠️ Monto inesperado en pago recurrente: ${amount}`)
     }
 
     // Obtener usuario y su token de tarjeta

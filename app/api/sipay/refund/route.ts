@@ -1,14 +1,31 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSipayClient } from '@/lib/sipay-client'
+import { verifyInternalApiKey } from '@/lib/api-security'
 
 export const dynamic = 'force-dynamic'
 
 /**
  * Procesar devolución (refund) con Sipay
  * https://developer.sipay.es/docs/api/mdwr/refund
+ * 
+ * SEGURIDAD:
+ * - ⚠️ ENDPOINT CRÍTICO - Solo accesible con API key interna
+ * - Solo administradores o llamadas internas pueden hacer refunds
+ * - Nunca exponer al frontend
  */
 export async function POST(request: NextRequest) {
   try {
+    // SEGURIDAD: Verificar API key interna (solo admin/server puede llamar)
+    const isAuthorized = verifyInternalApiKey(request)
+    
+    if (!isAuthorized) {
+      console.error('❌ Intento de acceso no autorizado a refund')
+      return NextResponse.json(
+        { error: 'No autorizado. Este endpoint requiere autenticación interna.' },
+        { status: 401 }
+      )
+    }
+
     const { transactionId, amount, reason, email } = await request.json()
 
     console.log('↩️ Procesando reembolso con Sipay:', { transactionId, amount, email })

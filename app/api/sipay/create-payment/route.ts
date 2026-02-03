@@ -1,15 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSipayClient } from '@/lib/sipay-client'
 import { db } from '@/lib/database-postgres'
+import { checkRateLimit, getClientIP, rateLimitResponse } from '@/lib/api-security'
 
 export const dynamic = 'force-dynamic'
 
 /**
  * API para crear un pago inicial con Sipay
  * Incluye tokenización para futuros pagos recurrentes
+ * 
+ * SEGURIDAD:
+ * - Rate limiting: 5 peticiones por minuto por IP
+ * - Validación de email y monto
  */
 export async function POST(request: NextRequest) {
   try {
+    // Rate limiting por IP
+    const clientIP = getClientIP(request)
+    const rateLimit = checkRateLimit(`create-payment:${clientIP}`, 5, 60000) // 5 req/min
+    
+    if (!rateLimit.allowed) {
+      console.warn(`⚠️ Rate limit excedido para IP: ${clientIP}`)
+      return rateLimitResponse(rateLimit.resetIn)
+    }
+
     const { email, userName, amount, userIQ, lang, testData } = await request.json()
 
     console.log('💳 Iniciando pago con Sipay:', { email, amount, lang })
@@ -17,6 +31,15 @@ export async function POST(request: NextRequest) {
     if (!email || !amount) {
       return NextResponse.json(
         { error: 'Email y monto requeridos' },
+        { status: 400 }
+      )
+    }
+    
+    // Validar formato de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      return NextResponse.json(
+        { error: 'Formato de email inválido' },
         { status: 400 }
       )
     }

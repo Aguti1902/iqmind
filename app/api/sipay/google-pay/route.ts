@@ -1,15 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSipayClient } from '@/lib/sipay-client'
 import { db } from '@/lib/database-postgres'
+import { checkRateLimit, getClientIP, rateLimitResponse } from '@/lib/api-security'
 
 export const dynamic = 'force-dynamic'
 
 /**
  * Procesar pago con Google Pay
  * https://developer.sipay.es/docs/documentation/online/selling/wallets/gpay
+ * 
+ * SEGURIDAD:
+ * - Rate limiting: 3 peticiones por minuto por IP
+ * - El token de Google Pay es validado por Sipay
  */
 export async function POST(request: NextRequest) {
   try {
+    // Rate limiting por IP
+    const clientIP = getClientIP(request)
+    const rateLimit = checkRateLimit(`google-pay:${clientIP}`, 3, 60000)
+    
+    if (!rateLimit.allowed) {
+      console.warn(`⚠️ Rate limit excedido para IP: ${clientIP}`)
+      return rateLimitResponse(rateLimit.resetIn)
+    }
+
     const {
       googlePayToken,
       email,
@@ -25,6 +39,15 @@ export async function POST(request: NextRequest) {
     if (!googlePayToken || !email || !amount) {
       return NextResponse.json(
         { error: 'Datos incompletos' },
+        { status: 400 }
+      )
+    }
+    
+    // Validar formato de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      return NextResponse.json(
+        { error: 'Formato de email inválido' },
         { status: 400 }
       )
     }

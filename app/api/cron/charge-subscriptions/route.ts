@@ -90,11 +90,12 @@ export async function GET(request: NextRequest) {
       try {
         console.log(`💳 Procesando cobro para: ${user.email}`)
 
-        // Llamar al endpoint de pago recurrente
+        // Llamar al endpoint de pago recurrente (con API key interna)
         const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/sipay/recurring-payment`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'x-internal-api-key': process.env.INTERNAL_API_KEY || '',
           },
           body: JSON.stringify({
             email: user.email,
@@ -152,6 +153,7 @@ export async function GET(request: NextRequest) {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'x-internal-api-key': process.env.INTERNAL_API_KEY || '',
           },
           body: JSON.stringify({
             email: user.email,
