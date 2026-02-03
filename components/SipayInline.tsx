@@ -91,7 +91,7 @@ export default function SipayInline({
         margin: '0 auto',
         borderRadius: 8,
         overflow: 'hidden',
-        background: '#f9fafb',
+        background: '#ffffff',
       }}
     >
       <iframe
@@ -102,10 +102,9 @@ export default function SipayInline({
           width: '100%',
           height: `${height}px`,
           border: 'none',
-          minHeight: '520px',
+          minHeight: '600px',
         }}
         allow="payment"
-        scrolling="no"
       />
     </div>
   )

@@ -358,7 +358,7 @@ function CheckoutPaymentContent() {
                           console.log('🎉 Payment success! request_id:', requestId)
                           handlePaymentSuccess({ request_id: requestId, ...(typeof payload === 'object' && payload !== null ? payload : {}) })
                         }}
-                        height={580}
+                        height={620}
                       />
                     </div>
 
