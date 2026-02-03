@@ -48,3 +48,8 @@ next-env.d.ts
 # Misc
 .turbo
 .cache
+
+# Sipay examples (reference only, not part of build)
+iframe_2026/
+sipay-share/
+sipay-share 2/
