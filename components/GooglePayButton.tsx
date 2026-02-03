@@ -84,10 +84,14 @@ export default function GooglePayButton({
       },
     }
 
-    // Solo añadir merchantId en producción
+    // MerchantId proporcionado por Sipay - SOLO para LIVE después del onboarding
+    // En TEST no se incluye merchantId
     if (isProduction) {
       request.merchantInfo.merchantId = GOOGLE_PAY_MERCHANT_ID
     }
+
+    // Callback intents según ejemplo de Sipay
+    request.callbackIntents = ['PAYMENT_AUTHORIZATION']
 
     return request
   }, [amount, currency, isProduction])
