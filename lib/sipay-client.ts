@@ -94,50 +94,54 @@ export class SipayClient {
   }
 
   /**
-   * Autorización con autenticación y tokenización (primer pago)
-   * https://developer.sipay.es/docs/api/mdwr/allinone#2-autorizaci%C3%B3n-con-autenticaci%C3%B3n-con-almacenamiento-de-tarjeta-tokenizaci%C3%B3n
-   * 
-   * Nota: Si viene de FastPay (iframe), el requestId se usa con el parámetro 'fastpay'
-   * Si ya tenemos un card_token permanente, se usa 'card_token'
+   * Autorización con FastPay request_id (primer pago desde iframe)
+   */
+  async authorizeWithFastPay(params: {
+    amount: number
+    currency: string
+    orderId: string
+    requestId: string
+    customerEmail: string
+  }): Promise<SipayAuthResponse> {
+    const data = {
+      key: this.config.key,
+      resource: this.config.resource,
+      amount: params.amount,
+      currency: params.currency,
+      order: params.orderId,
+      reconciliation: params.orderId,
+      fastpay: params.requestId,
+      mode: 'sha',
+    }
+
+    console.log('📤 Sipay authorize:', { ...data, key: '***' })
+    return this.makeRequest('/mdwr/v1/authorization', 'POST', data)
+  }
+
+  /**
+   * Autorización con card_token (pagos recurrentes)
    */
   async authorizeWithTokenization(params: {
     amount: number
     currency: string
     orderId: string
     description: string
-    cardToken: string // Puede ser requestId de FastPay o cardToken permanente
+    cardToken: string
     customerEmail: string
     returnUrl: string
     cancelUrl: string
-    isRequestId?: boolean // true si cardToken es en realidad un requestId de FastPay
   }): Promise<SipayAuthResponse> {
-    // Determinar si es un request_id de FastPay o un card_token permanente
-    // request_id de FastPay suele ser un hash hexadecimal de 32 caracteres
-    const isFastPayRequestId = params.isRequestId || 
-      (params.cardToken && params.cardToken.length === 32 && /^[a-f0-9]+$/i.test(params.cardToken))
-    
-    const data: Record<string, any> = {
+    const data = {
       key: this.config.key,
       resource: this.config.resource,
       amount: params.amount,
       currency: params.currency,
       order: params.orderId,
-      reconciliation: params.orderId, // ID de conciliación
-      custom_01: params.customerEmail,
-    }
-    
-    // Añadir el token correcto según el tipo
-    if (isFastPayRequestId) {
-      // Es un request_id de FastPay - usar el parámetro 'fastpay'
-      data.fastpay = params.cardToken
-      data.mode = 'sha' // Modo de autenticación con tokenización
-    } else {
-      // Es un card_token permanente (de un pago anterior)
-      data.card_token = params.cardToken
+      card_token: params.cardToken,
+      reconciliation: params.orderId,
     }
 
-    console.log('📤 Datos enviados a Sipay:', { ...data, key: '***' })
-    
+    console.log('📤 Sipay tokenized:', { ...data, key: '***' })
     return this.makeRequest('/mdwr/v1/authorization', 'POST', data)
   }
 

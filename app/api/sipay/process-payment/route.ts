@@ -91,19 +91,28 @@ export async function POST(request: NextRequest) {
     const returnUrl = `${origin}/${paymentLang}/resultado?order_id=${orderId}`
     const cancelUrl = `${origin}/${paymentLang}/checkout?canceled=true`
 
-    // Procesar pago con Sipay (autorización + tokenización)
+    // Procesar pago con Sipay
     const amountInCents = paymentAmount ? Math.round(paymentAmount * 100) : 50 // 0.50€ por defecto
 
-    const response = await sipay.authorizeWithTokenization({
-      amount: amountInCents,
-      currency: 'EUR',
-      orderId,
-      description: description || `Pago MindMetric - Test de CI - ${userEmail}`,
-      cardToken: tokenToUse, // requestId de FastPay o cardToken directo
-      customerEmail: userEmail,
-      returnUrl,
-      cancelUrl,
-    })
+    // Si es requestId de FastPay, usar authorizeWithFastPay
+    const response = requestId 
+      ? await sipay.authorizeWithFastPay({
+          amount: amountInCents,
+          currency: 'EUR',
+          orderId,
+          requestId: requestId,
+          customerEmail: userEmail,
+        })
+      : await sipay.authorizeWithTokenization({
+          amount: amountInCents,
+          currency: 'EUR',
+          orderId,
+          description: description || `Pago MindMetric - ${userEmail}`,
+          cardToken: cardToken,
+          customerEmail: userEmail,
+          returnUrl,
+          cancelUrl,
+        })
 
     console.log('📡 Respuesta de Sipay:', response)
 

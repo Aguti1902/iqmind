@@ -122,24 +122,32 @@ function CheckoutPaymentContent() {
   }
 
   const handlePaymentSuccess = async (response: any) => {
+    console.log('💳 Pago completado! request_id:', response.request_id)
+    
     try {
-      console.log('💳 Pago completado! request_id:', response.request_id)
-      console.log('🎉 Redirigiendo a resultados...')
+      // Procesar pago en backend
+      const result = await fetch('/api/sipay/process-payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderId: paymentData.orderId,
+          requestId: response.request_id,
+          email: email,
+          amount: 0.50,
+          lang: lang,
+        }),
+      })
 
-      // El callback de FastPay con request_id significa que la tarjeta fue capturada
-      // Guardar el request_id para procesarlo después
-      localStorage.setItem('sipay_request_id', response.request_id)
-      localStorage.setItem('sipay_order_id', paymentData.orderId)
+      const data = await result.json()
+      console.log('📡 Respuesta backend:', data)
       
-      // Redirigir inmediatamente a la página de resultados
-      // El backend procesará el pago de forma asíncrona
-      router.push('/' + lang + '/resultado?order_id=' + paymentData.orderId + '&request_id=' + response.request_id + '&email=' + encodeURIComponent(email))
-
     } catch (error: any) {
-      console.error('❌ Error:', error)
-      // Aún así redirigir para no bloquear al usuario
-      router.push('/' + lang + '/resultado?order_id=' + paymentData.orderId)
+      console.error('⚠️ Error backend (ignorando):', error)
     }
+    
+    // Redirigir siempre a resultados
+    console.log('🎉 Redirigiendo a resultados...')
+    router.push('/' + lang + '/resultado?order_id=' + paymentData.orderId)
   }
 
   const handlePaymentError = (error: any) => {
