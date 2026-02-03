@@ -5,27 +5,53 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <title>Pago Seguro</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * { box-sizing: border-box; }
     html, body { 
+      margin: 0;
+      padding: 0;
       width: 100%; 
-      min-height: 100%; 
-      background: transparent;
+      min-height: 100vh;
+      background: #f9fafb;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
-    body { padding: 4px; }
+    body { 
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
     
-    /* Ocultar el botón trigger */
-    #sipay-trigger { 
-      position: absolute; 
-      left: -9999px; 
-      opacity: 0; 
-      pointer-events: none;
+    /* Botón trigger - visible pero discreto hasta que Sipay lo reemplace */
+    .fastpay-btn {
+      display: block;
+      width: 100%;
+      padding: 16px 24px;
+      font-size: 16px;
+      font-weight: 600;
+      color: white;
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-bottom: 16px;
+    }
+    .fastpay-btn:hover {
+      opacity: 0.9;
+    }
+    
+    /* Contenedor para el formulario de Sipay */
+    #sipay-container {
+      flex: 1;
+      min-height: 400px;
+      width: 100%;
     }
     
     /* Hacer responsive el contenido de Sipay */
-    iframe, .sipay-container, [class*="sipay"], [class*="fpay"] {
+    iframe {
       width: 100% !important;
       max-width: 100% !important;
+      min-height: 450px !important;
+      border: none !important;
     }
   </style>
   
@@ -52,20 +78,23 @@
   </script>
 </head>
 <body>
-  <!-- Botón oculto que Sipay necesita para inicializarse -->
-  <button
-    id="sipay-trigger"
-    type="button"
-    class="fastpay-btn"
-    data-key="clicklabsdigital"
-    data-amount="50"
-    data-currency="EUR"
-    data-template="v4"
-    data-lang="es"
-    data-callback="onFastPayDone"
-    data-notab="true"
-    data-cardholdername="false"
-  >Pagar</button>
+  <!-- Contenedor para el formulario -->
+  <div id="sipay-container">
+    <!-- Botón que Sipay transformará en formulario -->
+    <button
+      id="sipay-trigger"
+      type="button"
+      class="fastpay-btn"
+      data-key="clicklabsdigital"
+      data-amount="50"
+      data-currency="EUR"
+      data-template="v4"
+      data-lang="es"
+      data-callback="onFastPayDone"
+      data-notab="true"
+      data-cardholdername="false"
+    >Cargar formulario de pago...</button>
+  </div>
 
   <!-- Cargar SDK de Sipay -->
   <script src="https://sandbox.sipay.es/fpay/v1/static/bundle/fastpay.js"></script>
@@ -99,35 +128,46 @@
     // ============================================
     // 3. AUTO-CLICK PARA MOSTRAR FORMULARIO
     // ============================================
+    var sipayTriggered = false;
+    
     function triggerSipay() {
+      if (sipayTriggered) return;
+      
       var btn = document.getElementById('sipay-trigger');
-      if (btn) {
+      if (btn && btn.offsetParent !== null) { // Verificar que el botón es visible
         console.log('🖱️ Triggering Sipay...');
+        sipayTriggered = true;
         btn.click();
       }
     }
     
-    // Esperar a que Sipay esté listo y hacer click
+    // Esperar a que Sipay esté listo y hacer click automático
+    function initSipay() {
+      // Dar tiempo a fastpay.js para inicializarse
+      setTimeout(triggerSipay, 800);
+    }
+    
     if (document.readyState === 'complete') {
-      setTimeout(triggerSipay, 500);
+      initSipay();
     } else {
-      window.addEventListener('load', function() {
-        setTimeout(triggerSipay, 500);
-      });
+      window.addEventListener('load', initSipay);
     }
     
     // ============================================
-    // 4. DEBUG: Verificar estado después de 2s
+    // 4. DEBUG: Verificar estado
     // ============================================
     setTimeout(function() {
       var iframes = document.querySelectorAll('iframe');
-      var forms = document.querySelectorAll('form');
-      console.log('📊 Debug - iframes:', iframes.length, 'forms:', forms.length);
+      var btn = document.getElementById('sipay-trigger');
+      console.log('📊 Debug - iframes:', iframes.length, 'button visible:', btn ? (btn.offsetParent !== null) : false);
       
-      // Si no hay iframes, el formulario no se cargó
-      if (iframes.length === 0) {
-        console.warn('⚠️ Sipay no cargó el formulario. Intentando de nuevo...');
-        triggerSipay();
+      // Si el iframe se cargó, asegurar que tenga buen tamaño
+      if (iframes.length > 0) {
+        iframes.forEach(function(iframe) {
+          iframe.style.width = '100%';
+          iframe.style.minHeight = '450px';
+          console.log('📐 Iframe resized');
+        });
       }
     }, 2000);
   </script>

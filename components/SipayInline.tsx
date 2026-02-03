@@ -102,9 +102,10 @@ export default function SipayInline({
           width: '100%',
           height: `${height}px`,
           border: 'none',
-          minHeight: '480px',
+          minHeight: '520px',
         }}
         allow="payment"
+        scrolling="no"
       />
     </div>
   )
