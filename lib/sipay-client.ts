@@ -96,31 +96,49 @@ export class SipayClient {
   /**
    * Autorización con autenticación y tokenización (primer pago)
    * https://developer.sipay.es/docs/api/mdwr/allinone#2-autorizaci%C3%B3n-con-autenticaci%C3%B3n-con-almacenamiento-de-tarjeta-tokenizaci%C3%B3n
+   * 
+   * Nota: Si viene de FastPay (iframe), el requestId se usa con el parámetro 'fastpay'
+   * Si ya tenemos un card_token permanente, se usa 'card_token'
    */
   async authorizeWithTokenization(params: {
     amount: number
     currency: string
     orderId: string
     description: string
-    cardToken: string
+    cardToken: string // Puede ser requestId de FastPay o cardToken permanente
     customerEmail: string
     returnUrl: string
     cancelUrl: string
+    isRequestId?: boolean // true si cardToken es en realidad un requestId de FastPay
   }): Promise<SipayAuthResponse> {
-    const data = {
+    // Determinar si es un request_id de FastPay o un card_token permanente
+    // request_id de FastPay suele ser un hash hexadecimal de 32 caracteres
+    const isFastPayRequestId = params.isRequestId || 
+      (params.cardToken && params.cardToken.length === 32 && /^[a-f0-9]+$/i.test(params.cardToken))
+    
+    const data: Record<string, any> = {
+      key: this.config.key,
+      resource: this.config.resource,
       amount: params.amount,
       currency: params.currency,
       order: params.orderId,
-      description: params.description,
-      card_token: params.cardToken,
-      customer_email: params.customerEmail,
-      return_url: params.returnUrl,
-      cancel_url: params.cancelUrl,
-      tokenize: true,
-      resource: this.config.resource,
+      reconciliation: params.orderId, // ID de conciliación
+      custom_01: params.customerEmail,
+    }
+    
+    // Añadir el token correcto según el tipo
+    if (isFastPayRequestId) {
+      // Es un request_id de FastPay - usar el parámetro 'fastpay'
+      data.fastpay = params.cardToken
+      data.mode = 'sha' // Modo de autenticación con tokenización
+    } else {
+      // Es un card_token permanente (de un pago anterior)
+      data.card_token = params.cardToken
     }
 
-    return this.makeRequest('/api/v1/mdwr/allinone', 'POST', data)
+    console.log('📤 Datos enviados a Sipay:', { ...data, key: '***' })
+    
+    return this.makeRequest('/mdwr/v1/authorization', 'POST', data)
   }
 
   /**
