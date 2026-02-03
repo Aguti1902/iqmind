@@ -118,40 +118,31 @@ export async function POST(request: NextRequest) {
 
     console.log('📡 Respuesta de Sipay:', response)
 
-    // Verificar respuesta
-    if (response.code !== 0) {
-      console.error('❌ Error en Sipay:', response.description)
-      return NextResponse.json(
-        { error: response.description || 'Error procesando el pago' },
-        { status: 400 }
-      )
-    }
-
-    // Guardar token de la tarjeta en la BD para futuros pagos
-    if (response.card_token) {
-      await db.updateUser(user.id, {
-        subscriptionId: response.card_token, // Usamos este campo para guardar el token
-      })
-      console.log('✅ Token de tarjeta guardado')
-    }
-
     // Calcular fecha de fin del trial (2 días)
     const trialEndDate = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
     
+    // SIEMPRE activar trial y enviar emails (el usuario ya tokenizó su tarjeta)
     // Actualizar estado del usuario
     await db.updateUser(user.id, {
       subscriptionStatus: 'trial',
       trialEndDate: trialEndDate.toISOString(),
     })
+    console.log('✅ Trial activado')
 
-    console.log('✅ Pago procesado exitosamente')
+    // Guardar token de la tarjeta si Sipay lo devuelve
+    if (response.code === 0 && response.card_token) {
+      await db.updateUser(user.id, {
+        subscriptionId: response.card_token,
+      })
+      console.log('✅ Token de tarjeta guardado')
+    }
 
     // Obtener el IQ del usuario (si existe)
     const testResults = await db.getTestResultsByUserId(user.id)
     const latestResult = testResults && testResults.length > 0 ? testResults[0] : null
     const userIQ = latestResult?.iq || 100
 
-    // Enviar emails
+    // Enviar emails SIEMPRE
     const userName = (user as any).name || userEmail.split('@')[0]
     const trialEndFormatted = trialEndDate.toLocaleDateString(paymentLang === 'es' ? 'es-ES' : 'en-US', {
       weekday: 'long',
@@ -183,7 +174,7 @@ export async function POST(request: NextRequest) {
           testEmail = emailTemplates.paymentSuccess(userEmail, userName, userIQ, paymentLang)
       }
       await sendEmail(testEmail)
-      console.log(`📧 Email de test ${testType} enviado`)
+      console.log(`📧 Email de test ${testType} enviado a ${userEmail}`)
     } catch (e) {
       console.error('⚠️ Error enviando email de test:', e)
     }
@@ -192,21 +183,18 @@ export async function POST(request: NextRequest) {
     try {
       const trialEmail = emailTemplates.trialStarted(userEmail, userName, trialEndFormatted, paymentLang)
       await sendEmail(trialEmail)
-      console.log('📧 Email de trial enviado')
+      console.log(`📧 Email de trial enviado a ${userEmail}`)
     } catch (e) {
       console.error('⚠️ Error enviando email de trial:', e)
     }
 
+    // Responder con éxito (aunque Sipay haya fallado, el trial está activo)
     return NextResponse.json({
       success: true,
+      sipaySuccess: response.code === 0,
       transactionId: response.id_transaction,
       orderId: response.id_order,
       cardToken: response.card_token,
-      cardMask: response.card_mask,
-      cardBrand: response.card_brand,
-      authorizationCode: response.authorization_code,
-      amount: response.amount,
-      status: response.transaction_status,
       trialEndDate: trialEndDate.toISOString(),
     })
 
