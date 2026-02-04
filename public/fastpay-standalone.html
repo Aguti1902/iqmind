@@ -28,24 +28,8 @@
       display: none !important; 
     }
     
-    /* Estilos para el iframe de Sipay - sin scroll */
-    iframe {
-      width: 100% !important;
-      height: 100% !important;
-      min-height: 450px !important;
-      border: none !important;
-      display: block;
-      background: transparent !important;
-      overflow: hidden !important;
-    }
-    
-    /* Añadir espacio encima del botón de pagar */
-    /* Sipay usa clases internas, intentamos con selectores generales */
-    button[type="submit"],
-    .sipay-submit-btn,
-    input[type="submit"] {
-      margin-top: 24px !important;
-    }
+    /* El iframe interno de Sipay no se puede estilizar desde aquí 
+       porque es de otro dominio (sandbox.sipay.es) */
   </style>
 </head>
 <body>
@@ -59,10 +43,11 @@
     data-template="v4"
     data-callback="onFastPayDone"
     data-lang="es"
-    data-paymentbutton="PAGAR"
+    data-paymentbutton="PAGAR 0,50 €"
     data-cardholdername="false"
     data-notab="true"
     data-hiddenprice="true"
+    data-autosave="false"
   >
     Pagar
   </button>
@@ -84,8 +69,9 @@
         if (template) btn.setAttribute('data-template', template);
         if (lang) btn.setAttribute('data-lang', lang);
         
-        // Texto del botón sin precio (data-hiddenprice=true lo oculta)
-        btn.setAttribute('data-paymentbutton', 'PAGAR 0,50 €');
+        // Texto del botón - solo "PAGAR" sin precio
+        // data-hiddenprice=true oculta el precio que Sipay añade
+        btn.setAttribute('data-paymentbutton', 'PAGAR');
         btn.setAttribute('data-hiddenprice', 'true');
       }
     })();
