@@ -88,13 +88,14 @@ export default function SipayInline({
     <iframe
       src={iframeSrc}
       title="Formulario de pago"
+      scrolling="no"
       style={{
         display: 'block',
         width: '100%',
         height: `${height}px`,
         border: 'none',
-        minHeight: '500px',
         background: 'transparent',
+        overflow: 'hidden',
       }}
       allow="payment"
     />

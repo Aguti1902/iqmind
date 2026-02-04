@@ -13,15 +13,14 @@
     
     html, body { 
       width: 100%;
-      min-height: 100%;
-      overflow-x: hidden;
-      overflow-y: auto;
-      background: transparent;
+      height: 100%;
+      overflow: hidden;
+      background: transparent !important;
     }
     
     body { 
-      min-height: 500px;
       padding: 0;
+      background: transparent !important;
     }
     
     /* Ocultar el botón de Sipay */
@@ -29,13 +28,23 @@
       display: none !important; 
     }
     
-    /* Estilos para el iframe de Sipay */
+    /* Estilos para el iframe de Sipay - sin scroll */
     iframe {
       width: 100% !important;
+      height: 100% !important;
       min-height: 450px !important;
       border: none !important;
       display: block;
-      background: transparent;
+      background: transparent !important;
+      overflow: hidden !important;
+    }
+    
+    /* Añadir espacio encima del botón de pagar */
+    /* Sipay usa clases internas, intentamos con selectores generales */
+    button[type="submit"],
+    .sipay-submit-btn,
+    input[type="submit"] {
+      margin-top: 24px !important;
     }
   </style>
 </head>
@@ -50,10 +59,10 @@
     data-template="v4"
     data-callback="onFastPayDone"
     data-lang="es"
-    data-paymentbutton="Pagar 0,50 €"
+    data-paymentbutton="PAGAR"
     data-cardholdername="false"
     data-notab="true"
-    data-hiddenprice="false"
+    data-hiddenprice="true"
   >
     Pagar
   </button>
@@ -75,9 +84,9 @@
         if (template) btn.setAttribute('data-template', template);
         if (lang) btn.setAttribute('data-lang', lang);
         
-        // Actualizar texto del botón según el importe
-        var amountNum = amount ? (parseInt(amount) / 100).toFixed(2).replace('.', ',') : '0,50';
-        btn.setAttribute('data-paymentbutton', 'Pagar ' + amountNum + ' €');
+        // Texto del botón sin precio (data-hiddenprice=true lo oculta)
+        btn.setAttribute('data-paymentbutton', 'PAGAR 0,50 €');
+        btn.setAttribute('data-hiddenprice', 'true');
       }
     })();
 

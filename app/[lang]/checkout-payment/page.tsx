@@ -6,6 +6,15 @@ import SipayInline from '@/components/SipayInline'
 import GooglePayButton from '@/components/GooglePayButton'
 import ApplePayButton from '@/components/ApplePayButton'
 
+// Reseñas de usuarios
+const reviews = [
+  { name: 'María G.', rating: 5, text: 'Muy profesional y detallado. Me ayudó a entenderme mejor.', country: '🇪🇸' },
+  { name: 'Carlos R.', rating: 5, text: 'Resultados precisos y el certificado es muy útil.', country: '🇲🇽' },
+  { name: 'Ana P.', rating: 5, text: 'Excelente experiencia, lo recomiendo totalmente.', country: '🇦🇷' },
+  { name: 'David M.', rating: 5, text: 'El análisis por categorías es muy completo.', country: '🇨🇴' },
+  { name: 'Laura S.', rating: 5, text: 'Rápido, fácil y muy informativo. ¡Gracias!', country: '🇨🇱' },
+]
+
 // Deshabilitar pre-rendering estático
 export const dynamic = 'force-dynamic'
 
@@ -18,6 +27,15 @@ function CheckoutPaymentContent() {
   const [paymentData, setPaymentData] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
+  const [currentReview, setCurrentReview] = useState(0)
+
+  // Auto-rotar reseñas
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentReview((prev) => (prev + 1) % reviews.length)
+    }, 4000)
+    return () => clearInterval(interval)
+  }, [])
 
   const testConfig: any = {
     'iq': {
@@ -335,6 +353,50 @@ function CheckoutPaymentContent() {
                   </div>
                 </div>
               </div>
+
+              {/* Reviews Slider */}
+              <div className="bg-white rounded-2xl shadow-xl p-6">
+                <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                  <span>⭐</span> Lo que dicen nuestros usuarios
+                </h3>
+                <div className="relative overflow-hidden">
+                  <div 
+                    className="transition-transform duration-500 ease-in-out"
+                    style={{ transform: `translateX(-${currentReview * 100}%)` }}
+                  >
+                    <div className="flex">
+                      {reviews.map((review, index) => (
+                        <div key={index} className="w-full flex-shrink-0 px-1">
+                          <div className="bg-gray-50 rounded-xl p-4">
+                            <div className="flex items-center gap-2 mb-2">
+                              <div className="flex text-yellow-400">
+                                {[...Array(review.rating)].map((_, i) => (
+                                  <span key={i}>★</span>
+                                ))}
+                              </div>
+                              <span className="text-lg">{review.country}</span>
+                            </div>
+                            <p className="text-gray-700 text-sm mb-2 italic">"{review.text}"</p>
+                            <p className="text-gray-500 text-xs font-semibold">— {review.name}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  {/* Dots */}
+                  <div className="flex justify-center gap-2 mt-4">
+                    {reviews.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentReview(index)}
+                        className={`w-2 h-2 rounded-full transition-colors ${
+                          index === currentReview ? 'bg-[#07C59A]' : 'bg-gray-300'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Right Column - Payment Form */}
@@ -428,8 +490,24 @@ function CheckoutPaymentContent() {
                         console.log('🎉 Payment success! request_id:', requestId)
                         handlePaymentSuccess({ request_id: requestId, ...(typeof payload === 'object' && payload !== null ? payload : {}) })
                       }}
-                      height={550}
+                      height={480}
                     />
+
+                    {/* Security Badges */}
+                    <div className="flex items-center justify-center gap-4 mt-4 pt-4 border-t border-gray-200">
+                      <div className="flex items-center gap-1 text-xs text-gray-600">
+                        <i className="fas fa-lock text-green-500"></i>
+                        <span>Pago 100% Seguro</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-xs text-gray-600">
+                        <i className="fas fa-shield-alt text-green-500"></i>
+                        <span>SSL Encriptado</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-xs text-gray-600">
+                        <i className="fas fa-credit-card text-green-500"></i>
+                        <span>PCI DSS</span>
+                      </div>
+                    </div>
                   </>
                 ) : null}
               </div>
