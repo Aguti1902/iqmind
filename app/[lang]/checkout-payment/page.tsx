@@ -490,26 +490,26 @@ function CheckoutPaymentContent() {
                         <button
                           type="button"
                           onClick={() => setPaymentMethod(paymentMethod === 'card' ? 'none' : 'card')}
-                          className={`w-full flex items-center justify-between p-4 rounded-xl border-2 transition-all ${
+                          className={`w-full flex items-center justify-between p-3 sm:p-4 rounded-xl border-2 transition-all ${
                             paymentMethod === 'card' 
                               ? 'border-[#07C59A] bg-green-50' 
                               : 'border-gray-200 hover:border-gray-300 bg-white'
                           }`}
                         >
-                          <div className="flex items-center gap-3">
-                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                          <div className="flex items-center gap-2 sm:gap-3">
+                            <div className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
                               paymentMethod === 'card' ? 'border-[#07C59A]' : 'border-gray-300'
                             }`}>
                               {paymentMethod === 'card' && (
-                                <div className="w-3 h-3 rounded-full bg-[#07C59A]" />
+                                <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-[#07C59A]" />
                               )}
                             </div>
-                            <i className="fas fa-credit-card text-gray-600 text-lg"></i>
-                            <span className="font-medium text-gray-900">Tarjeta de crédito/débito</span>
+                            <i className="fas fa-credit-card text-gray-600 text-sm sm:text-lg"></i>
+                            <span className="font-medium text-gray-900 text-sm sm:text-base">Tarjeta</span>
                           </div>
-                          <div className="flex gap-2">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" className="h-5" />
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" className="h-5" />
+                          <div className="flex gap-1 sm:gap-2 flex-shrink-0">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" className="h-3 sm:h-5" />
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" className="h-3 sm:h-5" />
                           </div>
                         </button>
 
