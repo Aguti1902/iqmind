@@ -462,6 +462,30 @@ function CheckoutPaymentContent() {
                       </label>
                       
                       <div className="space-y-2">
+                        {/* Google Pay */}
+                        <GooglePayButton
+                          amount={0.50}
+                          currency="EUR"
+                          onSuccess={handleGooglePaySuccess}
+                          onError={handlePaymentError}
+                          env={paymentData.sipayConfig?.endpoint?.includes('live') ? 'live' : 'sandbox'}
+                        />
+
+                        {/* Apple Pay */}
+                        <ApplePayButton
+                          amount={0.50}
+                          currency="EUR"
+                          onSuccess={handleApplePaySuccess}
+                          onError={handlePaymentError}
+                        />
+
+                        {/* Separador */}
+                        <div className="flex items-center gap-3 py-2">
+                          <div className="flex-1 h-px bg-gray-300"></div>
+                          <span className="text-xs text-gray-500">o paga con tarjeta</span>
+                          <div className="flex-1 h-px bg-gray-300"></div>
+                        </div>
+
                         {/* Opción Tarjeta */}
                         <button
                           type="button"
@@ -508,27 +532,6 @@ function CheckoutPaymentContent() {
                               height={450}
                             />
                           </div>
-                        </div>
-
-                        {/* Opción Google Pay */}
-                        <div className="relative">
-                          <GooglePayButton
-                            amount={0.50}
-                            currency="EUR"
-                            onSuccess={handleGooglePaySuccess}
-                            onError={handlePaymentError}
-                            env={paymentData.sipayConfig?.endpoint?.includes('live') ? 'live' : 'sandbox'}
-                          />
-                        </div>
-
-                        {/* Opción Apple Pay */}
-                        <div className="relative">
-                          <ApplePayButton
-                            amount={0.50}
-                            currency="EUR"
-                            onSuccess={handleApplePaySuccess}
-                            onError={handlePaymentError}
-                          />
                         </div>
                       </div>
                     </div>
