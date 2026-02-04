@@ -28,6 +28,7 @@ function CheckoutPaymentContent() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
   const [currentReview, setCurrentReview] = useState(0)
+  const [paymentMethod, setPaymentMethod] = useState<'none' | 'card' | 'google' | 'apple'>('none')
 
   // Auto-rotar reseñas
   useEffect(() => {
@@ -454,47 +455,86 @@ function CheckoutPaymentContent() {
                       </div>
                     </div>
 
-                    {/* Botones de pago rápido: Google Pay y Apple Pay */}
-                    <div className="space-y-3 mb-4">
-                      <GooglePayButton
-                        amount={0.50}
-                        currency="EUR"
-                        onSuccess={handleGooglePaySuccess}
-                        onError={handlePaymentError}
-                        env={paymentData.sipayConfig?.endpoint?.includes('live') ? 'live' : 'sandbox'}
-                      />
-                      <ApplePayButton
-                        amount={0.50}
-                        currency="EUR"
-                        onSuccess={handleApplePaySuccess}
-                        onError={handlePaymentError}
-                      />
-                    </div>
+                    {/* Método de pago */}
+                    <div className="mb-4">
+                      <label className="block text-gray-700 font-semibold mb-3 text-sm">
+                        Selecciona tu método de pago
+                      </label>
+                      
+                      <div className="space-y-2">
+                        {/* Opción Tarjeta */}
+                        <button
+                          type="button"
+                          onClick={() => setPaymentMethod(paymentMethod === 'card' ? 'none' : 'card')}
+                          className={`w-full flex items-center justify-between p-4 rounded-xl border-2 transition-all ${
+                            paymentMethod === 'card' 
+                              ? 'border-[#07C59A] bg-green-50' 
+                              : 'border-gray-200 hover:border-gray-300 bg-white'
+                          }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                              paymentMethod === 'card' ? 'border-[#07C59A]' : 'border-gray-300'
+                            }`}>
+                              {paymentMethod === 'card' && (
+                                <div className="w-3 h-3 rounded-full bg-[#07C59A]" />
+                              )}
+                            </div>
+                            <i className="fas fa-credit-card text-gray-600 text-lg"></i>
+                            <span className="font-medium text-gray-900">Tarjeta de crédito/débito</span>
+                          </div>
+                          <div className="flex gap-2">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" className="h-5" />
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" className="h-5" />
+                          </div>
+                        </button>
 
-                    {/* Separador */}
-                    <div className="flex items-center gap-4 my-4">
-                      <div className="flex-1 h-px bg-gray-300"></div>
-                      <span className="text-sm text-gray-500">o paga con tarjeta</span>
-                      <div className="flex-1 h-px bg-gray-300"></div>
-                    </div>
+                        {/* Formulario de tarjeta desplegable */}
+                        <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                          paymentMethod === 'card' ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0'
+                        }`}>
+                          <div className="pt-2">
+                            <SipayInline
+                              merchantKey={paymentData.sipayConfig?.key || 'clicklabsdigital'}
+                              amount={50}
+                              currency="EUR"
+                              template="v4"
+                              lang={lang}
+                              env={paymentData.sipayConfig?.endpoint?.includes('live') ? 'live' : 'sandbox'}
+                              onRequestId={(requestId, payload) => {
+                                console.log('🎉 Payment success! request_id:', requestId)
+                                handlePaymentSuccess({ request_id: requestId, ...(typeof payload === 'object' && payload !== null ? payload : {}) })
+                              }}
+                              height={450}
+                            />
+                          </div>
+                        </div>
 
-                    {/* Sipay Payment Component */}
-                    <SipayInline
-                      merchantKey={paymentData.sipayConfig?.key || 'clicklabsdigital'}
-                      amount={50}
-                      currency="EUR"
-                      template="v4"
-                      lang={lang}
-                      env={paymentData.sipayConfig?.endpoint?.includes('live') ? 'live' : 'sandbox'}
-                      onRequestId={(requestId, payload) => {
-                        console.log('🎉 Payment success! request_id:', requestId)
-                        handlePaymentSuccess({ request_id: requestId, ...(typeof payload === 'object' && payload !== null ? payload : {}) })
-                      }}
-                      height={480}
-                    />
+                        {/* Opción Google Pay */}
+                        <div className="relative">
+                          <GooglePayButton
+                            amount={0.50}
+                            currency="EUR"
+                            onSuccess={handleGooglePaySuccess}
+                            onError={handlePaymentError}
+                            env={paymentData.sipayConfig?.endpoint?.includes('live') ? 'live' : 'sandbox'}
+                          />
+                        </div>
+
+                        {/* Opción Apple Pay */}
+                        <div className="relative">
+                          <ApplePayButton
+                            amount={0.50}
+                            currency="EUR"
+                            onSuccess={handleApplePaySuccess}
+                            onError={handlePaymentError}
+                          />
+                        </div>
+                      </div>
+                    </div>
 
                     {/* Security Badges */}
-                    <div className="flex items-center justify-center gap-4 mt-4 pt-4 border-t border-gray-200">
+                    <div className="flex items-center justify-center gap-4 pt-4 border-t border-gray-200">
                       <div className="flex items-center gap-1 text-xs text-gray-600">
                         <i className="fas fa-lock text-green-500"></i>
                         <span>Pago 100% Seguro</span>
