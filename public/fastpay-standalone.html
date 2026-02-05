@@ -79,10 +79,23 @@
     // Callback cuando el pago se completa
     function onFastPayDone(data) {
       console.log('[Payment] ✅ Completado:', data);
+      console.log('[Payment] 📦 Payload completo:', JSON.stringify(data, null, 2));
+      
+      // Extraer datos importantes
+      var requestId = data && data.request_id ? data.request_id : null;
+      var cardToken = data && data.payload && data.payload.card_token ? data.payload.card_token : null;
+      var transactionId = data && data.payload && data.payload.transaction_id ? data.payload.transaction_id : null;
+      
+      console.log('[Payment] 🔑 request_id:', requestId);
+      console.log('[Payment] 💳 card_token:', cardToken);
+      console.log('[Payment] 🧾 transaction_id:', transactionId);
+      
       if (window.parent !== window) {
         window.parent.postMessage({ 
           type: 'sipay_fastpay_done', 
-          request_id: data && data.request_id ? data.request_id : null, 
+          request_id: requestId,
+          card_token: cardToken,
+          transaction_id: transactionId,
           payload: data 
         }, '*');
       }
