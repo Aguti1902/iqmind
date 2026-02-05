@@ -109,6 +109,7 @@ export class SipayClient {
 
   /**
    * Autorización con FastPay request_id (primer pago desde iframe)
+   * Usa el endpoint all-in-one según documentación Sipay
    */
   async authorizeWithFastPay(params: {
     amount: number
@@ -117,7 +118,7 @@ export class SipayClient {
     requestId: string
     customerEmail: string
   }): Promise<SipayAuthResponse> {
-    // Generar reconciliation simple (solo números, máx 12 chars)
+    // Generar reconciliation simple (solo números, máx 10 chars)
     const reconciliation = Date.now().toString().slice(-10)
     
     const payload = {
@@ -125,13 +126,14 @@ export class SipayClient {
       currency: params.currency,
       order: params.orderId.replace(/[^a-zA-Z0-9]/g, '').slice(0, 20), // Solo alfanumérico
       reconciliation: reconciliation,
+      operation: 'all-in-one',
       fastpay: {
         request_id: params.requestId,
       },
     }
 
     console.log('📤 Sipay authorize FastPay:', payload)
-    return this.makeRequest('/mdwr/v1/authorization', 'POST', payload)
+    return this.makeRequest('/mdwr/v1/all-in-one', 'POST', payload)
   }
 
   /**
