@@ -65,32 +65,46 @@ export class SipayClient {
   }
 
   /**
-   * Hacer petición a la API de Sipay
+   * Hacer petición a la API de Sipay con formato MDWR 2.0
    */
   private async makeRequest(
     endpoint: string,
     method: string,
-    data: any
+    payloadData: any
   ): Promise<any> {
     const url = `${this.config.endpoint}${endpoint}`
-    const payload = JSON.stringify(data)
-    const signature = this.generateSignature(payload)
+    
+    // Formato MDWR 2.0: key, resource, nonce, mode, payload
+    const requestBody = {
+      key: this.config.key,
+      resource: this.config.resource,
+      nonce: Date.now().toString(),
+      mode: 'sha256',
+      payload: payloadData,
+    }
+    
+    const bodyString = JSON.stringify(requestBody)
+    const signature = this.generateSignature(bodyString)
+
+    console.log('📤 Sipay request:', { endpoint, payload: payloadData })
 
     const response = await fetch(url, {
       method,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.config.key}`,
         'X-Sipay-Signature': signature,
       },
-      body: payload,
+      body: bodyString,
     })
 
-    if (!response.ok) {
-      throw new Error(`Sipay API error: ${response.status} ${response.statusText}`)
+    const result = await response.json()
+    console.log('📥 Sipay response:', result)
+
+    if (result.type === 'error') {
+      throw new Error(`Sipay error: ${result.detail} - ${result.description}`)
     }
 
-    return response.json()
+    return result
   }
 
   /**
@@ -103,19 +117,21 @@ export class SipayClient {
     requestId: string
     customerEmail: string
   }): Promise<SipayAuthResponse> {
-    const data = {
-      key: this.config.key,
-      resource: this.config.resource,
-      amount: params.amount,
+    // Generar reconciliation simple (solo números, máx 12 chars)
+    const reconciliation = Date.now().toString().slice(-10)
+    
+    const payload = {
+      amount: params.amount.toString(),
       currency: params.currency,
-      order: params.orderId,
-      reconciliation: params.orderId,
-      fastpay: params.requestId,
-      mode: 'sha',
+      order: params.orderId.replace(/[^a-zA-Z0-9]/g, '').slice(0, 20), // Solo alfanumérico
+      reconciliation: reconciliation,
+      fastpay: {
+        request_id: params.requestId,
+      },
     }
 
-    console.log('📤 Sipay authorize:', { ...data, key: '***' })
-    return this.makeRequest('/mdwr/v1/authorization', 'POST', data)
+    console.log('📤 Sipay authorize FastPay:', payload)
+    return this.makeRequest('/mdwr/v1/authorization', 'POST', payload)
   }
 
   /**

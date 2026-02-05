@@ -1,0 +1,64 @@
+[
+  {
+    "id": "1.1",
+    "tipo": "Venta CIT + token",
+    "ticket": "0291824284",
+    "token": "token0291824284",
+    "importe": "0.01€",
+    "request_id": "6984825f68609fc19aac3450",
+    "code": "-1",
+    "description": "You do not have enough permissions"
+  },
+  {
+    "id": "1.3",
+    "tipo": "Venta CIT + token",
+    "ticket": "0291824674",
+    "token": "token0291824674",
+    "importe": "0.01€",
+    "request_id": "6984825f68609fc19aac3451",
+    "code": "-1",
+    "description": "You do not have enough permissions"
+  },
+  {
+    "id": "2.1",
+    "tipo": "Venta CIT + token",
+    "ticket": "0291824958",
+    "token": "token0291824958",
+    "importe": "0.01€",
+    "request_id": "6984825f68609fc19aac3452",
+    "code": "-1",
+    "description": "You do not have enough permissions"
+  },
+  {
+    "id": "2.3",
+    "tipo": "Venta MIT Recurrente",
+    "ticket": "0291825066",
+    "token": "token0291824958",
+    "importe": "0.01€",
+    "code": "-1",
+    "description": "You do not have enough permissions"
+  },
+  {
+    "id": "2.5",
+    "tipo": "Venta MIT Compra única",
+    "ticket": "0291825170",
+    "token": "token0291824958",
+    "importe": "0.01€",
+    "code": "-1",
+    "description": "You do not have enough permissions"
+  },
+  {
+    "id": "3.2",
+    "tipo": "Consulta token",
+    "token": "token0291824958",
+    "code": "-1",
+    "description": "You do not have enough permissions"
+  },
+  {
+    "id": "3.1",
+    "tipo": "Unregister token",
+    "token": "token0291824958",
+    "code": "-1",
+    "description": "You do not have enough permissions"
+  }
+]
