@@ -155,12 +155,12 @@ export async function POST(request: NextRequest) {
       console.error('⚠️ Error enviando email de trial:', e)
     }
 
-    // Responder con éxito (aunque Sipay haya fallado, el trial está activo)
+    // Responder con éxito
     return NextResponse.json({
       success: true,
-      sipaySuccess: response.code === 0,
-      transactionId: response.id_transaction,
-      orderId: response.id_order,
+      sipaySuccess: true,
+      transactionId: requestId, // El request_id de FastPay es nuestra referencia
+      orderId: orderId,
       cardToken: response.card_token,
       trialEndDate: trialEndDate.toISOString(),
     })
