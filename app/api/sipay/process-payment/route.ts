@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
     
     let response: any = { code: 0, card_token: requestId }
     let transactionId = null
-    let cardToken = null
+    let savedCardToken = null
     
     if (requestId) {
       try {
@@ -109,12 +109,12 @@ export async function POST(request: NextRequest) {
           console.log('📥 confirm result:', confirmResult)
           
           transactionId = confirmResult?.payload?.transaction_id
-          cardToken = confirmResult?.payload?.token
+          savedCardToken = confirmResult?.payload?.token
           
           response = {
             code: 0,
             description: 'Payment confirmed',
-            card_token: cardToken || requestId,
+            card_token: savedCardToken || requestId,
             transaction_id: transactionId,
           }
         }
@@ -137,11 +137,11 @@ export async function POST(request: NextRequest) {
     console.log('✅ Trial activado')
 
     // Guardar token de la tarjeta si Sipay lo devuelve
-    if (cardToken || response.card_token) {
+    if (savedCardToken || response.card_token) {
       await db.updateUser(user.id, {
-        subscriptionId: cardToken || response.card_token,
+        subscriptionId: savedCardToken || response.card_token,
       })
-      console.log('✅ Token de tarjeta guardado:', cardToken || response.card_token)
+      console.log('✅ Token de tarjeta guardado:', savedCardToken || response.card_token)
     }
 
     // Obtener el IQ del usuario (si existe)
@@ -201,7 +201,7 @@ export async function POST(request: NextRequest) {
       sipaySuccess: true,
       transactionId: transactionId || requestId,
       orderId: orderId,
-      cardToken: cardToken || response.card_token,
+      cardToken: savedCardToken || response.card_token,
       trialEndDate: trialEndDate.toISOString(),
     })
 
