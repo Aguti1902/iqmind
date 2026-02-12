@@ -224,11 +224,14 @@ async function test_unregister(cardToken) {
 
 // ===== EJECUTAR BATERÍA COMPLETA =====
 
+// Token obtenido de FastPay (del último pago exitoso)
+const FASTPAY_TOKEN = 'b2249ff4aae3470eaffc7aaf81b43c93'
+
 async function main() {
   console.log('\n🚀 BATERÍA DE PRUEBAS SIPAY - MINDMETRIC')
   console.log('Fecha:', new Date().toLocaleString('es-ES'))
   console.log('Entorno: SANDBOX')
-  console.log('Tarjeta: ****' + TEST_CARD.pan.slice(-4))
+  console.log('Token FastPay:', FASTPAY_TOKEN)
 
   // ========================================
   // BLOQUE 1: CIT + Tokenización

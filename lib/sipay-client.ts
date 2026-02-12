@@ -92,7 +92,7 @@ export class SipayClient {
       method,
       headers: {
         'Content-Type': 'application/json',
-        'X-Sipay-Signature': signature,
+        'Content-Signature': signature,
       },
       body: bodyString,
     })
@@ -117,16 +117,20 @@ export class SipayClient {
     orderId: string
     requestId: string
     customerEmail: string
-  }): Promise<SipayAuthResponse> {
-    // Generar reconciliation simple (solo números, máx 10 chars)
-    const reconciliation = Date.now().toString().slice(-10)
+    urlOk?: string
+    urlKo?: string
+  }): Promise<any> {
+    // Generar reconciliation simple (solo alfanumérico)
+    const reconciliation = 'Psd2' + Date.now().toString().slice(-8)
     
-    const payload = {
+    const payload: any = {
       amount: params.amount.toString(),
       currency: params.currency,
-      order: params.orderId.replace(/[^a-zA-Z0-9]/g, '').slice(0, 20), // Solo alfanumérico
+      order: params.orderId,
       reconciliation: reconciliation,
       operation: 'all-in-one',
+      url_ok: params.urlOk || 'https://mindmetric.io/es/resultado',
+      url_ko: params.urlKo || 'https://mindmetric.io/es/checkout-payment?error=true',
       fastpay: {
         request_id: params.requestId,
       },
@@ -134,6 +138,18 @@ export class SipayClient {
 
     console.log('📤 Sipay authorize FastPay:', payload)
     return this.makeRequest('/mdwr/v1/all-in-one', 'POST', payload)
+  }
+
+  /**
+   * Confirmar y capturar fondos después de autenticación
+   */
+  async confirmPayment(requestId: string): Promise<any> {
+    const payload = {
+      request_id: requestId,
+    }
+
+    console.log('📤 Sipay confirm payment:', payload)
+    return this.makeRequest('/mdwr/v1/all-in-one/confirm', 'POST', payload)
   }
 
   /**

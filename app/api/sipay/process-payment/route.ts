@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getSipayClient } from '@/lib/sipay-client'
 import { db } from '@/lib/database-postgres'
 import { checkRateLimit, getClientIP, rateLimitResponse } from '@/lib/api-security'
 import { sendEmail, emailTemplates } from '@/lib/email-service'
@@ -73,16 +74,55 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // IMPORTANTE: FastPay ya realizó el cobro cuando el usuario completó el formulario
-    // El request_id indica que el pago fue exitoso (tokenization_success)
-    // No necesitamos hacer otra llamada a Sipay para autorización
-    console.log('✅ FastPay completado con request_id:', requestId)
+    // Flujo FastPay completo:
+    // 1. FastPay (iframe) tokenizó la tarjeta → devolvió request_id
+    // 2. Ahora llamamos a /all-in-one con fastpay.request_id para iniciar autorización
+    // 3. Luego /all-in-one/confirm para confirmar y capturar fondos
     
-    // Simular respuesta exitosa (FastPay ya hizo el cobro)
-    const response = {
-      code: 0,
-      description: 'FastPay payment completed',
-      card_token: requestId, // Usamos el request_id como referencia
+    const sipay = getSipayClient()
+    const origin = request.headers.get('origin') || 'https://mindmetric.io'
+    
+    let response: any = { code: 0, card_token: requestId }
+    let transactionId = null
+    let cardToken = null
+    
+    if (requestId) {
+      try {
+        // Paso 2: /all-in-one con FastPay request_id
+        console.log('📤 Paso 1: /all-in-one con FastPay request_id:', requestId)
+        const allinoneResult = await sipay.authorizeWithFastPay({
+          amount: Math.round((amount || 0.50) * 100),
+          currency: 'EUR',
+          orderId: orderId.replace(/[^a-zA-Z0-9]/g, '').slice(0, 20),
+          requestId: requestId,
+          customerEmail: userEmail,
+          urlOk: `${origin}/${paymentLang}/resultado?order_id=${orderId}`,
+          urlKo: `${origin}/${paymentLang}/checkout-payment?error=true`,
+        })
+        console.log('📥 all-in-one result:', allinoneResult)
+        
+        // Paso 3: /all-in-one/confirm para capturar fondos
+        const confirmRequestId = allinoneResult?.request_id || allinoneResult?.payload?.request_id
+        if (confirmRequestId) {
+          console.log('📤 Paso 2: /all-in-one/confirm con request_id:', confirmRequestId)
+          const confirmResult = await sipay.confirmPayment(confirmRequestId)
+          console.log('📥 confirm result:', confirmResult)
+          
+          transactionId = confirmResult?.payload?.transaction_id
+          cardToken = confirmResult?.payload?.token
+          
+          response = {
+            code: 0,
+            description: 'Payment confirmed',
+            card_token: cardToken || requestId,
+            transaction_id: transactionId,
+          }
+        }
+      } catch (sipayError: any) {
+        console.error('⚠️ Error Sipay API:', sipayError.message)
+        // Seguimos adelante con el trial incluso si Sipay falla
+        // La tokenización ya se hizo, activamos el trial
+      }
     }
 
     // Calcular fecha de fin del trial (2 días)
@@ -97,11 +137,11 @@ export async function POST(request: NextRequest) {
     console.log('✅ Trial activado')
 
     // Guardar token de la tarjeta si Sipay lo devuelve
-    if (response.code === 0 && response.card_token) {
+    if (cardToken || response.card_token) {
       await db.updateUser(user.id, {
-        subscriptionId: response.card_token,
+        subscriptionId: cardToken || response.card_token,
       })
-      console.log('✅ Token de tarjeta guardado')
+      console.log('✅ Token de tarjeta guardado:', cardToken || response.card_token)
     }
 
     // Obtener el IQ del usuario (si existe)
@@ -159,9 +199,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       sipaySuccess: true,
-      transactionId: requestId, // El request_id de FastPay es nuestra referencia
+      transactionId: transactionId || requestId,
       orderId: orderId,
-      cardToken: response.card_token,
+      cardToken: cardToken || response.card_token,
       trialEndDate: trialEndDate.toISOString(),
     })
 
