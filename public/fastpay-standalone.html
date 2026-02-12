@@ -102,28 +102,32 @@
     }
   </script>
 
-  <!-- Script de Sipay (dinámico: sandbox o producción) -->
+  <!-- Script de Sipay: document.write para carga estática según entorno -->
   <script>
     (function() {
       var params = new URLSearchParams(window.location.search);
       var env = params.get('env') || 'sandbox';
       var baseUrl = env === 'live' ? 'https://live.sipay.es' : 'https://sandbox.sipay.es';
-      var script = document.createElement('script');
-      script.src = baseUrl + '/fpay/v1/static/bundle/fastpay.js';
-      script.type = 'text/javascript';
-      script.onload = function() {
-        console.log('[Sipay] ✅ Script cargado, abriendo formulario...');
-        setTimeout(function() {
-          var btn = document.querySelector(".fastpay-btn");
-          if (btn) {
-            console.log('[Sipay] 🖱️ Click en botón');
-            btn.click();
-          }
-        }, 600);
-      };
-      document.head.appendChild(script);
-      console.log('[Sipay] ⏳ Cargando script desde:', script.src);
+      var src = baseUrl + '/fpay/v1/static/bundle/fastpay.js';
+      console.log('[Sipay] Cargando script desde:', src);
+      document.write('<scr' + 'ipt type="text/javascript" src="' + src + '"></scr' + 'ipt>');
     })();
+  </script>
+
+  <!-- Auto-open del formulario después de que Sipay cargue -->
+  <script>
+    function openFastPay() {
+      var btn = document.querySelector(".fastpay-btn");
+      if (btn) {
+        console.log('[Sipay] 🖱️ Click en botón');
+        btn.click();
+      }
+    }
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", function() { setTimeout(openFastPay, 600); });
+    } else {
+      setTimeout(openFastPay, 600);
+    }
   </script>
 </body>
 </html>
