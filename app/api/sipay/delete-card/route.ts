@@ -55,10 +55,10 @@ export async function POST(request: NextRequest) {
     const sipay = getSipayClient()
 
     // Eliminar token en Sipay
-    const response = await sipay.deleteCardToken(cardToken)
+    const response: any = await sipay.deleteCardToken(cardToken)
 
-    if (response.code !== 0) {
-      console.error('❌ Error eliminando tarjeta:', response.description)
+    if (response.type !== 'success') {
+      console.error('❌ Error eliminando tarjeta:', response.detail, response.description)
       return NextResponse.json(
         { error: response.description || 'Error eliminando tarjeta' },
         { status: 400 }

@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { transactionId, amount, reason, email } = await request.json()
+    const { transactionId, amount, email } = await request.json()
 
     console.log('↩️ Procesando reembolso con Sipay:', { transactionId, amount, email })
 
@@ -40,20 +40,26 @@ export async function POST(request: NextRequest) {
     // Obtener cliente de Sipay
     const sipay = getSipayClient()
 
-    // Procesar reembolso
-    const amountInCents = amount ? Math.round(amount * 100) : undefined
+    // Procesar reembolso - amount en céntimos, requerido
+    if (!amount) {
+      return NextResponse.json(
+        { error: 'Amount requerido para el reembolso' },
+        { status: 400 }
+      )
+    }
 
-    const response = await sipay.refund({
+    const amountInCents = Math.round(amount * 100)
+
+    const response: any = await sipay.refund({
       transactionId,
       amount: amountInCents,
-      reason: reason || 'Reembolso solicitado por el cliente',
     })
 
-    console.log('📡 Respuesta de Sipay (refund):', response)
+    console.log('📡 Respuesta de Sipay (refund):', JSON.stringify(response))
 
-    // Verificar respuesta
-    if (response.code !== 0) {
-      console.error('❌ Error en reembolso:', response.description)
+    // Verificar respuesta MDWR 2.0
+    if (response.type !== 'success') {
+      console.error('❌ Error en reembolso:', response.detail, response.description)
       return NextResponse.json(
         { error: response.description || 'Error procesando el reembolso' },
         { status: 400 }
@@ -64,10 +70,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      refundId: response.id_refund,
-      transactionId: response.id_transaction,
-      amount: response.amount,
-      description: response.description,
+      transactionId: response.payload?.transaction_id,
+      amount: response.payload?.amount,
+      approval: response.payload?.approval,
     })
 
   } catch (error: any) {

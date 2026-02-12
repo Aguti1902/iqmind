@@ -44,9 +44,9 @@ export async function POST(request: NextRequest) {
     const sipay = getSipayClient()
 
     // Consultar información de la tarjeta
-    const response = await sipay.getCardInfo(cardToken)
+    const response: any = await sipay.getCardInfo(cardToken)
 
-    if (response.code !== 0) {
+    if (response.type !== 'success') {
       return NextResponse.json(
         { error: response.description || 'Error consultando tarjeta' },
         { status: 400 }
@@ -55,10 +55,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      cardToken: response.card_token,
-      cardMask: response.card_mask,
-      cardBrand: response.card_brand,
-      expiryDate: response.expiry_date,
+      cardToken: response.payload?.token,
+      cardMask: response.payload?.masked_card,
+      cardBrand: response.payload?.card_brand,
+      expiryDate: response.payload?.expiration,
     })
 
   } catch (error: any) {
