@@ -146,7 +146,7 @@ function CheckoutPaymentContent() {
     console.log('💳 Pago completado! request_id:', response.request_id)
     
     try {
-      // Procesar pago en backend
+      // Paso 1: Iniciar autorización con Sipay
       const result = await fetch('/api/sipay/process-payment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -156,18 +156,25 @@ function CheckoutPaymentContent() {
           email: email,
           amount: 0.50,
           lang: lang,
-          testType: testType, // Enviar tipo de test para email correcto
+          testType: testType,
         }),
       })
 
       const data = await result.json()
       console.log('📡 Respuesta backend:', data)
       
+      // Si requiere 3DS, redirigir a la URL de autenticación
+      if (data.requires3DS && data.threeDSUrl) {
+        console.log('🔐 Redirigiendo a 3DS:', data.threeDSUrl)
+        window.location.href = data.threeDSUrl
+        return
+      }
+      
     } catch (error: any) {
       console.error('⚠️ Error backend (ignorando):', error)
     }
     
-    // Redirigir siempre a resultados
+    // Si no requiere 3DS, redirigir a resultados
     console.log('🎉 Redirigiendo a resultados...')
     router.push('/' + lang + '/resultado?order_id=' + paymentData.orderId)
   }
