@@ -63,26 +63,25 @@ export async function POST(request: NextRequest) {
     // Obtener cliente de Sipay
     const sipay = getSipayClient()
 
-    // Generar ID único para la orden
-    const orderId = `recurring_${Date.now()}_${user.id.substr(-6)}`
+    // Generar ID único para la orden (solo numérico para Sipay)
+    const orderId = Date.now().toString().slice(-10)
 
-    // Procesar pago recurrente (MIT)
+    // Procesar pago recurrente (MIT) - amount en céntimos
     const amountInCents = Math.round(amount * 100)
 
-    const response = await sipay.authorizeRecurring({
+    const response: any = await sipay.authorizeRecurring({
       amount: amountInCents,
       currency: 'EUR',
       orderId,
-      description: description || `Suscripción MindMetric Premium - ${email}`,
       cardToken,
-      customerEmail: email,
+      mitReason: 'R', // R = Recurrente
     })
 
-    console.log('📡 Respuesta de Sipay (recurrente):', response)
+    console.log('📡 Respuesta de Sipay (recurrente):', JSON.stringify(response))
 
-    // Verificar respuesta
-    if (response.code !== 0) {
-      console.error('❌ Error en pago recurrente:', response.description)
+    // Verificar respuesta MDWR 2.0
+    if (response.type !== 'success') {
+      console.error('❌ Error en pago recurrente:', response.detail, response.description)
       
       // Si el pago falla, marcar suscripción como vencida
       await db.updateUser(user.id, {
@@ -104,14 +103,15 @@ export async function POST(request: NextRequest) {
       accessUntil: nextBillingDate.toISOString(),
     })
 
-    console.log('✅ Pago recurrente procesado exitosamente')
+    const transactionId = response.payload?.transaction_id
+    console.log('✅ Pago recurrente procesado. Transaction:', transactionId)
 
     return NextResponse.json({
       success: true,
-      transactionId: response.id_transaction,
-      orderId: response.id_order,
-      amount: response.amount,
-      status: response.transaction_status,
+      transactionId: transactionId,
+      orderId: response.payload?.order,
+      amount: response.payload?.amount,
+      approval: response.payload?.approval,
       nextBillingDate: nextBillingDate.toISOString(),
     })
 

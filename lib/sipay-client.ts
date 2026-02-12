@@ -120,8 +120,10 @@ export class SipayClient {
     urlOk?: string
     urlKo?: string
   }): Promise<any> {
-    // Generar reconciliation simple (solo alfanumérico)
-    const reconciliation = 'Psd2' + Date.now().toString().slice(-8)
+    // reconciliation DEBE ser numérico
+    const reconciliation = Date.now().toString().slice(-10)
+    // Token para guardar tarjeta (necesario para MIT/recurrente)
+    const tokenId = 'mndmtrc_' + Date.now().toString().slice(-10)
     
     const payload: any = {
       amount: params.amount.toString(),
@@ -129,6 +131,7 @@ export class SipayClient {
       order: params.orderId,
       reconciliation: reconciliation,
       operation: 'all-in-one',
+      token: tokenId,
       url_ok: params.urlOk || 'https://mindmetric.io/es/resultado',
       url_ko: params.urlKo || 'https://mindmetric.io/es/checkout-payment?error=true',
       fastpay: {
@@ -136,7 +139,7 @@ export class SipayClient {
       },
     }
 
-    console.log('📤 Sipay authorize FastPay:', payload)
+    console.log('📤 Sipay authorize FastPay:', { ...payload, fastpay: { request_id: params.requestId.slice(0, 8) + '...' } })
     return this.makeRequest('/mdwr/v1/all-in-one', 'POST', payload)
   }
 
@@ -182,28 +185,29 @@ export class SipayClient {
   /**
    * Autorización con exención MIT (Merchant Initiated Transaction)
    * Para pagos recurrentes sin la presencia del cliente
-   * https://developer.sipay.es/docs/api/mdwr/allinone#4-autorizaci%C3%B3n-con-exenci%C3%B3n-mit-r
+   * 
+   * IMPORTANTE: Sipay usa 'token' (no 'card_token') y 'reconciliation' debe ser numérico
    */
   async authorizeRecurring(params: {
     amount: number
     currency: string
     orderId: string
-    description: string
     cardToken: string
-    customerEmail: string
+    mitReason?: string  // 'R' = Recurrente, 'C' = Credential on file
   }): Promise<SipayAuthResponse> {
+    const reconciliation = Date.now().toString().slice(-10)
     const data = {
-      amount: params.amount,
+      amount: params.amount.toString(),
       currency: params.currency,
       order: params.orderId,
-      description: params.description,
-      card_token: params.cardToken,
-      customer_email: params.customerEmail,
-      mit_exemption: true,
-      resource: this.config.resource,
+      reconciliation: reconciliation,
+      token: params.cardToken,
+      sca_exemptions: 'MIT',
+      mit_reason: params.mitReason || 'R',
     }
 
-    return this.makeRequest('/api/v1/mdwr/allinone', 'POST', data)
+    console.log('📤 Sipay MIT:', { ...data, token: data.token.slice(0, 10) + '...' })
+    return this.makeRequest('/mdwr/v1/authorization', 'POST', data)
   }
 
   /**
@@ -212,17 +216,20 @@ export class SipayClient {
    */
   async refund(params: {
     transactionId: string
-    amount?: number
-    reason?: string
+    amount: number
+    currency?: string
   }): Promise<SipayRefundResponse> {
+    const reconciliation = Date.now().toString().slice(-10)
     const data = {
-      id_transaction: params.transactionId,
-      amount: params.amount,
-      reason: params.reason,
-      resource: this.config.resource,
+      amount: params.amount.toString(),
+      currency: params.currency || 'EUR',
+      order: reconciliation,
+      reconciliation: reconciliation,
+      transaction_id: params.transactionId,
     }
 
-    return this.makeRequest('/api/v1/mdwr/refund', 'POST', data)
+    console.log('📤 Sipay refund:', { ...data })
+    return this.makeRequest('/mdwr/v1/refund', 'POST', data)
   }
 
   /**
@@ -231,11 +238,10 @@ export class SipayClient {
    */
   async getCardInfo(cardToken: string): Promise<SipayCardTokenResponse> {
     const data = {
-      card_token: cardToken,
-      resource: this.config.resource,
+      token: cardToken,
     }
 
-    return this.makeRequest('/api/v1/mdwr/card', 'POST', data)
+    return this.makeRequest('/mdwr/v1/card', 'POST', data)
   }
 
   /**
@@ -244,11 +250,10 @@ export class SipayClient {
    */
   async deleteCardToken(cardToken: string): Promise<{ code: number; description: string }> {
     const data = {
-      card_token: cardToken,
-      resource: this.config.resource,
+      token: cardToken,
     }
 
-    return this.makeRequest('/api/v1/mdwr/unregister', 'POST', data)
+    return this.makeRequest('/mdwr/v1/unregister', 'POST', data)
   }
 
   /**
