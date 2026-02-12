@@ -120,8 +120,8 @@ export async function POST(request: NextRequest) {
         }
       } catch (sipayError: any) {
         console.error('⚠️ Error Sipay API:', sipayError.message)
-        // Seguimos adelante con el trial incluso si Sipay falla
-        // La tokenización ya se hizo, activamos el trial
+        // Guardamos el error para debugging pero seguimos con el trial
+        response.sipayError = sipayError.message
       }
     }
 
@@ -198,11 +198,16 @@ export async function POST(request: NextRequest) {
     // Responder con éxito
     return NextResponse.json({
       success: true,
-      sipaySuccess: true,
+      sipaySuccess: !!transactionId,
       transactionId: transactionId || requestId,
       orderId: orderId,
       cardToken: savedCardToken || response.card_token,
       trialEndDate: trialEndDate.toISOString(),
+      sipayError: response.sipayError || null,
+      debug: {
+        hasTransactionId: !!transactionId,
+        hasSavedCardToken: !!savedCardToken,
+      }
     })
 
   } catch (error: any) {

@@ -39,37 +39,37 @@ function CheckoutPaymentContent() {
   }, [])
 
   const testConfig: any = {
-    'iq': {
-      title: 'Desbloquea tu Resultado de CI',
-      subtitle: 'Acceso completo a tu análisis de CI',
-      icon: '🧠'
-    },
-    'personality': {
-      title: 'Desbloquea tu Perfil de Personalidad',
-      subtitle: 'Descubre los 5 rasgos de tu personalidad',
-      icon: '🎯'
-    },
-    'adhd': {
-      title: 'Desbloquea tu Evaluación de TDAH',
-      subtitle: 'Análisis completo de síntomas de TDAH',
-      icon: '🎯'
-    },
-    'anxiety': {
-      title: 'Desbloquea tu Evaluación de Ansiedad',
-      subtitle: 'Evaluación de niveles de ansiedad',
-      icon: '💙'
-    },
-    'depression': {
-      title: 'Desbloquea tu Evaluación de Depresión',
-      subtitle: 'Evaluación de síntomas depresivos',
-      icon: '🌟'
-    },
-    'eq': {
-      title: 'Desbloquea tu Inteligencia Emocional',
-      subtitle: 'Descubre tu inteligencia emocional',
-      icon: '❤️'
-    }
+  'iq': {
+    title: 'Desbloquea tu Resultado de CI',
+    subtitle: 'Acceso completo a tu análisis de CI',
+    icon: '🧠'
+  },
+  'personality': {
+    title: 'Desbloquea tu Perfil de Personalidad',
+    subtitle: 'Descubre los 5 rasgos de tu personalidad',
+    icon: '🎯'
+  },
+  'adhd': {
+    title: 'Desbloquea tu Evaluación de TDAH',
+    subtitle: 'Análisis completo de síntomas de TDAH',
+    icon: '🎯'
+  },
+  'anxiety': {
+    title: 'Desbloquea tu Evaluación de Ansiedad',
+    subtitle: 'Evaluación de niveles de ansiedad',
+    icon: '💙'
+  },
+  'depression': {
+    title: 'Desbloquea tu Evaluación de Depresión',
+    subtitle: 'Evaluación de síntomas depresivos',
+    icon: '🌟'
+  },
+  'eq': {
+    title: 'Desbloquea tu Inteligencia Emocional',
+    subtitle: 'Descubre tu inteligencia emocional',
+    icon: '❤️'
   }
+}
 
   useEffect(() => {
     const emailParam = searchParams.get('email') || ''
@@ -92,42 +92,42 @@ function CheckoutPaymentContent() {
   const createPaymentSession = async (email: string, testType: string, lang: string) => {
     try {
       console.log('💳 Creando sesión de pago...')
-
-      // Obtener datos del test desde localStorage
+  
+  // Obtener datos del test desde localStorage
       let testData: any = {}
-      const testResultsStr = localStorage.getItem('testResults')
-      if (testResultsStr) {
-        try {
-          const testResults = JSON.parse(testResultsStr)
-          testData = {
-            answers: testResults.answers || [],
-            timeElapsed: testResults.timeElapsed || 0,
-            correctAnswers: testResults.correctAnswers || 0,
-            categoryScores: testResults.categoryScores || {}
-          }
-        } catch (error) {
-          console.error('Error parseando testResults:', error)
-        }
+  const testResultsStr = localStorage.getItem('testResults')
+  if (testResultsStr) {
+    try {
+      const testResults = JSON.parse(testResultsStr)
+      testData = {
+        answers: testResults.answers || [],
+        timeElapsed: testResults.timeElapsed || 0,
+        correctAnswers: testResults.correctAnswers || 0,
+        categoryScores: testResults.categoryScores || {}
       }
+    } catch (error) {
+      console.error('Error parseando testResults:', error)
+    }
+  }
 
-      const response = await fetch('/api/sipay/create-payment', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: email,
-          userName: email.split('@')[0],
-          amount: 0.50,
-          userIQ: localStorage.getItem('userIQ') || 100,
-          lang: lang,
-          testData: testData,
-        }),
-      })
+    const response = await fetch('/api/sipay/create-payment', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: email,
+        userName: email.split('@')[0],
+        amount: 0.50,
+        userIQ: localStorage.getItem('userIQ') || 100,
+        lang: lang,
+        testData: testData,
+      }),
+    })
 
       const data = await response.json()
 
-      if (!response.ok) {
+    if (!response.ok) {
         throw new Error(data.error || 'Error creando el pago')
       }
 
