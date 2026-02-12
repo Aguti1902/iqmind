@@ -29,6 +29,7 @@ function CheckoutPaymentContent() {
   const [error, setError] = useState('')
   const [currentReview, setCurrentReview] = useState(0)
   const [paymentMethod, setPaymentMethod] = useState<'none' | 'card' | 'google' | 'apple'>('none')
+  const [isProcessing, setIsProcessing] = useState(false)
 
   // Auto-rotar reseñas
   useEffect(() => {
@@ -144,6 +145,8 @@ function CheckoutPaymentContent() {
 
   const handlePaymentSuccess = async (response: any) => {
     console.log('💳 Pago completado! request_id:', response.request_id)
+    setIsProcessing(true)
+    setError('')
     
     try {
       // Paso 1: Iniciar autorización con Sipay
@@ -163,6 +166,13 @@ function CheckoutPaymentContent() {
       const data = await result.json()
       console.log('📡 Respuesta backend:', data)
       
+      if (!result.ok) {
+        console.error('❌ Backend error:', data)
+        setError(data.error || 'Error procesando el pago. Por favor, intenta de nuevo.')
+        setIsProcessing(false)
+        return
+      }
+      
       // Si requiere 3DS, redirigir a la URL de autenticación
       if (data.requires3DS && data.threeDSUrl) {
         console.log('🔐 Redirigiendo a 3DS:', data.threeDSUrl)
@@ -170,13 +180,22 @@ function CheckoutPaymentContent() {
         return
       }
       
+      // Si no requiere 3DS (frictionless), el backend ya confirmó el pago
+      if (data.success) {
+        console.log('🎉 Pago frictionless completado! Redirigiendo a resultados...')
+        router.push('/' + lang + '/resultado?order_id=' + paymentData.orderId + '&payment=success')
+        return
+      }
+
+      // Si llegamos aquí, algo inesperado pasó
+      setError('Respuesta inesperada del servidor. Por favor, intenta de nuevo.')
+      setIsProcessing(false)
+      
     } catch (error: any) {
-      console.error('⚠️ Error backend (ignorando):', error)
+      console.error('❌ Error en el proceso de pago:', error)
+      setError('Error de conexión. Por favor, verifica tu conexión e intenta de nuevo.')
+      setIsProcessing(false)
     }
-    
-    // Si no requiere 3DS, redirigir a resultados
-    console.log('🎉 Redirigiendo a resultados...')
-    router.push('/' + lang + '/resultado?order_id=' + paymentData.orderId)
   }
 
   const handlePaymentError = (error: any) => {
@@ -420,7 +439,13 @@ function CheckoutPaymentContent() {
                   </div>
                 )}
 
-                {isLoading ? (
+                {isProcessing ? (
+                  <div className="text-center py-12">
+                    <div className="w-16 h-16 border-4 border-[#07C59A] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                    <p className="text-gray-600 mb-2">Procesando pago...</p>
+                    <p className="text-xs text-gray-500">Serás redirigido a la verificación de tu banco</p>
+                  </div>
+                ) : isLoading ? (
                   <div className="text-center py-12">
                     <div className="w-16 h-16 border-4 border-[#07C59A] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
                     <p className="text-gray-600 mb-2">Inicializando pago...</p>

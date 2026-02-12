@@ -11,56 +11,75 @@ export const dynamic = 'force-dynamic'
  * Sipay redirige aquí después de que el usuario complete la autenticación 3DS.
  * Este endpoint:
  * 1. Llama a /all-in-one/confirm para capturar los fondos
- * 2. Activa el trial del usuario
+ * 2. Solo si el confirm es exitoso: activa el trial del usuario
  * 3. Envía emails
  * 4. Redirige al usuario a la página de resultados
+ * 
+ * URL esperada de Sipay: /api/sipay/confirm-payment?order_id=xxx&email=xxx&lang=es&test_type=iq&request_id=xxx
  */
 export async function GET(request: NextRequest) {
+  const origin = process.env.NEXT_PUBLIC_SITE_URL || 'https://mindmetric.io'
+  
   try {
     const { searchParams } = new URL(request.url)
-    const requestId = searchParams.get('request_id') // Sipay añade esto automáticamente
+    
+    // Log ALL query parameters to understand what Sipay sends
+    const allParams: Record<string, string> = {}
+    searchParams.forEach((value, key) => {
+      allParams[key] = value
+    })
+    console.log('🔄 [confirm-payment] TODOS los parámetros recibidos:', JSON.stringify(allParams))
+
+    const requestId = searchParams.get('request_id')
     const orderId = searchParams.get('order_id')
     const email = searchParams.get('email')
     const lang = searchParams.get('lang') || 'es'
     const testType = searchParams.get('test_type') || 'iq'
-    const error = searchParams.get('error') // Si viene con error
 
-    console.log('🔄 Confirm payment:', { requestId, orderId, email, error })
+    console.log('🔄 [confirm-payment] Datos:', { requestId, orderId, email, lang, testType })
 
-    const origin = process.env.NEXT_PUBLIC_SITE_URL || 'https://mindmetric.io'
-
-    // Si hay error de 3DS, redirigir al checkout
-    if (error) {
-      console.error('❌ 3DS falló:', error)
-      return NextResponse.redirect(`${origin}/${lang}/checkout-payment?error=3ds_failed`)
+    // Si hay error de 3DS (Sipay redirigió a url_ko)
+    if (searchParams.get('error')) {
+      console.error('❌ [confirm-payment] 3DS falló:', searchParams.get('error'))
+      return NextResponse.redirect(
+        `${origin}/${lang}/checkout-payment?error=3ds_failed&email=${encodeURIComponent(email || '')}`
+      )
     }
 
     if (!requestId) {
-      console.error('❌ No request_id en callback')
-      return NextResponse.redirect(`${origin}/${lang}/checkout-payment?error=no_request_id`)
+      console.error('❌ [confirm-payment] No hay request_id en el callback de Sipay. Params:', allParams)
+      // Redirigir con error claro
+      return NextResponse.redirect(
+        `${origin}/${lang}/checkout-payment?error=no_request_id&email=${encodeURIComponent(email || '')}`
+      )
     }
 
     // Llamar a /all-in-one/confirm para capturar fondos
     const sipay = getSipayClient()
-    let transactionId = null
-    let cardToken = null
+    let transactionId: string | null = null
+    let cardToken: string | null = null
+    let confirmSuccessful = false
 
     try {
-      console.log('📤 Confirmando pago con request_id:', requestId)
+      console.log('📤 [confirm-payment] Confirmando pago con request_id:', requestId)
       const confirmResult = await sipay.confirmPayment(requestId)
-      console.log('📥 Confirm result:', JSON.stringify(confirmResult))
+      console.log('📥 [confirm-payment] Confirm result:', JSON.stringify(confirmResult))
 
-      transactionId = confirmResult?.payload?.transaction_id
-      cardToken = confirmResult?.payload?.token
+      transactionId = confirmResult?.payload?.transaction_id || confirmResult?.payload?.id_transaction || null
+      cardToken = confirmResult?.payload?.token || confirmResult?.payload?.card_token || null
+      confirmSuccessful = true
 
-      console.log('✅ Pago confirmado! transaction_id:', transactionId, 'token:', cardToken)
+      console.log('✅ [confirm-payment] Pago CONFIRMADO! transaction_id:', transactionId, 'token:', cardToken)
     } catch (confirmError: any) {
-      console.error('⚠️ Error en confirm:', confirmError.message)
-      // Continuamos igualmente para activar el trial
+      console.error('❌ [confirm-payment] Error en confirm:', confirmError.message)
+      // Si el confirm falla, NO activamos trial
+      return NextResponse.redirect(
+        `${origin}/${lang}/checkout-payment?error=confirm_failed&email=${encodeURIComponent(email || '')}`
+      )
     }
 
-    // Activar trial del usuario
-    if (email) {
+    // Solo activar trial si el confirm fue EXITOSO
+    if (confirmSuccessful && email) {
       const user = await db.getUserByEmail(email)
       if (user) {
         const trialEndDate = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
@@ -70,7 +89,7 @@ export async function GET(request: NextRequest) {
           trialEndDate: trialEndDate.toISOString(),
           subscriptionId: cardToken || requestId,
         })
-        console.log('✅ Trial activado para:', email)
+        console.log('✅ [confirm-payment] Trial activado para:', email, 'hasta:', trialEndDate.toISOString())
 
         // Enviar emails
         const userName = (user as any).name || email.split('@')[0]
@@ -105,31 +124,32 @@ export async function GET(request: NextRequest) {
               testEmail = emailTemplates.paymentSuccess(email, userName, userIQ, lang)
           }
           await sendEmail(testEmail)
-          console.log(`📧 Email de test ${testType} enviado`)
+          console.log(`📧 [confirm-payment] Email de test ${testType} enviado`)
         } catch (e) {
-          console.error('⚠️ Error enviando email de test:', e)
+          console.error('⚠️ [confirm-payment] Error enviando email de test:', e)
         }
 
         // Email de trial
         try {
           const trialEmail = emailTemplates.trialStarted(email, userName, trialEndFormatted, lang)
           await sendEmail(trialEmail)
-          console.log('📧 Email de trial enviado')
+          console.log('📧 [confirm-payment] Email de trial enviado')
         } catch (e) {
-          console.error('⚠️ Error enviando email de trial:', e)
+          console.error('⚠️ [confirm-payment] Error enviando email de trial:', e)
         }
+      } else {
+        console.error('⚠️ [confirm-payment] Usuario no encontrado:', email)
       }
     }
 
     // Redirigir al usuario a la página de resultados
     const redirectUrl = `${origin}/${lang}/resultado?order_id=${orderId || ''}&payment=success&transaction_id=${transactionId || ''}`
-    console.log('🔄 Redirigiendo a:', redirectUrl)
+    console.log('🔄 [confirm-payment] Redirigiendo a:', redirectUrl)
     
     return NextResponse.redirect(redirectUrl)
 
   } catch (error: any) {
-    console.error('❌ Error en confirm-payment:', error.message)
-    const origin = process.env.NEXT_PUBLIC_SITE_URL || 'https://mindmetric.io'
+    console.error('❌ [confirm-payment] Error general:', error.message, error.stack)
     return NextResponse.redirect(`${origin}/es/checkout-payment?error=confirm_failed`)
   }
 }

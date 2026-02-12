@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSipayClient } from '@/lib/sipay-client'
 import { db } from '@/lib/database-postgres'
+import { sendEmail, emailTemplates } from '@/lib/email-service'
 import { checkRateLimit, getClientIP, rateLimitResponse } from '@/lib/api-security'
 
 export const dynamic = 'force-dynamic'
@@ -33,7 +34,7 @@ export async function POST(request: NextRequest) {
       testType = 'iq'
     } = await request.json()
 
-    console.log('💳 Paso 1: Iniciando pago Sipay:', { orderId, requestId, email })
+    console.log('💳 [process-payment] Iniciando pago Sipay:', { orderId, requestId: requestId?.slice(0, 8) + '...', email })
 
     if (!orderId || !requestId) {
       return NextResponse.json(
@@ -49,26 +50,42 @@ export async function POST(request: NextRequest) {
     }
 
     const sipay = getSipayClient()
-    const origin = request.headers.get('origin') || 'https://mindmetric.io'
+    const origin = request.headers.get('origin') || process.env.NEXT_PUBLIC_SITE_URL || 'https://mindmetric.io'
     const paymentLang = lang || 'es'
 
     // URL de confirmación: cuando 3DS termine, Sipay redirigirá aquí
     // Incluimos datos necesarios en la URL para el confirm
     const confirmUrl = `${origin}/api/sipay/confirm-payment?order_id=${orderId}&email=${encodeURIComponent(email)}&lang=${paymentLang}&test_type=${testType}`
-    const errorUrl = `${origin}/${paymentLang}/checkout-payment?error=true`
+    const errorUrl = `${origin}/${paymentLang}/checkout-payment?error=true&email=${encodeURIComponent(email)}`
+
+    console.log('💳 [process-payment] url_ok:', confirmUrl)
+    console.log('💳 [process-payment] url_ko:', errorUrl)
 
     // Llamar a /all-in-one con el request_id de FastPay
-    const allinoneResult = await sipay.authorizeWithFastPay({
-      amount: Math.round((amount || 0.50) * 100),
-      currency: 'EUR',
-      orderId: orderId.replace(/[^a-zA-Z0-9]/g, '').slice(0, 20),
-      requestId: requestId,
-      customerEmail: email,
-      urlOk: confirmUrl,
-      urlKo: errorUrl,
-    })
+    let allinoneResult: any
+    try {
+      allinoneResult = await sipay.authorizeWithFastPay({
+        amount: Math.round((amount || 0.50) * 100),
+        currency: 'EUR',
+        orderId: orderId.replace(/[^a-zA-Z0-9]/g, '').slice(0, 20),
+        requestId: requestId,
+        customerEmail: email,
+        urlOk: confirmUrl,
+        urlKo: errorUrl,
+      })
+    } catch (sipayError: any) {
+      console.error('❌ [process-payment] Error en all-in-one:', sipayError.message)
+      return NextResponse.json(
+        { 
+          error: 'Error iniciando el pago con Sipay', 
+          detail: sipayError.message,
+          step: 'all-in-one'
+        },
+        { status: 502 }
+      )
+    }
 
-    console.log('📥 all-in-one result:', JSON.stringify(allinoneResult))
+    console.log('📥 [process-payment] all-in-one result:', JSON.stringify(allinoneResult))
 
     // Sipay devuelve una URL 3DS para autenticación
     const threeDSUrl = allinoneResult?.payload?.url
@@ -76,7 +93,7 @@ export async function POST(request: NextRequest) {
 
     if (threeDSUrl) {
       // Devolver la URL 3DS al frontend para redirección
-      console.log('🔗 URL 3DS:', threeDSUrl)
+      console.log('🔗 [process-payment] URL 3DS encontrada, redirigiendo usuario:', threeDSUrl)
       return NextResponse.json({
         success: true,
         requires3DS: true,
@@ -85,23 +102,38 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // Si no requiere 3DS (frictionless), la operación se completa directamente
-    // Intentar confirm inmediato
+    // Si no requiere 3DS (frictionless), intentar confirm inmediato
     if (sipayRequestId) {
       try {
+        console.log('📤 [process-payment] Flujo frictionless, confirmando:', sipayRequestId)
         const confirmResult = await sipay.confirmPayment(sipayRequestId)
-        console.log('📥 confirm result:', JSON.stringify(confirmResult))
+        console.log('📥 [process-payment] confirm result:', JSON.stringify(confirmResult))
 
-        const transactionId = confirmResult?.payload?.transaction_id
-        const cardToken = confirmResult?.payload?.token
+        const transactionId = confirmResult?.payload?.transaction_id || confirmResult?.payload?.id_transaction
+        const cardToken = confirmResult?.payload?.token || confirmResult?.payload?.card_token
 
-        // Activar trial
+        // Solo activar trial si el confirm fue exitoso
         const trialEndDate = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
         await db.updateUser(user.id, {
           subscriptionStatus: 'trial',
           trialEndDate: trialEndDate.toISOString(),
-          subscriptionId: cardToken || requestId,
+          subscriptionId: cardToken || sipayRequestId,
         })
+
+        console.log('✅ [process-payment] Trial activado (frictionless) para:', email)
+
+        // Enviar emails
+        try {
+          const userName = (user as any).name || email.split('@')[0]
+          const trialEndFormatted = trialEndDate.toLocaleDateString(
+            paymentLang === 'es' ? 'es-ES' : 'en-US',
+            { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
+          )
+          const trialEmail = emailTemplates.trialStarted(email, userName, trialEndFormatted, paymentLang)
+          await sendEmail(trialEmail)
+        } catch (emailErr) {
+          console.error('⚠️ [process-payment] Error enviando email:', emailErr)
+        }
 
         return NextResponse.json({
           success: true,
@@ -111,27 +143,31 @@ export async function POST(request: NextRequest) {
           trialEndDate: trialEndDate.toISOString(),
         })
       } catch (confirmError: any) {
-        console.error('⚠️ Error en confirm:', confirmError.message)
+        console.error('❌ [process-payment] Error en confirm frictionless:', confirmError.message)
+        return NextResponse.json(
+          { 
+            error: 'Error confirmando el pago',
+            detail: confirmError.message,
+            step: 'confirm-frictionless'
+          },
+          { status: 502 }
+        )
       }
     }
 
-    // Fallback: activar trial de todas formas
-    const trialEndDate = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
-    await db.updateUser(user.id, {
-      subscriptionStatus: 'trial',
-      trialEndDate: trialEndDate.toISOString(),
-      subscriptionId: requestId,
-    })
-
-    return NextResponse.json({
-      success: true,
-      requires3DS: false,
-      transactionId: requestId,
-      trialEndDate: trialEndDate.toISOString(),
-    })
+    // Si no hay 3DS URL ni sipayRequestId, algo salió mal
+    console.error('❌ [process-payment] No se obtuvo URL 3DS ni request_id de Sipay')
+    return NextResponse.json(
+      { 
+        error: 'Sipay no devolvió URL de autenticación', 
+        detail: 'No threeDSUrl and no sipayRequestId from all-in-one',
+        sipayResponse: allinoneResult
+      },
+      { status: 502 }
+    )
 
   } catch (error: any) {
-    console.error('❌ Error procesando pago:', error.message)
+    console.error('❌ [process-payment] Error general:', error.message)
     return NextResponse.json(
       { error: error.message || 'Error procesando el pago' },
       { status: 500 }
