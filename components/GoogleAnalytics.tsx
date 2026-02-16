@@ -2,12 +2,24 @@
 
 import Script from 'next/script'
 
-export default function GoogleAnalytics() {
-  const GA_MEASUREMENT_ID = 'G-ETQT995RPQ'
-  const GOOGLE_ADS_ID = 'AW-17232820139'
+const GTM_ID = 'GTM-N79X6BWZ'
+const GA_MEASUREMENT_ID = 'G-ETQT995RPQ'
+const GOOGLE_ADS_ID = 'AW-17232820139'
 
+export default function GoogleAnalytics() {
   return (
     <>
+      {/* Google Tag Manager */}
+      <Script id="gtm-script" strategy="afterInteractive">
+        {`
+          (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+          })(window,document,'script','dataLayer','${GTM_ID}');
+        `}
+      </Script>
+
       {/* Google tag (gtag.js) - Analytics + Ads */}
       <Script
         src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
@@ -27,6 +39,19 @@ export default function GoogleAnalytics() {
         `}
       </Script>
     </>
+  )
+}
+
+export function GTMNoscript() {
+  return (
+    <noscript>
+      <iframe
+        src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
+        height="0"
+        width="0"
+        style={{ display: 'none', visibility: 'hidden' }}
+      />
+    </noscript>
   )
 }
 
