@@ -1,137 +1,96 @@
 import { NextRequest, NextResponse } from 'next/server'
-import Stripe from 'stripe'
-export const dynamic = 'force-dynamic'
+import { getSipayClient } from '@/lib/sipay-client'
+import { db } from '@/lib/database-postgres'
+import { sendEmail, emailTemplates } from '@/lib/email-service'
 import { verifyToken } from '@/lib/auth'
 
-const stripe = process.env.STRIPE_SECRET_KEY
-  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: '2023-10-16',
-    })
-  : null
+export const dynamic = 'force-dynamic'
 
+/**
+ * Cancelar suscripción (Sipay)
+ *
+ * - Elimina el token de tarjeta en Sipay (impide futuros cobros)
+ * - Mantiene acceso hasta el final del periodo pagado (accessUntil)
+ * - Envía email de confirmación de cancelación
+ */
 export async function POST(request: NextRequest) {
   try {
-    if (!stripe) {
-      return NextResponse.json(
-        { error: 'Stripe no configurado' },
-        { status: 500 }
-      )
-    }
-
     const body = await request.json()
-    const { subscriptionId, email } = body
+    const { email } = body
 
-    // Verificar autenticación por token O por email
     const authHeader = request.headers.get('authorization')
     const token = authHeader?.replace('Bearer ', '')
-    
-    let userId: string | null = null
+
     let userEmail: string | null = email || null
 
-    // Intento 1: Verificar con token si está presente
     if (token) {
       const authData = verifyToken(token)
-      if (authData && authData.userId) {
-        userId = authData.userId
-        userEmail = authData.email || userEmail
+      if (authData && authData.email) {
+        userEmail = authData.email
       }
     }
 
-    // Si no hay subscriptionId, intentar buscar por email
-    if (!subscriptionId && !userEmail) {
+    if (!userEmail) {
+      return NextResponse.json({ error: 'Email requerido' }, { status: 400 })
+    }
+
+    console.log('🚫 [cancel] Cancelando suscripción para:', userEmail)
+
+    const user = await db.getUserByEmail(userEmail)
+    if (!user) {
+      return NextResponse.json({ error: 'Usuario no encontrado' }, { status: 404 })
+    }
+
+    if (user.subscriptionStatus !== 'active' && user.subscriptionStatus !== 'trial') {
       return NextResponse.json(
-        { error: 'Se requiere subscriptionId o email' },
+        { error: 'No hay suscripción activa para cancelar' },
         { status: 400 }
       )
     }
 
-    let subscription: any
+    const cardToken = user.subscriptionId
 
-    // Si tenemos subscriptionId, usarlo directamente
-    if (subscriptionId) {
-      subscription = await stripe.subscriptions.update(subscriptionId, {
-        cancel_at_period_end: true,
-        metadata: {
-          cancelled_by: 'user',
-          cancelled_at: new Date().toISOString(),
-          user_id: userId || 'unknown',
-          user_email: userEmail || 'unknown'
-        }
-      })
-    } else if (userEmail) {
-      // Buscar el cliente por email
-      const customers = await stripe.customers.list({
-        email: userEmail,
-        limit: 1
-      })
-
-      if (customers.data.length === 0) {
-        return NextResponse.json(
-          { error: 'No se encontró ninguna suscripción para este email' },
-          { status: 404 }
-        )
+    if (cardToken) {
+      try {
+        const sipay = getSipayClient()
+        await sipay.deleteCardToken(cardToken)
+        console.log('✅ [cancel] Token eliminado de Sipay:', cardToken.slice(0, 10) + '...')
+      } catch (sipayErr: any) {
+        console.error('⚠️ [cancel] Error eliminando token en Sipay (continuamos):', sipayErr.message)
       }
-
-      // Buscar suscripciones activas o en trial del cliente
-      const subscriptions = await stripe.subscriptions.list({
-        customer: customers.data[0].id,
-        limit: 10 // Buscar hasta 10 suscripciones
-      })
-
-      // Filtrar solo las que están activas o en trial
-      const activeSubscriptions = subscriptions.data.filter(sub => 
-        sub.status === 'active' || sub.status === 'trialing'
-      )
-
-      if (activeSubscriptions.length === 0) {
-        return NextResponse.json(
-          { error: 'No tienes ninguna suscripción activa o en trial' },
-          { status: 404 }
-        )
-      }
-
-      // Cancelar la primera suscripción activa o en trial
-      subscription = await stripe.subscriptions.update(activeSubscriptions[0].id, {
-        cancel_at_period_end: true,
-        metadata: {
-          cancelled_by: 'user',
-          cancelled_at: new Date().toISOString(),
-          user_email: userEmail
-        }
-      })
     }
 
-    console.log('✅ Suscripción cancelada:', {
-      subscriptionId: subscription.id,
-      userId: userId,
-      userEmail: userEmail,
-      cancelAtPeriodEnd: subscription.cancel_at_period_end,
-      currentPeriodEnd: subscription.current_period_end
+    const accessUntil = user.accessUntil || user.trialEndDate || new Date().toISOString()
+
+    await db.updateUser(user.id, {
+      subscriptionStatus: 'cancelled',
+      subscriptionId: null as any,
     })
+
+    console.log('✅ [cancel] Suscripción cancelada. Acceso hasta:', accessUntil)
+
+    try {
+      const userName = user.userName || userEmail.split('@')[0]
+      const accessDate = new Date(accessUntil).toLocaleDateString('es-ES', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+      })
+      const cancelEmail = emailTemplates.subscriptionCancelled(userEmail, userName, accessDate, 'es')
+      await sendEmail(cancelEmail)
+      console.log('📧 [cancel] Email de cancelación enviado a:', userEmail)
+    } catch (emailErr: any) {
+      console.error('⚠️ [cancel] Error enviando email:', emailErr.message)
+    }
 
     return NextResponse.json({
       success: true,
       message: 'Suscripción cancelada exitosamente',
-      subscription: {
-        id: subscription.id,
-        status: subscription.status,
-        cancelAtPeriodEnd: subscription.cancel_at_period_end,
-        currentPeriodEnd: subscription.current_period_end
-      }
+      accessUntil,
     })
 
   } catch (error: any) {
-    console.error('❌ Error cancelando suscripción:', error)
-    
-    if (error.type === 'StripeInvalidRequestError') {
-      return NextResponse.json(
-        { error: 'Suscripción no encontrada o ya cancelada' },
-        { status: 404 }
-      )
-    }
-
+    console.error('❌ [cancel] Error:', error.message)
     return NextResponse.json(
-      { error: 'Error interno del servidor' },
+      { error: error.message || 'Error cancelando suscripción' },
       { status: 500 }
     )
   }

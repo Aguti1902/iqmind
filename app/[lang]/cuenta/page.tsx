@@ -260,7 +260,7 @@ export default function CuentaPage() {
       const response = await fetch('/api/cancel-subscription', {
         method: 'POST',
         headers,
-        body: JSON.stringify(requestBody),
+        body: JSON.stringify({ email: requestBody.email }),
       })
 
       const data = await response.json()

@@ -1,282 +1,114 @@
 import { NextResponse } from 'next/server'
-import Stripe from 'stripe'
-import { db } from '@/lib/database-postgres'
+import { Pool } from 'pg'
 
 export const dynamic = 'force-dynamic'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2023-10-16',
-})
+function getPool() {
+  const connectionString = process.env.POSTGRES_URL || process.env.DATABASE_URL
+  if (!connectionString) throw new Error('No database URL configured')
+  return new Pool({ connectionString, ssl: { rejectUnauthorized: false }, max: 5 })
+}
 
 export async function GET() {
+  const pool = getPool()
   try {
-    // Obtener datos de los últimos 12 meses
     const now = new Date()
-    const twelveMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 12, 1)
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
-    
-    // SUSCRIPCIONES - Obtener TODAS con paginación (ordenadas por fecha descendente)
-    let allSubscriptions: Stripe.Subscription[] = []
-    let subscriptionsHasMore = true
-    let subscriptionsStartingAfter: string | undefined = undefined
-    
-    while (subscriptionsHasMore) {
-      const subscriptionsResponse: Stripe.Response<Stripe.ApiList<Stripe.Subscription>> = await stripe.subscriptions.list({
-      limit: 100,
-      status: 'all',
-        ...(subscriptionsStartingAfter && { starting_after: subscriptionsStartingAfter }),
-      })
-      
-      allSubscriptions = allSubscriptions.concat(subscriptionsResponse.data)
-      subscriptionsHasMore = subscriptionsResponse.has_more
-      
-      if (subscriptionsResponse.data.length > 0) {
-        subscriptionsStartingAfter = subscriptionsResponse.data[subscriptionsResponse.data.length - 1].id
-      }
-      
-      // Limitar a 1000 suscripciones para evitar timeouts
-      if (allSubscriptions.length >= 1000) {
-        break
-      }
-    }
-    
-    // Ordenar suscripciones por fecha descendente (más recientes primero)
-    allSubscriptions.sort((a, b) => b.created - a.created)
-    
-    const activeSubscriptions = allSubscriptions.filter(
-      sub => sub.status === 'active'
-    )
-    
-    const trialingSubscriptions = allSubscriptions.filter(
-      sub => sub.status === 'trialing'
-    )
-    
-    const canceledThisMonth = allSubscriptions.filter(
-      sub => sub.canceled_at && 
-      new Date(sub.canceled_at * 1000) >= startOfMonth
-    )
-    
-    // MRR (Monthly Recurring Revenue)
-    let mrr = 0
-    activeSubscriptions.forEach(sub => {
-      sub.items.data.forEach(item => {
-        if (item.price.recurring?.interval === 'month') {
-          mrr += (item.price.unit_amount || 0) / 100
-        } else if (item.price.recurring?.interval === 'week') {
-          // Convertir semanal a mensual (aprox 4.33 semanas/mes)
-          mrr += ((item.price.unit_amount || 0) / 100) * 4.33
-        }
-      })
-    })
-    
-    // PAGOS - Obtener las más recientes primero (sin filtro inicial para asegurar todas las recientes)
-    // Stripe ordena por defecto por fecha descendente
-    let allCharges: Stripe.Charge[] = []
-    let chargesHasMore = true
-    let chargesStartingAfter: string | undefined = undefined
-    const chargesCreatedGte = Math.floor(twelveMonthsAgo.getTime() / 1000)
-    const maxChargesToFetch = 2000 // Obtener más para asegurar que tenemos todas las recientes
-    
-    // Obtener transacciones recientes (las primeras páginas siempre son las más recientes)
-    while (chargesHasMore && allCharges.length < maxChargesToFetch) {
-      const chargesResponse: Stripe.Response<Stripe.ApiList<Stripe.Charge>> = await stripe.charges.list({
-      limit: 100,
-        ...(chargesStartingAfter && { starting_after: chargesStartingAfter }),
-      })
-      
-      allCharges = allCharges.concat(chargesResponse.data)
-      chargesHasMore = chargesResponse.has_more
-      
-      if (chargesResponse.data.length > 0) {
-        chargesStartingAfter = chargesResponse.data[chargesResponse.data.length - 1].id
-        
-        // Si la última transacción es más antigua que nuestro rango, parar
-        const lastChargeDate = chargesResponse.data[chargesResponse.data.length - 1].created
-        if (lastChargeDate < chargesCreatedGte) {
-          break
-        }
-      }
-    }
-    
-    // Ordenar por fecha descendente (más recientes primero) - asegurar orden correcto
-    allCharges.sort((a, b) => b.created - a.created)
-    
-    // Para cálculos históricos, usar solo las del último año
-    // Pero para transacciones recientes en la tabla, usar todas las obtenidas
-    const chargesForHistory = allCharges.filter(charge => charge.created >= chargesCreatedGte)
-    
-    // Para ingresos totales, usar todas las transacciones obtenidas (no solo del último año)
-    // para incluir todas las recientes
-    const successfulCharges = allCharges.filter(
-      charge => charge.status === 'succeeded'
-    )
-    
-    // Para total revenue, usar todas las transacciones exitosas obtenidas
-    const totalRevenue = successfulCharges.reduce(
-      (sum, charge) => sum + charge.amount,
-      0
-    ) / 100
-    
-    // REEMBOLSOS - Obtener TODOS con paginación
-    let allRefunds: Stripe.Refund[] = []
-    let refundsHasMore = true
-    let refundsStartingAfter: string | undefined = undefined
-    const refundsCreatedGte = Math.floor(twelveMonthsAgo.getTime() / 1000)
-    
-    while (refundsHasMore) {
-      const refundsResponse: Stripe.Response<Stripe.ApiList<Stripe.Refund>> = await stripe.refunds.list({
-      limit: 100,
-      created: {
-          gte: refundsCreatedGte,
-        },
-        ...(refundsStartingAfter && { starting_after: refundsStartingAfter }),
-      })
-      
-      allRefunds = allRefunds.concat(refundsResponse.data)
-      refundsHasMore = refundsResponse.has_more
-      
-      if (refundsResponse.data.length > 0) {
-        refundsStartingAfter = refundsResponse.data[refundsResponse.data.length - 1].id
-      }
-      
-      // Limitar a 1000 refunds para evitar timeouts
-      if (allRefunds.length >= 1000) {
-        break
-      }
-    }
-    
-    const successfulRefunds = allRefunds.filter(
-      refund => refund.status === 'succeeded'
-    )
-    
-    const totalRefunded = successfulRefunds.reduce(
-      (sum, refund) => sum + refund.amount,
-      0
-    ) / 100
-    
-    const refundsThisMonth = successfulRefunds.filter(
-      refund => new Date(refund.created * 1000) >= startOfMonth
-    ).length
-    
-    // INGRESOS POR MES (últimos 12 meses)
-    const monthlyRevenue = []
-    for (let i = 11; i >= 0; i--) {
-      const monthDate = new Date(now.getFullYear(), now.getMonth() - i, 1)
-      const monthStart = Math.floor(monthDate.getTime() / 1000)
-      const monthEnd = Math.floor(new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 0).getTime() / 1000)
-      
-      const monthCharges = chargesForHistory.filter(
-        charge => charge.created >= monthStart && charge.created <= monthEnd && charge.status === 'succeeded'
-      )
-      
-      const monthTotal = monthCharges.reduce((sum, charge) => sum + charge.amount, 0) / 100
-      
-      monthlyRevenue.push({
-        month: monthDate.toLocaleDateString('es-ES', { month: 'short', year: 'numeric' }),
-        revenue: monthTotal,
-        transactions: monthCharges.length
-      })
-    }
-    
-    // TASA DE CONVERSIÓN (Trial → Activo)
-    const totalTrials = trialingSubscriptions.length + activeSubscriptions.length
-    const conversionRate = totalTrials > 0 
-      ? (activeSubscriptions.length / totalTrials) * 100 
-      : 0
-    
-    // CHURN RATE (cancelaciones / suscripciones activas al inicio del mes)
-    const totalActiveAtStart = activeSubscriptions.length + canceledThisMonth.length
-    const churnRate = totalActiveAtStart > 0
-      ? (canceledThisMonth.length / totalActiveAtStart) * 100
-      : 0
-    
-    // TRANSACCIONES RECIENTES (últimas 20) - Expandir customer para obtener email
-    const recentTransactionsWithEmails = await Promise.all(
-      successfulCharges.slice(0, 20).map(async (charge) => {
-        let customerEmail = charge.billing_details?.email || charge.receipt_email || 'N/A'
-        
-        // Si no tenemos email, intentar obtenerlo del customer
-        if (customerEmail === 'N/A' && charge.customer) {
-          try {
-            const customer = await stripe.customers.retrieve(charge.customer as string)
-            if ('email' in customer && customer.email) {
-              customerEmail = customer.email
-            }
-          } catch (error) {
-            console.error('Error retrieving customer:', error)
-          }
-        }
-        
-        return {
-          id: charge.id,
-          amount: charge.amount / 100,
-          currency: charge.currency.toUpperCase(),
-          status: charge.status,
-          customer_email: customerEmail,
-          customer_id: charge.customer,
-          created: new Date(charge.created * 1000).toISOString(),
-          description: charge.description || 'Pago inicial'
-        }
-      })
-    )
-    
-    // MÉTRICAS DEL AGENTE IA (de la base de datos o logs)
-    // Aquí podrías integrar con logs de n8n si los guardas en tu BD
-    const aiMetrics = {
-      totalRequests: 0, // TODO: Implementar con logs del agente
-      refundApproved: 0,
-      refundDenied: 0,
-      cancelationsProcessed: canceledThisMonth.length,
-      avgResponseTime: 0
-    }
-    
+
+    const statsResult = await pool.query(`
+      SELECT
+        COUNT(*) FILTER (WHERE subscription_status = 'active') as active_count,
+        COUNT(*) FILTER (WHERE subscription_status = 'trial') as trial_count,
+        COUNT(*) FILTER (WHERE subscription_status = 'cancelled' AND updated_at >= $1) as cancelled_this_month,
+        COUNT(*) FILTER (WHERE subscription_status = 'expired') as expired_count,
+        COUNT(*) as total_users
+      FROM users
+    `, [startOfMonth.toISOString()])
+
+    const stats = statsResult.rows[0]
+    const activeCount = parseInt(stats.active_count)
+    const trialCount = parseInt(stats.trial_count)
+    const cancelledThisMonth = parseInt(stats.cancelled_this_month)
+    const totalUsers = parseInt(stats.total_users)
+
+    const mrr = activeCount * 9.99
+    const totalTrials = trialCount + activeCount
+    const conversionRate = totalTrials > 0 ? (activeCount / totalTrials) * 100 : 0
+    const totalActiveAtStart = activeCount + cancelledThisMonth
+    const churnRate = totalActiveAtStart > 0 ? (cancelledThisMonth / totalActiveAtStart) * 100 : 0
+
+    const recentUsersResult = await pool.query(`
+      SELECT id, email, user_name, subscription_status, created_at, access_until, trial_end_date
+      FROM users
+      ORDER BY created_at DESC
+      LIMIT 20
+    `)
+
+    const recentTransactions = recentUsersResult.rows.map(row => ({
+      id: row.id,
+      amount: row.subscription_status === 'trial' ? 0.50 : 9.99,
+      currency: 'EUR',
+      status: row.subscription_status === 'active' ? 'succeeded' : row.subscription_status,
+      customer_email: row.email,
+      created: row.created_at,
+      description: row.subscription_status === 'trial' ? 'Pago inicial (trial)' : 'Suscripción Premium',
+    }))
+
+    const activeSubsList = await pool.query(`
+      SELECT id, email, subscription_status, access_until, trial_end_date, created_at
+      FROM users
+      WHERE subscription_status IN ('active', 'trial')
+      ORDER BY created_at DESC
+      LIMIT 10
+    `)
+
+    const activeSubscriptionsList = activeSubsList.rows.map(row => ({
+      id: row.id,
+      customer_id: row.id,
+      status: row.subscription_status,
+      plan: 'MindMetric Premium',
+      amount: 9.99,
+      current_period_end: row.access_until || row.trial_end_date,
+      trial_end: row.trial_end_date,
+    }))
+
     return NextResponse.json({
       success: true,
       data: {
-        // KPIs principales
         kpis: {
-          activeSubscriptions: activeSubscriptions.length,
-          trialingSubscriptions: trialingSubscriptions.length,
-          cancelationsThisMonth: canceledThisMonth.length,
-          refundsThisMonth: refundsThisMonth,
+          activeSubscriptions: activeCount,
+          trialingSubscriptions: trialCount,
+          cancelationsThisMonth: cancelledThisMonth,
+          refundsThisMonth: 0,
           mrr: Math.round(mrr * 100) / 100,
-          totalRevenue: Math.round(totalRevenue * 100) / 100,
-          totalRefunded: Math.round(totalRefunded * 100) / 100,
+          totalRevenue: 0,
+          totalRefunded: 0,
           conversionRate: Math.round(conversionRate * 10) / 10,
-          churnRate: Math.round(churnRate * 10) / 10
+          churnRate: Math.round(churnRate * 10) / 10,
         },
-        // Gráficos
         charts: {
-          monthlyRevenue,
+          monthlyRevenue: [],
         },
-        // Tablas
         tables: {
-          recentTransactions: recentTransactionsWithEmails,
-          activeSubscriptions: activeSubscriptions.slice(0, 10).map(sub => ({
-            id: sub.id,
-            customer_id: sub.customer,
-            status: sub.status,
-            plan: sub.items.data[0]?.price.nickname || 'Plan',
-            amount: (sub.items.data[0]?.price.unit_amount || 0) / 100,
-            current_period_end: new Date(sub.current_period_end * 1000).toISOString(),
-            trial_end: sub.trial_end ? new Date(sub.trial_end * 1000).toISOString() : null
-          }))
+          recentTransactions,
+          activeSubscriptions: activeSubscriptionsList,
         },
-        // Métricas del agente IA
-        aiMetrics
-      }
+        aiMetrics: {
+          totalRequests: 0,
+          refundApproved: 0,
+          refundDenied: 0,
+          cancelationsProcessed: cancelledThisMonth,
+          avgResponseTime: 0,
+        },
+      },
     })
-    
   } catch (error: any) {
     console.error('Error fetching dashboard data:', error)
     return NextResponse.json(
-      {
-        success: false,
-        error: 'Error obteniendo datos del dashboard',
-        details: error.message
-      },
+      { success: false, error: error.message },
       { status: 500 }
     )
+  } finally {
+    await pool.end().catch(() => {})
   }
 }
-

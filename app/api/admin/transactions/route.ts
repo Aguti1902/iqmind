@@ -1,169 +1,119 @@
 import { NextRequest, NextResponse } from 'next/server'
-import Stripe from 'stripe'
+import { Pool } from 'pg'
+import { getSipayClient } from '@/lib/sipay-client'
 
 export const dynamic = 'force-dynamic'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2023-10-16',
-})
+function getPool() {
+  const connectionString = process.env.POSTGRES_URL || process.env.DATABASE_URL
+  if (!connectionString) throw new Error('No database URL configured')
+  return new Pool({ connectionString, ssl: { rejectUnauthorized: false }, max: 5 })
+}
 
+/**
+ * Admin: listar usuarios con suscripciones (como transacciones)
+ * Con Sipay no tenemos un log de transacciones local, pero mostramos
+ * los usuarios con su estado de suscripción.
+ */
 export async function GET(req: NextRequest) {
+  const pool = getPool()
   try {
     const { searchParams } = new URL(req.url)
     const search = searchParams.get('search') || ''
-    const status = searchParams.get('status') || 'all'
-    const requestedLimit = parseInt(searchParams.get('limit') || '100')
-    const actualLimit = Math.min(requestedLimit, 1000) // Máximo 1000 para evitar timeouts
-    
-    // Obtener charges con paginación si es necesario
-    let allCharges: Stripe.Charge[] = []
-    let chargesHasMore = true
-    let chargesStartingAfter: string | undefined = undefined
-    
-    while (chargesHasMore && allCharges.length < actualLimit) {
-      const chargesResponse: Stripe.Response<Stripe.ApiList<Stripe.Charge>> = await stripe.charges.list({
-        limit: Math.min(100, actualLimit - allCharges.length),
-      expand: ['data.customer'],
-        ...(chargesStartingAfter && { starting_after: chargesStartingAfter }),
-      })
-      
-      allCharges = allCharges.concat(chargesResponse.data)
-      chargesHasMore = chargesResponse.has_more
-      
-      if (chargesResponse.data.length > 0) {
-        chargesStartingAfter = chargesResponse.data[chargesResponse.data.length - 1].id
-      }
-      
-      // Si ya tenemos suficientes, parar
-      if (allCharges.length >= actualLimit) {
-        break
-      }
-    }
-    
-    // Ordenar por fecha descendente (más recientes primero) - Stripe ya lo hace por defecto pero asegurémonos
-    allCharges.sort((a, b) => b.created - a.created)
-    
-    // Filtrar por estado si es necesario
-    let filteredCharges = allCharges
-    if (status !== 'all') {
-      filteredCharges = allCharges.filter(charge => charge.status === status)
-    }
-    
-    // Obtener emails de customers para búsqueda
-    const chargesWithEmails = await Promise.all(
-      filteredCharges.map(async (charge) => {
-        let customerEmail = charge.billing_details?.email || charge.receipt_email || 'N/A'
-        let customerName = charge.billing_details?.name || 'N/A'
-        
-        if (charge.customer) {
-          try {
-            const customer = await stripe.customers.retrieve(charge.customer as string)
-            if ('email' in customer) {
-              customerEmail = customer.email || customerEmail
-              customerName = customer.name || customerName
-            }
-          } catch (error) {
-            console.error('Error retrieving customer:', error)
-          }
-        }
-        
-        // Verificar si tiene reembolso
-        const refunded = charge.refunded
-        const refundAmount = charge.amount_refunded / 100
-        
-        return {
-          id: charge.id,
-          amount: charge.amount / 100,
-          amount_refunded: refundAmount,
-          currency: charge.currency.toUpperCase(),
-          status: charge.status,
-          refunded: refunded,
-          customer_id: charge.customer,
-          customer_email: customerEmail,
-          customer_name: customerName,
-          payment_method: charge.payment_method_details?.type || 'card',
-          created: new Date(charge.created * 1000).toISOString(),
-          description: charge.description || 'Pago',
-        }
-      })
-    )
-    
-    // Filtrar por búsqueda si existe
-    let filteredTransactions = chargesWithEmails
+    const limit = Math.min(parseInt(searchParams.get('limit') || '100'), 1000)
+
+    let query = `
+      SELECT id, email, user_name, subscription_status, subscription_id,
+             trial_end_date, access_until, created_at, updated_at
+      FROM users
+      ORDER BY updated_at DESC
+    `
+    const params: any[] = []
+    let paramIdx = 1
+
     if (search) {
-      filteredTransactions = chargesWithEmails.filter(charge => {
-        return (
-          charge.customer_email.toLowerCase().includes(search.toLowerCase()) ||
-          charge.id.toLowerCase().includes(search.toLowerCase()) ||
-          (charge.customer_id && charge.customer_id.toString().toLowerCase().includes(search.toLowerCase()))
-        )
-      })
+      query = `
+        SELECT id, email, user_name, subscription_status, subscription_id,
+               trial_end_date, access_until, created_at, updated_at
+        FROM users
+        WHERE email ILIKE $${paramIdx++} OR user_name ILIKE $${paramIdx++}
+        ORDER BY updated_at DESC
+      `
+      params.push(`%${search}%`)
+      params.push(`%${search}%`)
     }
-    
+
+    query += ` LIMIT $${paramIdx++}`
+    params.push(limit)
+
+    const result = await pool.query(query, params)
+
+    const formattedTransactions = result.rows.map(row => ({
+      id: row.id,
+      amount: row.subscription_status === 'trial' ? 0.50 : 9.99,
+      currency: 'EUR',
+      status: row.subscription_status,
+      customer_email: row.email,
+      customer_name: row.user_name || 'N/A',
+      has_card_token: !!row.subscription_id,
+      created: row.created_at,
+      description: row.subscription_status === 'trial' ? 'Pago inicial' : 'Suscripción mensual',
+    }))
+
     return NextResponse.json({
       success: true,
-      data: filteredTransactions,
-      total: filteredTransactions.length,
-      has_more: allCharges.length >= actualLimit && chargesHasMore,
+      data: formattedTransactions,
+      total: formattedTransactions.length,
     })
-    
   } catch (error: any) {
     console.error('Error fetching transactions:', error)
     return NextResponse.json(
-      {
-        success: false,
-        error: 'Error obteniendo transacciones',
-        details: error.message
-      },
+      { success: false, error: error.message },
       { status: 500 }
     )
+  } finally {
+    await pool.end().catch(() => {})
   }
 }
 
-// Crear reembolso
+/**
+ * Admin: crear reembolso via Sipay
+ */
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json()
-    const { chargeId, amount, reason } = body
-    
-    if (!chargeId) {
+    const { transactionId, amount } = await req.json()
+
+    if (!transactionId || !amount) {
       return NextResponse.json(
-        { success: false, error: 'ID de cargo requerido' },
+        { success: false, error: 'transactionId y amount requeridos' },
         { status: 400 }
       )
     }
-    
-    // Crear reembolso
-    const refundData: any = {
-      charge: chargeId,
+
+    const sipay = getSipayClient()
+    const response: any = await sipay.refund({
+      transactionId,
+      amount: Math.round(amount * 100),
+      currency: 'EUR',
+    })
+
+    if (response.type !== 'success') {
+      return NextResponse.json(
+        { success: false, error: response.description || 'Error en reembolso' },
+        { status: 400 }
+      )
     }
-    
-    if (amount) {
-      refundData.amount = Math.round(amount * 100) // Convertir a centavos
-    }
-    
-    if (reason) {
-      refundData.reason = reason
-    }
-    
-    const refund = await stripe.refunds.create(refundData)
-    
+
     return NextResponse.json({
       success: true,
       message: 'Reembolso procesado exitosamente',
-      data: refund
+      data: response.payload,
     })
-    
   } catch (error: any) {
     console.error('Error creating refund:', error)
     return NextResponse.json(
-      {
-        success: false,
-        error: 'Error procesando reembolso',
-        details: error.message
-      },
+      { success: false, error: error.message },
       { status: 500 }
     )
   }
 }
-

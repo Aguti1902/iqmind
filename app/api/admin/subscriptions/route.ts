@@ -1,135 +1,106 @@
 import { NextRequest, NextResponse } from 'next/server'
-import Stripe from 'stripe'
+import { Pool } from 'pg'
 
 export const dynamic = 'force-dynamic'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2023-10-16',
-})
+function getPool() {
+  const connectionString = process.env.POSTGRES_URL || process.env.DATABASE_URL
+  if (!connectionString) throw new Error('No database URL configured')
+  return new Pool({ connectionString, ssl: { rejectUnauthorized: false }, max: 5 })
+}
 
 export async function GET(req: NextRequest) {
+  const pool = getPool()
   try {
     const { searchParams } = new URL(req.url)
     const search = searchParams.get('search') || ''
     const status = searchParams.get('status') || 'all'
-    const requestedLimit = parseInt(searchParams.get('limit') || '100')
-    const actualLimit = Math.min(requestedLimit, 1000) // Máximo 1000 para evitar timeouts
-    
-    // Obtener suscripciones con paginación si es necesario
-    let allSubscriptions: Stripe.Subscription[] = []
-    let subscriptionsHasMore = true
-    let subscriptionsStartingAfter: string | undefined = undefined
-    
-    while (subscriptionsHasMore && allSubscriptions.length < actualLimit) {
-      const subscriptionsResponse: Stripe.Response<Stripe.ApiList<Stripe.Subscription>> = await stripe.subscriptions.list({
-        limit: Math.min(100, actualLimit - allSubscriptions.length),
-      status: status === 'all' ? undefined : (status as any),
-      expand: ['data.customer'],
-        ...(subscriptionsStartingAfter && { starting_after: subscriptionsStartingAfter }),
-      })
-      
-      allSubscriptions = allSubscriptions.concat(subscriptionsResponse.data)
-      subscriptionsHasMore = subscriptionsResponse.has_more
-      
-      if (subscriptionsResponse.data.length > 0) {
-        subscriptionsStartingAfter = subscriptionsResponse.data[subscriptionsResponse.data.length - 1].id
-      }
-      
-      // Si ya tenemos suficientes, parar
-      if (allSubscriptions.length >= actualLimit) {
-        break
-      }
+    const limit = Math.min(parseInt(searchParams.get('limit') || '100'), 1000)
+
+    let query = `
+      SELECT id, email, user_name, subscription_status, subscription_id,
+             trial_end_date, access_until, created_at, updated_at
+      FROM users
+      WHERE subscription_id IS NOT NULL OR subscription_status != 'expired'
+    `
+    const params: any[] = []
+    let paramIdx = 1
+
+    if (status !== 'all') {
+      query += ` AND subscription_status = $${paramIdx++}`
+      params.push(status)
     }
-    
-    // Filtrar por búsqueda si existe
-    let filteredSubs = allSubscriptions
+
     if (search) {
-      filteredSubs = allSubscriptions.filter(sub => {
-        const customer = sub.customer as Stripe.Customer
-        const email = customer.email || ''
-        const customerId = typeof sub.customer === 'string' ? sub.customer : customer.id
-        
-        return (
-          email.toLowerCase().includes(search.toLowerCase()) ||
-          sub.id.toLowerCase().includes(search.toLowerCase()) ||
-          customerId.toLowerCase().includes(search.toLowerCase())
-        )
-      })
+      query += ` AND (email ILIKE $${paramIdx++} OR user_name ILIKE $${paramIdx++})`
+      params.push(`%${search}%`)
+      params.push(`%${search}%`)
     }
-    
-    // Formatear datos
-    const formattedSubs = filteredSubs.map(sub => {
-      const customer = sub.customer as Stripe.Customer
-      
-      return {
-        id: sub.id,
-        customer_id: typeof sub.customer === 'string' ? sub.customer : customer.id,
-        customer_email: customer.email || 'N/A',
-        customer_name: customer.name || 'N/A',
-        status: sub.status,
-        plan: sub.items.data[0]?.price.nickname || sub.items.data[0]?.price.id || 'Plan',
-        amount: (sub.items.data[0]?.price.unit_amount || 0) / 100,
-        currency: sub.currency.toUpperCase(),
-        current_period_start: new Date(sub.current_period_start * 1000).toISOString(),
-        current_period_end: new Date(sub.current_period_end * 1000).toISOString(),
-        trial_end: sub.trial_end ? new Date(sub.trial_end * 1000).toISOString() : null,
-        cancel_at_period_end: sub.cancel_at_period_end,
-        canceled_at: sub.canceled_at ? new Date(sub.canceled_at * 1000).toISOString() : null,
-        created: new Date(sub.created * 1000).toISOString(),
-      }
-    })
-    
+
+    query += ` ORDER BY updated_at DESC LIMIT $${paramIdx++}`
+    params.push(limit)
+
+    const result = await pool.query(query, params)
+
+    const formattedSubs = result.rows.map(row => ({
+      id: row.id,
+      customer_email: row.email,
+      customer_name: row.user_name || 'N/A',
+      status: row.subscription_status,
+      has_card_token: !!row.subscription_id,
+      amount: 9.99,
+      currency: 'EUR',
+      trial_end: row.trial_end_date,
+      access_until: row.access_until,
+      created: row.created_at,
+      updated: row.updated_at,
+    }))
+
     return NextResponse.json({
       success: true,
       data: formattedSubs,
-      total: filteredSubs.length,
-      has_more: allSubscriptions.length >= actualLimit && subscriptionsHasMore,
+      total: formattedSubs.length,
     })
-    
   } catch (error: any) {
     console.error('Error fetching subscriptions:', error)
     return NextResponse.json(
-      {
-        success: false,
-        error: 'Error obteniendo suscripciones',
-        details: error.message
-      },
+      { success: false, error: error.message },
       { status: 500 }
     )
+  } finally {
+    await pool.end().catch(() => {})
   }
 }
 
-// Cancelar suscripción
 export async function DELETE(req: NextRequest) {
+  const pool = getPool()
   try {
     const { searchParams } = new URL(req.url)
-    const subscriptionId = searchParams.get('id')
-    
-    if (!subscriptionId) {
+    const userId = searchParams.get('id')
+
+    if (!userId) {
       return NextResponse.json(
-        { success: false, error: 'ID de suscripción requerido' },
+        { success: false, error: 'ID de usuario requerido' },
         { status: 400 }
       )
     }
-    
-    const deletedSubscription = await stripe.subscriptions.cancel(subscriptionId)
-    
+
+    await pool.query(
+      `UPDATE users SET subscription_status = 'cancelled', subscription_id = NULL, updated_at = NOW() WHERE id = $1`,
+      [userId]
+    )
+
     return NextResponse.json({
       success: true,
       message: 'Suscripción cancelada exitosamente',
-      data: deletedSubscription
     })
-    
   } catch (error: any) {
     console.error('Error canceling subscription:', error)
     return NextResponse.json(
-      {
-        success: false,
-        error: 'Error cancelando suscripción',
-        details: error.message
-      },
+      { success: false, error: error.message },
       { status: 500 }
     )
+  } finally {
+    await pool.end().catch(() => {})
   }
 }
-
