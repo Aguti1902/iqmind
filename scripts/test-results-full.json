@@ -1,0 +1,20 @@
+[
+  {
+    "id": "1.2",
+    "tipo": "Cancelación/Refund",
+    "ticket": "Psd262194109",
+    "transaction_id": "000000000012906956",
+    "result_code": "-1",
+    "result_detail": "transaction_id_not_found",
+    "result_description": "The transaction ID given was not found",
+    "full_response": {
+      "type": "error",
+      "code": "-1",
+      "detail": "transaction_id_not_found",
+      "description": "The transaction ID given was not found",
+      "payload": {},
+      "uuid": "0afe6a80240941809c5f182e2b4e7701",
+      "request_id": "698d365f68609fc19aac38d0"
+    }
+  }
+]

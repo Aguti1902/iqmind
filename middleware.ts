@@ -29,8 +29,7 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Skip all internal paths (_next, api, etc) and static HTML files
-    '/((?!api|_next/static|_next/image|images|favicon.ico|messages|.*\\.html).*)',
+    '/((?!api|_next/static|_next/image|images|favicon.ico|messages|\\.well-known|.*\\.html).*)',
   ],
 }
 

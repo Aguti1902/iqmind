@@ -4,10 +4,24 @@ const nextConfig = {
   images: {
     domains: [],
   },
+  async rewrites() {
+    return {
+      beforeFiles: [
+        {
+          source: '/.well-known/apple-developer-merchantid-domain-association',
+          destination: '/api/apple-pay-cert',
+        },
+        {
+          source: '/.well-known/apple-developer-merchantid-domain-association.txt',
+          destination: '/api/apple-pay-cert',
+        },
+      ],
+    }
+  },
   async headers() {
     return [
       {
-        source: '/.well-known/apple-developer-merchantid-domain-association',
+        source: '/.well-known/:path*',
         headers: [
           {
             key: 'Content-Type',
@@ -15,7 +29,6 @@ const nextConfig = {
           },
         ],
       },
-      // Headers para archivos HTML estáticos (Sipay FastPay iframe)
       {
         source: '/:path*.html',
         headers: [

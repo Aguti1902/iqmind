@@ -1,0 +1,69 @@
+[
+  {
+    "testId": "1.2",
+    "testName": "Cancelación CIT (Refund)",
+    "success": true,
+    "code": "0",
+    "detail": "refund",
+    "description": "Refund processed successfully",
+    "transactionId": "000101734959781252785",
+    "token": null,
+    "amount": 50,
+    "approval": "820275",
+    "originalTransactionId": "000101734959781252775",
+    "timestamp": "2026-02-12T02:38:46.781Z"
+  },
+  {
+    "testId": "2.1",
+    "testName": "MIT Recurrente - Venta (9.99€)",
+    "success": true,
+    "code": "0",
+    "detail": "authorization",
+    "description": "Authorization processed successfully",
+    "transactionId": "000101734959781252788",
+    "token": "mndmtrc_Test63816714",
+    "amount": "999",
+    "approval": "986471",
+    "timestamp": "2026-02-12T02:38:50.052Z"
+  },
+  {
+    "testId": "2.2",
+    "testName": "MIT Recurrente - Cancelación",
+    "success": true,
+    "code": "0",
+    "detail": "refund",
+    "description": "Refund processed successfully",
+    "transactionId": "000101734959781252791",
+    "token": null,
+    "amount": 999,
+    "approval": "749915",
+    "originalTransactionId": "000101734959781252788",
+    "timestamp": "2026-02-12T02:38:52.164Z"
+  },
+  {
+    "testId": "CARD",
+    "testName": "Consulta de token",
+    "success": true,
+    "code": "0",
+    "detail": "card",
+    "description": "Card data",
+    "transactionId": null,
+    "token": "mndmtrc_Test63816714",
+    "amount": null,
+    "approval": null,
+    "timestamp": "2026-02-12T02:38:53.546Z"
+  },
+  {
+    "testId": "UNREG",
+    "testName": "Baja de token (Unregister)",
+    "success": true,
+    "code": "0",
+    "detail": "unregister",
+    "description": "Unregister card successfully",
+    "transactionId": null,
+    "token": null,
+    "amount": null,
+    "approval": null,
+    "timestamp": "2026-02-12T02:38:54.725Z"
+  }
+]
