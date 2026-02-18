@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getSipayClient } from '@/lib/sipay-client'
 
 export const dynamic = 'force-dynamic'
 
 /**
  * Validar sesión de Apple Pay con Sipay
- * https://developer.sipay.es/docs/documentation/online/selling/wallets/apay
+ * Docs: https://developer.sipay.es/docs/documentation/online/selling/wallets/apay
+ * 
+ * Paso 1 del flujo Apple Pay:
+ * Frontend envía validationURL → Backend llama a Sipay /apay/api/v1/session
+ * → Devuelve merchantSession (payload) + request_id para paso 2
  */
 export async function POST(request: NextRequest) {
   try {
@@ -17,37 +22,21 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log('🍎 Validando merchant Apple Pay:', validationURL)
+    console.log('🍎 Validando sesión Apple Pay:', validationURL)
 
-    // Sipay maneja la validación del comerciante
-    // En producción, esto debería llamar a la API de Sipay
-    const sipayEndpoint = process.env.SIPAY_ENDPOINT || 'https://sandbox.sipay.es'
-    
-    const response = await fetch(`${sipayEndpoint}/mdwr/v1/applepay/session`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.SIPAY_API_KEY}`,
-      },
-      body: JSON.stringify({
-        validationURL,
-        displayName: 'MindMetric',
-        domainName: 'mindmetric.io',
-      }),
+    const sipay = getSipayClient()
+    const response = await sipay.validateApplePaySession({
+      validationURL,
+      domain: 'mindmetric.io',
+      displayName: 'MindMetric',
     })
 
-    if (!response.ok) {
-      console.error('❌ Error validando Apple Pay merchant')
-      return NextResponse.json(
-        { error: 'Error validando merchant' },
-        { status: 400 }
-      )
-    }
+    console.log('✅ Sesión Apple Pay validada, request_id:', response.request_id)
 
-    const merchantSession = await response.json()
-    console.log('✅ Sesión Apple Pay validada')
-
-    return NextResponse.json(merchantSession)
+    return NextResponse.json({
+      merchantSession: response.payload,
+      request_id: response.request_id,
+    })
 
   } catch (error: any) {
     console.error('❌ Error en validación Apple Pay:', error)

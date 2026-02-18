@@ -1,26 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSipayClient } from '@/lib/sipay-client'
 import { db } from '@/lib/database-postgres'
+import { sendEmail, emailTemplates } from '@/lib/email-service'
 import { checkRateLimit, getClientIP, rateLimitResponse } from '@/lib/api-security'
 
 export const dynamic = 'force-dynamic'
 
 /**
  * Procesar pago con Google Pay
- * https://developer.sipay.es/docs/documentation/online/selling/wallets/gpay
+ * Docs: https://developer.sipay.es/docs/documentation/online/selling/wallets/gpay
  * 
- * SEGURIDAD:
- * - Rate limiting: 3 peticiones por minuto por IP
- * - El token de Google Pay es validado por Sipay
+ * Recibe el token string de Google Pay (paymentMethodData.tokenizationData.token)
+ * Envía a Sipay POST /mdwr/v1/authorization con formato catcher type=gpay.
  */
 export async function POST(request: NextRequest) {
   try {
-    // Rate limiting por IP
     const clientIP = getClientIP(request)
     const rateLimit = checkRateLimit(`google-pay:${clientIP}`, 3, 60000)
-    
+
     if (!rateLimit.allowed) {
-      console.warn(`⚠️ Rate limit excedido para IP: ${clientIP}`)
       return rateLimitResponse(rateLimit.resetIn)
     }
 
@@ -34,27 +32,22 @@ export async function POST(request: NextRequest) {
       testData
     } = await request.json()
 
-    console.log('🔍 Procesando pago con Google Pay:', { email, amount })
+    console.log('🔍 Procesando Google Pay:', { email, amount })
 
     if (!googlePayToken || !email || !amount) {
       return NextResponse.json(
-        { error: 'Datos incompletos' },
-        { status: 400 }
-      )
-    }
-    
-    // Validar formato de email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(email)) {
-      return NextResponse.json(
-        { error: 'Formato de email inválido' },
+        { error: 'Datos incompletos: googlePayToken, email y amount son requeridos' },
         { status: 400 }
       )
     }
 
-    // Crear o actualizar usuario
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      return NextResponse.json({ error: 'Formato de email inválido' }, { status: 400 })
+    }
+
     let user = await db.getUserByEmail(email)
-    
+
     if (!user) {
       const hashedPassword = `temp_${Math.random().toString(36).substr(2, 9)}`
       user = await db.createUser({
@@ -66,7 +59,6 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // Guardar datos del test si existen
     if (testData && testData.answers && user) {
       try {
         const testResultId = `test_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
@@ -85,50 +77,53 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Obtener cliente de Sipay
     const sipay = getSipayClient()
-
-    // Generar ID de orden
-    const orderId = `googlepay_${Date.now()}_${user.id.substr(-6)}`
-
-    // Procesar pago con Google Pay
     const amountInCents = Math.round(amount * 100)
+    const tokenId = 'mndmtrc_' + Date.now().toString().slice(-10)
 
     const response = await sipay.authorizeGooglePay({
       amount: amountInCents,
       currency: 'EUR',
-      orderId,
-      description: `MindMetric - Test de CI - ${email}`,
       googlePayToken,
-      customerEmail: email,
+      tokenId,
     })
 
-    console.log('📡 Respuesta de Sipay (Google Pay):', response)
+    console.log('📡 Respuesta Sipay Google Pay:', JSON.stringify(response).slice(0, 300))
 
-    // Verificar respuesta
-    if (response.code !== 0) {
-      console.error('❌ Error en Google Pay:', response.description)
+    const payloadCode = response.payload?.code
+    if (payloadCode !== '0' && payloadCode !== 0) {
+      console.error('❌ Google Pay pago denegado:', response.payload)
       return NextResponse.json(
-        { error: response.description || 'Error procesando Google Pay' },
+        { error: response.payload?.description || response.description || 'Pago denegado' },
         { status: 400 }
       )
     }
 
-    // Activar trial
     const trialEnd = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
     await db.updateUser(user.id, {
       subscriptionStatus: 'trial',
+      subscriptionId: tokenId,
       trialEndDate: trialEnd.toISOString(),
+      accessUntil: trialEnd.toISOString(),
     })
 
-    console.log('✅ Pago con Google Pay procesado exitosamente')
+    try {
+      const uName = userName || email.split('@')[0]
+      const trialEmail = emailTemplates.trialStarted(email, uName, trialEnd.toLocaleDateString('es-ES'), lang || 'es')
+      await sendEmail(trialEmail)
+      const payEmail = emailTemplates.paymentSuccess(email, uName, amount, lang || 'es')
+      await sendEmail(payEmail)
+    } catch (e: any) {
+      console.error('⚠️ Error enviando emails:', e.message)
+    }
+
+    console.log('✅ Google Pay completado. Token guardado:', tokenId.slice(0, 12) + '...')
 
     return NextResponse.json({
       success: true,
-      transactionId: response.id_transaction,
-      orderId: response.id_order,
-      amount: response.amount,
-      status: response.transaction_status,
+      transactionId: response.payload?.transaction_id,
+      orderId: response.payload?.order,
+      amount: response.payload?.amount,
     })
 
   } catch (error: any) {
@@ -139,4 +134,3 @@ export async function POST(request: NextRequest) {
     )
   }
 }
-

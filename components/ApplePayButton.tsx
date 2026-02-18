@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 
 declare global {
   interface Window {
@@ -17,7 +17,7 @@ declare global {
 type ApplePayButtonProps = {
   amount: number
   currency?: string
-  onSuccess: (token: string) => void
+  onProcessPayment: (token: any, requestId: string) => Promise<boolean>
   onError: (error: Error) => void
   disabled?: boolean
 }
@@ -25,15 +25,16 @@ type ApplePayButtonProps = {
 export default function ApplePayButton({
   amount,
   currency = 'EUR',
-  onSuccess,
+  onProcessPayment,
   onError,
   disabled = false,
 }: ApplePayButtonProps) {
   const [isAvailable, setIsAvailable] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const onProcessRef = useRef(onProcessPayment)
+  onProcessRef.current = onProcessPayment
 
   useEffect(() => {
-    // Verificar si Apple Pay está disponible
     if (typeof window !== 'undefined' && window.ApplePaySession) {
       try {
         if (window.ApplePaySession.canMakePayments()) {
@@ -57,38 +58,54 @@ export default function ApplePayButton({
         supportedNetworks: ['visa', 'masterCard'],
         merchantCapabilities: ['supports3DS'],
         total: {
-          label: 'MindMetric - Test',
+          label: 'MindMetric',
           amount: amount.toFixed(2),
-          type: 'final',
+          type: 'final' as const,
         },
       }
 
       const session = new window.ApplePaySession(3, paymentRequest)
+      let sessionRequestId = ''
 
       session.onvalidatemerchant = async (event: any) => {
         try {
-          // Llamar al backend para validar el comerciante
           const response = await fetch('/api/sipay/apple-pay/validate', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ validationURL: event.validationURL }),
           })
-          const merchantSession = await response.json()
-          session.completeMerchantValidation(merchantSession)
+
+          if (!response.ok) {
+            throw new Error('Error validando merchant')
+          }
+
+          const data = await response.json()
+          sessionRequestId = data.request_id
+          session.completeMerchantValidation(data.merchantSession)
         } catch (error) {
+          console.error('❌ Apple Pay merchant validation error:', error)
           session.abort()
           onError(error as Error)
+          setIsLoading(false)
         }
       }
 
-      session.onpaymentauthorized = (event: any) => {
+      session.onpaymentauthorized = async (event: any) => {
         try {
-          const token = JSON.stringify(event.payment.token.paymentData)
-          onSuccess(token)
-          session.completePayment(window.ApplePaySession!.STATUS_SUCCESS)
+          const fullToken = event.payment.token
+          const success = await onProcessRef.current(fullToken, sessionRequestId)
+
+          if (success) {
+            session.completePayment(window.ApplePaySession!.STATUS_SUCCESS)
+          } else {
+            session.completePayment(window.ApplePaySession!.STATUS_FAILURE)
+          }
         } catch (error) {
+          console.error('❌ Apple Pay authorization error:', error)
           session.completePayment(window.ApplePaySession!.STATUS_FAILURE)
           onError(error as Error)
+        } finally {
+          setIsLoading(false)
         }
       }
 
@@ -99,7 +116,6 @@ export default function ApplePayButton({
       session.begin()
     } catch (error: any) {
       onError(error)
-    } finally {
       setIsLoading(false)
     }
   }

@@ -1,31 +1,31 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSipayClient } from '@/lib/sipay-client'
 import { db } from '@/lib/database-postgres'
+import { sendEmail, emailTemplates } from '@/lib/email-service'
 import { checkRateLimit, getClientIP, rateLimitResponse } from '@/lib/api-security'
 
 export const dynamic = 'force-dynamic'
 
 /**
- * Procesar pago con Apple Pay
- * https://developer.sipay.es/docs/documentation/online/selling/wallets/apay
+ * Procesar pago con Apple Pay - Paso 2
+ * Docs: https://developer.sipay.es/docs/documentation/online/selling/wallets/apay
  * 
- * SEGURIDAD:
- * - Rate limiting: 3 peticiones por minuto por IP
- * - El token de Apple Pay es validado por Sipay
+ * Recibe el token completo de Apple Pay JS (event.payment.token)
+ * y el request_id del paso de validación de sesión.
+ * Envía a Sipay POST /mdwr/v1/authorization con formato catcher.
  */
 export async function POST(request: NextRequest) {
   try {
-    // Rate limiting por IP
     const clientIP = getClientIP(request)
     const rateLimit = checkRateLimit(`apple-pay:${clientIP}`, 3, 60000)
-    
+
     if (!rateLimit.allowed) {
-      console.warn(`⚠️ Rate limit excedido para IP: ${clientIP}`)
       return rateLimitResponse(rateLimit.resetIn)
     }
 
     const {
       applePayToken,
+      requestId,
       email,
       userName,
       amount,
@@ -34,27 +34,22 @@ export async function POST(request: NextRequest) {
       testData
     } = await request.json()
 
-    console.log('🍎 Procesando pago con Apple Pay:', { email, amount })
+    console.log('🍎 Procesando Apple Pay:', { email, amount, hasRequestId: !!requestId })
 
-    if (!applePayToken || !email || !amount) {
+    if (!applePayToken || !requestId || !email || !amount) {
       return NextResponse.json(
-        { error: 'Datos incompletos' },
+        { error: 'Datos incompletos: applePayToken, requestId, email y amount son requeridos' },
         { status: 400 }
       )
     }
-    
-    // Validar formato de email
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
-      return NextResponse.json(
-        { error: 'Formato de email inválido' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Formato de email inválido' }, { status: 400 })
     }
 
-    // Crear o actualizar usuario
     let user = await db.getUserByEmail(email)
-    
+
     if (!user) {
       const hashedPassword = `temp_${Math.random().toString(36).substr(2, 9)}`
       user = await db.createUser({
@@ -66,7 +61,6 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // Guardar datos del test si existen
     if (testData && testData.answers && user) {
       try {
         const testResultId = `test_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
@@ -85,50 +79,54 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Obtener cliente de Sipay
     const sipay = getSipayClient()
-
-    // Generar ID de orden
-    const orderId = `applepay_${Date.now()}_${user.id.substr(-6)}`
-
-    // Procesar pago con Apple Pay
     const amountInCents = Math.round(amount * 100)
+    const tokenId = 'mndmtrc_' + Date.now().toString().slice(-10)
 
     const response = await sipay.authorizeApplePay({
       amount: amountInCents,
       currency: 'EUR',
-      orderId,
-      description: `MindMetric - Test de CI - ${email}`,
       applePayToken,
-      customerEmail: email,
+      requestId,
+      tokenId,
     })
 
-    console.log('📡 Respuesta de Sipay (Apple Pay):', response)
+    console.log('📡 Respuesta Sipay Apple Pay:', JSON.stringify(response).slice(0, 300))
 
-    // Verificar respuesta
-    if (response.code !== 0) {
-      console.error('❌ Error en Apple Pay:', response.description)
+    const payloadCode = response.payload?.code
+    if (payloadCode !== '0' && payloadCode !== 0) {
+      console.error('❌ Apple Pay pago denegado:', response.payload)
       return NextResponse.json(
-        { error: response.description || 'Error procesando Apple Pay' },
+        { error: response.payload?.description || response.description || 'Pago denegado' },
         { status: 400 }
       )
     }
 
-    // Activar trial
     const trialEnd = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
     await db.updateUser(user.id, {
       subscriptionStatus: 'trial',
+      subscriptionId: tokenId,
       trialEndDate: trialEnd.toISOString(),
+      accessUntil: trialEnd.toISOString(),
     })
 
-    console.log('✅ Pago con Apple Pay procesado exitosamente')
+    try {
+      const uName = userName || email.split('@')[0]
+      const trialEmail = emailTemplates.trialStarted(email, uName, trialEnd.toLocaleDateString('es-ES'), lang || 'es')
+      await sendEmail(trialEmail)
+      const payEmail = emailTemplates.paymentSuccess(email, uName, amount, lang || 'es')
+      await sendEmail(payEmail)
+    } catch (e: any) {
+      console.error('⚠️ Error enviando emails:', e.message)
+    }
+
+    console.log('✅ Apple Pay completado. Token guardado:', tokenId.slice(0, 12) + '...')
 
     return NextResponse.json({
       success: true,
-      transactionId: response.id_transaction,
-      orderId: response.id_order,
-      amount: response.amount,
-      status: response.transaction_status,
+      transactionId: response.payload?.transaction_id,
+      orderId: response.payload?.order,
+      amount: response.payload?.amount,
     })
 
   } catch (error: any) {
@@ -139,4 +137,3 @@ export async function POST(request: NextRequest) {
     )
   }
 }
-

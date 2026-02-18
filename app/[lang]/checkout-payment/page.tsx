@@ -203,9 +203,9 @@ function CheckoutPaymentContent() {
     setError(error.description || 'Error procesando el pago. Por favor, intenta de nuevo.')
   }
 
-  // Handler para Google Pay
-  const handleGooglePaySuccess = async (token: string) => {
-    console.log('🔍 Google Pay token recibido')
+  // Handler para Google Pay - devuelve Promise<boolean> para que el botón espere
+  const handleGooglePayProcess = async (token: string): Promise<boolean> => {
+    console.log('🔍 Google Pay: procesando pago en backend...')
     try {
       const response = await fetch('/api/sipay/google-pay', {
         method: 'POST',
@@ -222,28 +222,32 @@ function CheckoutPaymentContent() {
       })
 
       const data = await response.json()
-      
+
       if (!response.ok) {
-        throw new Error(data.error || 'Error en Google Pay')
+        setError(data.error || 'Error en Google Pay')
+        return false
       }
 
       console.log('✅ Google Pay exitoso:', data)
-      router.push('/' + lang + '/resultado?order_id=' + data.orderId)
+      router.push('/' + lang + '/resultado?order_id=' + data.orderId + '&payment=success')
+      return true
     } catch (error: any) {
       console.error('❌ Error Google Pay:', error)
       setError(error.message || 'Error con Google Pay')
+      return false
     }
   }
 
-  // Handler para Apple Pay
-  const handleApplePaySuccess = async (token: string) => {
-    console.log('🍎 Apple Pay token recibido')
+  // Handler para Apple Pay - devuelve Promise<boolean> para que el botón espere
+  const handleApplePayProcess = async (applePayToken: any, requestId: string): Promise<boolean> => {
+    console.log('🍎 Apple Pay: procesando pago en backend...')
     try {
       const response = await fetch('/api/sipay/apple-pay', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          applePayToken: token,
+          applePayToken,
+          requestId,
           email,
           userName: email.split('@')[0],
           amount: 0.50,
@@ -254,16 +258,19 @@ function CheckoutPaymentContent() {
       })
 
       const data = await response.json()
-      
+
       if (!response.ok) {
-        throw new Error(data.error || 'Error en Apple Pay')
+        setError(data.error || 'Error en Apple Pay')
+        return false
       }
 
       console.log('✅ Apple Pay exitoso:', data)
-      router.push('/' + lang + '/resultado?order_id=' + data.orderId)
+      router.push('/' + lang + '/resultado?order_id=' + data.orderId + '&payment=success')
+      return true
     } catch (error: any) {
       console.error('❌ Error Apple Pay:', error)
       setError(error.message || 'Error con Apple Pay')
+      return false
     }
   }
 
@@ -498,16 +505,17 @@ function CheckoutPaymentContent() {
                         <GooglePayButton
                           amount={0.50}
                           currency="EUR"
-                          onSuccess={handleGooglePaySuccess}
+                          onProcessPayment={handleGooglePayProcess}
                           onError={handlePaymentError}
                           env={paymentData.sipayConfig?.endpoint?.includes('live') ? 'live' : 'sandbox'}
+                          gatewayMerchantId={paymentData.sipayConfig?.key || 'clicklabsdigital'}
                         />
 
                         {/* Apple Pay */}
                         <ApplePayButton
                           amount={0.50}
                           currency="EUR"
-                          onSuccess={handleApplePaySuccess}
+                          onProcessPayment={handleApplePayProcess}
                           onError={handlePaymentError}
                         />
 

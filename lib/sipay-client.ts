@@ -257,51 +257,78 @@ export class SipayClient {
   }
 
   /**
-   * Iniciar flujo de pago con Apple Pay
+   * Validar sesión de Apple Pay con Sipay
+   * Docs: https://developer.sipay.es/docs/documentation/online/selling/wallets/apay
+   * Endpoint: POST /apay/api/v1/session
+   */
+  async validateApplePaySession(params: {
+    validationURL: string
+    domain: string
+    displayName: string
+  }): Promise<any> {
+    const data = {
+      url: params.validationURL,
+      domain: params.domain,
+      title: params.displayName,
+    }
+    return this.makeRequest('/apay/api/v1/session', 'POST', data)
+  }
+
+  /**
+   * Autorizar pago con Apple Pay
+   * Docs: https://developer.sipay.es/docs/documentation/online/selling/wallets/apay
+   * Endpoint: POST /mdwr/v1/authorization
+   * 
+   * Usa formato `catcher` con type=apay, token_apay (objeto completo de Apple Pay JS)
+   * y request_id obtenido del paso de validación de sesión.
    */
   async authorizeApplePay(params: {
     amount: number
     currency: string
-    orderId: string
-    description: string
-    applePayToken: string
-    customerEmail: string
-  }): Promise<SipayAuthResponse> {
-    const data = {
+    applePayToken: any
+    requestId: string
+    tokenId?: string
+  }): Promise<any> {
+    const data: any = {
       amount: params.amount,
       currency: params.currency,
-      order: params.orderId,
-      description: params.description,
-      apple_pay_token: params.applePayToken,
-      customer_email: params.customerEmail,
-      resource: this.config.resource,
+      catcher: {
+        type: 'apay',
+        token_apay: params.applePayToken,
+        request_id: params.requestId,
+      },
     }
-
-    return this.makeRequest('/api/v1/mdwr/allinone', 'POST', data)
+    if (params.tokenId) {
+      data.token = params.tokenId
+    }
+    return this.makeRequest('/mdwr/v1/authorization', 'POST', data)
   }
 
   /**
-   * Iniciar flujo de pago con Google Pay
+   * Autorizar pago con Google Pay
+   * Docs: https://developer.sipay.es/docs/documentation/online/selling/wallets/gpay
+   * Endpoint: POST /mdwr/v1/authorization
+   * 
+   * Usa formato `catcher` con type=gpay, token_gpay (string del tokenizationData.token)
    */
   async authorizeGooglePay(params: {
     amount: number
     currency: string
-    orderId: string
-    description: string
     googlePayToken: string
-    customerEmail: string
-  }): Promise<SipayAuthResponse> {
-    const data = {
+    tokenId?: string
+  }): Promise<any> {
+    const data: any = {
       amount: params.amount,
       currency: params.currency,
-      order: params.orderId,
-      description: params.description,
-      google_pay_token: params.googlePayToken,
-      customer_email: params.customerEmail,
-      resource: this.config.resource,
+      catcher: {
+        type: 'gpay',
+        token_gpay: params.googlePayToken,
+      },
     }
-
-    return this.makeRequest('/api/v1/mdwr/allinone', 'POST', data)
+    if (params.tokenId) {
+      data.token = params.tokenId
+    }
+    return this.makeRequest('/mdwr/v1/authorization', 'POST', data)
   }
 }
 

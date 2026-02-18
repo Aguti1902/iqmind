@@ -1,0 +1,1056 @@
+{
+  "name": "🤖 Agente Reembolsos MindMetric",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "571434cc-a3cc-465f-890d-a1eac71f1756",
+      "name": "📧 Gmail: Recibir Solicitud",
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 2,
+      "position": [
+        -6640,
+        1136
+      ],
+      "credentials": {
+        "imap": {
+          "id": "qZFgAKnAEeGzXWXZ",
+          "name": "IMAP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fields": {
+          "values": [
+            {
+              "name": "prompt_sistema",
+              "stringValue": "Eres un asistente de atención al cliente de MindMetric especializado en reembolsos.  Tu tarea es analizar correos de clientes y extraer información clave.  ---  ## INFORMACIÓN A EXTRAER:  Debes responder ÚNICAMENTE con un JSON con esta estructura:  {   \"idioma\": \"es | en | fr | de | it | pt | other\",   \"email_cliente\": \"email@ejemplo.com\",   \"email_pago\": \"email usado en el pago (si es diferente o se menciona)\",   \"motivo_solicitud\": \"Descripción breve del motivo\",   \"tipo_solicitud\": \"REEMBOLSO_INICIAL | REEMBOLSO_SUSCRIPCION | CANCELACION | QUEJA | OTRO\",   \"emocion\": \"NEUTRAL | FRUSTRADO | ENOJADO | EDUCADO\",   \"cumple_politica\": true | false,   \"razon_cumplimiento\": \"Explicación de por qué cumple o no cumple\",   \"respuesta_sugerida\": \"Respuesta empática y profesional en EL MISMO IDIOMA del email\",   \"datos_pedido\": {     \"fecha_pago\": \"fecha mencionada del pago (formato: YYYY-MM-DD)\",     \"monto\": \"monto del pago mencionado\",     \"ultimos_4_digitos\": \"últimos 4 dígitos de tarjeta si se mencionan\",     \"transaction_id\": \"ID de transacción si se menciona\",     \"nombre_titular\": \"nombre del titular de la tarjeta si se menciona\"   } }  IMPORTANTE: - Si el cliente menciona \"pagué con otro email\", extráelo en email_pago - Busca CUALQUIER dato del pedido que mencione (fecha, monto, tarjeta, etc.) - RESPONDE SOLO CON EL JSON, SIN TEXTO ADICIONAL  ---  ## POLÍTICA DE REEMBOLSOS DE MINDMETRIC:  ### ⛔ NO REEMBOLSABLE:  **1. PAGO INICIAL (1€):** - ⛔ NO es reembolsable bajo NINGUNA circunstancia - Razón: Contenido digital ya entregado (resultado del test) - SIEMPRE marca cumple_politica como FALSE si solicitan reembolso del pago inicial  ### ✅ REEMBOLSOS APROBADOS (SOLO SUSCRIPCIONES):  **2. SUSCRIPCIÓN (9.99€/19.99€):** Solo reembolsable si: - ✅ Indisponibilidad > 24 horas consecutivas (documentada, NO mantenimiento) - ✅ Problemas técnicos verificables (error impide acceso a funciones) - ✅ Errores de facturación (doble cargo, monto incorrecto, no autorizado) - ✅ Requisito legal (derecho de desistimiento, orden judicial)  ### ❌ REEMBOLSOS DENEGADOS:  - ⛔ Pago inicial de 1€ (por cualquier motivo) - ⛔ Cambio de opinión / \"Ya no lo necesito\" - ⛔ \"Olvidé cancelar antes de renovación\"  ### ### 🔄 CANCELACIONES (Sin Reembolso):\n\n✅ SIEMPRE PERMITIDAS - Detecta CUALQUIERA de estas palabras clave:\n- \"cancelar\" → CANCELACION\n- \"cancela\" → CANCELACION\n- \"dar de baja\" → CANCELACION\n- \"baja de cuenta\" → CANCELACION\n- \"no quiero seguir\" → CANCELACION\n- \"terminar suscripción\" → CANCELACION\n- \"cancel\" (inglés) → CANCELACION\n\nIMPORTANTE:\n- Si el email contiene la palabra \"cancelar\" o \"cancel\" → tipo_solicitud = \"CANCELACION\"\n- Ignora errores de encoding (Ã³, Ã±, etc.)\n- Marca cumple_politica = true\n- NO generar reembolso, solo cancelar suscripción\n\nEJEMPLOS:\n- \"quiero cancelar\" → CANCELACION ✓\n- \"cancelar mi suscripciÃ³n\" → CANCELACION ✓\n- \"dar de baja\" → CANCELACION ✓\n- \"I want to cancel\" → CANCELACION ✓\n\n ---  ## INSTRUCCIONES FINALES:  1. **IDIOMA:** DETECTA el idioma del email y responde en ese mismo idioma 2. SIEMPRE responde con JSON válido 3. NO agregues texto explicativo, SOLO el JSON 4. La respuesta_sugerida DEBE estar en el MISMO IDIOMA que el email del cliente"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e0cef8ce-397f-4db0-96cf-03503cf5d200",
+      "name": "🧠 Prompt del Sistema",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        -6240,
+        1136
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "chat",
+        "prompt": {
+          "messages": [
+            {
+              "role": "system",
+              "content": "=={{ $('🧠 Prompt del Sistema').item.json.prompt_sistema }}"
+            },
+            {
+              "content": "==EMAIL DEL CLIENTE:             De: {{ $json.from }}             Asunto: {{ $json.subject }}                          Contenido:             {{ $json.emailLimpio }}"
+            }
+          ]
+        },
+        "options": {
+          "maxTokens": 1000,
+          "temperature": 0.3
+        },
+        "requestOptions": {}
+      },
+      "id": "9728ec72-fb6f-4148-9ad6-d758a6cdba96",
+      "name": "🤖 OpenAI: Analizar Solicitud",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [
+        -6032,
+        1136
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "kQzOiUVIHsad9pC8",
+          "name": "OpenAi account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parsear respuesta de OpenAI\nconst inputData = $input.item.json;\n\n// Intentar múltiples formas de obtener la respuesta\nlet response = null;\n\n// Forma 1: message.content (nueva API)\nif (inputData.message && inputData.message.content) {\n  response = inputData.message.content;\n}\n// Forma 2: choices[0].message.content (API antigua)\nelse if (inputData.choices && inputData.choices.length > 0 && inputData.choices[0].message) {\n  response = inputData.choices[0].message.content;\n}\n// Forma 3: text (completions API)\nelse if (inputData.text) {\n  response = inputData.text;\n}\n// Forma 4: content directo\nelse if (inputData.content) {\n  response = inputData.content;\n}\n\n// Validar que hay respuesta\nif (!response) {\n  throw new Error('OpenAI no devolvió respuesta válida. Data recibida: ' + JSON.stringify(inputData));\n}\n\nlet analisisIA;\ntry {\n  // Extraer JSON de la respuesta (puede venir con markdown)\n  const jsonMatch = response.match(/\\{[\\s\\S]*\\}/);\n  \n  if (!jsonMatch) {\n    throw new Error('No se encontró JSON en la respuesta. Respuesta: ' + response);\n  }\n  \n  analisisIA = JSON.parse(jsonMatch[0]);\n} catch (error) {\n  return {\n    error: true,\n    mensaje: \"No se pudo parsear la respuesta de OpenAI\",\n    respuesta_raw: response,\n    error_detalle: error.message,\n    input_completo: inputData\n  };\n}\n\n// Combinar con datos del email original\nconst emailOriginal = $('📧 Gmail: Recibir Solicitud').item.json;\n\nreturn {\n  ...analisisIA,\n  email_remitente: emailOriginal.from || 'desconocido',\n  asunto_original: emailOriginal.subject || 'sin asunto',\n  fecha_recepcion: new Date().toISOString(),\n  email_completo: emailOriginal.text || emailOriginal.textPlain || ''\n};\n\n// VALIDACIÓN ADICIONAL: Detectar cancelación por palabras clave\nconst emailTexto = emailOriginal.text || emailOriginal.textPlain || '';\nconst textoMinusculas = emailTexto.toLowerCase();\n\nif ((textoMinusculas.includes('cancelar') || \n     textoMinusculas.includes('cancel') || \n     textoMinusculas.includes('dar de baja') ||\n     textoMinusculas.includes('baja de cuenta')) &&\n    analisisIA.tipo_solicitud === 'OTRO') {\n  \n  console.log('⚠️ CORRECCIÓN: Detectado \"cancelar\" pero IA lo marcó como OTRO');\n  analisisIA.tipo_solicitud = 'CANCELACION';\n  analisisIA.cumple_politica = true;\n  analisisIA.razon_cumplimiento = 'Solicitud de cancelación detectada por palabra clave';\n  analisisIA.respuesta_sugerida = 'Hemos recibido tu solicitud de cancelación.';\n}\n\n// Combinar con datos del email original\nreturn {\n  ...analisisIA,\n  email_remitente: emailOriginal.from || 'desconocido',\n  asunto_original: emailOriginal.subject || 'sin asunto',\n  fecha_recepcion: new Date().toISOString(),\n  email_completo: emailOriginal.text || emailOriginal.textPlain || ''\n};"
+      },
+      "id": "90f25806-e2f1-4391-80e2-7bad96dfc540",
+      "name": "📝 Parsear Respuesta IA",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -5840,
+        1136
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.tipo_solicitud }}",
+              "operation": "notEqual",
+              "value2": "OTRO"
+            }
+          ]
+        }
+      },
+      "id": "0c707ec6-63a9-4868-8748-106e25d043a1",
+      "name": "🔀 ¿Es Solicitud de Reembolso?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -5600,
+        1424
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const analisisIA = $input.item.json;\nlet emailBusqueda = analisisIA.email_cliente;\nif (analisisIA.email_pago && analisisIA.email_pago !== analisisIA.email_cliente) {\n  emailBusqueda = analisisIA.email_pago;\n}\nreturn { email_busqueda: emailBusqueda, ...analisisIA };"
+      },
+      "id": "1a6328a7-20ce-4ad3-b461-3a998b7a3940",
+      "name": "🔧 Preparar Búsqueda Cliente",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -5440,
+        1024
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://mindmetric.io/api/n8n/agent",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "={{$env.N8N_API_KEY}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"action\": \"lookup\", \"email\": \"{{ $json.email_busqueda }}\"}",
+        "options": {}
+      },
+      "id": "f40a7907-72c4-41ed-a1a0-90a0e2a5d2bc",
+      "name": "🔍 MindMetric: Buscar Cliente",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -5296,
+        816
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $('🔍 MindMetric: Buscar Cliente').item.json.found }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "7735d32f-a258-42e2-a726-37cc199dd4c4",
+      "name": "🔀 ¿Cliente Existe?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -4944,
+        992
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const analisisIA = $('📝 Parsear Respuesta IA').item.json;\nconst lookupData = $('🔍 MindMetric: Buscar Cliente1').item.json;\n\nif (!lookupData.found) {\n  return { cumple_politica: false, razon: \"Cliente no encontrado\", ...analisisIA };\n}\n\nconst hasActive = lookupData.has_active_subscription;\nconst status = lookupData.subscription_status;\n\nif (analisisIA.tipo_solicitud === \"REEMBOLSO_INICIAL\") {\n  return {\n    ...analisisIA,\n    cumple_politica: false,\n    razon: \"El pago inicial NO es reembolsable - contenido digital ya entregado\",\n    customer_email: lookupData.email,\n    tipo: \"REEMBOLSO_INICIAL\"\n  };\n}\n\nif (analisisIA.tipo_solicitud === \"REEMBOLSO_SUSCRIPCION\") {\n  const motivosValidos = [\"indisponibilidad\", \"problemas técnicos\", \"error de facturación\", \"cargo duplicado\", \"no funciona\", \"caída\", \"down\", \"bug\"];\n  const motivoValido = motivosValidos.some(m => analisisIA.motivo_solicitud.toLowerCase().includes(m));\n  \n  if (motivoValido) {\n    return {\n      ...analisisIA,\n      cumple_politica: true,\n      razon: \"Motivo técnico válido: \" + analisisIA.motivo_solicitud,\n      customer_email: lookupData.email,\n      monto_total: 999,\n      tipo: \"REEMBOLSO_SUSCRIPCION\",\n      ofrecer_cancelacion: hasActive\n    };\n  } else {\n    return {\n      ...analisisIA,\n      cumple_politica: false,\n      razon: \"Motivo no cumple con política de reembolsos\",\n      customer_email: lookupData.email,\n      ofrecer_cancelacion: hasActive\n    };\n  }\n}\n\nif (analisisIA.tipo_solicitud === \"CANCELACION\") {\n  if (!hasActive) {\n    return { ...analisisIA, cumple_politica: false, razon: \"No tiene suscripción activa\", tipo: \"CANCELACION\" };\n  }\n  return {\n    ...analisisIA,\n    cumple_politica: true,\n    razon: \"Solicitud de cancelación - siempre permitida\",\n    customer_email: lookupData.email,\n    tipo: \"CANCELACION\",\n    solo_cancelar: true\n  };\n}\n\nreturn { ...analisisIA, cumple_politica: false, razon: \"No cumple con criterios de reembolso\" };"
+      },
+      "id": "92a06398-7cc5-4323-9d74-2d3a3e43853e",
+      "name": "⚖️ Evaluar Política de Reembolso",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -4176,
+        1520
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.cumple_politica }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "cb728353-4e47-4f3a-89b1-3a489f48ed7a",
+      "name": "🔀 ¿Cumple Política?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -3920,
+        1520
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.tipo_solicitud }}",
+              "value2": "CANCELACION"
+            }
+          ]
+        }
+      },
+      "id": "2ea202cb-b651-479a-8b14-e4e4b58c01dc",
+      "name": "🔀 ¿Es Solo Cancelación?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -5648,
+        1136
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.item.json;\nconst transactionId = data.datos_pedido?.transaction_id || '';\nreturn [{\n  json: {\n    email: data.email_cliente || data.customer_email,\n    transaction_id: transactionId,\n    amount: data.monto_total ? data.monto_total / 100 : 9.99,\n    ...data\n  }\n}];"
+      },
+      "id": "38ddb290-1f89-4e64-aa45-4578ddcbf77c",
+      "name": "💳 Preparar Reembolsos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3680,
+        1296
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://mindmetric.io/api/n8n/agent",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "={{$env.N8N_API_KEY}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"action\": \"refund\", \"email\": \"{{ $json.email }}\", \"transaction_id\": \"{{ $json.transaction_id }}\", \"amount\": {{ $json.amount }} }",
+        "options": {}
+      },
+      "id": "7dd2d557-5bca-4524-a535-cd6aa876c3a3",
+      "name": "💰 MindMetric: Crear Reembolso",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -3408,
+        1296
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://mindmetric.io/api/n8n/agent",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "={{$env.N8N_API_KEY}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"action\": \"cancel\", \"email\": \"{{ $('📝 Parsear Respuesta IA').item.json.email_cliente }}\"}",
+        "options": {}
+      },
+      "id": "b0bac555-f5ee-47be-936f-315e9f752bbc",
+      "name": "🚫 MindMetric: Cancelar Suscripción",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -4608,
+        576
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtener datos\nconst analisisIA = $('📝 Parsear Respuesta IA').item.json;\nconst evaluacion = $('⚖️ Evaluar Política de Reembolso').item.json;\nconst idioma = analisisIA.idioma || 'en';\n\n// Plantillas por idioma\nconst plantillas = {\n  es: {\n    subject: 'Reembolso Procesado - MindMetric',\n    title: '✅ Reembolso Procesado',\n    greeting: 'Hola,',\n    success: '✓ Tu reembolso ha sido procesado exitosamente',\n    details_title: 'Detalles del reembolso:',\n    amount: 'Monto:',\n    method: 'Método:',\n    time: 'Tiempo estimado:',\n    time_value: '3-5 días hábiles',\n    payment_method: 'Pago inicial',\n    subscription_method: 'Suscripción',\n    info: 'El reembolso se procesará al mismo método de pago que utilizaste originalmente.',\n    questions: 'Si tienes alguna pregunta, no dudes en contactarnos.',\n    thanks: 'Gracias por tu comprensión.',\n    signature: 'Atentamente,<br><strong>Equipo de MindMetric</strong>',\n    footer: 'Este es un email automático generado por nuestro sistema de IA.'\n  },\n  en: {\n    subject: 'Refund Processed - MindMetric',\n    title: '✅ Refund Processed',\n    greeting: 'Hello,',\n    success: '✓ Your refund has been processed successfully',\n    details_title: 'Refund details:',\n    amount: 'Amount:',\n    method: 'Method:',\n    time: 'Estimated time:',\n    time_value: '3-5 business days',\n    payment_method: 'Initial payment',\n    subscription_method: 'Subscription',\n    info: 'The refund will be processed to the same payment method you originally used.',\n    questions: 'If you have any questions, please don\\'t hesitate to contact us.',\n    thanks: 'Thank you for your understanding.',\n    signature: 'Best regards,<br><strong>MindMetric Team</strong>',\n    footer: 'This is an automated email generated by our AI system.'\n  }\n};\n\nconst t = plantillas[idioma] || plantillas.en;\n\nconst monto = evaluacion.monto_total / 100;\nconst metodo = evaluacion.tipo === 'REEMBOLSO_INICIAL' ? t.payment_method : t.subscription_method;\n\nconst email_body = `<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <style>\n    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }\n    .container { max-width: 600px; margin: 0 auto; padding: 20px; }\n    .header { background: linear-gradient(135deg, #113240 0%, #052547 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }\n    .content { background: white; padding: 30px; border: 1px solid #e0e0e0; border-top: none; }\n    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 15px; margin: 20px 0; border-radius: 5px; }\n    .footer { background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; border-radius: 0 0 10px 10px; }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <div class=\"header\">\n      <h1>${t.title}</h1>\n    </div>\n    <div class=\"content\">\n      <p>${t.greeting}</p>\n      \n      <div class=\"success-box\">\n        <p><strong>${t.success}</strong></p>\n      </div>\n      \n      <p>${analisisIA.respuesta_sugerida}</p>\n      \n      <p><strong>${t.details_title}</strong></p>\n      <ul>\n        <li><strong>${t.amount}</strong> ${monto}€</li>\n        <li><strong>${t.method}</strong> ${metodo}</li>\n        <li><strong>${t.time}</strong> ${t.time_value}</li>\n      </ul>\n      \n      <p>${t.info}</p>\n      \n      <p>${t.questions}</p>\n      \n      <p>${t.thanks}</p>\n      \n      <p>${t.signature}</p>\n    </div>\n    <div class=\"footer\">\n      <p>MindMetric | <a href=\"https://mindmetric.io\">mindmetric.io</a></p>\n      <p>${t.footer}</p>\n    </div>\n  </div>\n</body>\n</html>`;\n\nreturn {\n  ...analisisIA,\n  ...evaluacion,\n  email_subject: t.subject,\n  email_body: email_body\n};"
+      },
+      "id": "45251db8-2b0e-4dd6-ab30-63201350e4db",
+      "name": "🌍 Preparar Email Reembolso",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3136,
+        1296
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtener datos\nconst analisisIA = $('📝 Parsear Respuesta IA').item.json;\nconst idioma = analisisIA.idioma || 'en';\n\n// Plantillas por idioma\nconst plantillas = {\n  es: {\n    subject: '✅ Suscripción Cancelada - MindMetric',\n    title: '✅ Suscripción Cancelada',\n    greeting: 'Hola,',\n    success: '✓ Tu suscripción ha sido cancelada exitosamente',\n    info_title: 'Información importante:',\n    info_1: 'No habrá más cargos a tu tarjeta',\n    info_2: 'Puedes seguir usando el servicio hasta el final del período actual',\n    info_3: 'Tu cuenta permanecerá activa (sin acceso premium)',\n    reactivate: 'Si en el futuro deseas reactivar tu suscripción, estaremos encantados de ayudarte.',\n    goodbye: '¡Gracias por haber sido parte de MindMetric!',\n    signature: 'Atentamente,<br><strong>Equipo de MindMetric</strong>',\n    footer: 'Este es un email automático generado por nuestro sistema de IA.'\n  },\n  en: {\n    subject: '✅ Subscription Cancelled - MindMetric',\n    title: '✅ Subscription Cancelled',\n    greeting: 'Hello,',\n    success: '✓ Your subscription has been cancelled successfully',\n    info_title: 'Important information:',\n    info_1: 'There will be no more charges to your card',\n    info_2: 'You can continue using the service until the end of your current period',\n    info_3: 'Your account will remain active (without premium access)',\n    reactivate: 'If you wish to reactivate your subscription in the future, we\\'ll be happy to help.',\n    goodbye: 'Thank you for being part of MindMetric!',\n    signature: 'Best regards,<br><strong>MindMetric Team</strong>',\n    footer: 'This is an automated email generated by our AI system.'\n  }\n};\n\nconst t = plantillas[idioma] || plantillas.en;\n\nconst email_body = `<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <style>\n    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }\n    .container { max-width: 600px; margin: 0 auto; padding: 20px; }\n    .header { background: linear-gradient(135deg, #113240 0%, #052547 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }\n    .content { background: white; padding: 30px; border: 1px solid #e0e0e0; border-top: none; }\n    .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 15px; margin: 20px 0; border-radius: 5px; }\n    .info-box { background: #e7f3ff; border-left: 4px solid #2196F3; padding: 15px; margin: 20px 0; border-radius: 5px; }\n    .footer { background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; border-radius: 0 0 10px 10px; }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <div class=\"header\">\n      <h1>${t.title}</h1>\n    </div>\n    <div class=\"content\">\n      <p>${t.greeting}</p>\n      \n      <div class=\"success-box\">\n        <p><strong>${t.success}</strong></p>\n      </div>\n      \n      <p>${analisisIA.respuesta_sugerida}</p>\n      \n      <div class=\"info-box\">\n        <p><strong>${t.info_title}</strong></p>\n        <ul style=\"margin: 10px 0; padding-left: 20px;\">\n          <li>${t.info_1}</li>\n          <li>${t.info_2}</li>\n          <li>${t.info_3}</li>\n        </ul>\n      </div>\n      \n      <p>${t.reactivate}</p>\n      \n      <p>${t.goodbye}</p>\n      \n      <p>${t.signature}</p>\n    </div>\n    <div class=\"footer\">\n      <p>MindMetric | <a href=\"https://mindmetric.io\">mindmetric.io</a></p>\n      <p>${t.footer}</p>\n    </div>\n  </div>\n</body>\n</html>`;\n\nreturn {\n  ...analisisIA,\n  email_subject: t.subject,\n  email_body: email_body\n};"
+      },
+      "id": "de55205d-a494-4b19-9db8-ce725d99f5e7",
+      "name": "🌍 Preparar Email Cancelación",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -4112,
+        576
+      ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "support@mindmetric.io",
+        "toEmail": "={{ $('📝 Parsear Respuesta IA').item.json.email_cliente }}",
+        "subject": "={{ $json.email_subject }}",
+        "emailFormat": "html",
+        "html": "={{ $json.email_body }}",
+        "options": {}
+      },
+      "id": "b66788c0-5624-4508-87a5-2313040da539",
+      "name": "📤 Email: Reembolso Aprobado",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [
+        -2832,
+        1296
+      ],
+      "webhookId": "c8f0d8ba-9b53-43d3-b40f-3b01e74dfcb0",
+      "credentials": {
+        "smtp": {
+          "id": "c4NbBhiwywAfTGgX",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "support@mindmetric.io",
+        "toEmail": "={{ $('📝 Parsear Respuesta IA').item.json.email_cliente }}",
+        "subject": "={{ $json.email_subject }}",
+        "emailFormat": "html",
+        "html": "={{ $json.email_body }}",
+        "options": {}
+      },
+      "id": "d0f4f2e1-d8ea-4bda-9877-993520947d24",
+      "name": "📤 Email: Cancelación Confirmada",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [
+        -3648,
+        576
+      ],
+      "webhookId": "e8c43208-769f-4ed1-b1e6-0d508d1d3316",
+      "credentials": {
+        "smtp": {
+          "id": "c4NbBhiwywAfTGgX",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtener datos\nconst analisisIA = $('📝 Parsear Respuesta IA').item.json;\nconst evaluacion = $('⚖️ Evaluar Política de Reembolso').item.json;\nconst idioma = analisisIA.idioma || 'en';\n\n// Plantillas por idioma\nconst plantillas = {\n  es: {\n    subject: '📋 Sobre tu Solicitud de Reembolso - MindMetric',\n    title: '📋 Sobre tu Solicitud',\n    greeting: 'Hola,',\n    reason_title: 'Razón:',\n    policy_title: 'Nuestra política de reembolsos establece que:',\n    policy_1: 'Pago inicial (1€): NO es reembolsable (contenido digital entregado)',\n    policy_2: 'Suscripciones: Solo por problemas técnicos documentados o errores de facturación',\n    policy_3: 'Cambio de opinión o no cancelar antes de renovación: No reembolsable',\n    cancelled_text: '<p><strong>✅ Hemos cancelado tu suscripción</strong> para evitar futuros cargos. Puedes seguir usando el servicio hasta el final del período actual.</p>',\n    error_text: 'Si crees que hay un error o tienes información adicional, por favor responde a este correo.',\n    button_text: 'Ver Política Completa',\n    thanks: 'Gracias por tu comprensión.',\n    signature: 'Atentamente,<br><strong>Equipo de MindMetric</strong>',\n    footer: 'Este es un email automático generado por nuestro sistema de IA.'\n  },\n  en: {\n    subject: '📋 About Your Refund Request - MindMetric',\n    title: '📋 About Your Request',\n    greeting: 'Hello,',\n    reason_title: 'Reason:',\n    policy_title: 'Our refund policy states that:',\n    policy_1: 'Initial payment (1€): NOT refundable (digital content delivered)',\n    policy_2: 'Subscriptions: Only for documented technical issues or billing errors',\n    policy_3: 'Change of mind or not canceling before renewal: Not refundable',\n    cancelled_text: '<p><strong>✅ We have cancelled your subscription</strong> to avoid future charges. You can continue using the service until the end of the current period.</p>',\n    error_text: 'If you believe there is an error or have additional information, please reply to this email.',\n    button_text: 'View Full Policy',\n    thanks: 'Thank you for your understanding.',\n    signature: 'Best regards,<br><strong>MindMetric Team</strong>',\n    footer: 'This is an automated email generated by our AI system.'\n  }\n};\n\nconst t = plantillas[idioma] || plantillas.en;\nconst cancelledSection = evaluacion.ofrecer_cancelacion ? t.cancelled_text : '';\n\nconst email_body = `<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <style>\n    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }\n    .container { max-width: 600px; margin: 0 auto; padding: 20px; }\n    .header { background: linear-gradient(135deg, #113240 0%, #052547 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }\n    .content { background: white; padding: 30px; border: 1px solid #e0e0e0; border-top: none; }\n    .info-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 5px; }\n    .footer { background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; border-radius: 0 0 10px 10px; }\n    .button { display: inline-block; background: #07C59A; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin: 20px 0; }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <div class=\"header\">\n      <h1>${t.title}</h1>\n    </div>\n    <div class=\"content\">\n      <p>${t.greeting}</p>\n      \n      <p>${analisisIA.respuesta_sugerida}</p>\n      \n      <div class=\"info-box\">\n        <p><strong>${t.reason_title}</strong> ${evaluacion.razon}</p>\n      </div>\n      \n      <p><strong>${t.policy_title}</strong></p>\n      <ul>\n        <li>${t.policy_1}</li>\n        <li>${t.policy_2}</li>\n        <li>${t.policy_3}</li>\n      </ul>\n      \n      ${cancelledSection}\n      \n      <p>${t.error_text}</p>\n      \n      <a href=\"https://mindmetric.io/${idioma === 'es' ? 'es' : 'en'}/reembolso\" class=\"button\" style=\"color: white;\">${t.button_text}</a>\n      \n      <p>${t.thanks}</p>\n      \n      <p>${t.signature}</p>\n    </div>\n    <div class=\"footer\">\n      <p>MindMetric | <a href=\"https://mindmetric.io\">mindmetric.io</a></p>\n      <p>${t.footer}</p>\n    </div>\n  </div>\n</body>\n</html>`;\n\nreturn {\n  ...analisisIA,\n  ...evaluacion,\n  email_subject: t.subject,\n  email_body: email_body\n};"
+      },
+      "id": "ee8dcc46-6b94-4dc4-af62-86f21d7a897c",
+      "name": "🌍 Preparar Email Denegado",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3664,
+        1680
+      ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "support@mindmetric.io",
+        "toEmail": "={{ $('📝 Parsear Respuesta IA').item.json.email_cliente }}",
+        "subject": "={{ $json.email_subject }}",
+        "emailFormat": "html",
+        "html": "={{ $json.email_body }}",
+        "options": {}
+      },
+      "id": "9c8a9bae-b1a8-4142-af54-023751f06217",
+      "name": "📤 Email: Reembolso Denegado",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [
+        -3392,
+        1680
+      ],
+      "webhookId": "79ecb6ff-2a35-4b53-8d25-3014bf2dce9b",
+      "credentials": {
+        "smtp": {
+          "id": "c4NbBhiwywAfTGgX",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtener datos\nconst analisisIA = $('📝 Parsear Respuesta IA').item.json;\nconst busqueda = $('🔧 Preparar Búsqueda Cliente').item.json;\nconst emailOriginal = $('📧 Gmail: Recibir Solicitud').item.json;\nconst idioma = analisisIA.idioma || 'en';\n\n// Plantillas por idioma\nconst plantillas = {\n  es: {\n    subject: '🔍 Información Adicional Requerida - MindMetric',\n    title: '🔍 Información Adicional Requerida',\n    greeting: 'Hola,',\n    not_found: '⚠️ No encontramos tu cuenta con el email:',\n    help: 'Para procesar tu solicitud, necesitamos verificar algunos datos de tu pedido.',\n    provide_title: '📋 Por favor, responde a este correo proporcionando:',\n    provide_1: '<strong>Email usado en el pago</strong> (si es diferente)',\n    provide_2: '<strong>Fecha aproximada del pago</strong> (día/mes/año)',\n    provide_3: '<strong>Monto del pago</strong> (1€, 9.99€ o 19.99€)',\n    provide_4: '<strong>Últimos 4 dígitos de la tarjeta</strong> usada',\n    provide_5: '<strong>Nombre del titular</strong> de la tarjeta (opcional)',\n    attach_title: '💡 También puedes adjuntar:',\n    attach_1: 'Captura del recibo de MindMetric',\n    attach_2: 'Email de confirmación de pago',\n    attach_3: 'Extracto bancario (ocultando datos sensibles)',\n    fast: 'Con esta información podremos localizar tu pedido y procesar tu solicitud rápidamente.',\n    note: '<strong>Nota:</strong> Si escribiste desde un email diferente al de tu compra, es normal que no te encontremos. Simplemente proporciona el email correcto y te ayudaremos.',\n    signature: 'Atentamente,<br><strong>Equipo de MindMetric</strong>',\n    footer: 'Responde a este correo con la información solicitada'\n  },\n  en: {\n    subject: '🔍 Additional Information Required - MindMetric',\n    title: '🔍 Additional Information Required',\n    greeting: 'Hello,',\n    not_found: '⚠️ We couldn\\'t find your account with the email:',\n    help: 'To process your request, we need to verify some details about your order.',\n    provide_title: '📋 Please reply to this email providing:',\n    provide_1: '<strong>Email used for payment</strong> (if different)',\n    provide_2: '<strong>Approximate payment date</strong> (day/month/year)',\n    provide_3: '<strong>Payment amount</strong> (1€, 9.99€ or 19.99€)',\n    provide_4: '<strong>Last 4 digits of the card</strong> used',\n    provide_5: '<strong>Cardholder name</strong> (optional)',\n    attach_title: '💡 You can also attach:',\n    attach_1: 'MindMetric receipt screenshot',\n    attach_2: 'Payment confirmation email',\n    attach_3: 'Bank statement (hiding sensitive data)',\n    fast: 'With this information we can locate your order and process your request quickly.',\n    note: '<strong>Note:</strong> If you wrote from a different email than your purchase, it\\'s normal we can\\'t find you. Simply provide the correct email and we\\'ll help you.',\n    signature: 'Best regards,<br><strong>MindMetric Team</strong>',\n    footer: 'Reply to this email with the requested information'\n  }\n};\n\nconst t = plantillas[idioma] || plantillas.en;\n\nconst email_body = `<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <style>\n    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }\n    .container { max-width: 600px; margin: 0 auto; padding: 20px; }\n    .header { background: linear-gradient(135deg, #113240 0%, #052547 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }\n    .content { background: white; padding: 30px; border: 1px solid #e0e0e0; border-top: none; }\n    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 5px; }\n    .info-box { background: #e7f3ff; border-left: 4px solid #2196F3; padding: 15px; margin: 20px 0; border-radius: 5px; }\n    .footer { background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; border-radius: 0 0 10px 10px; }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <div class=\"header\">\n      <h1>${t.title}</h1>\n    </div>\n    <div class=\"content\">\n      <p>${t.greeting}</p>\n      \n      <div class=\"warning-box\">\n        <p><strong>${t.not_found} ${busqueda.email_busqueda}</strong></p>\n      </div>\n      \n      <p>${t.help}</p>\n      \n      <div class=\"info-box\">\n        <p><strong>${t.provide_title}</strong></p>\n        <ol style=\"margin: 10px 0; padding-left: 20px;\">\n          <li>${t.provide_1}</li>\n          <li>${t.provide_2}</li>\n          <li>${t.provide_3}</li>\n          <li>${t.provide_4}</li>\n          <li>${t.provide_5}</li>\n        </ol>\n      </div>\n      \n      <p><strong>${t.attach_title}</strong></p>\n      <ul>\n        <li>${t.attach_1}</li>\n        <li>${t.attach_2}</li>\n        <li>${t.attach_3}</li>\n      </ul>\n      \n      <p>${t.fast}</p>\n      \n      <p>${t.note}</p>\n      \n      <p>${t.signature}</p>\n    </div>\n    <div class=\"footer\">\n      <p>MindMetric | <a href=\"https://mindmetric.io\">mindmetric.io</a></p>\n      <p>support@mindmetric.io</p>\n      <p style=\"margin-top: 10px; font-size: 11px; color: #999;\">${t.footer}</p>\n    </div>\n  </div>\n</body>\n</html>`;\n\nreturn {\n  ...analisisIA,\n  ...busqueda,\n  email_subject: t.subject,\n  email_body: email_body\n};"
+      },
+      "id": "998556c3-6e56-41f5-afdc-08572064af4f",
+      "name": "🌍 Preparar Email No Encontrado",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -4752,
+        1136
+      ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "support@mindmetric.io",
+        "toEmail": "={{ $('📧 Gmail: Recibir Solicitud').item.json.from }}",
+        "subject": "={{ $json.email_subject }}",
+        "emailFormat": "html",
+        "html": "={{ $json.email_body }}",
+        "options": {}
+      },
+      "id": "7513bae0-d18b-4030-b978-24ab4cf3441a",
+      "name": "📤 Email: Cliente No Encontrado",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [
+        -4464,
+        1136
+      ],
+      "webhookId": "66a14ece-04ff-44de-94a2-ae3bbaa65971",
+      "credentials": {
+        "smtp": {
+          "id": "c4NbBhiwywAfTGgX",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtener datos\nconst analisisIA = $('📝 Parsear Respuesta IA').item.json;\nconst idioma = analisisIA.idioma || 'en';\n\n// Plantillas por idioma\nconst plantillas = {\n  es: {\n    subject: '👋 Gracias por Contactarnos - MindMetric',\n    title: '👋 Gracias por Contactarnos',\n    greeting: 'Hola,',\n    clarify: 'Si tu consulta es sobre reembolsos o cancelaciones, por favor especifícalo claramente en tu respuesta.',\n    refunds_title: 'Para reembolsos, incluye:',\n    refunds_1: 'Email usado en el pago',\n    refunds_2: 'Fecha del pago',\n    refunds_3: 'Motivo del reembolso',\n    button_text: 'Formulario de Contacto',\n    signature: 'Atentamente,<br><strong>Equipo de MindMetric</strong>',\n    footer: 'support@mindmetric.io'\n  },\n  en: {\n    subject: '👋 Thank You for Contacting Us - MindMetric',\n    title: '👋 Thank You for Contacting Us',\n    greeting: 'Hello,',\n    clarify: 'If your inquiry is about refunds or cancellations, please specify it clearly in your reply.',\n    refunds_title: 'For refunds, include:',\n    refunds_1: 'Email used for payment',\n    refunds_2: 'Payment date',\n    refunds_3: 'Reason for refund',\n    button_text: 'Contact Form',\n    signature: 'Best regards,<br><strong>MindMetric Team</strong>',\n    footer: 'support@mindmetric.io'\n  }\n};\n\nconst t = plantillas[idioma] || plantillas.en;\n\nconst email_body = `<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <style>\n    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }\n    .container { max-width: 600px; margin: 0 auto; padding: 20px; }\n    .header { background: linear-gradient(135deg, #113240 0%, #052547 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }\n    .content { background: white; padding: 30px; border: 1px solid #e0e0e0; border-top: none; }\n    .footer { background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; border-radius: 0 0 10px 10px; }\n    .button { display: inline-block; background: #07C59A; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin: 20px 0; }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <div class=\"header\">\n      <h1>${t.title}</h1>\n    </div>\n    <div class=\"content\">\n      <p>${t.greeting}</p>\n      \n      <p>${analisisIA.respuesta_sugerida}</p>\n      \n      <p>${t.clarify}</p>\n      \n      <p><strong>${t.refunds_title}</strong></p>\n      <ul>\n        <li>${t.refunds_1}</li>\n        <li>${t.refunds_2}</li>\n        <li>${t.refunds_3}</li>\n      </ul>\n      \n      <a href=\"https://mindmetric.io/${idioma === 'es' ? 'es' : 'en'}/contacto\" class=\"button\" style=\"color: white;\">${t.button_text}</a>\n      \n      <p>${t.signature}</p>\n    </div>\n    <div class=\"footer\">\n      <p>MindMetric | <a href=\"https://mindmetric.io\">mindmetric.io</a></p>\n      <p>${t.footer}</p>\n    </div>\n  </div>\n</body>\n</html>`;\n\nreturn {\n  ...analisisIA,\n  email_subject: t.subject,\n  email_body: email_body\n};"
+      },
+      "id": "d17d9280-1b0a-4e52-a320-809f35cc20c6",
+      "name": "🌍 Preparar Email Genérico",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -5552,
+        1744
+      ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "support@mindmetric.io",
+        "toEmail": "={{ $('📧 Gmail: Recibir Solicitud').item.json.from }}",
+        "subject": "={{ $json.email_subject }}",
+        "emailFormat": "html",
+        "html": "={{ $json.email_body }}",
+        "options": {}
+      },
+      "id": "dbbafec8-093a-4110-92bd-27d05cf33129",
+      "name": "📤 Email: Respuesta Genérica",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [
+        -5328,
+        1744
+      ],
+      "webhookId": "01a4002b-d92f-4e74-a5e7-7c26eb2d9bb2",
+      "credentials": {
+        "smtp": {
+          "id": "c4NbBhiwywAfTGgX",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.item.json;\n\n// Obtener el contenido y limpiar encoding\nlet contenido = item.textPlain || item.textHtml || '';\n\n// Corregir caracteres mal codificados\ncontenido = contenido\n  .replace(/Ã³/g, 'ó')\n  .replace(/Ã±/g, 'ñ')\n  .replace(/Ã¡/g, 'á')\n  .replace(/Ã©/g, 'é')\n  .replace(/Ã­/g, 'í')\n  .replace(/Ãº/g, 'ú')\n  .replace(/Â /g, ' '); // Espacios raros\n\nreturn {\n  ...item,\n  textPlain: contenido,\n  emailLimpio: contenido\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -6432,
+        1136
+      ],
+      "id": "0e7e2c99-c49e-45e7-853a-4e7de221f78b",
+      "name": "🔧 Limpiar Email"
+    },
+    {
+      "parameters": {
+        "jsCode": "const lookupData = $('🔍 MindMetric: Buscar Cliente').item.json;\nreturn { data: lookupData.has_active_subscription ? [{ id: lookupData.email, status: lookupData.subscription_status }] : [] };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -5024,
+        672
+      ],
+      "id": "46b675c0-fa69-44e2-b3fd-9a2dd27eefb8",
+      "name": "🔍 Obtener Suscripciones"
+    },
+    {
+      "parameters": {
+        "jsCode": "const analisisIA = $input.item.json;\nlet emailBusqueda = analisisIA.email_cliente;\nif (analisisIA.email_pago && analisisIA.email_pago !== analisisIA.email_cliente) {\n  emailBusqueda = analisisIA.email_pago;\n}\nreturn { email_busqueda: emailBusqueda, ...analisisIA };"
+      },
+      "id": "e206621d-9a8f-4c74-a525-c0bc68bd5ca5",
+      "name": "🔧 Preparar Búsqueda Cliente1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -5328,
+        1520
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://mindmetric.io/api/n8n/agent",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "={{$env.N8N_API_KEY}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"action\": \"lookup\", \"email\": \"{{ $json.email_busqueda }}\"}",
+        "options": {}
+      },
+      "id": "192d3a49-291e-4911-bda4-cef0e40e7459",
+      "name": "🔍 MindMetric: Buscar Cliente1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -5072,
+        1520
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const lookupData = $('🔍 MindMetric: Buscar Cliente1').item.json;\nreturn { data: lookupData.has_active_subscription ? [{ id: lookupData.email, status: lookupData.subscription_status }] : [] };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -4832,
+        1520
+      ],
+      "id": "72fd2d26-fed9-47e2-b49c-48cc1ecdcbca",
+      "name": "🔍 Obtener Suscripciones1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $('🔍 MindMetric: Buscar Cliente1').item.json.found }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "5ee36b0d-776a-4891-a252-0810ff596026",
+      "name": "🔀 ¿Cliente Existe?1",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -4608,
+        1520
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtener datos\nconst analisisIA = $('📝 Parsear Respuesta IA').item.json;\nconst busqueda = $('🔧 Preparar Búsqueda Cliente').item.json;\nconst emailOriginal = $('📧 Gmail: Recibir Solicitud').item.json;\nconst idioma = analisisIA.idioma || 'en';\n\n// Plantillas por idioma\nconst plantillas = {\n  es: {\n    subject: '🔍 Información Adicional Requerida - MindMetric',\n    title: '🔍 Información Adicional Requerida',\n    greeting: 'Hola,',\n    not_found: '⚠️ No encontramos tu cuenta con el email:',\n    help: 'Para procesar tu solicitud, necesitamos verificar algunos datos de tu pedido.',\n    provide_title: '📋 Por favor, responde a este correo proporcionando:',\n    provide_1: '<strong>Email usado en el pago</strong> (si es diferente)',\n    provide_2: '<strong>Fecha aproximada del pago</strong> (día/mes/año)',\n    provide_3: '<strong>Monto del pago</strong> (1€, 9.99€ o 19.99€)',\n    provide_4: '<strong>Últimos 4 dígitos de la tarjeta</strong> usada',\n    provide_5: '<strong>Nombre del titular</strong> de la tarjeta (opcional)',\n    attach_title: '💡 También puedes adjuntar:',\n    attach_1: 'Captura del recibo de MindMetric',\n    attach_2: 'Email de confirmación de pago',\n    attach_3: 'Extracto bancario (ocultando datos sensibles)',\n    fast: 'Con esta información podremos localizar tu pedido y procesar tu solicitud rápidamente.',\n    note: '<strong>Nota:</strong> Si escribiste desde un email diferente al de tu compra, es normal que no te encontremos. Simplemente proporciona el email correcto y te ayudaremos.',\n    signature: 'Atentamente,<br><strong>Equipo de MindMetric</strong>',\n    footer: 'Responde a este correo con la información solicitada'\n  },\n  en: {\n    subject: '🔍 Additional Information Required - MindMetric',\n    title: '🔍 Additional Information Required',\n    greeting: 'Hello,',\n    not_found: '⚠️ We couldn\\'t find your account with the email:',\n    help: 'To process your request, we need to verify some details about your order.',\n    provide_title: '📋 Please reply to this email providing:',\n    provide_1: '<strong>Email used for payment</strong> (if different)',\n    provide_2: '<strong>Approximate payment date</strong> (day/month/year)',\n    provide_3: '<strong>Payment amount</strong> (1€, 9.99€ or 19.99€)',\n    provide_4: '<strong>Last 4 digits of the card</strong> used',\n    provide_5: '<strong>Cardholder name</strong> (optional)',\n    attach_title: '💡 You can also attach:',\n    attach_1: 'MindMetric receipt screenshot',\n    attach_2: 'Payment confirmation email',\n    attach_3: 'Bank statement (hiding sensitive data)',\n    fast: 'With this information we can locate your order and process your request quickly.',\n    note: '<strong>Note:</strong> If you wrote from a different email than your purchase, it\\'s normal we can\\'t find you. Simply provide the correct email and we\\'ll help you.',\n    signature: 'Best regards,<br><strong>MindMetric Team</strong>',\n    footer: 'Reply to this email with the requested information'\n  }\n};\n\nconst t = plantillas[idioma] || plantillas.en;\n\nconst email_body = `<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <style>\n    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }\n    .container { max-width: 600px; margin: 0 auto; padding: 20px; }\n    .header { background: linear-gradient(135deg, #113240 0%, #052547 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }\n    .content { background: white; padding: 30px; border: 1px solid #e0e0e0; border-top: none; }\n    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 5px; }\n    .info-box { background: #e7f3ff; border-left: 4px solid #2196F3; padding: 15px; margin: 20px 0; border-radius: 5px; }\n    .footer { background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; border-radius: 0 0 10px 10px; }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <div class=\"header\">\n      <h1>${t.title}</h1>\n    </div>\n    <div class=\"content\">\n      <p>${t.greeting}</p>\n      \n      <div class=\"warning-box\">\n        <p><strong>${t.not_found} ${busqueda.email_busqueda}</strong></p>\n      </div>\n      \n      <p>${t.help}</p>\n      \n      <div class=\"info-box\">\n        <p><strong>${t.provide_title}</strong></p>\n        <ol style=\"margin: 10px 0; padding-left: 20px;\">\n          <li>${t.provide_1}</li>\n          <li>${t.provide_2}</li>\n          <li>${t.provide_3}</li>\n          <li>${t.provide_4}</li>\n          <li>${t.provide_5}</li>\n        </ol>\n      </div>\n      \n      <p><strong>${t.attach_title}</strong></p>\n      <ul>\n        <li>${t.attach_1}</li>\n        <li>${t.attach_2}</li>\n        <li>${t.attach_3}</li>\n      </ul>\n      \n      <p>${t.fast}</p>\n      \n      <p>${t.note}</p>\n      \n      <p>${t.signature}</p>\n    </div>\n    <div class=\"footer\">\n      <p>MindMetric | <a href=\"https://mindmetric.io\">mindmetric.io</a></p>\n      <p>support@mindmetric.io</p>\n      <p style=\"margin-top: 10px; font-size: 11px; color: #999;\">${t.footer}</p>\n    </div>\n  </div>\n</body>\n</html>`;\n\nreturn {\n  ...analisisIA,\n  ...busqueda,\n  email_subject: t.subject,\n  email_body: email_body\n};"
+      },
+      "id": "6f8a9665-fd79-40bb-82e7-47d17a603f9b",
+      "name": "🌍 Preparar Email No Encontrado1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -4288,
+        1888
+      ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "support@mindmetric.io",
+        "toEmail": "={{ $('📧 Gmail: Recibir Solicitud').item.json.from }}",
+        "subject": "={{ $json.email_subject }}",
+        "emailFormat": "html",
+        "html": "={{ $json.email_body }}",
+        "options": {}
+      },
+      "id": "f6644da3-7a86-467e-8a7b-249edde8b081",
+      "name": "📤 Email: Cliente No Encontrado1",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [
+        -4064,
+        1888
+      ],
+      "webhookId": "66a14ece-04ff-44de-94a2-ae3bbaa65971",
+      "credentials": {
+        "smtp": {
+          "id": "c4NbBhiwywAfTGgX",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "25927753-ab15-4468-a3f2-0731f6c3fe20",
+              "leftValue": "={{ $('🔍 MindMetric: Buscar Cliente').item.json.has_active_subscription }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -4768,
+        816
+      ],
+      "id": "2f824af6-b660-48e1-aac8-03a98f5f694e",
+      "name": "🔀 ¿Tiene Suscripción Activa?"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtener datos\nconst analisisIA = $('📝 Parsear Respuesta IA').item.json;\nconst idioma = analisisIA.idioma || 'en';\n\n// Plantillas por idioma\nconst plantillas = {\n  es: {\n    subject: '📋 Sobre tu Solicitud de Cancelación - MindMetric',\n    title: '📋 Sobre tu Solicitud',\n    greeting: 'Hola,',\n    no_subscription: '⚠️ No tienes suscripción activa para cancelar',\n    explanation: 'Hemos revisado tu cuenta y no encontramos ninguna suscripción activa en este momento.',\n    reasons_title: 'Esto puede deberse a:',\n    reason_1: 'Ya cancelaste tu suscripción anteriormente',\n    reason_2: 'Tu suscripción ya finalizó',\n    reason_3: 'Solo realizaste el pago inicial de 1€ (que da acceso al resultado del test)',\n    access_title: '💡 Información sobre tu cuenta:',\n    access_1: 'El pago inicial de 1€ te da acceso permanente a tu resultado del test',\n    access_2: 'Para acceder a funciones premium, necesitas una suscripción activa',\n    access_3: 'Puedes suscribirte en cualquier momento desde tu panel',\n    help: 'Si crees que esto es un error o necesitas ayuda, por favor responde a este correo con más detalles.',\n    thanks: 'Gracias por contactarnos.',\n    signature: 'Atentamente,<br><strong>Equipo de MindMetric</strong>',\n    footer: 'Este es un email automático generado por nuestro sistema de IA.'\n  },\n  en: {\n    subject: '📋 About Your Cancellation Request - MindMetric',\n    title: '📋 About Your Request',\n    greeting: 'Hello,',\n    no_subscription: '⚠️ You don\\'t have an active subscription to cancel',\n    explanation: 'We have reviewed your account and found no active subscription at this time.',\n    reasons_title: 'This may be because:',\n    reason_1: 'You already cancelled your subscription previously',\n    reason_2: 'Your subscription already ended',\n    reason_3: 'You only made the initial 1€ payment (which gives access to test results)',\n    access_title: '💡 Information about your account:',\n    access_1: 'The initial 1€ payment gives you permanent access to your test result',\n    access_2: 'To access premium features, you need an active subscription',\n    access_3: 'You can subscribe at any time from your dashboard',\n    help: 'If you believe this is an error or need help, please reply to this email with more details.',\n    thanks: 'Thank you for contacting us.',\n    signature: 'Best regards,<br><strong>MindMetric Team</strong>',\n    footer: 'This is an automated email generated by our AI system.'\n  }\n};\n\nconst t = plantillas[idioma] || plantillas.en;\n\nconst email_body = `<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <style>\n    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }\n    .container { max-width: 600px; margin: 0 auto; padding: 20px; }\n    .header { background: linear-gradient(135deg, #113240 0%, #052547 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }\n    .content { background: white; padding: 30px; border: 1px solid #e0e0e0; border-top: none; }\n    .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 5px; }\n    .info-box { background: #e7f3ff; border-left: 4px solid #2196F3; padding: 15px; margin: 20px 0; border-radius: 5px; }\n    .footer { background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; border-radius: 0 0 10px 10px; }\n    ul { margin: 10px 0; padding-left: 25px; }\n    li { margin: 8px 0; }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <div class=\"header\">\n      <h1>${t.title}</h1>\n    </div>\n    <div class=\"content\">\n      <p>${t.greeting}</p>\n      \n      <div class=\"warning-box\">\n        <p><strong>${t.no_subscription}</strong></p>\n      </div>\n      \n      <p>${t.explanation}</p>\n      \n      <p><strong>${t.reasons_title}</strong></p>\n      <ul>\n        <li>${t.reason_1}</li>\n        <li>${t.reason_2}</li>\n        <li>${t.reason_3}</li>\n      </ul>\n      \n      <div class=\"info-box\">\n        <p><strong>${t.access_title}</strong></p>\n        <ul style=\"margin: 10px 0; padding-left: 20px;\">\n          <li>${t.access_1}</li>\n          <li>${t.access_2}</li>\n          <li>${t.access_3}</li>\n        </ul>\n      </div>\n      \n      <p>${t.help}</p>\n      \n      <p>${t.thanks}</p>\n      \n      <p>${t.signature}</p>\n    </div>\n    <div class=\"footer\">\n      <p>MindMetric | <a href=\"https://mindmetric.io\">mindmetric.io</a></p>\n      <p>${t.footer}</p>\n    </div>\n  </div>\n</body>\n</html>`;\n\nreturn {\n  ...analisisIA,\n  email_subject: t.subject,\n  email_body: email_body\n};"
+      },
+      "id": "235b5866-98a4-4939-8473-a87c77beb6a8",
+      "name": "🌍 Preparar Email No suscripción activa",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -4544,
+        896
+      ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "support@mindmetric.io",
+        "toEmail": "={{ $('📧 Gmail: Recibir Solicitud').item.json.from }}",
+        "subject": "={{ $json.email_subject }}",
+        "emailFormat": "html",
+        "html": "={{ $json.email_body }}",
+        "options": {}
+      },
+      "id": "c11072e7-ba40-47cc-acdf-08e0d8b5e977",
+      "name": "📤 Email: Cliente No suscripcion activa",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [
+        -4368,
+        896
+      ],
+      "webhookId": "66a14ece-04ff-44de-94a2-ae3bbaa65971",
+      "credentials": {
+        "smtp": {
+          "id": "c4NbBhiwywAfTGgX",
+          "name": "SMTP account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "📧 Gmail: Recibir Solicitud": {
+      "main": [
+        [
+          {
+            "node": "🔧 Limpiar Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🧠 Prompt del Sistema": {
+      "main": [
+        [
+          {
+            "node": "🤖 OpenAI: Analizar Solicitud",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🤖 OpenAI: Analizar Solicitud": {
+      "main": [
+        [
+          {
+            "node": "📝 Parsear Respuesta IA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📝 Parsear Respuesta IA": {
+      "main": [
+        [
+          {
+            "node": "🔀 ¿Es Solo Cancelación?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔀 ¿Es Solicitud de Reembolso?": {
+      "main": [
+        [
+          {
+            "node": "🔧 Preparar Búsqueda Cliente1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "🌍 Preparar Email Genérico",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🌍 Preparar Email Genérico": {
+      "main": [
+        [
+          {
+            "node": "📤 Email: Respuesta Genérica",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔧 Preparar Búsqueda Cliente": {
+      "main": [
+        [
+          {
+            "node": "🔍 MindMetric: Buscar Cliente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔍 MindMetric: Buscar Cliente": {
+      "main": [
+        [
+          {
+            "node": "🔀 ¿Cliente Existe?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔀 ¿Cliente Existe?": {
+      "main": [
+        [
+          {
+            "node": "🔍 Obtener Suscripciones",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "🌍 Preparar Email No Encontrado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🌍 Preparar Email No Encontrado": {
+      "main": [
+        [
+          {
+            "node": "📤 Email: Cliente No Encontrado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⚖️ Evaluar Política de Reembolso": {
+      "main": [
+        [
+          {
+            "node": "🔀 ¿Cumple Política?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔀 ¿Cumple Política?": {
+      "main": [
+        [
+          {
+            "node": "💳 Preparar Reembolsos",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "🌍 Preparar Email Denegado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🌍 Preparar Email Denegado": {
+      "main": [
+        [
+          {
+            "node": "📤 Email: Reembolso Denegado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔀 ¿Es Solo Cancelación?": {
+      "main": [
+        [
+          {
+            "node": "🔧 Preparar Búsqueda Cliente",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "🔀 ¿Es Solicitud de Reembolso?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "💳 Preparar Reembolsos": {
+      "main": [
+        [
+          {
+            "node": "💰 MindMetric: Crear Reembolso",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "💰 MindMetric: Crear Reembolso": {
+      "main": [
+        [
+          {
+            "node": "🌍 Preparar Email Reembolso",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🌍 Preparar Email Reembolso": {
+      "main": [
+        [
+          {
+            "node": "📤 Email: Reembolso Aprobado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🚫 MindMetric: Cancelar Suscripción": {
+      "main": [
+        [
+          {
+            "node": "🌍 Preparar Email Cancelación",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🌍 Preparar Email Cancelación": {
+      "main": [
+        [
+          {
+            "node": "📤 Email: Cancelación Confirmada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔧 Limpiar Email": {
+      "main": [
+        [
+          {
+            "node": "🧠 Prompt del Sistema",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔍 Obtener Suscripciones": {
+      "main": [
+        [
+          {
+            "node": "🔀 ¿Tiene Suscripción Activa?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔧 Preparar Búsqueda Cliente1": {
+      "main": [
+        [
+          {
+            "node": "🔍 MindMetric: Buscar Cliente1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔍 MindMetric: Buscar Cliente1": {
+      "main": [
+        [
+          {
+            "node": "🔍 Obtener Suscripciones1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔍 Obtener Suscripciones1": {
+      "main": [
+        [
+          {
+            "node": "🔀 ¿Cliente Existe?1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔀 ¿Cliente Existe?1": {
+      "main": [
+        [
+          {
+            "node": "⚖️ Evaluar Política de Reembolso",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "🌍 Preparar Email No Encontrado1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🌍 Preparar Email No Encontrado1": {
+      "main": [
+        [
+          {
+            "node": "📤 Email: Cliente No Encontrado1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔀 ¿Tiene Suscripción Activa?": {
+      "main": [
+        [
+          {
+            "node": "🚫 MindMetric: Cancelar Suscripción",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "🌍 Preparar Email No suscripción activa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🌍 Preparar Email No suscripción activa": {
+      "main": [
+        [
+          {
+            "node": "📤 Email: Cliente No suscripcion activa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "32888ea6-b4da-4abe-96cf-19887a56ef39",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "57a39d56f5458af3906c579ace30c26dade4137838c5dc76a53511faa6559e4a"
+  },
+  "id": "pwWkKfsdmBH1DVv5",
+  "tags": []
+}
