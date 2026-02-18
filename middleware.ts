@@ -7,7 +7,10 @@ const defaultLocale = 'es'
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Verificar si la ruta ya tiene un idioma
+  if (pathname.startsWith('/.well-known')) {
+    return NextResponse.next()
+  }
+
   const pathnameHasLocale = supportedLocales.some(
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
   )
@@ -16,12 +19,10 @@ export function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // Si es la raíz, dejar que el componente cliente maneje la redirección
   if (pathname === '/') {
     return NextResponse.next()
   }
 
-  // Para otras rutas sin idioma, redirigir a español
   const locale = defaultLocale
   request.nextUrl.pathname = `/${locale}${pathname}`
   return NextResponse.redirect(request.nextUrl)
