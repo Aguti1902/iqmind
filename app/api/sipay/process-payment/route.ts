@@ -117,22 +117,33 @@ export async function POST(request: NextRequest) {
         await db.updateUser(user.id, {
           subscriptionStatus: 'trial',
           trialEndDate: trialEndDate.toISOString(),
+          accessUntil: trialEndDate.toISOString(),
           subscriptionId: cardToken || sipayRequestId,
         })
 
         console.log('✅ [process-payment] Trial activado (frictionless) para:', email)
 
         // Enviar emails
+        const userName = user.userName || email.split('@')[0]
+        const trialEndFormatted = trialEndDate.toLocaleDateString(
+          paymentLang === 'es' ? 'es-ES' : 'en-US',
+          { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
+        )
+
         try {
-          const userName = (user as any).name || email.split('@')[0]
-          const trialEndFormatted = trialEndDate.toLocaleDateString(
-            paymentLang === 'es' ? 'es-ES' : 'en-US',
-            { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
-          )
+          const payEmail = emailTemplates.paymentSuccess(email, userName, amount || 0.50, paymentLang)
+          await sendEmail(payEmail)
+          console.log('📧 [process-payment] Email paymentSuccess enviado')
+        } catch (emailErr) {
+          console.error('⚠️ [process-payment] Error enviando email paymentSuccess:', emailErr)
+        }
+
+        try {
           const trialEmail = emailTemplates.trialStarted(email, userName, trialEndFormatted, paymentLang)
           await sendEmail(trialEmail)
+          console.log('📧 [process-payment] Email trialStarted enviado')
         } catch (emailErr) {
-          console.error('⚠️ [process-payment] Error enviando email:', emailErr)
+          console.error('⚠️ [process-payment] Error enviando email trialStarted:', emailErr)
         }
 
         return NextResponse.json({

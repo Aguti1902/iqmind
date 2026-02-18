@@ -87,22 +87,19 @@ export async function GET(request: NextRequest) {
         await db.updateUser(user.id, {
           subscriptionStatus: 'trial',
           trialEndDate: trialEndDate.toISOString(),
+          accessUntil: trialEndDate.toISOString(),
           subscriptionId: cardToken || requestId,
         })
         console.log('✅ [confirm-payment] Trial activado para:', email, 'hasta:', trialEndDate.toISOString())
 
-        // Enviar emails
-        const userName = (user as any).name || email.split('@')[0]
+        const userName = user.userName || email.split('@')[0]
         const trialEndFormatted = trialEndDate.toLocaleDateString(
           lang === 'es' ? 'es-ES' : 'en-US',
           { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
         )
 
-        // Email según tipo de test
+        // Email de pago exitoso / test específico
         try {
-          const testResults = await db.getTestResultsByUserId(user.id)
-          const userIQ = testResults?.[0]?.iq || 100
-
           let testEmail
           switch (testType) {
             case 'personality':
@@ -121,7 +118,7 @@ export async function GET(request: NextRequest) {
               testEmail = emailTemplates.eqTestResult(email, userName, lang)
               break
             default:
-              testEmail = emailTemplates.paymentSuccess(email, userName, userIQ, lang)
+              testEmail = emailTemplates.paymentSuccess(email, userName, 0.50, lang)
           }
           await sendEmail(testEmail)
           console.log(`📧 [confirm-payment] Email de test ${testType} enviado`)
