@@ -3,13 +3,11 @@ import { Pool } from 'pg'
 
 export const dynamic = 'force-dynamic'
 
-// Función para obtener el pool de conexiones
 function getPool() {
   const connectionString = process.env.POSTGRES_URL || process.env.DATABASE_URL
   if (!connectionString) {
     throw new Error('No se encontró POSTGRES_URL o DATABASE_URL en las variables de entorno')
   }
-  
   return new Pool({
     connectionString,
     ssl: { rejectUnauthorized: false },
@@ -19,204 +17,125 @@ function getPool() {
   })
 }
 
+async function chargeUser(user: { email: string }, amount: number, description: string): Promise<{ ok: boolean; data: any }> {
+  const url = `${process.env.NEXT_PUBLIC_APP_URL || 'https://mindmetric.io'}/api/sipay/recurring-payment`
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-internal-api-key': process.env.INTERNAL_API_KEY || '',
+    },
+    body: JSON.stringify({ email: user.email, amount, description }),
+  })
+  const data = await response.json()
+  return { ok: response.ok && data.success, data }
+}
+
 /**
- * Cron Job para cobrar suscripciones vencidas
+ * Cron Job: cobra suscripciones cada 6 horas.
  * 
- * Configurar en Vercel:
- * - Path: /api/cron/charge-subscriptions
- * - Schedule: "0 star-slash-6 * * *" (cada 6 horas)
- * - Reemplaza "star-slash-6" por: asterisco/6
- * 
- * Agregar variable de entorno:
- * CRON_SECRET=tu_secret_aleatorio
+ * 1. Trials vencidos → primer cobro de 9.99€
+ * 2. Suscripciones activas con access_until vencido → renovación
+ * 3. Suscripciones activas con cobro fallido previo → reintento
  */
 export async function GET(request: NextRequest) {
+  const pool = getPool()
+
   try {
-    // Verificar autenticación del cron
     const authHeader = request.headers.get('authorization')
-    const expectedAuth = `Bearer ${process.env.CRON_SECRET}`
-
-    if (!process.env.CRON_SECRET) {
-      console.error('❌ CRON_SECRET no configurado')
-      return NextResponse.json(
-        { error: 'Cron secret not configured' },
-        { status: 500 }
-      )
+    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    if (authHeader !== expectedAuth) {
-      console.error('❌ Autenticación de cron inválida')
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
-    }
-
-    console.log('🔄 Iniciando cobro de suscripciones...')
+    console.log('🔄 [cron] Iniciando cobro de suscripciones...')
 
     const now = new Date()
     const results = {
       checked: 0,
       charged: 0,
       failed: 0,
-      skipped: 0,
-      errors: [] as string[]
+      errors: [] as string[],
     }
 
-    // 1. Buscar usuarios con trial vencido
-    console.log('📋 Buscando usuarios con trial vencido...')
-    
-    const pool = getPool()
-    const usersWithExpiredTrialResult = await pool.query(`
-      SELECT 
-        id, 
-        email, 
-        subscription_id as "subscriptionId",
-        trial_end_date as "trialEndDate"
+    // --- 1. Trials vencidos: primer cobro ---
+    console.log('📋 [cron] Buscando usuarios con trial vencido...')
+    const expiredTrials = await pool.query(`
+      SELECT id, email, subscription_id, trial_end_date
       FROM users
       WHERE subscription_status = 'trial'
         AND trial_end_date <= $1
         AND subscription_id IS NOT NULL
     `, [now.toISOString()])
-    
-    const usersWithExpiredTrial = usersWithExpiredTrialResult.rows
 
-    console.log(`📊 Encontrados ${usersWithExpiredTrial.length} usuarios con trial vencido`)
+    console.log(`📊 [cron] ${expiredTrials.rows.length} usuarios con trial vencido`)
 
-    // 2. Cobrar a cada usuario
-    for (const user of usersWithExpiredTrial) {
+    for (const user of expiredTrials.rows) {
       results.checked++
-
       try {
-        console.log(`💳 Procesando cobro para: ${user.email}`)
-
-        // Llamar al endpoint de pago recurrente (con API key interna)
-        const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/sipay/recurring-payment`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-internal-api-key': process.env.INTERNAL_API_KEY || '',
-          },
-          body: JSON.stringify({
-            email: user.email,
-            amount: 9.99,
-            description: 'Suscripción mensual MindMetric Premium'
-          }),
-        })
-
-        const data = await response.json()
-
-        if (response.ok && data.success) {
+        console.log(`💳 [cron] Cobrando trial vencido: ${user.email}`)
+        const { ok, data } = await chargeUser(user, 9.99, 'Suscripción mensual MindMetric Premium')
+        if (ok) {
           results.charged++
-          console.log(`✅ Cobro exitoso: ${user.email} - ${data.transactionId}`)
+          console.log(`✅ [cron] Cobro trial OK: ${user.email} - ${data.transactionId}`)
         } else {
           results.failed++
-          const errorMsg = `${user.email}: ${data.error || 'Unknown error'}`
-          results.errors.push(errorMsg)
-          console.error(`❌ Cobro fallido: ${errorMsg}`)
+          results.errors.push(`${user.email}: ${data.error}`)
+          console.error(`❌ [cron] Cobro trial fallido: ${user.email}: ${data.error}`)
         }
       } catch (error: any) {
         results.failed++
-        const errorMsg = `${user.email}: ${error.message}`
-        results.errors.push(errorMsg)
-        console.error(`❌ Error procesando ${user.email}:`, error)
+        results.errors.push(`${user.email}: ${error.message}`)
+        console.error(`❌ [cron] Error ${user.email}:`, error.message)
       }
     }
 
-    // 3. Buscar usuarios con suscripción activa que necesitan renovación
-    console.log('📋 Buscando suscripciones activas a renovar...')
-
-    const usersToRenewResult = await pool.query(`
-      SELECT 
-        id, 
-        email, 
-        subscription_id as "subscriptionId",
-        access_until as "accessUntil"
+    // --- 2. Suscripciones activas con access_until vencido ---
+    console.log('📋 [cron] Buscando renovaciones pendientes...')
+    const renewals = await pool.query(`
+      SELECT id, email, subscription_id, access_until
       FROM users
       WHERE subscription_status = 'active'
         AND access_until <= $1
         AND subscription_id IS NOT NULL
     `, [now.toISOString()])
-    
-    const usersToRenew = usersToRenewResult.rows
 
-    console.log(`📊 Encontrados ${usersToRenew.length} usuarios a renovar`)
+    console.log(`📊 [cron] ${renewals.rows.length} suscripciones a renovar`)
 
-    // 4. Renovar cada suscripción
-    for (const user of usersToRenew) {
+    for (const user of renewals.rows) {
       results.checked++
-
       try {
-        console.log(`🔄 Renovando suscripción: ${user.email}`)
-
-        const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/sipay/recurring-payment`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-internal-api-key': process.env.INTERNAL_API_KEY || '',
-          },
-          body: JSON.stringify({
-            email: user.email,
-            amount: 9.99,
-            description: 'Renovación mensual MindMetric Premium'
-          }),
-        })
-
-        const data = await response.json()
-
-        if (response.ok && data.success) {
+        console.log(`🔄 [cron] Renovando: ${user.email}`)
+        const { ok, data } = await chargeUser(user, 9.99, 'Renovación mensual MindMetric Premium')
+        if (ok) {
           results.charged++
-          console.log(`✅ Renovación exitosa: ${user.email} - ${data.transactionId}`)
+          console.log(`✅ [cron] Renovación OK: ${user.email} - ${data.transactionId}`)
         } else {
           results.failed++
-          const errorMsg = `${user.email}: ${data.error || 'Unknown error'}`
-          results.errors.push(errorMsg)
-          console.error(`❌ Renovación fallida: ${errorMsg}`)
+          results.errors.push(`${user.email}: ${data.error}`)
+          console.error(`❌ [cron] Renovación fallida: ${user.email}: ${data.error}`)
         }
       } catch (error: any) {
         results.failed++
-        const errorMsg = `${user.email}: ${error.message}`
-        results.errors.push(errorMsg)
-        console.error(`❌ Error renovando ${user.email}:`, error)
+        results.errors.push(`${user.email}: ${error.message}`)
+        console.error(`❌ [cron] Error renovación ${user.email}:`, error.message)
       }
     }
 
-    // 5. Resumen
-    console.log('📊 Resumen del cron job:')
+    console.log('📊 [cron] Resumen:')
     console.log(`   ✅ Cobrados: ${results.charged}`)
     console.log(`   ❌ Fallidos: ${results.failed}`)
-    console.log(`   ⏭️  Omitidos: ${results.skipped}`)
-    console.log(`   📋 Total revisados: ${results.checked}`)
+    console.log(`   📋 Total: ${results.checked}`)
 
     return NextResponse.json({
       success: true,
-      summary: {
-        checked: results.checked,
-        charged: results.charged,
-        failed: results.failed,
-        skipped: results.skipped,
-      },
-      errors: results.errors,
+      summary: results,
       timestamp: now.toISOString(),
     })
 
   } catch (error: any) {
-    console.error('❌ Error en cron job:', error)
-    return NextResponse.json(
-      { 
-        error: error.message || 'Error en cron job',
-        timestamp: new Date().toISOString()
-      },
-      { status: 500 }
-    )
+    console.error('❌ [cron] Error general:', error.message)
+    return NextResponse.json({ error: error.message }, { status: 500 })
   } finally {
-    // Cerrar pool si se creó
-    try {
-      const pool = getPool()
-      await pool.end()
-    } catch (e) {
-      // Ignorar errores al cerrar
-    }
+    await pool.end().catch(() => {})
   }
 }
-

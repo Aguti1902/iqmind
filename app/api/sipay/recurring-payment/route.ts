@@ -1,24 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSipayClient } from '@/lib/sipay-client'
 import { db } from '@/lib/database-postgres'
+import { sendEmail, emailTemplates } from '@/lib/email-service'
 import { verifyInternalApiKey } from '@/lib/api-security'
 
 export const dynamic = 'force-dynamic'
 
+const MAX_RETRY_DAYS = 7
+const GRACE_PERIOD_DAYS = 3
+
 /**
  * Procesar pago recurrente con Sipay usando token guardado
  * MIT (Merchant Initiated Transaction) - Sin presencia del cliente
- * 
- * SEGURIDAD:
- * - ⚠️ ENDPOINT CRÍTICO - Solo accesible con API key interna
- * - Solo el cron job o llamadas internas pueden usar este endpoint
- * - Nunca exponer al frontend
+ *
+ * Lógica de reintentos:
+ * - 1er fallo: status queda igual, se da periodo de gracia de 3 días
+ * - El cron reintentará en las siguientes ejecuciones (cada 6h)
+ * - Después de 7 días sin poder cobrar: status = 'expired'
  */
 export async function POST(request: NextRequest) {
   try {
-    // SEGURIDAD: Verificar API key interna (solo cron/server puede llamar)
     const isAuthorized = verifyInternalApiKey(request)
-    
     if (!isAuthorized) {
       console.error('❌ Intento de acceso no autorizado a recurring-payment')
       return NextResponse.json(
@@ -27,9 +29,9 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { email, amount, description } = await request.json()
+    const { email, amount, description, isRetry } = await request.json()
 
-    console.log('🔄 Procesando pago recurrente con Sipay:', { email, amount })
+    console.log('🔄 Procesando pago recurrente con Sipay:', { email, amount, isRetry })
 
     if (!email || !amount) {
       return NextResponse.json(
@@ -37,22 +39,17 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       )
     }
-    
-    // Validar que el monto sea el esperado (9.99€)
+
     if (amount !== 9.99) {
       console.warn(`⚠️ Monto inesperado en pago recurrente: ${amount}`)
     }
 
-    // Obtener usuario y su token de tarjeta
     const user = await db.getUserByEmail(email)
     if (!user) {
-      return NextResponse.json(
-        { error: 'Usuario no encontrado' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'Usuario no encontrado' }, { status: 404 })
     }
 
-    const cardToken = user.subscriptionId // El token está guardado aquí
+    const cardToken = user.subscriptionId
     if (!cardToken) {
       return NextResponse.json(
         { error: 'No hay tarjeta guardada para este usuario' },
@@ -60,13 +57,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Obtener cliente de Sipay
     const sipay = getSipayClient()
-
-    // Generar ID único para la orden (solo numérico para Sipay)
     const orderId = Date.now().toString().slice(-10)
-
-    // Procesar pago recurrente (MIT) - amount en céntimos
     const amountInCents = Math.round(amount * 100)
 
     const response: any = await sipay.authorizeRecurring({
@@ -74,27 +66,63 @@ export async function POST(request: NextRequest) {
       currency: 'EUR',
       orderId,
       cardToken,
-      mitReason: 'R', // R = Recurrente
+      mitReason: 'R',
     })
 
     console.log('📡 Respuesta de Sipay (recurrente):', JSON.stringify(response))
 
-    // Verificar respuesta MDWR 2.0
     if (response.type !== 'success') {
       console.error('❌ Error en pago recurrente:', response.detail, response.description)
-      
-      // Si el pago falla, marcar suscripción como vencida
-      await db.updateUser(user.id, {
-        subscriptionStatus: 'expired',
-      })
+
+      const now = new Date()
+      const originalDueDate = user.trialEndDate
+        ? new Date(user.trialEndDate)
+        : user.accessUntil
+          ? new Date(user.accessUntil)
+          : now
+
+      const daysSinceDue = Math.floor((now.getTime() - originalDueDate.getTime()) / (1000 * 60 * 60 * 24))
+      const attemptNumber = Math.max(1, Math.ceil(daysSinceDue / 0.25))
+
+      if (daysSinceDue >= MAX_RETRY_DAYS) {
+        console.log(`⛔ [recurring] ${email}: ${daysSinceDue} días sin pagar, expirando cuenta`)
+        await db.updateUser(user.id, { subscriptionStatus: 'expired' })
+
+        try {
+          const userName = user.userName || email.split('@')[0]
+          const failEmail = emailTemplates.paymentFailed(email, userName, attemptNumber, 'es')
+          await sendEmail(failEmail)
+        } catch (e: any) {
+          console.error('⚠️ Error enviando email de pago fallido final:', e.message)
+        }
+      } else {
+        const gracePeriod = new Date(now.getTime() + GRACE_PERIOD_DAYS * 24 * 60 * 60 * 1000)
+        const currentAccess = user.accessUntil ? new Date(user.accessUntil) : now
+
+        if (gracePeriod > currentAccess) {
+          await db.updateUser(user.id, { accessUntil: gracePeriod.toISOString() })
+          console.log(`⏳ [recurring] ${email}: gracia extendida hasta ${gracePeriod.toISOString()}`)
+        }
+
+        if (daysSinceDue < 1 || daysSinceDue === 3 || daysSinceDue === 5) {
+          try {
+            const userName = user.userName || email.split('@')[0]
+            const failEmail = emailTemplates.paymentFailed(email, userName, attemptNumber, 'es')
+            await sendEmail(failEmail)
+            console.log(`📧 [recurring] Email de pago fallido enviado a ${email} (intento ~${attemptNumber})`)
+          } catch (e: any) {
+            console.error('⚠️ Error enviando email de pago fallido:', e.message)
+          }
+        }
+      }
 
       return NextResponse.json(
-        { error: response.description || 'Error procesando el pago recurrente' },
+        { error: response.description || 'Error procesando el pago recurrente', retryable: daysSinceDue < MAX_RETRY_DAYS },
         { status: 400 }
       )
     }
 
-    // Actualizar suscripción del usuario
+    // Pago exitoso
     const nextBillingDate = new Date()
     nextBillingDate.setMonth(nextBillingDate.getMonth() + 1)
 
@@ -106,9 +134,18 @@ export async function POST(request: NextRequest) {
     const transactionId = response.payload?.transaction_id
     console.log('✅ Pago recurrente procesado. Transaction:', transactionId)
 
+    try {
+      const userName = user.userName || email.split('@')[0]
+      const successEmail = emailTemplates.monthlyPaymentSuccess(email, userName, amount, 'es')
+      await sendEmail(successEmail)
+      console.log(`📧 [recurring] Email de pago exitoso enviado a ${email}`)
+    } catch (e: any) {
+      console.error('⚠️ Error enviando email de pago exitoso:', e.message)
+    }
+
     return NextResponse.json({
       success: true,
-      transactionId: transactionId,
+      transactionId,
       orderId: response.payload?.order,
       amount: response.payload?.amount,
       approval: response.payload?.approval,
@@ -123,4 +160,3 @@ export async function POST(request: NextRequest) {
     )
   }
 }
-

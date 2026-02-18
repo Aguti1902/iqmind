@@ -1,4 +1,14 @@
 {
+  "crons": [
+    {
+      "path": "/api/cron/charge-subscriptions",
+      "schedule": "0 */6 * * *"
+    },
+    {
+      "path": "/api/cron/trial-ending-emails",
+      "schedule": "0 9 * * *"
+    }
+  ],
   "rewrites": [
     {
       "source": "/checkout-sipay.html",
