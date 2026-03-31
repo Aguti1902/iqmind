@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
 
     const sipay = getSipayClient()
     const amountInCents = Math.round(amount * 100)
-    const tokenId = 'mndmtrc_' + Date.now().toString().slice(-10)
+    const tokenId = 'mm' + Date.now().toString().slice(-12)
 
     const response = await sipay.authorizeGooglePay({
       amount: amountInCents,

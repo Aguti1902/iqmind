@@ -122,8 +122,8 @@ export class SipayClient {
   }): Promise<any> {
     // reconciliation DEBE ser numérico
     const reconciliation = Date.now().toString().slice(-10)
-    // Token para guardar tarjeta (necesario para MIT/recurrente)
-    const tokenId = 'mndmtrc_' + Date.now().toString().slice(-10)
+    // Token alfanumérico para guardar tarjeta (sin guiones ni caracteres especiales)
+    const tokenId = 'mm' + Date.now().toString().slice(-12)
     
     const payload: any = {
       amount: params.amount.toString(),
@@ -289,18 +289,24 @@ export class SipayClient {
     requestId: string
     tokenId?: string
   }): Promise<any> {
+    const ts = Date.now().toString().slice(-10)
+    const reconciliation = ts
+    const orderId = 'AP' + ts  // Estrictamente alfanumérico, max 20 chars
     const data: any = {
-      amount: params.amount,
+      amount: params.amount.toString(),
       currency: params.currency,
+      order: orderId,
+      reconciliation,
       catcher: {
         type: 'apay',
         token_apay: params.applePayToken,
-        request_id: params.requestId,
+        ...(params.requestId ? { request_id: params.requestId } : {}),
       },
     }
     if (params.tokenId) {
       data.token = params.tokenId
     }
+    console.log('📤 Sipay Apple Pay payload:', { amount: data.amount, currency: data.currency, order: data.order, hasToken: !!params.applePayToken, hasRequestId: !!params.requestId })
     return this.makeRequest('/mdwr/v1/authorization', 'POST', data)
   }
 
@@ -317,9 +323,14 @@ export class SipayClient {
     googlePayToken: string
     tokenId?: string
   }): Promise<any> {
+    const ts = Date.now().toString().slice(-10)
+    const reconciliation = ts
+    const orderId = 'GP' + ts  // Estrictamente alfanumérico, max 20 chars
     const data: any = {
-      amount: params.amount,
+      amount: params.amount.toString(),
       currency: params.currency,
+      order: orderId,
+      reconciliation,
       catcher: {
         type: 'gpay',
         token_gpay: params.googlePayToken,
@@ -328,6 +339,7 @@ export class SipayClient {
     if (params.tokenId) {
       data.token = params.tokenId
     }
+    console.log('📤 Sipay Google Pay payload:', { amount: data.amount, currency: data.currency, order: data.order })
     return this.makeRequest('/mdwr/v1/authorization', 'POST', data)
   }
 }
