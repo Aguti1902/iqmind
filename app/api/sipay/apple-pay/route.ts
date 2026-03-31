@@ -34,11 +34,12 @@ export async function POST(request: NextRequest) {
       testData
     } = await request.json()
 
-    console.log('🍎 Procesando Apple Pay:', { email, amount, hasRequestId: !!requestId })
+    console.log('🍎 Procesando Apple Pay:', { email, amount, hasToken: !!applePayToken, hasRequestId: !!requestId, requestId })
 
-    if (!applePayToken || !requestId || !email || !amount) {
+    // requestId es opcional — Sipay puede no devolver request_id en la validación de sesión
+    if (!applePayToken || !email || !amount) {
       return NextResponse.json(
-        { error: 'Datos incompletos: applePayToken, requestId, email y amount son requeridos' },
+        { error: `Datos incompletos. Recibido: applePayToken=${!!applePayToken}, email=${!!email}, amount=${!!amount}, requestId=${!!requestId}` },
         { status: 400 }
       )
     }
@@ -87,7 +88,7 @@ export async function POST(request: NextRequest) {
       amount: amountInCents,
       currency: 'EUR',
       applePayToken,
-      requestId,
+      requestId: requestId || '',
       tokenId,
     })
 

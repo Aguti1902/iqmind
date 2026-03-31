@@ -241,15 +241,18 @@ function CheckoutPaymentContent() {
   // Handler para Apple Pay - devuelve Promise<boolean> para que el botón espere
   const handleApplePayProcess = async (applePayToken: any, requestId: string): Promise<boolean> => {
     console.log('🍎 Apple Pay: procesando pago en backend...')
+    // Garantizar que tenemos email — tomar del estado o de la URL en tiempo de ejecución
+    const effectiveEmail = email || searchParams.get('email') || localStorage.getItem('userEmail') || ''
+    console.log('🍎 Apple Pay email usado:', effectiveEmail, '| requestId:', requestId || '(vacío)')
     try {
       const response = await fetch('/api/sipay/apple-pay', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           applePayToken,
-          requestId,
-          email,
-          userName: email.split('@')[0],
+          requestId: requestId || '',
+          email: effectiveEmail,
+          userName: effectiveEmail.split('@')[0],
           amount: 0.50,
           userIQ: localStorage.getItem('userIQ') || 100,
           lang,

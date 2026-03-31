@@ -80,7 +80,8 @@ export default function ApplePayButton({
           }
 
           const data = await response.json()
-          sessionRequestId = data.request_id
+          sessionRequestId = data.request_id || ''
+          console.log('🍎 Apple Pay session validada. request_id:', sessionRequestId || '(no devuelto)')
           session.completeMerchantValidation(data.merchantSession)
         } catch (error) {
           console.error('❌ Apple Pay merchant validation error:', error)
