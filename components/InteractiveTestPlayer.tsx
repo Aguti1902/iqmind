@@ -16,14 +16,14 @@ export interface ScaleOption {
   emoji?: string
 }
 
+export type SlideAnimationType = 'bars' | 'rings' | 'orbit' | 'wave' | 'final' | 'check'
+
 export interface SlideConfig {
-  afterQuestionIndex: number // -1 = before all, 0 = after question index 0, etc.
-  icon: string
+  afterQuestionIndex: number
+  animationType: SlideAnimationType
   title: string
   subtitle: string
   description?: string
-  accentFrom: string
-  accentTo: string
   badge?: string
 }
 
@@ -50,26 +50,16 @@ type Step =
 
 function buildSteps(questions: TestQuestion[], slides: SlideConfig[]): Step[] {
   const steps: Step[] = []
-
-  // Slides before all questions (afterQuestionIndex === -1)
-  slides
-    .filter(s => s.afterQuestionIndex === -1)
-    .forEach(s => steps.push({ type: 'slide', slide: s }))
-
+  slides.filter(s => s.afterQuestionIndex === -1).forEach(s => steps.push({ type: 'slide', slide: s }))
   questions.forEach((q, idx) => {
     steps.push({ type: 'question', question: q, questionIndex: idx })
-    // Slides after this question
-    slides
-      .filter(s => s.afterQuestionIndex === idx)
-      .forEach(s => steps.push({ type: 'slide', slide: s }))
+    slides.filter(s => s.afterQuestionIndex === idx).forEach(s => steps.push({ type: 'slide', slide: s }))
   })
-
   return steps
 }
 
 export default function InteractiveTestPlayer({ config }: { config: TestConfig }) {
-  const { questions, scaleOptions, slides, lang, onBack, onComplete } = config
-
+  const { questions, scaleOptions, slides, onBack, onComplete } = config
   const steps = buildSteps(questions, slides)
   const [currentStepIndex, setCurrentStepIndex] = useState(0)
   const [answers, setAnswers] = useState<{ [key: number]: number }>({})
@@ -80,10 +70,8 @@ export default function InteractiveTestPlayer({ config }: { config: TestConfig }
   const totalQuestions = questions.length
   const answeredCount = Object.keys(answers).length
   const progress = (answeredCount / totalQuestions) * 100
-
   const currentStep = steps[currentStepIndex]
 
-  // Sync selectedValue when navigating back to a question
   useEffect(() => {
     if (currentStep.type === 'question') {
       const existing = answers[currentStep.question.id]
@@ -93,63 +81,106 @@ export default function InteractiveTestPlayer({ config }: { config: TestConfig }
     }
   }, [currentStepIndex])
 
-  const goToStep = useCallback(
-    (nextIndex: number, dir: 'forward' | 'back' = 'forward') => {
-      setDirection('out')
-      setTransitioning(true)
-      setTimeout(() => {
-        setCurrentStepIndex(nextIndex)
-        setDirection('in')
-        setTimeout(() => setTransitioning(false), 300)
-        window.scrollTo({ top: 0, behavior: 'smooth' })
-      }, 250)
-    },
-    []
-  )
+  const goToStep = useCallback((nextIndex: number) => {
+    setDirection('out')
+    setTransitioning(true)
+    setTimeout(() => {
+      setCurrentStepIndex(nextIndex)
+      setDirection('in')
+      setTimeout(() => setTransitioning(false), 300)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }, 250)
+  }, [])
 
   const handleAnswer = (value: number) => {
     if (transitioning) return
     const step = currentStep as { type: 'question'; question: TestQuestion; questionIndex: number }
     setSelectedValue(value)
     setAnswers(prev => ({ ...prev, [step.question.id]: value }))
-
     const newAnswers = { ...answers, [step.question.id]: value }
     const isLastStep = currentStepIndex === steps.length - 1
-
     if (isLastStep && Object.keys(newAnswers).length === totalQuestions) {
-      // Auto-advance then complete
       setTimeout(() => onComplete(newAnswers), 600)
       return
     }
-
-    setTimeout(() => {
-      goToStep(currentStepIndex + 1)
-    }, 420)
+    setTimeout(() => goToStep(currentStepIndex + 1), 420)
   }
 
-  const handlePrev = () => {
-    if (currentStepIndex > 0) goToStep(currentStepIndex - 1, 'back')
-  }
-
+  const handlePrev = () => { if (currentStepIndex > 0) goToStep(currentStepIndex - 1) }
   const handleSlideNext = () => goToStep(currentStepIndex + 1)
 
-  const isLastQuestionAnswered =
-    currentStep.type === 'question' && answers[currentStep.question.id] !== undefined
-
   const transitionClass = transitioning
-    ? direction === 'out'
-      ? 'opacity-0 translate-y-4'
-      : 'opacity-0 -translate-y-4'
+    ? direction === 'out' ? 'opacity-0 translate-y-4' : 'opacity-0 -translate-y-4'
     : 'opacity-100 translate-y-0'
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br ${config.colorLight} to-white`}>
-      {/* Top Progress Bar */}
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+      <style>{`
+        @keyframes mmBarRise {
+          from { transform: scaleY(0); opacity: 0; }
+          to   { transform: scaleY(1); opacity: 1; }
+        }
+        @keyframes mmRingPulse {
+          0%   { transform: scale(0.6); opacity: 0.9; }
+          100% { transform: scale(2.4); opacity: 0; }
+        }
+        @keyframes mmOrbit {
+          from { transform: rotate(0deg) translateX(38px) rotate(0deg); }
+          to   { transform: rotate(360deg) translateX(38px) rotate(-360deg); }
+        }
+        @keyframes mmOrbit2 {
+          from { transform: rotate(120deg) translateX(38px) rotate(-120deg); }
+          to   { transform: rotate(480deg) translateX(38px) rotate(-480deg); }
+        }
+        @keyframes mmOrbit3 {
+          from { transform: rotate(240deg) translateX(38px) rotate(-240deg); }
+          to   { transform: rotate(600deg) translateX(38px) rotate(-600deg); }
+        }
+        @keyframes mmWave {
+          0%,100% { transform: translateY(0px); }
+          50%      { transform: translateY(-18px); }
+        }
+        @keyframes mmFinalBurst {
+          0%   { transform: scale(0) rotate(0deg); opacity: 0; }
+          60%  { transform: scale(1.15) rotate(180deg); opacity: 1; }
+          100% { transform: scale(1) rotate(360deg); opacity: 1; }
+        }
+        @keyframes mmCheckDraw {
+          from { stroke-dashoffset: 100; }
+          to   { stroke-dashoffset: 0; }
+        }
+        @keyframes mmFadeInUp {
+          from { opacity: 0; transform: translateY(16px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        .mm-bar-1 { animation: mmBarRise 0.55s cubic-bezier(.22,.68,0,1.2) 0.1s both; transform-origin: bottom; }
+        .mm-bar-2 { animation: mmBarRise 0.55s cubic-bezier(.22,.68,0,1.2) 0.25s both; transform-origin: bottom; }
+        .mm-bar-3 { animation: mmBarRise 0.55s cubic-bezier(.22,.68,0,1.2) 0.4s both; transform-origin: bottom; }
+        .mm-ring-1 { animation: mmRingPulse 2s ease-out 0s infinite; }
+        .mm-ring-2 { animation: mmRingPulse 2s ease-out 0.65s infinite; }
+        .mm-ring-3 { animation: mmRingPulse 2s ease-out 1.3s infinite; }
+        .mm-orbit-1 { animation: mmOrbit 3s linear infinite; }
+        .mm-orbit-2 { animation: mmOrbit2 3s linear infinite; }
+        .mm-orbit-3 { animation: mmOrbit3 3s linear infinite; }
+        .mm-wave-1 { animation: mmWave 1.4s ease-in-out 0s infinite; }
+        .mm-wave-2 { animation: mmWave 1.4s ease-in-out 0.18s infinite; }
+        .mm-wave-3 { animation: mmWave 1.4s ease-in-out 0.36s infinite; }
+        .mm-wave-4 { animation: mmWave 1.4s ease-in-out 0.54s infinite; }
+        .mm-wave-5 { animation: mmWave 1.4s ease-in-out 0.72s infinite; }
+        .mm-final { animation: mmFinalBurst 0.8s cubic-bezier(.22,.68,0,1.2) both; }
+        .mm-check { stroke-dasharray: 100; animation: mmCheckDraw 0.6s ease-out 0.3s both; }
+        .mm-fadeinup { animation: mmFadeInUp 0.5s ease-out both; }
+        .mm-fadeinup-1 { animation: mmFadeInUp 0.5s ease-out 0.15s both; }
+        .mm-fadeinup-2 { animation: mmFadeInUp 0.5s ease-out 0.3s both; }
+        .mm-fadeinup-3 { animation: mmFadeInUp 0.5s ease-out 0.45s both; }
+      `}</style>
+
+      {/* Top bar */}
       <div className="fixed top-0 left-0 right-0 z-50">
         <div className="h-1 bg-gray-200">
           <div
-            className={`h-full bg-gradient-to-r ${config.colorFrom} ${config.colorTo} transition-all duration-700 ease-out`}
-            style={{ width: `${Math.max(progress, 2)}%` }}
+            className="h-full transition-all duration-700 ease-out"
+            style={{ width: `${Math.max(progress, 2)}%`, background: 'linear-gradient(90deg,#07C59A,#113240)' }}
           />
         </div>
         <div className="bg-white/95 backdrop-blur-sm border-b border-gray-100 px-4 py-2 flex items-center justify-between">
@@ -161,30 +192,17 @@ export default function InteractiveTestPlayer({ config }: { config: TestConfig }
             <span>Atrás</span>
           </button>
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-gray-500">
-              {answeredCount} / {totalQuestions}
-            </span>
-            <span
-              className={`text-sm font-bold bg-gradient-to-r ${config.colorFrom} ${config.colorTo} bg-clip-text text-transparent`}
-            >
-              {Math.round(progress)}%
-            </span>
+            <span className="text-sm font-medium text-gray-500">{answeredCount} / {totalQuestions}</span>
+            <span className="text-sm font-bold" style={{ color: '#07C59A' }}>{Math.round(progress)}%</span>
           </div>
         </div>
       </div>
 
-      {/* Main Content */}
+      {/* Content */}
       <div className="pt-20 pb-16 min-h-screen flex items-center justify-center px-4">
-        <div
-          className={`w-full max-w-2xl transition-all duration-300 ease-out ${transitionClass}`}
-        >
+        <div className={`w-full max-w-2xl transition-all duration-300 ease-out ${transitionClass}`}>
           {currentStep.type === 'slide' ? (
-            <SlideScreen
-              slide={currentStep.slide}
-              onContinue={handleSlideNext}
-              colorFrom={config.colorFrom}
-              colorTo={config.colorTo}
-            />
+            <SlideScreen slide={currentStep.slide} onContinue={handleSlideNext} />
           ) : (
             <QuestionCard
               step={currentStep}
@@ -196,7 +214,6 @@ export default function InteractiveTestPlayer({ config }: { config: TestConfig }
               colorFrom={config.colorFrom}
               colorTo={config.colorTo}
               colorText={config.colorText}
-              colorRing={config.colorRing}
             />
           )}
         </div>
@@ -208,16 +225,7 @@ export default function InteractiveTestPlayer({ config }: { config: TestConfig }
 // ── Question Card ──────────────────────────────────────────────────────────────
 
 function QuestionCard({
-  step,
-  totalQuestions,
-  answers,
-  selectedValue,
-  scaleOptions,
-  onAnswer,
-  colorFrom,
-  colorTo,
-  colorText,
-  colorRing,
+  step, totalQuestions, answers, selectedValue, scaleOptions, onAnswer, colorFrom, colorTo, colorText,
 }: {
   step: { type: 'question'; question: TestQuestion; questionIndex: number }
   totalQuestions: number
@@ -228,19 +236,13 @@ function QuestionCard({
   colorFrom: string
   colorTo: string
   colorText: string
-  colorRing: string
 }) {
   const { question, questionIndex } = step
-  const isAnswered = answers[question.id] !== undefined
-
   return (
     <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
-      {/* Question header */}
-      <div className={`bg-gradient-to-r ${colorFrom} ${colorTo} px-8 py-6`}>
+      <div className={`bg-gradient-to-r ${colorFrom} ${colorTo} px-8 py-5`}>
         <div className="flex items-center gap-3">
-          <span className="text-white/60 text-sm font-medium tracking-wide uppercase">
-            Pregunta
-          </span>
+          <span className="text-white/60 text-sm font-medium tracking-wide uppercase">Pregunta</span>
           <span className="bg-white/20 text-white text-sm font-bold px-2.5 py-0.5 rounded-full">
             {questionIndex + 1} / {totalQuestions}
           </span>
@@ -252,11 +254,8 @@ function QuestionCard({
         </div>
       </div>
 
-      {/* Question body */}
       <div className="px-8 pt-8 pb-4">
-        <p className="text-xl md:text-2xl font-semibold text-gray-900 leading-relaxed mb-2">
-          {question.text}
-        </p>
+        <p className="text-xl md:text-2xl font-semibold text-gray-900 leading-relaxed">{question.text}</p>
         {question.warningText && (
           <div className="mt-4 bg-red-50 border-l-4 border-red-500 p-3 rounded-r-lg">
             <p className="text-sm text-red-800 font-medium">{question.warningText}</p>
@@ -264,7 +263,6 @@ function QuestionCard({
         )}
       </div>
 
-      {/* Scale options */}
       <div className="px-6 pb-8 space-y-2.5">
         {scaleOptions.map(opt => {
           const isSelected = selectedValue === opt.value
@@ -275,23 +273,16 @@ function QuestionCard({
               className={`
                 w-full flex items-center gap-4 px-5 py-4 rounded-2xl font-medium text-left
                 transition-all duration-200 border-2 group
-                ${
-                  isSelected
-                    ? `bg-gradient-to-r ${colorFrom} ${colorTo} text-white border-transparent shadow-lg scale-[1.02]`
-                    : 'bg-gray-50 text-gray-700 border-gray-100 hover:border-gray-300 hover:bg-white hover:shadow-md'
+                ${isSelected
+                  ? `bg-gradient-to-r ${colorFrom} ${colorTo} text-white border-transparent shadow-lg scale-[1.02]`
+                  : 'bg-gray-50 text-gray-700 border-gray-100 hover:border-gray-300 hover:bg-white hover:shadow-md'
                 }
               `}
             >
-              {opt.emoji && (
-                <span className="text-xl flex-shrink-0">{opt.emoji}</span>
-              )}
+              {opt.emoji && <span className="text-xl flex-shrink-0">{opt.emoji}</span>}
               {!opt.emoji && (
-                <span
-                  className={`
-                    w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 transition-colors
-                    ${isSelected ? 'bg-white/20 text-white' : `bg-gray-200 ${colorText} group-hover:bg-gray-300`}
-                  `}
-                >
+                <span className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 transition-colors
+                  ${isSelected ? 'bg-white/20 text-white' : `bg-gray-200 ${colorText} group-hover:bg-gray-300`}`}>
                   {opt.value}
                 </span>
               )}
@@ -301,64 +292,50 @@ function QuestionCard({
           )
         })}
       </div>
-
-      {/* Dot indicators */}
-      <div className="flex justify-center gap-1.5 pb-6">
-        {Array.from({ length: Math.min(totalQuestions, 20) }).map((_, i) => {
-          const qId = i < totalQuestions ? i : null
-          const answered = qId !== null && answers[Object.keys(answers).map(Number)[i]] !== undefined
-          const isCurrent = questionIndex === i
-          return (
-            <div
-              key={i}
-              className={`
-                rounded-full transition-all duration-300
-                ${isCurrent ? `w-4 h-2 bg-gradient-to-r ${colorFrom} ${colorTo}` : ''}
-                ${!isCurrent && answers[step.questionIndex - (step.questionIndex - i)] !== undefined ? `w-2 h-2 opacity-60 bg-gradient-to-r ${colorFrom} ${colorTo}` : ''}
-                ${!isCurrent && answers[step.questionIndex - (step.questionIndex - i)] === undefined ? 'w-2 h-2 bg-gray-200' : ''}
-              `}
-            />
-          )
-        })}
-      </div>
     </div>
   )
 }
 
 // ── Slide Screen ───────────────────────────────────────────────────────────────
 
-function SlideScreen({
-  slide,
-  onContinue,
-  colorFrom,
-  colorTo,
-}: {
-  slide: SlideConfig
-  onContinue: () => void
-  colorFrom: string
-  colorTo: string
-}) {
+function SlideScreen({ slide, onContinue }: { slide: SlideConfig; onContinue: () => void }) {
   return (
     <div
-      className={`rounded-3xl overflow-hidden shadow-2xl bg-gradient-to-br ${slide.accentFrom} ${slide.accentTo}`}
+      className="rounded-3xl overflow-hidden shadow-2xl relative"
+      style={{ background: 'linear-gradient(135deg, #113240 0%, #07C59A 100%)' }}
     >
-      <div className="px-8 py-16 text-center text-white">
+      {/* Subtle mesh overlay */}
+      <div
+        className="absolute inset-0 opacity-10 pointer-events-none"
+        style={{
+          backgroundImage: 'radial-gradient(circle at 20% 80%, #ffffff 1px, transparent 1px), radial-gradient(circle at 80% 20%, #ffffff 1px, transparent 1px)',
+          backgroundSize: '40px 40px',
+        }}
+      />
+
+      <div className="relative px-8 py-16 text-center text-white">
         {slide.badge && (
-          <span className="inline-block bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-6">
+          <span className="mm-fadeinup inline-block text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-8"
+            style={{ background: 'rgba(255,255,255,0.15)', color: '#07C59A', border: '1px solid rgba(7,197,154,0.4)' }}>
             {slide.badge}
           </span>
         )}
-        <div className="text-7xl mb-6 animate-bounce-once">{slide.icon}</div>
-        <h2 className="text-3xl md:text-4xl font-black mb-3 tracking-tight">{slide.title}</h2>
-        <p className="text-lg md:text-xl text-white/80 font-medium mb-4">{slide.subtitle}</p>
+
+        {/* CSS Animation */}
+        <div className="flex justify-center mb-8">
+          <SlideAnimation type={slide.animationType} />
+        </div>
+
+        <h2 className="mm-fadeinup-1 text-3xl md:text-4xl font-black mb-3 tracking-tight">{slide.title}</h2>
+        <p className="mm-fadeinup-2 text-lg text-white/80 font-medium mb-3">{slide.subtitle}</p>
         {slide.description && (
-          <p className="text-base text-white/65 max-w-md mx-auto mb-8 leading-relaxed">
-            {slide.description}
-          </p>
+          <p className="mm-fadeinup-2 text-sm text-white/60 max-w-sm mx-auto leading-relaxed mb-8">{slide.description}</p>
         )}
+
         <button
           onClick={onContinue}
-          className="inline-flex items-center gap-3 bg-white/20 hover:bg-white/30 backdrop-blur text-white font-bold px-8 py-4 rounded-2xl transition-all duration-200 hover:scale-105 shadow-lg mt-4"
+          className="mm-fadeinup-3 inline-flex items-center gap-3 font-bold px-8 py-4 rounded-2xl transition-all hover:scale-105 mt-4"
+          style={{ background: 'rgba(7,197,154,0.25)', border: '1.5px solid rgba(7,197,154,0.5)', color: '#fff', backdropFilter: 'blur(6px)' }}
         >
           Continuar
           <FaChevronRight />
@@ -366,4 +343,95 @@ function SlideScreen({
       </div>
     </div>
   )
+}
+
+// ── CSS Animations ─────────────────────────────────────────────────────────────
+
+function SlideAnimation({ type }: { type: SlideAnimationType }) {
+  const teal = '#07C59A'
+  const navy = '#113240'
+  const white = 'rgba(255,255,255,0.9)'
+  const whiteA = 'rgba(255,255,255,0.25)'
+
+  if (type === 'bars') {
+    return (
+      <div className="flex items-end gap-3 h-20">
+        {[{ h: '45%', delay: 0 }, { h: '70%', delay: 1 }, { h: '100%', delay: 2 }].map((b, i) => (
+          <div key={i} className={`mm-bar-${i + 1} rounded-t-xl w-10`}
+            style={{ height: `${parseInt(b.h)}%`, background: i === 2 ? teal : i === 1 ? 'rgba(7,197,154,0.65)' : 'rgba(7,197,154,0.35)' }} />
+        ))}
+      </div>
+    )
+  }
+
+  if (type === 'rings') {
+    return (
+      <div className="relative flex items-center justify-center w-20 h-20">
+        {[1, 2, 3].map(i => (
+          <div key={i} className={`mm-ring-${i} absolute rounded-full border-2`}
+            style={{ width: 50, height: 50, borderColor: i === 1 ? teal : 'rgba(7,197,154,0.5)' }} />
+        ))}
+        <div className="rounded-full w-5 h-5 z-10" style={{ background: teal }} />
+      </div>
+    )
+  }
+
+  if (type === 'orbit') {
+    return (
+      <div className="relative flex items-center justify-center w-20 h-20">
+        {/* Center */}
+        <div className="absolute rounded-full w-8 h-8" style={{ background: teal }} />
+        {/* Orbit ring */}
+        <div className="absolute rounded-full w-20 h-20 border" style={{ borderColor: 'rgba(7,197,154,0.3)' }} />
+        {/* Orbiting dots */}
+        {(['mm-orbit-1', 'mm-orbit-2', 'mm-orbit-3'] as const).map((cls, i) => (
+          <div key={i} className={`${cls} absolute`}
+            style={{ width: 10, height: 10, borderRadius: '50%', background: i === 0 ? white : whiteA }} />
+        ))}
+      </div>
+    )
+  }
+
+  if (type === 'wave') {
+    return (
+      <div className="flex items-center gap-1.5 h-14">
+        {[1, 2, 3, 4, 5].map(i => (
+          <div key={i} className={`mm-wave-${i} rounded-full w-3`}
+            style={{ height: 28, background: i === 3 ? teal : i === 2 || i === 4 ? 'rgba(7,197,154,0.65)' : 'rgba(7,197,154,0.35)' }} />
+        ))}
+      </div>
+    )
+  }
+
+  if (type === 'final') {
+    return (
+      <div className="relative flex items-center justify-center w-20 h-20">
+        {/* Rotating diamond */}
+        <div className="mm-final absolute w-14 h-14 rounded-sm" style={{ background: 'rgba(7,197,154,0.2)', transform: 'rotate(45deg)' }} />
+        <div className="mm-final absolute w-10 h-10 rounded-sm" style={{ background: teal, transform: 'rotate(45deg)', animationDelay: '0.1s' }} />
+        <div className="absolute w-4 h-4 rounded-full" style={{ background: white }} />
+      </div>
+    )
+  }
+
+  if (type === 'check') {
+    return (
+      <div className="flex items-center justify-center w-20 h-20">
+        <svg viewBox="0 0 64 64" className="w-full h-full">
+          <circle cx="32" cy="32" r="28" fill="rgba(7,197,154,0.2)" stroke={teal} strokeWidth="2" />
+          <polyline
+            className="mm-check"
+            points="18,32 27,42 46,22"
+            fill="none"
+            stroke={teal}
+            strokeWidth="4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </div>
+    )
+  }
+
+  return null
 }

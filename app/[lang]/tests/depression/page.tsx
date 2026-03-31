@@ -18,13 +18,11 @@ const scaleOptions: ScaleOption[] = [
 const slides: SlideConfig[] = [
   {
     afterQuestionIndex: 9,
-    icon: '🌱',
+    animationType: 'rings',
     title: 'Vas muy bien',
     subtitle: 'La mitad del camino completada',
     description: 'Gracias por tu honestidad. Las siguientes preguntas exploran el bienestar físico, la energía y los patrones de pensamiento.',
-    accentFrom: 'from-slate-600',
-    accentTo: 'to-gray-800',
-    badge: '10 de 20 completadas',
+    badge: '10 DE 20 COMPLETADAS',
   },
 ]
 

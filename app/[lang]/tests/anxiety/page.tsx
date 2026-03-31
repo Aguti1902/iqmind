@@ -18,13 +18,11 @@ const scaleOptions: ScaleOption[] = [
 const slides: SlideConfig[] = [
   {
     afterQuestionIndex: 9,
-    icon: '💪',
+    animationType: 'wave',
     title: '¡Vas genial!',
     subtitle: 'Ya llevas la mitad del test',
     description: 'Estás haciendo un gran ejercicio de autoconocimiento. Las siguientes preguntas exploran aspectos físicos y conductuales de la ansiedad.',
-    accentFrom: 'from-rose-500',
-    accentTo: 'to-red-700',
-    badge: '10 de 20 completadas',
+    badge: '10 DE 20 COMPLETADAS',
   },
 ]
 

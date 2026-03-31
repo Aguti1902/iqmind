@@ -19,13 +19,11 @@ const scaleOptions: ScaleOption[] = [
 const slides: SlideConfig[] = [
   {
     afterQuestionIndex: 8,
-    icon: '⚡',
+    animationType: 'bars',
     title: 'Sección 2',
     subtitle: 'Hiperactividad e Impulsividad',
     description: 'Ahora evaluaremos síntomas relacionados con la inquietud, el movimiento y el control de impulsos.',
-    accentFrom: 'from-blue-600',
-    accentTo: 'to-blue-800',
-    badge: '9 de 18 completadas',
+    badge: '9 DE 18 COMPLETADAS',
   },
 ]
 

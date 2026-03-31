@@ -11,24 +11,20 @@ import { useTranslations } from '@/hooks/useTranslations'
 import { saveTestResult, calculateCategoryScores, updateUserInfo } from '@/lib/test-history'
 
 // Diapositivas de transición entre secciones del test de IQ
-const IQ_SLIDES: Record<number, { icon: string; title: string; subtitle: string; description: string; badge: string; from: string; to: string }> = {
+const IQ_SLIDES: Record<number, { anim: 'bars' | 'orbit'; title: string; subtitle: string; description: string; badge: string }> = {
   4: {
-    icon: '🎯',
+    anim: 'bars',
     title: 'Nivel Medio',
     subtitle: 'Las preguntas se vuelven más complejas',
     description: 'Has superado la fase inicial. Ahora los patrones requieren mayor razonamiento abstracto.',
     badge: '4 DE 20 COMPLETADAS',
-    from: 'from-indigo-500',
-    to: 'to-blue-700',
   },
   10: {
-    icon: '🔥',
+    anim: 'orbit',
     title: 'Nivel Avanzado',
     subtitle: '¡Estás en la recta final!',
     description: 'Solo quedan 10 preguntas. Son las más desafiantes — demuestra tu capacidad máxima.',
     badge: '10 DE 20 COMPLETADAS',
-    from: 'from-violet-600',
-    to: 'to-purple-800',
   },
 }
 
@@ -388,26 +384,86 @@ export default function TestPage() {
 
       {/* Diapositiva de transición entre secciones */}
       {activeSlide && (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+          <style>{`
+            @keyframes iqBarRise {
+              from { transform: scaleY(0); opacity: 0; }
+              to   { transform: scaleY(1); opacity: 1; }
+            }
+            @keyframes iqOrbitDot {
+              from { transform: rotate(0deg) translateX(36px) rotate(0deg); }
+              to   { transform: rotate(360deg) translateX(36px) rotate(-360deg); }
+            }
+            @keyframes iqOrbitDot2 {
+              from { transform: rotate(120deg) translateX(36px) rotate(-120deg); }
+              to   { transform: rotate(480deg) translateX(36px) rotate(-480deg); }
+            }
+            @keyframes iqOrbitDot3 {
+              from { transform: rotate(240deg) translateX(36px) rotate(-240deg); }
+              to   { transform: rotate(600deg) translateX(36px) rotate(-600deg); }
+            }
+            @keyframes iqSlideIn {
+              from { opacity: 0; transform: translateY(20px) scale(0.96); }
+              to   { opacity: 1; transform: translateY(0) scale(1); }
+            }
+            @keyframes iqFadeUp {
+              from { opacity: 0; transform: translateY(12px); }
+              to   { opacity: 1; transform: translateY(0); }
+            }
+            .iq-slide-card { animation: iqSlideIn 0.45s cubic-bezier(.22,.68,0,1.2) both; }
+            .iq-fu-0 { animation: iqFadeUp 0.4s ease-out 0.2s both; }
+            .iq-fu-1 { animation: iqFadeUp 0.4s ease-out 0.35s both; }
+            .iq-fu-2 { animation: iqFadeUp 0.4s ease-out 0.5s both; }
+            .iq-fu-3 { animation: iqFadeUp 0.4s ease-out 0.65s both; }
+            .iq-bar-1 { animation: iqBarRise 0.5s cubic-bezier(.22,.68,0,1.2) 0.15s both; transform-origin: bottom; }
+            .iq-bar-2 { animation: iqBarRise 0.5s cubic-bezier(.22,.68,0,1.2) 0.3s both; transform-origin: bottom; }
+            .iq-bar-3 { animation: iqBarRise 0.5s cubic-bezier(.22,.68,0,1.2) 0.45s both; transform-origin: bottom; }
+            .iq-od-1 { animation: iqOrbitDot 3s linear infinite; }
+            .iq-od-2 { animation: iqOrbitDot2 3s linear infinite; }
+            .iq-od-3 { animation: iqOrbitDot3 3s linear infinite; }
+          `}</style>
           <div
-            className={`
-              w-full max-w-md rounded-3xl overflow-hidden shadow-2xl
-              transition-all duration-300
-              ${slideTransitioning ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}
-              bg-gradient-to-br ${activeSlide.from} ${activeSlide.to}
-            `}
+            className={`iq-slide-card w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl relative transition-all duration-300 ${slideTransitioning ? 'opacity-0 scale-95' : ''}`}
+            style={{ background: 'linear-gradient(135deg, #113240 0%, #07C59A 100%)' }}
           >
-            <div className="px-8 py-14 text-center text-white">
-              <span className="inline-block bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-6">
+            {/* Dot mesh background */}
+            <div className="absolute inset-0 opacity-10 pointer-events-none"
+              style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
+
+            <div className="relative px-8 py-14 text-center text-white">
+              <span className="iq-fu-0 inline-block text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-7"
+                style={{ background: 'rgba(7,197,154,0.2)', border: '1px solid rgba(7,197,154,0.5)', color: '#07C59A' }}>
                 {activeSlide.badge}
               </span>
-              <div className="text-7xl mb-5">{activeSlide.icon}</div>
-              <h2 className="text-3xl font-black mb-2 tracking-tight">{activeSlide.title}</h2>
-              <p className="text-lg text-white/85 font-medium mb-3">{activeSlide.subtitle}</p>
-              <p className="text-sm text-white/65 leading-relaxed mb-8 max-w-xs mx-auto">{activeSlide.description}</p>
+
+              {/* Animation */}
+              <div className="flex justify-center mb-7">
+                {activeSlide.anim === 'bars' && (
+                  <div className="flex items-end gap-3 h-16">
+                    <div className="iq-bar-1 rounded-t-lg w-9" style={{ height: '45%', background: 'rgba(7,197,154,0.35)' }} />
+                    <div className="iq-bar-2 rounded-t-lg w-9" style={{ height: '70%', background: 'rgba(7,197,154,0.65)' }} />
+                    <div className="iq-bar-3 rounded-t-lg w-9" style={{ height: '100%', background: '#07C59A' }} />
+                  </div>
+                )}
+                {activeSlide.anim === 'orbit' && (
+                  <div className="relative flex items-center justify-center w-16 h-16">
+                    <div className="absolute rounded-full w-7 h-7" style={{ background: '#07C59A' }} />
+                    <div className="absolute rounded-full w-16 h-16 border" style={{ borderColor: 'rgba(7,197,154,0.3)' }} />
+                    <div className="iq-od-1 absolute" style={{ width: 9, height: 9, borderRadius: '50%', background: 'rgba(255,255,255,0.9)' }} />
+                    <div className="iq-od-2 absolute" style={{ width: 7, height: 7, borderRadius: '50%', background: 'rgba(7,197,154,0.7)' }} />
+                    <div className="iq-od-3 absolute" style={{ width: 6, height: 6, borderRadius: '50%', background: 'rgba(255,255,255,0.4)' }} />
+                  </div>
+                )}
+              </div>
+
+              <h2 className="iq-fu-1 text-3xl font-black mb-2 tracking-tight">{activeSlide.title}</h2>
+              <p className="iq-fu-2 text-base font-medium mb-3" style={{ color: 'rgba(255,255,255,0.8)' }}>{activeSlide.subtitle}</p>
+              <p className="iq-fu-2 text-sm leading-relaxed mb-8 max-w-xs mx-auto" style={{ color: 'rgba(255,255,255,0.55)' }}>{activeSlide.description}</p>
+
               <button
                 onClick={handleSlideContinue}
-                className="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white font-bold px-8 py-4 rounded-2xl transition-all hover:scale-105"
+                className="iq-fu-3 inline-flex items-center gap-2 font-bold px-8 py-3.5 rounded-2xl transition-all hover:scale-105"
+                style={{ background: 'rgba(7,197,154,0.2)', border: '1.5px solid rgba(7,197,154,0.5)', color: '#fff' }}
               >
                 Continuar
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
