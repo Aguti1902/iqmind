@@ -19,6 +19,16 @@ export default function ResultadoPage() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
+    // Si venimos del redirect de 3DS, Sipay envía ?payment=success en la URL
+    // En ese caso establecemos paymentCompleted en localStorage antes de la comprobación
+    const urlParams = new URLSearchParams(window.location.search)
+    if (urlParams.get('payment') === 'success') {
+      localStorage.setItem('paymentCompleted', 'true')
+      localStorage.setItem('isPremiumTest', 'true')
+      const txId = urlParams.get('transaction_id')
+      if (txId) localStorage.setItem('transactionId', txId)
+    }
+
     const paymentCompleted = localStorage.getItem('paymentCompleted')
     if (!paymentCompleted) {
       router.push(`/${lang}/test`)

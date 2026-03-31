@@ -15,6 +15,13 @@ export default function PersonalityResultsPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    // Si venimos del redirect 3DS, Sipay añade ?payment=success en la URL
+    const urlParams = new URLSearchParams(window.location.search)
+    if (urlParams.get('payment') === 'success') {
+      localStorage.setItem('paymentCompleted', 'true')
+      localStorage.setItem('isPremiumTest', 'true')
+    }
+
     // Verificar que el pago esté completado o sea test premium
     const paymentCompleted = localStorage.getItem('paymentCompleted')
     const isPremiumTest = localStorage.getItem('isPremiumTest')

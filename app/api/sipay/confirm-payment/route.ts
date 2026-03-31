@@ -140,7 +140,13 @@ export async function GET(request: NextRequest) {
     }
 
     // Redirigir al usuario a la página de resultados
-    const redirectUrl = `${origin}/${lang}/resultado?order_id=${orderId || ''}&payment=success&transaction_id=${transactionId || ''}`
+    // Para tests no-IQ, ir directamente a su página de resultados específica
+    let redirectUrl: string
+    if (testType && testType !== 'iq') {
+      redirectUrl = `${origin}/${lang}/tests/${testType}/results?payment=success&transaction_id=${transactionId || ''}`
+    } else {
+      redirectUrl = `${origin}/${lang}/resultado?order_id=${orderId || ''}&payment=success&transaction_id=${transactionId || ''}`
+    }
     console.log('🔄 [confirm-payment] Redirigiendo a:', redirectUrl)
     
     return NextResponse.redirect(redirectUrl)

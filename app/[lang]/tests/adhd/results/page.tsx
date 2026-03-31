@@ -15,6 +15,12 @@ export default function ADHDResultsPage() {
 
   useEffect(() => {
     // Verificar que el pago esté completado o sea test premium
+    const urlParams = new URLSearchParams(window.location.search)
+    if (urlParams.get('payment') === 'success') {
+      localStorage.setItem('paymentCompleted', 'true')
+      localStorage.setItem('isPremiumTest', 'true')
+    }
+
     const paymentCompleted = localStorage.getItem('paymentCompleted')
     const isPremiumTest = localStorage.getItem('isPremiumTest')
     
