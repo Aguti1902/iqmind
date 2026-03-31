@@ -705,14 +705,16 @@ export const visualQuestions: VisualQuestion[] = [
 
 // Funciones auxiliares
 export function calculateIQ(correctAnswers: number): number {
-  if (correctAnswers <= 4) return 75 + correctAnswers * 3.5
-  if (correctAnswers <= 8) return 90 + (correctAnswers - 4) * 2.5
-  if (correctAnswers <= 12) return 100 + (correctAnswers - 8) * 2.5
-  if (correctAnswers <= 15) return 110 + (correctAnswers - 12) * 3
-  if (correctAnswers <= 17) return 120 + (correctAnswers - 15) * 5
-  if (correctAnswers === 18) return 135
-  if (correctAnswers === 19) return 142
-  return 150
+  let iq: number
+  if (correctAnswers <= 4) iq = 75 + correctAnswers * 3.5
+  else if (correctAnswers <= 8) iq = 90 + (correctAnswers - 4) * 2.5
+  else if (correctAnswers <= 12) iq = 100 + (correctAnswers - 8) * 2.5
+  else if (correctAnswers <= 15) iq = 110 + (correctAnswers - 12) * 3
+  else if (correctAnswers <= 17) iq = 120 + (correctAnswers - 15) * 5
+  else if (correctAnswers === 18) iq = 135
+  else if (correctAnswers === 19) iq = 142
+  else iq = 150
+  return Math.round(iq)
 }
 
 export function getIQCategory(iq: number, lang: string = 'es'): string {

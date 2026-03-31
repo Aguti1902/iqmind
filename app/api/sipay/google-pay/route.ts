@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
         email,
         password: hashedPassword,
         userName: userName || 'Usuario',
-        iq: userIQ || 0,
+        iq: Math.round(userIQ || 0),
         subscriptionStatus: 'trial',
       })
     }
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
         await db.createTestResult({
           id: testResultId,
           userId: user.id,
-          iq: userIQ || 0,
+          iq: Math.round(userIQ || 0),
           correctAnswers: testData.correctAnswers || 0,
           timeElapsed: testData.timeElapsed || 0,
           answers: testData.answers || [],
