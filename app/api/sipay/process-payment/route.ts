@@ -53,13 +53,16 @@ export async function POST(request: NextRequest) {
     const origin = request.headers.get('origin') || process.env.NEXT_PUBLIC_SITE_URL || 'https://mindmetric.io'
     const paymentLang = lang || 'es'
 
-    // URL de confirmación: cuando 3DS termine, Sipay redirigirá aquí
-    // Incluimos datos necesarios en la URL para el confirm
-    const confirmUrl = `${origin}/api/sipay/confirm-payment?order_id=${orderId}&email=${encodeURIComponent(email)}&lang=${paymentLang}&test_type=${testType}`
+    // Generar el tokenId ANTES de llamar a Sipay para poder incluirlo en la URL de confirmación
+    const cardTokenId = 'mm' + Date.now().toString().slice(-12)
+
+    // URL de confirmación: incluimos el tokenId para que confirm-payment pueda guardarlo
+    const confirmUrl = `${origin}/api/sipay/confirm-payment?order_id=${orderId}&email=${encodeURIComponent(email)}&lang=${paymentLang}&test_type=${testType}&card_token_id=${cardTokenId}`
     const errorUrl = `${origin}/${paymentLang}/checkout-payment?error=true&email=${encodeURIComponent(email)}`
 
     console.log('💳 [process-payment] url_ok:', confirmUrl)
     console.log('💳 [process-payment] url_ko:', errorUrl)
+    console.log('💳 [process-payment] cardTokenId que se registrará:', cardTokenId)
 
     // Llamar a /all-in-one con el request_id de FastPay
     let allinoneResult: any
@@ -72,6 +75,7 @@ export async function POST(request: NextRequest) {
         customerEmail: email,
         urlOk: confirmUrl,
         urlKo: errorUrl,
+        tokenId: cardTokenId,  // Pasamos el tokenId para que Sipay registre la tarjeta con este ID
       })
     } catch (sipayError: any) {
       console.error('❌ [process-payment] Error en all-in-one:', sipayError.message)
@@ -110,7 +114,9 @@ export async function POST(request: NextRequest) {
         console.log('📥 [process-payment] confirm result:', JSON.stringify(confirmResult))
 
         const transactionId = confirmResult?.payload?.transaction_id || confirmResult?.payload?.id_transaction
-        const cardToken = confirmResult?.payload?.token || confirmResult?.payload?.card_token
+        // Preferimos el tokenId que nosotros enviamos (cardTokenId), luego lo que Sipay devuelva
+        const cardToken = cardTokenId || confirmResult?.payload?.token || confirmResult?.payload?.card_token
+        console.log('💳 [process-payment] cardToken guardado (frictionless):', cardToken)
 
         // Solo activar trial si el confirm fue exitoso
         const trialEndDate = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
@@ -118,7 +124,7 @@ export async function POST(request: NextRequest) {
           subscriptionStatus: 'trial',
           trialEndDate: trialEndDate.toISOString(),
           accessUntil: trialEndDate.toISOString(),
-          subscriptionId: cardToken || sipayRequestId,
+          subscriptionId: cardToken,
         })
 
         console.log('✅ [process-payment] Trial activado (frictionless) para:', email)

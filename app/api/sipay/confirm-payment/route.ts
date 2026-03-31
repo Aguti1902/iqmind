@@ -35,8 +35,11 @@ export async function GET(request: NextRequest) {
     const email = searchParams.get('email')
     const lang = searchParams.get('lang') || 'es'
     const testType = searchParams.get('test_type') || 'iq'
+    // El tokenId fue generado en process-payment y pasado en la URL para garantizar
+    // que guardamos el token correcto aunque Sipay no lo devuelva en el confirm response
+    const urlCardTokenId = searchParams.get('card_token_id')
 
-    console.log('🔄 [confirm-payment] Datos:', { requestId, orderId, email, lang, testType })
+    console.log('🔄 [confirm-payment] Datos:', { requestId, orderId, email, lang, testType, urlCardTokenId })
 
     // Si hay error de 3DS (Sipay redirigió a url_ko)
     if (searchParams.get('error')) {
@@ -66,10 +69,11 @@ export async function GET(request: NextRequest) {
       console.log('📥 [confirm-payment] Confirm result:', JSON.stringify(confirmResult))
 
       transactionId = confirmResult?.payload?.transaction_id || confirmResult?.payload?.id_transaction || null
-      cardToken = confirmResult?.payload?.token || confirmResult?.payload?.card_token || null
+      // Prioridad: 1) tokenId de la URL (el que enviamos a Sipay), 2) lo que Sipay devuelva
+      cardToken = urlCardTokenId || confirmResult?.payload?.token || confirmResult?.payload?.card_token || null
       confirmSuccessful = true
 
-      console.log('✅ [confirm-payment] Pago CONFIRMADO! transaction_id:', transactionId, 'token:', cardToken)
+      console.log('✅ [confirm-payment] Pago CONFIRMADO! transaction_id:', transactionId, 'cardToken:', cardToken, '(fuente:', urlCardTokenId ? 'URL' : 'Sipay response', ')')
     } catch (confirmError: any) {
       console.error('❌ [confirm-payment] Error en confirm:', confirmError.message)
       // Si el confirm falla, NO activamos trial

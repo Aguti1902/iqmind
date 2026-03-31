@@ -119,11 +119,12 @@ export class SipayClient {
     customerEmail: string
     urlOk?: string
     urlKo?: string
-  }): Promise<any> {
+    tokenId?: string  // Si se pasa, se usa para guardar la tarjeta; si no, se genera automáticamente
+  }): Promise<{ tokenId: string; [key: string]: any }> {
     // reconciliation DEBE ser numérico
     const reconciliation = Date.now().toString().slice(-10)
     // Token alfanumérico para guardar tarjeta (sin guiones ni caracteres especiales)
-    const tokenId = 'mm' + Date.now().toString().slice(-12)
+    const tokenId = params.tokenId || ('mm' + Date.now().toString().slice(-12))
     
     const payload: any = {
       amount: params.amount.toString(),
@@ -140,7 +141,9 @@ export class SipayClient {
     }
 
     console.log('📤 Sipay authorize FastPay:', { ...payload, fastpay: { request_id: params.requestId.slice(0, 8) + '...' } })
-    return this.makeRequest('/mdwr/v1/all-in-one', 'POST', payload)
+    const result = await this.makeRequest('/mdwr/v1/all-in-one', 'POST', payload)
+    // Incluimos el tokenId en el resultado para que el llamador pueda usarlo
+    return { ...result, _tokenId: tokenId }
   }
 
   /**
