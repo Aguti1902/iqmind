@@ -4,18 +4,42 @@ import { useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import InteractiveTestPlayer, { TestConfig, ScaleOption, SlideConfig } from '@/components/InteractiveTestPlayer'
 import { adhdQuestions, calculateADHDScores } from '@/lib/adhd-questions'
-import { FaArrowLeft, FaCheck } from 'react-icons/fa'
+import { FaArrowRight, FaBrain, FaBolt, FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa'
+
+const scaleOptions: ScaleOption[] = [
+  { value: 0, label: 'Nunca', emoji: '😌' },
+  { value: 1, label: 'Rara vez', emoji: '🙂' },
+  { value: 2, label: 'A veces', emoji: '😐' },
+  { value: 3, label: 'A menudo', emoji: '😟' },
+  { value: 4, label: 'Muy a menudo', emoji: '😰' },
+]
+
+const slides: SlideConfig[] = [
+  {
+    afterQuestionIndex: 8,
+    icon: '⚡',
+    title: 'Sección 2',
+    subtitle: 'Hiperactividad e Impulsividad',
+    description: 'Ahora evaluaremos síntomas relacionados con la inquietud, el movimiento y el control de impulsos.',
+    accentFrom: 'from-blue-600',
+    accentTo: 'to-blue-800',
+    badge: '9 de 18 completadas',
+  },
+]
+
+const questions = adhdQuestions.map(q => ({
+  id: q.id,
+  text: q.text,
+  category: q.category === 'inattention' ? 'Inatención' : 'Hiperactividad',
+}))
 
 export default function ADHDTestPage() {
   const { lang } = useParams()
   const router = useRouter()
-  const [answers, setAnswers] = useState<{ [key: number]: number }>({})
   const [started, setStarted] = useState(false)
   const [userName, setUserName] = useState('')
-
-  const progress = (Object.keys(answers).length / adhdQuestions.length) * 100
-  const isComplete = Object.keys(answers).length === adhdQuestions.length
 
   const handleStart = (e: React.FormEvent) => {
     e.preventDefault()
@@ -25,147 +49,109 @@ export default function ADHDTestPage() {
     }
   }
 
-  const handleAnswer = (questionId: number, value: number) => {
-    setAnswers(prev => ({ ...prev, [questionId]: value }))
+  const handleComplete = (answers: { [key: number]: number }) => {
+    const results = calculateADHDScores(answers)
+    localStorage.setItem('testResults', JSON.stringify({
+      type: 'adhd', answers, completedAt: new Date().toISOString(),
+      userName: localStorage.getItem('userName') || 'Usuario',
+    }))
+    localStorage.setItem('adhdResults', JSON.stringify({
+      id: Date.now().toString(), type: 'adhd', date: new Date().toISOString(), results, answers,
+    }))
+    localStorage.removeItem('isPremiumTest')
+    router.push(`/${lang}/analizando`)
   }
 
-  const handleSubmit = () => {
-    const results = calculateADHDScores(answers)
-    
-    // Guardar resultados en localStorage
-    const testResult = {
-      id: Date.now().toString(),
-      type: 'adhd',
-      date: new Date().toISOString(),
-      results,
-      answers
-    }
-    
-    // Guardar en formato compatible con sistema de checkout
-    localStorage.setItem('testResults', JSON.stringify({
-      type: 'adhd',
-      answers,
-      completedAt: new Date().toISOString(),
-      userName: localStorage.getItem('userName') || 'Usuario'
-    }))
-    
-    // Guardar datos específicos del test de TDAH
-    localStorage.setItem('adhdResults', JSON.stringify(testResult))
-    
-    // Marcar como usuario nuevo (debe pasar por checkout)
-    localStorage.removeItem('isPremiumTest')
-    
-    // Redirigir al flujo de análisis (igual que test de IQ)
-    router.push(`/${lang}/analizando`)
+  const config: TestConfig = {
+    type: 'adhd',
+    title: 'Test de TDAH',
+    emoji: '🎯',
+    colorFrom: 'from-blue-500',
+    colorTo: 'to-blue-700',
+    colorLight: 'from-blue-50',
+    colorText: 'text-blue-600',
+    colorRing: 'ring-blue-500',
+    questions,
+    scaleOptions,
+    slides,
+    lang: lang as string,
+    onBack: () => router.push(`/${lang}/tests`),
+    onComplete: handleComplete,
   }
 
   if (!started) {
     return (
       <>
         <Header />
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white py-12">
-          <div className="container-custom max-w-4xl">
-            {/* Pantalla de inicio con nombre */}
-            <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 text-center mb-8">
-              <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-blue-700 rounded-full flex items-center justify-center mx-auto mb-6">
-                <span className="text-4xl">🎯</span>
-              </div>
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                Test de TDAH
-              </h1>
-              <p className="text-lg md:text-xl text-gray-600 mb-8">
-                Evaluación de síntomas de Trastorno por Déficit de Atención e Hiperactividad
-              </p>
-
-              <form onSubmit={handleStart} className="max-w-md mx-auto mb-8">
-                <input
-                  type="text"
-                  value={userName}
-                  onChange={(e) => setUserName(e.target.value)}
-                  placeholder="Introduce tu nombre"
-                  className="w-full px-6 py-4 text-lg border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-6"
-                  required
-                  autoFocus
-                />
-                <button type="submit" className="w-full bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white py-4 px-8 rounded-xl font-bold text-xl transition shadow-lg hover:shadow-xl">
-                  Comenzar Test
-                </button>
-              </form>
-            </div>
-
-            <div className="bg-white rounded-2xl shadow-2xl p-12">
-              <div className="text-center mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                  Información sobre el test
-                </h2>
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 flex items-center justify-center py-12 px-4">
+          <div className="w-full max-w-lg">
+            {/* Hero Card */}
+            <div className="bg-white rounded-3xl shadow-2xl overflow-hidden mb-6">
+              <div className="bg-gradient-to-r from-blue-500 to-blue-700 px-8 py-10 text-center text-white">
+                <div className="w-20 h-20 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4 text-5xl">
+                  🎯
+                </div>
+                <h1 className="text-3xl font-black tracking-tight mb-2">Test de TDAH</h1>
+                <p className="text-blue-100 text-base">Evaluación basada en criterios DSM-5</p>
               </div>
 
-              <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-lg mb-8">
-                <h3 className="font-bold text-blue-900 mb-3">Sobre este test:</h3>
-                <ul className="space-y-2 text-blue-800">
-                  <li className="flex items-start gap-2">
-                    <span className="text-blue-500 mt-1">•</span>
-                    <span><strong>18 preguntas</strong> basadas en criterios DSM-5</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-blue-500 mt-1">•</span>
-                    <span><strong>5-8 minutos</strong> de duración aproximada</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-blue-500 mt-1">•</span>
-                    <span>Evalúa <strong>2 categorías</strong>: Inatención e Hiperactividad/Impulsividad</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-blue-500 mt-1">•</span>
-                    <span>Orientación sobre nivel de riesgo y recomendaciones</span>
-                  </li>
-                </ul>
-              </div>
+              <div className="p-8">
+                <div className="grid grid-cols-3 gap-4 mb-8">
+                  <div className="text-center p-3 bg-blue-50 rounded-2xl">
+                    <div className="text-2xl font-black text-blue-700">18</div>
+                    <div className="text-xs text-gray-500 mt-0.5">Preguntas</div>
+                  </div>
+                  <div className="text-center p-3 bg-blue-50 rounded-2xl">
+                    <div className="text-2xl font-black text-blue-700">5'</div>
+                    <div className="text-xs text-gray-500 mt-0.5">Aprox.</div>
+                  </div>
+                  <div className="text-center p-3 bg-blue-50 rounded-2xl">
+                    <div className="text-2xl font-black text-blue-700">2</div>
+                    <div className="text-xs text-gray-500 mt-0.5">Secciones</div>
+                  </div>
+                </div>
 
-              <div className="bg-red-50 border-l-4 border-red-500 p-6 rounded-r-lg mb-8">
-                <h3 className="font-bold text-red-900 mb-3">⚠️ Importante - Disclaimer Médico:</h3>
-                <ul className="space-y-2 text-red-800 text-sm">
-                  <li className="flex items-start gap-2">
-                    <span>•</span>
-                    <span>Este test es solo una <strong>herramienta de autoeva luación orientativa</strong></span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span>•</span>
-                    <span><strong>NO es un diagnóstico médico</strong> ni sustituye la evaluación de un profesional</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span>•</span>
-                    <span>El TDAH debe ser diagnosticado por un profesional de salud mental cualificado</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span>•</span>
-                    <span>Si los síntomas afectan significativamente tu vida, consulta con un especialista</span>
-                  </li>
-                </ul>
-              </div>
+                <div className="space-y-3 mb-8">
+                  <div className="flex items-center gap-3 text-sm text-gray-600">
+                    <FaBrain className="text-blue-500 flex-shrink-0" />
+                    <span>Sección 1: <strong>Inatención</strong> (9 preguntas)</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-sm text-gray-600">
+                    <FaBolt className="text-blue-500 flex-shrink-0" />
+                    <span>Sección 2: <strong>Hiperactividad e Impulsividad</strong> (9 preguntas)</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-sm text-gray-600">
+                    <FaCheckCircle className="text-blue-500 flex-shrink-0" />
+                    <span>Piensa en los últimos <strong>6 meses</strong> de tu vida</span>
+                  </div>
+                </div>
 
-              <div className="bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-r-lg mb-8">
-                <h3 className="font-bold text-yellow-900 mb-3">Instrucciones:</h3>
-                <ul className="space-y-2 text-yellow-800">
-                  <li className="flex items-start gap-2">
-                    <span className="text-yellow-500 mt-1">1.</span>
-                    <span>Piensa en <strong>los últimos 6 meses</strong> de tu vida</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-yellow-500 mt-1">2.</span>
-                    <span>Responde con qué frecuencia experimentas cada síntoma</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-yellow-500 mt-1">3.</span>
-                    <span>Usa la escala: Nunca (0) - Rara vez (1) - A veces (2) - A menudo (3) - Muy a menudo (4)</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-yellow-500 mt-1">4.</span>
-                    <span>Sé honesto/a para obtener resultados útiles</span>
-                  </li>
-                </ul>
-              </div>
+                <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-8 flex gap-3">
+                  <FaExclamationTriangle className="text-amber-500 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm text-amber-800">
+                    Este test es una herramienta orientativa. <strong>No sustituye</strong> el diagnóstico de un profesional de salud mental.
+                  </p>
+                </div>
 
+                <form onSubmit={handleStart} className="space-y-4">
+                  <input
+                    type="text"
+                    value={userName}
+                    onChange={e => setUserName(e.target.value)}
+                    placeholder="¿Cómo te llamas?"
+                    className="w-full px-5 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-blue-500 transition-colors"
+                    required
+                    autoFocus
+                  />
+                  <button
+                    type="submit"
+                    className="w-full bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white py-4 px-8 rounded-2xl font-bold text-lg transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                  >
+                    Comenzar Test
+                    <FaArrowRight />
+                  </button>
+                </form>
+              </div>
             </div>
           </div>
         </div>
@@ -177,100 +163,8 @@ export default function ADHDTestPage() {
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white py-12">
-        <div className="container-custom max-w-4xl">
-          {/* Progress */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-semibold text-gray-700">
-                Pregunta {Object.keys(answers).length} de {adhdQuestions.length}
-              </span>
-              <span className="text-sm font-semibold text-blue-600">
-                {Math.round(progress)}% completado
-              </span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-3">
-              <div
-                className="bg-gradient-to-r from-blue-500 to-blue-700 h-full rounded-full transition-all duration-500"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-          </div>
-
-          {/* Questions */}
-          <div className="bg-white rounded-2xl shadow-xl p-8 mb-6">
-            <div className="space-y-8">
-              {adhdQuestions.map((question, index) => (
-                <div key={question.id} className="border-b border-gray-200 pb-6 last:border-b-0">
-                  <div className="flex items-start gap-3 mb-4">
-                    <span className="flex-shrink-0 w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold text-sm">
-                      {index + 1}
-                    </span>
-                    <p className="text-lg text-gray-900 flex-1">
-                      {question.text}
-                    </p>
-                  </div>
-                  
-                  {/* Scale */}
-                  <div className="flex flex-col gap-2 pl-11">
-                    {[
-                      { value: 0, label: 'Nunca' },
-                      { value: 1, label: 'Rara vez' },
-                      { value: 2, label: 'A veces' },
-                      { value: 3, label: 'A menudo' },
-                      { value: 4, label: 'Muy a menudo' }
-                    ].map(({ value, label }) => (
-                      <button
-                        key={value}
-                        onClick={() => handleAnswer(question.id, value)}
-                        className={`w-full text-left px-4 py-3 rounded-lg font-medium transition-all duration-200 ${
-                          answers[question.id] === value
-                            ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg scale-[1.02]'
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                        }`}
-                      >
-                        {label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Navigation */}
-          <div className="flex items-center justify-between gap-4">
-            <button
-              onClick={() => router.push(`/${lang}/tests`)}
-              className="flex items-center gap-2 px-6 py-3 rounded-lg font-semibold bg-white text-gray-700 hover:bg-gray-100 shadow-md hover:shadow-lg transition-all"
-            >
-              <FaArrowLeft />
-              Volver
-            </button>
-
-            <button
-              onClick={handleSubmit}
-              disabled={!isComplete}
-              className={`flex items-center gap-2 px-8 py-3 rounded-lg font-bold transition-all ${
-                isComplete
-                  ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg hover:shadow-xl'
-                  : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-              }`}
-            >
-              <FaCheck />
-              Ver Resultados
-            </button>
-          </div>
-
-          {!isComplete && (
-            <p className="text-center text-sm text-gray-500 mt-4">
-              Por favor, responde todas las preguntas para ver tus resultados
-            </p>
-          )}
-        </div>
-      </div>
+      <InteractiveTestPlayer config={config} />
       <Footer />
     </>
   )
 }
-

@@ -4,26 +4,81 @@ import { useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import InteractiveTestPlayer, { TestConfig, ScaleOption, SlideConfig } from '@/components/InteractiveTestPlayer'
 import { eqQuestions, calculateEQScores } from '@/lib/eq-questions'
-import { FaArrowLeft, FaArrowRight, FaCheck } from 'react-icons/fa'
+import { FaArrowRight } from 'react-icons/fa'
+
+const scaleOptions: ScaleOption[] = [
+  { value: 1, label: 'Muy en desacuerdo', emoji: '😤' },
+  { value: 2, label: 'En desacuerdo', emoji: '🙁' },
+  { value: 3, label: 'Neutral', emoji: '😐' },
+  { value: 4, label: 'De acuerdo', emoji: '🙂' },
+  { value: 5, label: 'Muy de acuerdo', emoji: '😄' },
+]
+
+// EQ questions: self_awareness(1-7), self_regulation(8-14), motivation(15-21), empathy(22-28), social_skills(29-33)
+const slides: SlideConfig[] = [
+  {
+    afterQuestionIndex: 6,
+    icon: '🎯',
+    title: 'Autorregulación',
+    subtitle: 'Control y gestión de tus emociones',
+    description: 'Ahora exploraremos tu capacidad para controlar impulsos, manejar el estrés y adaptarte a los cambios.',
+    accentFrom: 'from-blue-500',
+    accentTo: 'to-indigo-700',
+    badge: '7 de 33 completadas',
+  },
+  {
+    afterQuestionIndex: 13,
+    icon: '🚀',
+    title: 'Motivación',
+    subtitle: 'Tu fuerza interior y perseverancia',
+    description: 'Exploraremos tu impulso interno, optimismo y orientación hacia el logro.',
+    accentFrom: 'from-amber-500',
+    accentTo: 'to-orange-600',
+    badge: '14 de 33 completadas',
+  },
+  {
+    afterQuestionIndex: 20,
+    icon: '❤️',
+    title: 'Empatía',
+    subtitle: 'Conectar con los demás',
+    description: 'Las siguientes preguntas evalúan tu capacidad para percibir y comprender las emociones de otras personas.',
+    accentFrom: 'from-pink-500',
+    accentTo: 'to-rose-600',
+    badge: '21 de 33 completadas',
+  },
+  {
+    afterQuestionIndex: 27,
+    icon: '🤝',
+    title: 'Habilidades Sociales',
+    subtitle: 'La última sección',
+    description: 'Finalmente, evaluaremos tu capacidad para construir relaciones, comunicarte e influir positivamente en los demás.',
+    accentFrom: 'from-teal-500',
+    accentTo: 'to-green-600',
+    badge: '28 de 33 completadas',
+  },
+]
+
+const categoryLabels: Record<string, string> = {
+  self_awareness: 'Autoconciencia',
+  self_regulation: 'Autorregulación',
+  motivation: 'Motivación',
+  empathy: 'Empatía',
+  social_skills: 'Habilidades Sociales',
+}
+
+const questions = eqQuestions.map(q => ({
+  id: q.id,
+  text: q.text,
+  category: categoryLabels[q.category],
+}))
 
 export default function EQTestPage() {
   const { lang } = useParams()
   const router = useRouter()
-  const [currentPage, setCurrentPage] = useState(0)
-  const [answers, setAnswers] = useState<{ [key: number]: number }>({})
   const [started, setStarted] = useState(false)
   const [userName, setUserName] = useState('')
-
-  const questionsPerPage = 3
-  const totalPages = Math.ceil(eqQuestions.length / questionsPerPage)
-  const currentQuestions = eqQuestions.slice(
-    currentPage * questionsPerPage,
-    (currentPage + 1) * questionsPerPage
-  )
-
-  const isPageComplete = currentQuestions.every(q => answers[q.id] !== undefined)
-  const progress = (Object.keys(answers).length / eqQuestions.length) * 100
 
   const handleStart = (e: React.FormEvent) => {
     e.preventDefault()
@@ -33,155 +88,107 @@ export default function EQTestPage() {
     }
   }
 
-  const handleAnswer = (questionId: number, value: number) => {
-    setAnswers(prev => ({ ...prev, [questionId]: value }))
-  }
-
-  const handleNext = () => {
-    if (currentPage < totalPages - 1) {
-      setCurrentPage(prev => prev + 1)
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    }
-  }
-
-  const handlePrev = () => {
-    if (currentPage > 0) {
-      setCurrentPage(prev => prev - 1)
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    }
-  }
-
-  const handleSubmit = () => {
+  const handleComplete = (answers: { [key: number]: number }) => {
     const results = calculateEQScores(answers)
-    
-    // Guardar resultados en localStorage
-    const testResult = {
-      id: Date.now().toString(),
-      type: 'eq',
-      date: new Date().toISOString(),
-      results,
-      answers
-    }
-    
-    // Guardar en formato compatible con sistema de checkout
     localStorage.setItem('testResults', JSON.stringify({
-      type: 'eq',
-      answers,
-      completedAt: new Date().toISOString(),
-      userName: localStorage.getItem('userName') || 'Usuario'
+      type: 'eq', answers, completedAt: new Date().toISOString(),
+      userName: localStorage.getItem('userName') || 'Usuario',
     }))
-    
-    // Guardar datos específicos del test de EQ
-    localStorage.setItem('eqResults', JSON.stringify(testResult))
-    
-    // Marcar como usuario nuevo (debe pasar por checkout)
+    localStorage.setItem('eqResults', JSON.stringify({
+      id: Date.now().toString(), type: 'eq', date: new Date().toISOString(), results, answers,
+    }))
     localStorage.removeItem('isPremiumTest')
-    
-    // Redirigir al flujo de análisis (igual que test de IQ)
     router.push(`/${lang}/analizando`)
+  }
+
+  const config: TestConfig = {
+    type: 'eq',
+    title: 'Test de Inteligencia Emocional',
+    emoji: '💚',
+    colorFrom: 'from-green-500',
+    colorTo: 'to-emerald-700',
+    colorLight: 'from-green-50',
+    colorText: 'text-green-600',
+    colorRing: 'ring-green-500',
+    questions,
+    scaleOptions,
+    slides,
+    lang: lang as string,
+    onBack: () => router.push(`/${lang}/tests`),
+    onComplete: handleComplete,
   }
 
   if (!started) {
     return (
       <>
         <Header />
-        <div className="min-h-screen bg-gradient-to-br from-green-50 to-white py-12">
-          <div className="container-custom max-w-4xl">
-            {/* Pantalla de inicio con nombre */}
-            <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 text-center mb-8">
-              <div className="w-20 h-20 bg-gradient-to-r from-green-500 to-green-700 rounded-full flex items-center justify-center mx-auto mb-6">
-                <span className="text-4xl">💚</span>
-              </div>
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                Test de Inteligencia Emocional
-              </h1>
-              <p className="text-lg md:text-xl text-gray-600 mb-8">
-                Evalúa tu capacidad para reconocer, comprender y gestionar emociones
-              </p>
-
-              <form onSubmit={handleStart} className="max-w-md mx-auto mb-8">
-                <input
-                  type="text"
-                  value={userName}
-                  onChange={(e) => setUserName(e.target.value)}
-                  placeholder="Introduce tu nombre"
-                  className="w-full px-6 py-4 text-lg border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent mb-6"
-                  required
-                  autoFocus
-                />
-                <button type="submit" className="w-full bg-gradient-to-r from-green-500 to-green-700 hover:from-green-600 hover:to-green-800 text-white py-4 px-8 rounded-xl font-bold text-xl transition shadow-lg hover:shadow-xl">
-                  Comenzar Test
-                </button>
-              </form>
-            </div>
-
-            <div className="bg-white rounded-2xl shadow-2xl p-12">
-              <div className="text-center mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                  Información sobre el test
-                </h2>
+        <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 flex items-center justify-center py-12 px-4">
+          <div className="w-full max-w-lg">
+            <div className="bg-white rounded-3xl shadow-2xl overflow-hidden mb-6">
+              <div className="bg-gradient-to-r from-green-500 to-emerald-700 px-8 py-10 text-center text-white">
+                <div className="w-20 h-20 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4 text-5xl">
+                  💚
+                </div>
+                <h1 className="text-3xl font-black tracking-tight mb-2">Inteligencia Emocional</h1>
+                <p className="text-green-100 text-base">Modelo Goleman · 5 dimensiones clave</p>
               </div>
 
-              <div className="bg-green-50 border-l-4 border-green-500 p-6 rounded-r-lg mb-8">
-                <h3 className="font-bold text-green-900 mb-3">Sobre este test:</h3>
-                <ul className="space-y-2 text-green-800">
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-500 mt-1">•</span>
-                    <span><strong>33 preguntas</strong> sobre habilidades emocionales</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-500 mt-1">•</span>
-                    <span><strong>8-10 minutos</strong> de duración</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-500 mt-1">•</span>
-                    <span>Evalúa <strong>5 componentes</strong> clave de la inteligencia emocional</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-500 mt-1">•</span>
-                    <span>Basado en el modelo de Daniel Goleman</span>
-                  </li>
-                </ul>
-              </div>
+              <div className="p-8">
+                <div className="grid grid-cols-3 gap-4 mb-8">
+                  <div className="text-center p-3 bg-green-50 rounded-2xl">
+                    <div className="text-2xl font-black text-green-700">33</div>
+                    <div className="text-xs text-gray-500 mt-0.5">Preguntas</div>
+                  </div>
+                  <div className="text-center p-3 bg-green-50 rounded-2xl">
+                    <div className="text-2xl font-black text-green-700">8'</div>
+                    <div className="text-xs text-gray-500 mt-0.5">Aprox.</div>
+                  </div>
+                  <div className="text-center p-3 bg-green-50 rounded-2xl">
+                    <div className="text-2xl font-black text-green-700">5</div>
+                    <div className="text-xs text-gray-500 mt-0.5">Secciones</div>
+                  </div>
+                </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-                <div className="bg-gradient-to-br from-purple-100 to-purple-200 p-4 rounded-xl text-center">
-                  <div className="text-3xl mb-2">🧠</div>
-                  <h4 className="font-bold text-purple-900 text-sm mb-1">Autoconciencia</h4>
-                  <p className="text-xs text-purple-700">Reconocer tus emociones</p>
+                <div className="grid grid-cols-5 gap-2 mb-8">
+                  {[
+                    { emoji: '🧠', label: 'Auto-\nconciencia' },
+                    { emoji: '🎯', label: 'Auto-\nrregulación' },
+                    { emoji: '🚀', label: 'Motiva-\nción' },
+                    { emoji: '❤️', label: 'Empa-\ntía' },
+                    { emoji: '🤝', label: 'Hab.\nSociales' },
+                  ].map((item, i) => (
+                    <div key={i} className="text-center p-2 bg-gray-50 rounded-xl">
+                      <div className="text-2xl mb-1">{item.emoji}</div>
+                      <div className="text-[10px] text-gray-500 leading-tight whitespace-pre-line">{item.label}</div>
+                    </div>
+                  ))}
                 </div>
-                <div className="bg-gradient-to-br from-blue-100 to-blue-200 p-4 rounded-xl text-center">
-                  <div className="text-3xl mb-2">🎯</div>
-                  <h4 className="font-bold text-blue-900 text-sm mb-1">Autorregulación</h4>
-                  <p className="text-xs text-blue-700">Controlar emociones</p>
-                </div>
-                <div className="bg-gradient-to-br from-yellow-100 to-yellow-200 p-4 rounded-xl text-center">
-                  <div className="text-3xl mb-2">🚀</div>
-                  <h4 className="font-bold text-yellow-900 text-sm mb-1">Motivación</h4>
-                  <p className="text-xs text-yellow-700">Impulso interno</p>
-                </div>
-                <div className="bg-gradient-to-br from-pink-100 to-pink-200 p-4 rounded-xl text-center">
-                  <div className="text-3xl mb-2">❤️</div>
-                  <h4 className="font-bold text-pink-900 text-sm mb-1">Empatía</h4>
-                  <p className="text-xs text-pink-700">Comprender a otros</p>
-                </div>
-                <div className="bg-gradient-to-br from-green-100 to-green-200 p-4 rounded-xl text-center">
-                  <div className="text-3xl mb-2">🤝</div>
-                  <h4 className="font-bold text-green-900 text-sm mb-1">Habilidades Sociales</h4>
-                  <p className="text-xs text-green-700">Relaciones efectivas</p>
-                </div>
-              </div>
 
-              <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-lg mb-8">
-                <h3 className="font-bold text-blue-900 mb-3">Instrucciones:</h3>
-                <ul className="space-y-2 text-blue-800">
-                  <li>• Responde pensando en cómo te comportas normalmente</li>
-                  <li>• Usa la escala de 1 (Muy en desacuerdo) a 5 (Muy de acuerdo)</li>
-                  <li>• No hay respuestas correctas o incorrectas</li>
-                  <li>• Sé honesto/a para resultados precisos</li>
-                </ul>
-              </div>
+                <div className="bg-green-50 border border-green-200 rounded-2xl p-4 mb-8">
+                  <p className="text-sm text-green-800">
+                    💡 No hay respuestas correctas o incorrectas. Responde pensando en cómo <strong>eres habitualmente</strong>.
+                  </p>
+                </div>
 
+                <form onSubmit={handleStart} className="space-y-4">
+                  <input
+                    type="text"
+                    value={userName}
+                    onChange={e => setUserName(e.target.value)}
+                    placeholder="¿Cómo te llamas?"
+                    className="w-full px-5 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-green-500 transition-colors"
+                    required
+                    autoFocus
+                  />
+                  <button
+                    type="submit"
+                    className="w-full bg-gradient-to-r from-green-500 to-emerald-700 hover:from-green-600 hover:to-emerald-800 text-white py-4 px-8 rounded-2xl font-bold text-lg transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                  >
+                    Comenzar Test
+                    <FaArrowRight />
+                  </button>
+                </form>
+              </div>
             </div>
           </div>
         </div>
@@ -193,120 +200,8 @@ export default function EQTestPage() {
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-white py-12">
-        <div className="container-custom max-w-4xl">
-          {/* Progress */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-semibold text-gray-700">
-                Pregunta {Object.keys(answers).length} de {eqQuestions.length}
-              </span>
-              <span className="text-sm font-semibold text-green-600">
-                {Math.round(progress)}% completado
-              </span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-3">
-              <div
-                className="bg-gradient-to-r from-green-500 to-green-700 h-full rounded-full transition-all duration-500"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-          </div>
-
-          {/* Questions */}
-          <div className="bg-white rounded-2xl shadow-xl p-8 mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              Página {currentPage + 1} de {totalPages}
-            </h2>
-
-            <div className="space-y-8">
-              {currentQuestions.map((question, index) => {
-                const globalIndex = currentPage * questionsPerPage + index
-                return (
-                  <div key={question.id} className="border-b border-gray-200 pb-6 last:border-b-0">
-                    <p className="text-lg font-medium text-gray-900 mb-4">
-                      <span className="text-green-600 font-bold">{globalIndex + 1}.</span> {question.text}
-                    </p>
-                    
-                    {/* Scale */}
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-                      <span className="text-sm text-gray-600 whitespace-nowrap">Muy en desacuerdo</span>
-                      <div className="flex gap-2 flex-1 justify-center">
-                        {[1, 2, 3, 4, 5].map((value) => (
-                          <button
-                            key={value}
-                            onClick={() => handleAnswer(question.id, value)}
-                            className={`w-12 h-12 rounded-full font-bold transition-all duration-200 ${
-                              answers[question.id] === value
-                                ? 'bg-gradient-to-r from-green-600 to-green-700 text-white scale-110 shadow-lg'
-                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                            }`}
-                          >
-                            {value}
-                          </button>
-                        ))}
-                      </div>
-                      <span className="text-sm text-gray-600 whitespace-nowrap">Muy de acuerdo</span>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-
-          {/* Navigation */}
-          <div className="flex items-center justify-between gap-4">
-            <button
-              onClick={handlePrev}
-              disabled={currentPage === 0}
-              className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all ${
-                currentPage === 0
-                  ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                  : 'bg-white text-gray-700 hover:bg-gray-100 shadow-md hover:shadow-lg'
-              }`}
-            >
-              <FaArrowLeft />
-              Anterior
-            </button>
-
-            {currentPage === totalPages - 1 ? (
-              <button
-                onClick={handleSubmit}
-                disabled={!isPageComplete}
-                className={`flex items-center gap-2 px-8 py-3 rounded-lg font-bold transition-all ${
-                  isPageComplete
-                    ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg hover:shadow-xl'
-                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                }`}
-              >
-                <FaCheck />
-                Ver Resultados
-              </button>
-            ) : (
-              <button
-                onClick={handleNext}
-                disabled={!isPageComplete}
-                className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all ${
-                  isPageComplete
-                    ? 'bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white shadow-lg hover:shadow-xl'
-                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                }`}
-              >
-                Siguiente
-                <FaArrowRight />
-              </button>
-            )}
-          </div>
-
-          {!isPageComplete && (
-            <p className="text-center text-sm text-gray-500 mt-4">
-              Por favor, responde todas las preguntas de esta página para continuar
-            </p>
-          )}
-        </div>
-      </div>
+      <InteractiveTestPlayer config={config} />
       <Footer />
     </>
   )
 }
-

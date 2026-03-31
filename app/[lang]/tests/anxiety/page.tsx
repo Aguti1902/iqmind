@@ -4,18 +4,37 @@ import { useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import InteractiveTestPlayer, { TestConfig, ScaleOption, SlideConfig } from '@/components/InteractiveTestPlayer'
 import { anxietyQuestions, calculateAnxietyScore } from '@/lib/anxiety-questions'
-import { FaArrowLeft, FaCheck } from 'react-icons/fa'
+import { FaArrowRight, FaHeart, FaShieldAlt, FaCheckCircle } from 'react-icons/fa'
+
+const scaleOptions: ScaleOption[] = [
+  { value: 0, label: 'Nunca', emoji: '😌' },
+  { value: 1, label: 'Varios días', emoji: '🙂' },
+  { value: 2, label: 'Más de la mitad de los días', emoji: '😟' },
+  { value: 3, label: 'Casi todos los días', emoji: '😰' },
+]
+
+const slides: SlideConfig[] = [
+  {
+    afterQuestionIndex: 9,
+    icon: '💪',
+    title: '¡Vas genial!',
+    subtitle: 'Ya llevas la mitad del test',
+    description: 'Estás haciendo un gran ejercicio de autoconocimiento. Las siguientes preguntas exploran aspectos físicos y conductuales de la ansiedad.',
+    accentFrom: 'from-rose-500',
+    accentTo: 'to-red-700',
+    badge: '10 de 20 completadas',
+  },
+]
+
+const questions = anxietyQuestions.map(q => ({ id: q.id, text: q.text }))
 
 export default function AnxietyTestPage() {
   const { lang } = useParams()
   const router = useRouter()
-  const [answers, setAnswers] = useState<{ [key: number]: number }>({})
   const [started, setStarted] = useState(false)
   const [userName, setUserName] = useState('')
-
-  const progress = (Object.keys(answers).length / anxietyQuestions.length) * 100
-  const isComplete = Object.keys(answers).length === anxietyQuestions.length
 
   const handleStart = (e: React.FormEvent) => {
     e.preventDefault()
@@ -25,132 +44,107 @@ export default function AnxietyTestPage() {
     }
   }
 
-  const handleAnswer = (questionId: number, value: number) => {
-    setAnswers(prev => ({ ...prev, [questionId]: value }))
+  const handleComplete = (answers: { [key: number]: number }) => {
+    const results = calculateAnxietyScore(answers)
+    localStorage.setItem('testResults', JSON.stringify({
+      type: 'anxiety', answers, completedAt: new Date().toISOString(),
+      userName: localStorage.getItem('userName') || 'Usuario',
+    }))
+    localStorage.setItem('anxietyResults', JSON.stringify({
+      id: Date.now().toString(), type: 'anxiety', date: new Date().toISOString(), results, answers,
+    }))
+    localStorage.removeItem('isPremiumTest')
+    router.push(`/${lang}/analizando`)
   }
 
-  const handleSubmit = () => {
-    const results = calculateAnxietyScore(answers)
-    
-    // Guardar resultados en localStorage
-    const testResult = {
-      id: Date.now().toString(),
-      type: 'anxiety',
-      date: new Date().toISOString(),
-      results,
-      answers
-    }
-    
-    // Guardar en formato compatible con sistema de checkout
-    localStorage.setItem('testResults', JSON.stringify({
-      type: 'anxiety',
-      answers,
-      completedAt: new Date().toISOString(),
-      userName: localStorage.getItem('userName') || 'Usuario'
-    }))
-    
-    // Guardar datos específicos del test de ansiedad
-    localStorage.setItem('anxietyResults', JSON.stringify(testResult))
-    
-    // Marcar como usuario nuevo (debe pasar por checkout)
-    localStorage.removeItem('isPremiumTest')
-    
-    // Redirigir al flujo de análisis (igual que test de IQ)
-    router.push(`/${lang}/analizando`)
+  const config: TestConfig = {
+    type: 'anxiety',
+    title: 'Test de Ansiedad GAD-7',
+    emoji: '❤️',
+    colorFrom: 'from-rose-500',
+    colorTo: 'to-red-700',
+    colorLight: 'from-red-50',
+    colorText: 'text-red-600',
+    colorRing: 'ring-red-500',
+    questions,
+    scaleOptions,
+    slides,
+    lang: lang as string,
+    onBack: () => router.push(`/${lang}/tests`),
+    onComplete: handleComplete,
   }
 
   if (!started) {
     return (
       <>
         <Header />
-        <div className="min-h-screen bg-gradient-to-br from-red-50 to-white py-12">
-          <div className="container-custom max-w-4xl">
-            {/* Pantalla de inicio con nombre */}
-            <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 text-center mb-8">
-              <div className="w-20 h-20 bg-gradient-to-r from-red-500 to-red-700 rounded-full flex items-center justify-center mx-auto mb-6">
-                <span className="text-4xl">❤️</span>
-              </div>
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                Test de Ansiedad GAD-7 Extendido
-              </h1>
-              <p className="text-lg md:text-xl text-gray-600 mb-8">
-                Evaluación completa del Trastorno de Ansiedad Generalizada
-              </p>
-
-              <form onSubmit={handleStart} className="max-w-md mx-auto mb-8">
-                <input
-                  type="text"
-                  value={userName}
-                  onChange={(e) => setUserName(e.target.value)}
-                  placeholder="Introduce tu nombre"
-                  className="w-full px-6 py-4 text-lg border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent mb-6"
-                  required
-                  autoFocus
-                />
-                <button type="submit" className="w-full bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 text-white py-4 px-8 rounded-xl font-bold text-xl transition shadow-lg hover:shadow-xl">
-                  Comenzar Test
-                </button>
-              </form>
-            </div>
-
-            <div className="bg-white rounded-2xl shadow-2xl p-12">
-              <div className="text-center mb-8">
-                <div className="w-20 h-20 bg-gradient-to-r from-red-500 to-red-700 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <span className="text-4xl">❤️</span>
+        <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-rose-50 flex items-center justify-center py-12 px-4">
+          <div className="w-full max-w-lg">
+            <div className="bg-white rounded-3xl shadow-2xl overflow-hidden mb-6">
+              <div className="bg-gradient-to-r from-rose-500 to-red-700 px-8 py-10 text-center text-white">
+                <div className="w-20 h-20 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4 text-5xl">
+                  ❤️
                 </div>
-                <h1 className="text-4xl font-bold text-gray-900 mb-4">
-                  Test de Ansiedad GAD-7
-                </h1>
-                <p className="text-xl text-gray-600">
-                  Evaluación del Trastorno de Ansiedad Generalizada
-                </p>
+                <h1 className="text-3xl font-black tracking-tight mb-2">Test de Ansiedad</h1>
+                <p className="text-red-100 text-base">Escala GAD-7 Extendida · Validada clínicamente</p>
               </div>
 
-              <div className="bg-red-50 border-l-4 border-red-500 p-6 rounded-r-lg mb-8">
-                <h3 className="font-bold text-red-900 mb-3">Sobre este test:</h3>
-                <ul className="space-y-2 text-red-800">
-                  <li className="flex items-start gap-2">
-                    <span className="text-red-500 mt-1">•</span>
-                    <span><strong>7 preguntas</strong> de la escala GAD-7 clínicamente validada</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-red-500 mt-1">•</span>
-                    <span><strong>2-3 minutos</strong> de duración</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-red-500 mt-1">•</span>
-                    <span>Mide nivel de <strong>ansiedad generalizada</strong></span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-red-500 mt-1">•</span>
-                    <span>Usado mundialmente por profesionales de salud mental</span>
-                  </li>
-                </ul>
-              </div>
+              <div className="p-8">
+                <div className="grid grid-cols-3 gap-4 mb-8">
+                  <div className="text-center p-3 bg-red-50 rounded-2xl">
+                    <div className="text-2xl font-black text-red-700">20</div>
+                    <div className="text-xs text-gray-500 mt-0.5">Preguntas</div>
+                  </div>
+                  <div className="text-center p-3 bg-red-50 rounded-2xl">
+                    <div className="text-2xl font-black text-red-700">3'</div>
+                    <div className="text-xs text-gray-500 mt-0.5">Aprox.</div>
+                  </div>
+                  <div className="text-center p-3 bg-red-50 rounded-2xl">
+                    <div className="text-2xl font-black text-red-700">GAD</div>
+                    <div className="text-xs text-gray-500 mt-0.5">Estándar</div>
+                  </div>
+                </div>
 
-              <div className="bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-r-lg mb-8">
-                <h3 className="font-bold text-yellow-900 mb-3">Instrucciones:</h3>
-                <p className="text-yellow-800 mb-3">
-                  Durante las <strong>últimas 2 semanas</strong>, ¿con qué frecuencia has experimentado estos problemas?
-                </p>
-                <ul className="space-y-2 text-yellow-800 text-sm">
-                  <li>• Nunca (0 puntos)</li>
-                  <li>• Varios días (1 punto)</li>
-                  <li>• Más de la mitad de los días (2 puntos)</li>
-                  <li>• Casi todos los días (3 puntos)</li>
-                </ul>
-              </div>
+                <div className="space-y-3 mb-8">
+                  <div className="flex items-center gap-3 text-sm text-gray-600">
+                    <FaHeart className="text-red-500 flex-shrink-0" />
+                    <span>Evalúa síntomas de <strong>ansiedad generalizada</strong></span>
+                  </div>
+                  <div className="flex items-center gap-3 text-sm text-gray-600">
+                    <FaShieldAlt className="text-red-500 flex-shrink-0" />
+                    <span>Basado en los <strong>últimos 14 días</strong> de tu vida</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-sm text-gray-600">
+                    <FaCheckCircle className="text-red-500 flex-shrink-0" />
+                    <span>Responde <strong>honestamente</strong> para obtener resultados útiles</span>
+                  </div>
+                </div>
 
-              <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-lg mb-8">
-                <h3 className="font-bold text-blue-900 mb-2">💙 Recuerda:</h3>
-                <ul className="space-y-2 text-blue-800 text-sm">
-                  <li>• Este test es orientativo, no un diagnóstico</li>
-                  <li>• Responde honestamente para resultados útiles</li>
-                  <li>• Si experimentas ansiedad severa, busca ayuda profesional</li>
-                  <li>• La ansiedad es tratable y hay recursos disponibles</li>
-                </ul>
-              </div>
+                <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 mb-8">
+                  <p className="text-sm text-blue-800">
+                    💙 Este test es orientativo. Si experimentas ansiedad severa, te recomendamos <strong>buscar ayuda profesional</strong>.
+                  </p>
+                </div>
 
+                <form onSubmit={handleStart} className="space-y-4">
+                  <input
+                    type="text"
+                    value={userName}
+                    onChange={e => setUserName(e.target.value)}
+                    placeholder="¿Cómo te llamas?"
+                    className="w-full px-5 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-red-500 transition-colors"
+                    required
+                    autoFocus
+                  />
+                  <button
+                    type="submit"
+                    className="w-full bg-gradient-to-r from-rose-500 to-red-700 hover:from-rose-600 hover:to-red-800 text-white py-4 px-8 rounded-2xl font-bold text-lg transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                  >
+                    Comenzar Test
+                    <FaArrowRight />
+                  </button>
+                </form>
+              </div>
             </div>
           </div>
         </div>
@@ -162,103 +156,8 @@ export default function AnxietyTestPage() {
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-gradient-to-br from-red-50 to-white py-12">
-        <div className="container-custom max-w-4xl">
-          {/* Progress */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-semibold text-gray-700">
-                Pregunta {Object.keys(answers).length} de {anxietyQuestions.length}
-              </span>
-              <span className="text-sm font-semibold text-red-600">
-                {Math.round(progress)}% completado
-              </span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-3">
-              <div
-                className="bg-gradient-to-r from-red-500 to-red-700 h-full rounded-full transition-all duration-500"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-          </div>
-
-          {/* Questions */}
-          <div className="bg-white rounded-2xl shadow-xl p-8 mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              Durante las últimas 2 semanas, ¿con qué frecuencia...?
-            </h2>
-
-            <div className="space-y-8">
-              {anxietyQuestions.map((question, index) => (
-                <div key={question.id} className="border-b border-gray-200 pb-6 last:border-b-0">
-                  <div className="flex items-start gap-3 mb-4">
-                    <span className="flex-shrink-0 w-8 h-8 bg-red-100 text-red-600 rounded-full flex items-center justify-center font-bold text-sm">
-                      {index + 1}
-                    </span>
-                    <p className="text-lg text-gray-900 flex-1">
-                      {question.text}
-                    </p>
-                  </div>
-                  
-                  {/* Options */}
-                  <div className="flex flex-col gap-2 pl-11">
-                    {[
-                      { value: 0, label: 'Nunca' },
-                      { value: 1, label: 'Varios días' },
-                      { value: 2, label: 'Más de la mitad de los días' },
-                      { value: 3, label: 'Casi todos los días' }
-                    ].map(({ value, label }) => (
-                      <button
-                        key={value}
-                        onClick={() => handleAnswer(question.id, value)}
-                        className={`w-full text-left px-4 py-3 rounded-lg font-medium transition-all duration-200 ${
-                          answers[question.id] === value
-                            ? 'bg-gradient-to-r from-red-600 to-red-700 text-white shadow-lg scale-[1.02]'
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                        }`}
-                      >
-                        {label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Navigation */}
-          <div className="flex items-center justify-between gap-4">
-            <button
-              onClick={() => router.push(`/${lang}/tests`)}
-              className="flex items-center gap-2 px-6 py-3 rounded-lg font-semibold bg-white text-gray-700 hover:bg-gray-100 shadow-md hover:shadow-lg transition-all"
-            >
-              <FaArrowLeft />
-              Volver
-            </button>
-
-            <button
-              onClick={handleSubmit}
-              disabled={!isComplete}
-              className={`flex items-center gap-2 px-8 py-3 rounded-lg font-bold transition-all ${
-                isComplete
-                  ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg hover:shadow-xl'
-                  : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-              }`}
-            >
-              <FaCheck />
-              Ver Resultados
-            </button>
-          </div>
-
-          {!isComplete && (
-            <p className="text-center text-sm text-gray-500 mt-4">
-              Por favor, responde todas las preguntas para ver tus resultados
-            </p>
-          )}
-        </div>
-      </div>
+      <InteractiveTestPlayer config={config} />
       <Footer />
     </>
   )
 }
-

@@ -547,9 +547,23 @@ function CheckoutPaymentContent() {
                             <i className="fas fa-credit-card text-gray-600 text-sm sm:text-lg"></i>
                             <span className="font-medium text-gray-900 text-sm sm:text-base">Tarjeta</span>
                           </div>
-                          <div className="flex gap-1 sm:gap-2 flex-shrink-0">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" className="h-3 sm:h-5" />
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" className="h-3 sm:h-5" />
+                          <div className="flex gap-1 sm:gap-2 flex-shrink-0 items-center">
+                            {/* Visa */}
+                            <svg className="h-3 sm:h-5 w-auto" viewBox="0 0 750 471" xmlns="http://www.w3.org/2000/svg" aria-label="Visa">
+                              <rect width="750" height="471" rx="40" fill="#1A1F71"/>
+                              <path d="M278 333L311 138H364L331 333H278Z" fill="white"/>
+                              <path d="M524 142c-21-8-54-17-95-17-105 0-179 53-180 129-1 56 53 87 94 106 42 19 56 32 56 49-1 26-34 38-65 38-43 0-67-6-103-21l-14-7-15 89c25 11 72 21 120 22 111 0 183-52 184-133 1-44-28-78-89-106-37-18-60-29-60-47 0-16 19-33 61-33 35-1 60 7 80 15l10 5 14-87z" fill="white"/>
+                              <path d="M614 138h-82c-25 0-44 7-55 33l-157 162h111s18-48 22-58h135c3 13 13 58 13 58h98L614 138zm-130 117c9-23 42-108 42-108s9-23 14-37l7 34s21 97 25 111h-88z" fill="white"/>
+                              <path d="M210 138l-104 133-11-56c-19-61-79-127-146-160l95 278h112l167-195H210z" fill="white"/>
+                              <path d="M120 138H-2l-1 6c94 23 157 78 183 144L155 172c-4-26-22-33-35-34z" fill="#FAA61A"/>
+                            </svg>
+                            {/* Mastercard */}
+                            <svg className="h-3 sm:h-5 w-auto" viewBox="0 0 131.39 86.9" xmlns="http://www.w3.org/2000/svg" aria-label="Mastercard">
+                              <rect width="131.39" height="86.9" rx="7" fill="#252525"/>
+                              <circle cx="48.37" cy="43.45" r="28.25" fill="#EB001B"/>
+                              <circle cx="83.02" cy="43.45" r="28.25" fill="#F79E1B"/>
+                              <path d="M65.7 19.68a28.24 28.24 0 0 1 0 47.54 28.24 28.24 0 0 1 0-47.54z" fill="#FF5F00"/>
+                            </svg>
                           </div>
                         </button>
 
