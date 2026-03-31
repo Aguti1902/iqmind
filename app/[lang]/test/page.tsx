@@ -10,6 +10,28 @@ import { FaClock, FaUser } from 'react-icons/fa'
 import { useTranslations } from '@/hooks/useTranslations'
 import { saveTestResult, calculateCategoryScores, updateUserInfo } from '@/lib/test-history'
 
+// Diapositivas de transición entre secciones del test de IQ
+const IQ_SLIDES: Record<number, { icon: string; title: string; subtitle: string; description: string; badge: string; from: string; to: string }> = {
+  4: {
+    icon: '🎯',
+    title: 'Nivel Medio',
+    subtitle: 'Las preguntas se vuelven más complejas',
+    description: 'Has superado la fase inicial. Ahora los patrones requieren mayor razonamiento abstracto.',
+    badge: '4 DE 20 COMPLETADAS',
+    from: 'from-indigo-500',
+    to: 'to-blue-700',
+  },
+  10: {
+    icon: '🔥',
+    title: 'Nivel Avanzado',
+    subtitle: '¡Estás en la recta final!',
+    description: 'Solo quedan 10 preguntas. Son las más desafiantes — demuestra tu capacidad máxima.',
+    badge: '10 DE 20 COMPLETADAS',
+    from: 'from-violet-600',
+    to: 'to-purple-800',
+  },
+}
+
 export default function TestPage() {
   const router = useRouter()
   const { t, loading, lang } = useTranslations()
@@ -21,6 +43,8 @@ export default function TestPage() {
   const [startTime, setStartTime] = useState<number>(0)
   const [showTooFastModal, setShowTooFastModal] = useState(false)
   const [showFinishConfirmModal, setShowFinishConfirmModal] = useState(false)
+  const [activeSlide, setActiveSlide] = useState<typeof IQ_SLIDES[number] | null>(null)
+  const [slideTransitioning, setSlideTransitioning] = useState(false)
 
   useEffect(() => {
     const savedUserName = localStorage.getItem('userName')
@@ -67,23 +91,40 @@ export default function TestPage() {
 
     // Verificar si es la última pregunta
     if (currentQuestion === visualQuestions.length - 1) {
-      // Verificar anti-bot (1 minuto)
       const timeElapsed = Date.now() - startTime
       const oneMinute = 60 * 1000
-      
       if (timeElapsed < oneMinute) {
         setShowTooFastModal(true)
         return
       }
-      
-      // Mostrar modal de confirmación para finalizar
       setShowFinishConfirmModal(true)
       return
     }
 
-    // Avance automático para preguntas que no son la última
+    // Comprobar si hay diapositiva de transición después de esta pregunta
+    const nextQ = currentQuestion + 1
+    const slide = IQ_SLIDES[nextQ]
+    if (slide) {
+      setTimeout(() => {
+        setSlideTransitioning(true)
+        setActiveSlide(slide)
+        setTimeout(() => setSlideTransitioning(false), 300)
+      }, 350)
+      return
+    }
+
+    // Avance automático normal
     setTimeout(() => {
       setCurrentQuestion(currentQuestion + 1)
+    }, 300)
+  }
+
+  const handleSlideContinue = () => {
+    setSlideTransitioning(true)
+    setTimeout(() => {
+      setActiveSlide(null)
+      setCurrentQuestion(prev => prev + 1)
+      setSlideTransitioning(false)
     }, 300)
   }
 
@@ -344,6 +385,39 @@ export default function TestPage() {
           </div>
         </div>
       </div>
+
+      {/* Diapositiva de transición entre secciones */}
+      {activeSlide && (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div
+            className={`
+              w-full max-w-md rounded-3xl overflow-hidden shadow-2xl
+              transition-all duration-300
+              ${slideTransitioning ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}
+              bg-gradient-to-br ${activeSlide.from} ${activeSlide.to}
+            `}
+          >
+            <div className="px-8 py-14 text-center text-white">
+              <span className="inline-block bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-6">
+                {activeSlide.badge}
+              </span>
+              <div className="text-7xl mb-5">{activeSlide.icon}</div>
+              <h2 className="text-3xl font-black mb-2 tracking-tight">{activeSlide.title}</h2>
+              <p className="text-lg text-white/85 font-medium mb-3">{activeSlide.subtitle}</p>
+              <p className="text-sm text-white/65 leading-relaxed mb-8 max-w-xs mx-auto">{activeSlide.description}</p>
+              <button
+                onClick={handleSlideContinue}
+                className="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white font-bold px-8 py-4 rounded-2xl transition-all hover:scale-105"
+              >
+                Continuar
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal de confirmación finalizar */}
       {showFinishConfirmModal && (
