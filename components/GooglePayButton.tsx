@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react'
 
-const GOOGLE_PAY_MERCHANT_ID = '18013341542947814368'
+const GOOGLE_PAY_MERCHANT_ID = 'BCR2DN5TU3HN3ZQ2'
 
 declare global {
   interface Window {
