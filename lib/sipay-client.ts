@@ -295,26 +295,35 @@ export class SipayClient {
     const ts = Date.now().toString().slice(-10)
     const reconciliation = ts
     const orderId = 'AP' + ts  // Estrictamente alfanumérico, max 20 chars
-    // Sipay espera el objeto completo event.payment.token de Apple Pay JS
-    // con sus campos: paymentData, paymentMethod, transactionIdentifier
+    // Sipay puede esperar token_apay como JSON string serializado
+    const tokenStr = typeof params.applePayToken === 'string'
+      ? params.applePayToken
+      : JSON.stringify(params.applePayToken)
+
+    const catcher: any = {
+      type: 'apay',
+      token_apay: tokenStr,
+    }
+    // Solo incluir request_id si tiene valor real (no vacío)
+    if (params.requestId) {
+      catcher.request_id = params.requestId
+    }
+
     const data: any = {
       amount: params.amount.toString(),
       currency: params.currency,
       order: orderId,
       reconciliation,
-      catcher: {
-        type: 'apay',
-        token_apay: params.applePayToken,
-        request_id: params.requestId || '',  // Siempre incluir — requerido por Sipay
-      },
+      catcher,
     }
     console.log('📤 Sipay Apple Pay payload:', {
       amount: data.amount,
       currency: data.currency,
       order: data.order,
-      requestId: params.requestId || '(vacío)',
-      tokenKeys: params.applePayToken ? Object.keys(params.applePayToken) : [],
-      hasPaymentData: !!params.applePayToken?.paymentData,
+      requestId: params.requestId || '(sin requestId)',
+      tokenType: typeof params.applePayToken,
+      tokenStr_length: tokenStr.length,
+      hasPaymentData: tokenStr.includes('paymentData'),
     })
     return this.makeRequest('/mdwr/v1/authorization', 'POST', data)
   }
