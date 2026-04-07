@@ -79,13 +79,12 @@ export async function POST(request: NextRequest) {
 
     const sipay = getSipayClient()
     const amountInCents = Math.round(amount * 100)
-    const tokenId = 'mm' + Date.now().toString().slice(-12)
 
     const response = await sipay.authorizeGooglePay({
       amount: amountInCents,
       currency: 'EUR',
       googlePayToken,
-      tokenId,
+      // tokenId omitido — la tokenización debe estar activada en Sipay antes de usarla
     })
 
     console.log('📡 Respuesta Sipay Google Pay:', JSON.stringify(response).slice(0, 300))

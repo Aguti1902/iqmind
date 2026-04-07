@@ -82,14 +82,13 @@ export async function POST(request: NextRequest) {
 
     const sipay = getSipayClient()
     const amountInCents = Math.round(amount * 100)
-    const tokenId = 'mm' + Date.now().toString().slice(-12)
 
     const response = await sipay.authorizeApplePay({
       amount: amountInCents,
       currency: 'EUR',
       applePayToken,
       requestId: requestId || '',
-      tokenId,
+      // tokenId omitido — la tokenización debe estar activada en Sipay antes de usarla
     })
 
     console.log('📡 Respuesta Sipay Apple Pay:', JSON.stringify(response).slice(0, 300))
