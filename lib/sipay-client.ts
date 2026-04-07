@@ -292,34 +292,33 @@ export class SipayClient {
     requestId: string
     tokenId?: string
   }): Promise<any> {
-    const ts = Date.now().toString().slice(-10)
-    const reconciliation = ts
-    const orderId = 'AP' + ts  // Estrictamente alfanumérico, max 20 chars
-    // token_apay debe ser el objeto event.payment.token de Apple Pay JS (no serializado)
+    // Según docs Sipay: https://developer.sipay.es/docs/documentation/online/selling/wallets/apay/
+    // - amount: INTEGER en céntimos (no string)
+    // - NO se incluyen order ni reconciliation
+    // - catcher.token_apay: objeto completo event.payment.token
+    // - catcher.request_id: del paso de validación de sesión
     const catcher: any = {
       type: 'apay',
       token_apay: params.applePayToken,
     }
-    // request_id de la sesión de validación — requerido por Sipay para descifrar el token
-    // Solo incluir si tiene valor real (string vacío causa invalid_format)
     if (params.requestId) {
       catcher.request_id = params.requestId
     }
-
+    // Tokenización opcional: guardar tarjeta para MIT
     const data: any = {
-      amount: params.amount.toString(),
+      amount: params.amount,        // INTEGER (céntimos)
       currency: params.currency,
-      order: orderId,
-      reconciliation,
       catcher,
+    }
+    if (params.tokenId) {
+      data.token = params.tokenId   // Opcional: para guardar tarjeta
     }
     console.log('📤 Sipay Apple Pay payload:', {
       amount: data.amount,
-      order: data.order,
+      currency: data.currency,
       hasRequestId: !!params.requestId,
-      requestId: params.requestId || '⚠️ VACÍO — puede causar no_card_data',
-      tokenType: typeof params.applePayToken,
       tokenKeys: params.applePayToken ? Object.keys(params.applePayToken) : [],
+      hasPaymentData: !!params.applePayToken?.paymentData,
     })
     return this.makeRequest('/mdwr/v1/authorization', 'POST', data)
   }
