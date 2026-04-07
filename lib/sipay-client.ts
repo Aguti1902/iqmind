@@ -305,9 +305,7 @@ export class SipayClient {
         token_apay: params.applePayToken,
         ...(params.requestId ? { request_id: params.requestId } : {}),
       },
-    }
-    if (params.tokenId) {
-      data.token = params.tokenId
+      // NO incluimos 'token' — Sipay lo interpreta como "cobrar tarjeta guardada" y falla con no_card_from_token
     }
     console.log('📤 Sipay Apple Pay payload:', { amount: data.amount, currency: data.currency, order: data.order, hasToken: !!params.applePayToken, hasRequestId: !!params.requestId })
     return this.makeRequest('/mdwr/v1/authorization', 'POST', data)
@@ -338,9 +336,7 @@ export class SipayClient {
         type: 'gpay',
         token_gpay: params.googlePayToken,
       },
-    }
-    if (params.tokenId) {
-      data.token = params.tokenId
+      // NO incluimos 'token' — Sipay lo interpreta como "cobrar tarjeta guardada" y falla con no_card_from_token
     }
     console.log('📤 Sipay Google Pay payload:', { amount: data.amount, currency: data.currency, order: data.order })
     return this.makeRequest('/mdwr/v1/authorization', 'POST', data)
