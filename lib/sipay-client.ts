@@ -295,6 +295,11 @@ export class SipayClient {
     const ts = Date.now().toString().slice(-10)
     const reconciliation = ts
     const orderId = 'AP' + ts  // Estrictamente alfanumérico, max 20 chars
+    // Sipay necesita solo el paymentData del token de Apple Pay, no el objeto completo
+    const applePayTokenData = params.applePayToken?.paymentData
+      ?? params.applePayToken?.token?.paymentData
+      ?? params.applePayToken
+
     const data: any = {
       amount: params.amount.toString(),
       currency: params.currency,
@@ -302,12 +307,17 @@ export class SipayClient {
       reconciliation,
       catcher: {
         type: 'apay',
-        token_apay: params.applePayToken,
+        token_apay: applePayTokenData,
         ...(params.requestId ? { request_id: params.requestId } : {}),
       },
-      // NO incluimos 'token' — Sipay lo interpreta como "cobrar tarjeta guardada" y falla con no_card_from_token
     }
-    console.log('📤 Sipay Apple Pay payload:', { amount: data.amount, currency: data.currency, order: data.order, hasToken: !!params.applePayToken, hasRequestId: !!params.requestId })
+    console.log('📤 Sipay Apple Pay payload:', {
+      amount: data.amount,
+      currency: data.currency,
+      order: data.order,
+      hasPaymentData: !!applePayTokenData,
+      tokenKeys: params.applePayToken ? Object.keys(params.applePayToken) : [],
+    })
     return this.makeRequest('/mdwr/v1/authorization', 'POST', data)
   }
 
