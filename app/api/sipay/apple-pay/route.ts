@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
       console.error('⚠️ Error enviando emails:', e.message)
     }
 
-    console.log('✅ Apple Pay completado. Token guardado:', tokenId.slice(0, 12) + '...')
+    console.log('✅ Apple Pay completado.')
 
     return NextResponse.json({
       success: true,
