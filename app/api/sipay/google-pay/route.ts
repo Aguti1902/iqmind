@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
     const trialEnd = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
     await db.updateUser(user.id, {
       subscriptionStatus: 'trial',
-      subscriptionId: tokenId,
+      subscriptionId: undefined,
       trialEndDate: trialEnd.toISOString(),
       accessUntil: trialEnd.toISOString(),
     })
@@ -116,7 +116,7 @@ export async function POST(request: NextRequest) {
       console.error('⚠️ Error enviando emails:', e.message)
     }
 
-    console.log('✅ Google Pay completado. Token guardado:', tokenId.slice(0, 12) + '...')
+    console.log('✅ Google Pay completado.')
 
     return NextResponse.json({
       success: true,
