@@ -32,6 +32,9 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    // Email de aviso de trial desactivado — no se envía notificación previa al cobro
+    return NextResponse.json({ success: true, sent: 0, message: 'Trial ending emails disabled' })
+
     console.log('📧 [trial-ending] Buscando usuarios con trial que expira mañana...')
 
     const now = new Date()

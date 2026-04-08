@@ -53,8 +53,8 @@ export async function POST(request: NextRequest) {
         break
 
       case 'trialEndingTomorrow':
-        emailData = emailTemplates.trialEndingTomorrow(email, userName || 'Usuario', lang || 'es')
-        break
+        // Email desactivado — no se envía aviso previo al cobro
+        return NextResponse.json({ success: false, message: 'Trial ending emails disabled' }, { status: 410 })
 
       case 'subscriptionActivated':
         emailData = emailTemplates.subscriptionActivated(email, userName || 'Usuario', lang || 'es')
