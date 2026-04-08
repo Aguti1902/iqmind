@@ -145,7 +145,7 @@ export async function POST(request: NextRequest) {
         }
 
         try {
-          const trialEmail = emailTemplates.trialStarted(email, userName, trialEndFormatted, paymentLang)
+          const trialEmail = emailTemplates.trialStarted(email, userName, trialEndFormatted, paymentLang, user.iq)
           await sendEmail(trialEmail)
           console.log('📧 [process-payment] Email trialStarted enviado')
         } catch (emailErr) {

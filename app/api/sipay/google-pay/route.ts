@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
 
     try {
       const uName = userName || email.split('@')[0]
-      const trialEmail = emailTemplates.trialStarted(email, uName, trialEnd.toLocaleDateString('es-ES'), lang || 'es')
+      const trialEmail = emailTemplates.trialStarted(email, uName, trialEnd.toLocaleDateString('es-ES'), lang || 'es', Math.round(userIQ || 0) || undefined)
       await sendEmail(trialEmail)
       const payEmail = emailTemplates.paymentSuccess(email, uName, amount, lang || 'es')
       await sendEmail(payEmail)

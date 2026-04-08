@@ -339,100 +339,112 @@ export const emailTemplates = {
     `
   }),
 
-  // 4. Trial iniciado
-  trialStarted: (email: string, userName: string, trialEndDate: string, lang: string) => ({
+  // 4. Bienvenida tras el pago (sin mencionar trial ni suscripción)
+  trialStarted: (email: string, userName: string, trialEndDate: string, lang: string, iq?: number) => ({
     to: email,
     subject: lang === 'es'
-      ? '¡Bienvenido a Premium! 🚀'
-      : 'Welcome to Premium! 🚀',
+      ? `${userName}, tu análisis MindMetric está listo 🧠`
+      : `${userName}, your MindMetric analysis is ready 🧠`,
     html: `
       <!DOCTYPE html>
       <html>
       <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>${lang === 'es' ? 'Premium Activado' : 'Premium Activated'}</title>
+        <title>${lang === 'es' ? 'Tu análisis está listo' : 'Your analysis is ready'}</title>
       </head>
       <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f5;">
         <table role="presentation" style="width: 100%; border-collapse: collapse;">
           <tr>
             <td align="center" style="padding: 40px 20px;">
               <table role="presentation" style="max-width: 600px; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+
                 <!-- Header -->
                 <tr>
                   <td style="background: linear-gradient(135deg, #113240 0%, #07C59A 100%); padding: 40px 30px; text-align: center;">
                     <img src="https://www.mindmetric.io/images/MINDMETRIC/Logo_blanco.png" alt="MindMetric" style="height: 32px; width: auto; margin: 0 auto 20px auto; display: block;" />
-                    <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">
-                      🚀 ${lang === 'es' ? '¡Premium Activado!' : 'Premium Activated!'}
+                    <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 700;">
+                      ${lang === 'es' ? '¡Bienvenido a MindMetric!' : 'Welcome to MindMetric!'}
                     </h1>
                   </td>
                 </tr>
-                
+
                 <!-- Content -->
                 <tr>
                   <td style="padding: 40px 30px;">
-                    <h2 style="color: #113240; margin: 0 0 20px 0; font-size: 24px; font-weight: 600;">
-                      ${lang === 'es' ? 'Hola' : 'Hello'}, ${userName}! 👋
+                    <h2 style="color: #113240; margin: 0 0 16px 0; font-size: 22px; font-weight: 600;">
+                      ${lang === 'es' ? 'Hola' : 'Hi'}, ${userName} 👋
                     </h2>
-                    
-                    <p style="color: #4a5568; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+
+                    <p style="color: #4a5568; font-size: 16px; line-height: 1.7; margin: 0 0 30px 0;">
                       ${lang === 'es'
-                        ? '¡Tu periodo de prueba premium de 2 días ha comenzado! Ahora tienes acceso a todas las funciones avanzadas.'
-                        : 'Your 2-day premium trial period has started! You now have access to all advanced features.'}
+                        ? 'Tu análisis de inteligencia está listo. Ya tienes acceso completo a todos tus resultados y a tu dashboard personal.'
+                        : 'Your intelligence analysis is ready. You now have full access to all your results and your personal dashboard.'}
                     </p>
-                    
-                    <div style="background-color: #e6f5f5; border-left: 4px solid #07C59A; padding: 20px; margin: 30px 0; border-radius: 4px;">
-                      <h3 style="color: #07C59A; margin: 0 0 15px 0; font-size: 18px; font-weight: 600;">
-                        ✨ ${lang === 'es' ? '¿Qué puedes hacer ahora?' : 'What can you do now?'}
-                      </h3>
-                      <ul style="color: #2d3748; margin: 0; padding-left: 20px; line-height: 1.8;">
-                        <li>${lang === 'es' ? 'Tests ilimitados' : 'Unlimited tests'}</li>
-                        <li>${lang === 'es' ? 'Análisis comparativos detallados' : 'Detailed comparative analysis'}</li>
-                        <li>${lang === 'es' ? 'Seguimiento de progreso' : 'Progress tracking'}</li>
-                        <li>${lang === 'es' ? 'Historial completo de resultados' : 'Complete results history'}</li>
-                        <li>${lang === 'es' ? 'Exportación de datos' : 'Data export'}</li>
+
+                    ${iq ? `
+                    <!-- IQ Score -->
+                    <div style="background: linear-gradient(135deg, #113240 0%, #07C59A 100%); border-radius: 12px; padding: 32px; text-align: center; margin: 0 0 30px 0;">
+                      <p style="color: rgba(255,255,255,0.8); font-size: 14px; font-weight: 500; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 2px;">
+                        ${lang === 'es' ? 'Tu puntuación de CI' : 'Your IQ Score'}
+                      </p>
+                      <p style="color: #ffffff; font-size: 80px; font-weight: 800; margin: 0; line-height: 1;">
+                        ${iq}
+                      </p>
+                      <p style="color: rgba(255,255,255,0.7); font-size: 13px; margin: 12px 0 0 0;">
+                        ${lang === 'es' ? 'Cociente Intelectual' : 'Intelligence Quotient'}
+                      </p>
+                    </div>
+                    ` : ''}
+
+                    <!-- Features -->
+                    <div style="background-color: #f0fdf9; border-radius: 10px; padding: 24px; margin: 0 0 30px 0;">
+                      <p style="color: #113240; font-size: 15px; font-weight: 600; margin: 0 0 14px 0;">
+                        ${lang === 'es' ? '¿Qué incluye tu acceso?' : 'What\'s included in your access?'}
+                      </p>
+                      <ul style="color: #374151; font-size: 15px; margin: 0; padding-left: 0; list-style: none; line-height: 1;">
+                        ${['es', 'en'].includes(lang) ? `
+                        <li style="padding: 7px 0; border-bottom: 1px solid #d1fae5;">✅ ${lang === 'es' ? 'Análisis completo de CI con gráficas' : 'Complete IQ analysis with charts'}</li>
+                        <li style="padding: 7px 0; border-bottom: 1px solid #d1fae5;">✅ ${lang === 'es' ? 'Tests de personalidad, ansiedad, TDAH y más' : 'Personality, anxiety, ADHD tests and more'}</li>
+                        <li style="padding: 7px 0; border-bottom: 1px solid #d1fae5;">✅ ${lang === 'es' ? 'Certificado de inteligencia descargable' : 'Downloadable intelligence certificate'}</li>
+                        <li style="padding: 7px 0;">✅ ${lang === 'es' ? 'Historial completo de resultados' : 'Complete results history'}</li>
+                        ` : `
+                        <li style="padding: 7px 0; border-bottom: 1px solid #d1fae5;">✅ Análisis completo de CI con gráficas</li>
+                        <li style="padding: 7px 0; border-bottom: 1px solid #d1fae5;">✅ Tests de personalidad, ansiedad, TDAH y más</li>
+                        <li style="padding: 7px 0; border-bottom: 1px solid #d1fae5;">✅ Certificado de inteligencia descargable</li>
+                        <li style="padding: 7px 0;">✅ Historial completo de resultados</li>
+                        `}
                       </ul>
                     </div>
-                    
-                    <div style="background-color: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 20px; margin: 30px 0;">
-                      <p style="color: #856404; font-size: 16px; margin: 0 0 10px 0; font-weight: 600;">
-                        ⏰ ${lang === 'es' ? 'Tu trial termina' : 'Your trial ends'}
-                      </p>
-                      <p style="color: #856404; font-size: 18px; margin: 0; font-weight: 700;">
-                        ${trialEndDate}
-                      </p>
-                      <p style="color: #856404; font-size: 14px; margin: 10px 0 0 0; line-height: 1.6;">
-                        ${lang === 'es'
-                          ? 'Después se cobrará 19,99€/mes automáticamente. Puedes cancelar en cualquier momento antes de que termine el trial.'
-                          : 'After that, €19.99/month will be charged automatically. You can cancel anytime before the trial ends.'}
-                      </p>
-                    </div>
-                    
+
+                    <!-- CTA -->
                     <div style="text-align: center; margin: 30px 0;">
-                      <a href="https://mindmetric.io/${lang}/cuenta" style="display: inline-block; background: linear-gradient(135deg, #113240 0%, #07C59A 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 18px;">
-                        ${lang === 'es' ? 'Acceder a Mi Dashboard' : 'Access My Dashboard'}
+                      <a href="https://www.mindmetric.io/${lang}/cuenta"
+                         style="display: inline-block; background: linear-gradient(135deg, #113240 0%, #07C59A 100%); color: #ffffff; text-decoration: none; padding: 18px 48px; border-radius: 10px; font-weight: 700; font-size: 17px; letter-spacing: 0.3px;">
+                        ${lang === 'es' ? 'Ir a mi Dashboard' : 'Go to my Dashboard'}
                       </a>
                     </div>
-                    
-                    <p style="color: #718096; font-size: 14px; margin: 30px 0 0 0; line-height: 1.6;">
+
+                    <p style="color: #9ca3af; font-size: 13px; margin: 24px 0 0 0; line-height: 1.6; text-align: center;">
                       ${lang === 'es'
-                        ? '¿Necesitas ayuda? Responde a este email y te ayudaremos encantados.'
-                        : 'Need help? Reply to this email and we\'ll be happy to help.'}
+                        ? '¿Tienes alguna pregunta? Responde a este email y te ayudamos.'
+                        : 'Have any questions? Reply to this email and we\'ll help.'}
                     </p>
                   </td>
                 </tr>
-                
+
                 <!-- Footer -->
                 <tr>
-                  <td style="background-color: #f7fafc; padding: 30px; text-align: center; border-top: 1px solid #e2e8f0;">
-                    <p style="color: #718096; font-size: 12px; margin: 0 0 10px 0;">
+                  <td style="background-color: #f9fafb; padding: 24px 30px; text-align: center; border-top: 1px solid #e5e7eb;">
+                    <p style="color: #9ca3af; font-size: 12px; margin: 0 0 6px 0;">
                       © ${new Date().getFullYear()} MindMetric. ${lang === 'es' ? 'Todos los derechos reservados.' : 'All rights reserved.'}
                     </p>
-                    <p style="color: #718096; font-size: 12px; margin: 0;">
+                    <p style="color: #9ca3af; font-size: 12px; margin: 0;">
                       info@mindmetric.io
                     </p>
                   </td>
                 </tr>
+
               </table>
             </td>
           </tr>

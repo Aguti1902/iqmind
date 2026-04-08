@@ -132,7 +132,7 @@ export async function GET(request: NextRequest) {
 
         // Email de trial
         try {
-          const trialEmail = emailTemplates.trialStarted(email, userName, trialEndFormatted, lang)
+          const trialEmail = emailTemplates.trialStarted(email, userName, trialEndFormatted, lang, user.iq)
           await sendEmail(trialEmail)
           console.log('📧 [confirm-payment] Email de trial enviado')
         } catch (e) {
