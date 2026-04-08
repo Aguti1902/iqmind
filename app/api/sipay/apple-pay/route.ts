@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
     const trialEnd = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
     await db.updateUser(user.id, {
       subscriptionStatus: 'trial',
-      subscriptionId: tokenId,
+      subscriptionId: undefined,
       trialEndDate: trialEnd.toISOString(),
       accessUntil: trialEnd.toISOString(),
     })
