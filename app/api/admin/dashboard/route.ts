@@ -31,7 +31,7 @@ export async function GET() {
     const cancelledThisMonth = parseInt(stats.cancelled_this_month)
     const totalUsers = parseInt(stats.total_users)
 
-    const mrr = activeCount * 9.99
+    const mrr = activeCount * 19.99
     const totalTrials = trialCount + activeCount
     const conversionRate = totalTrials > 0 ? (activeCount / totalTrials) * 100 : 0
     const totalActiveAtStart = activeCount + cancelledThisMonth
@@ -46,7 +46,7 @@ export async function GET() {
 
     const recentTransactions = recentUsersResult.rows.map(row => ({
       id: row.id,
-      amount: row.subscription_status === 'trial' ? 0.50 : 9.99,
+      amount: row.subscription_status === 'trial' ? 0.50 : 19.99,
       currency: 'EUR',
       status: row.subscription_status === 'active' ? 'succeeded' : row.subscription_status,
       customer_email: row.email,
@@ -67,7 +67,7 @@ export async function GET() {
       customer_id: row.id,
       status: row.subscription_status,
       plan: 'MindMetric Premium',
-      amount: 9.99,
+      amount: 19.99,
       current_period_end: row.access_until || row.trial_end_date,
       trial_end: row.trial_end_date,
     }))

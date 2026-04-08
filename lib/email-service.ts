@@ -197,8 +197,8 @@ export const emailTemplates = {
                       </p>
                       <p style="color: #856404; font-size: 14px; margin: 10px 0 0 0; text-align: center; line-height: 1.6;">
                         ${lang === 'es'
-                          ? 'Después del trial, solo 9,99€/mes. Cancela cuando quieras.'
-                          : 'After the trial, only €9.99/month. Cancel anytime.'}
+                          ? 'Después del trial, solo 19,99€/mes. Cancela cuando quieras.'
+                          : 'After the trial, only €19.99/month. Cancel anytime.'}
                       </p>
                     </div>
                     
@@ -403,8 +403,8 @@ export const emailTemplates = {
                       </p>
                       <p style="color: #856404; font-size: 14px; margin: 10px 0 0 0; line-height: 1.6;">
                         ${lang === 'es'
-                          ? 'Después se cobrará 9,99€/mes automáticamente. Puedes cancelar en cualquier momento antes de que termine el trial.'
-                          : 'After that, €9.99/month will be charged automatically. You can cancel anytime before the trial ends.'}
+                          ? 'Después se cobrará 19,99€/mes automáticamente. Puedes cancelar en cualquier momento antes de que termine el trial.'
+                          : 'After that, €19.99/month will be charged automatically. You can cancel anytime before the trial ends.'}
                       </p>
                     </div>
                     
@@ -480,8 +480,8 @@ export const emailTemplates = {
                     
                     <p style="color: #4a5568; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
                       ${lang === 'es'
-                        ? 'Tu periodo de prueba premium termina MAÑANA. Si no cancelas antes, se cobrará automáticamente 9,99€/mes.'
-                        : 'Your premium trial period ends TOMORROW. If you don\'t cancel before, €9.99/month will be charged automatically.'}
+                        ? 'Tu periodo de prueba premium termina MAÑANA. Si no cancelas antes, se cobrará automáticamente 19,99€/mes.'
+                        : 'Your premium trial period ends TOMORROW. If you don\'t cancel before, €19.99/month will be charged automatically.'}
                     </p>
                     
                     <div style="background-color: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 20px; margin: 30px 0;">
@@ -489,7 +489,7 @@ export const emailTemplates = {
                         ${lang === 'es' ? '💳 Próximo cobro' : '💳 Next charge'}
                       </p>
                       <p style="color: #856404; font-size: 24px; margin: 0; font-weight: 700;">
-                        9,99€
+                        19,99€
                       </p>
                       <p style="color: #856404; font-size: 14px; margin: 10px 0 0 0; line-height: 1.6;">
                         ${lang === 'es'
@@ -602,7 +602,7 @@ export const emailTemplates = {
                     <div style="background-color: #e6f5f5; border-left: 4px solid #07C59A; padding: 20px; margin: 30px 0; border-radius: 4px;">
                       <p style="color: #07C59A; font-size: 14px; margin: 0; line-height: 1.6;">
                         <strong>${lang === 'es' ? 'Próximo cobro:' : 'Next charge:'}</strong><br>
-                        9,99€ ${lang === 'es' ? 'el próximo mes' : 'next month'}<br>
+                        19,99€ ${lang === 'es' ? 'el próximo mes' : 'next month'}<br>
                         ${lang === 'es' ? 'Puedes cancelar en cualquier momento desde tu cuenta.' : 'You can cancel anytime from your account.'}
                       </p>
                     </div>
@@ -773,8 +773,8 @@ export const emailTemplates = {
                     
                     <p style="color: #4a5568; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
                       ${lang === 'es'
-                        ? 'Lamentablemente, no pudimos procesar tu pago mensual de 9,99€. Esto puede deberse a fondos insuficientes, tarjeta vencida o límite excedido.'
-                        : 'Unfortunately, we could not process your monthly payment of €9.99. This may be due to insufficient funds, expired card, or limit exceeded.'}
+                        ? 'Lamentablemente, no pudimos procesar tu pago mensual de 19,99€. Esto puede deberse a fondos insuficientes, tarjeta vencida o límite excedido.'
+                        : 'Unfortunately, we could not process your monthly payment of €19.99. This may be due to insufficient funds, expired card, or limit exceeded.'}
                     </p>
                     
                     ${attempt >= 3 ? `

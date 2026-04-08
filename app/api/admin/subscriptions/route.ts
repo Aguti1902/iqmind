@@ -48,7 +48,7 @@ export async function GET(req: NextRequest) {
       customer_name: row.user_name || 'N/A',
       status: row.subscription_status,
       has_card_token: !!row.subscription_id,
-      amount: 9.99,
+      amount: 19.99,
       currency: 'EUR',
       trial_end: row.trial_end_date,
       access_until: row.access_until,

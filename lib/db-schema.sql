@@ -66,7 +66,7 @@ INSERT INTO site_config (key, value, description) VALUES
   ('stripe_live_price_id', '', 'Price ID del producto (live)'),
   
   -- Configuración de precios y suscripción
-  ('subscription_price', '9.99', 'Precio de la suscripción mensual'),
+  ('subscription_price', '19.99', 'Precio de la suscripción mensual'),
   ('trial_days', '30', 'Días de prueba gratuita'),
   ('initial_payment', '1.00', 'Pago inicial para acceder al resultado (2 × €0.50)'),
   ('admin_emails', '', 'Emails de administradores separados por coma')

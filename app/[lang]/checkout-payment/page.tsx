@@ -318,7 +318,7 @@ function CheckoutPaymentContent() {
                     Desbloquea tu Resultado Completo
                   </h3>
                   <div className="flex items-baseline justify-center gap-2 mb-4">
-                    <span className="text-gray-500 line-through text-2xl">19,99€</span>
+                    <span className="text-gray-500 line-through text-2xl">29,99€</span>
                     <span className="text-6xl font-bold text-[#07C59A]">0,50€</span>
                   </div>
                   <div className="inline-block bg-green-100 text-green-800 px-4 py-2 rounded-full font-semibold mb-4">
@@ -335,7 +335,7 @@ function CheckoutPaymentContent() {
                     ✅ Acceso completo a todos los tests<br />
                     ✅ Análisis detallado y comparativas<br />
                     ✅ Certificado descargable<br />
-                    ✅ Después solo <strong>9,99€/mes</strong>
+                    ✅ Después solo <strong>19,99€/mes</strong>
                   </p>
                   <p className="text-xs text-blue-700 mt-3">
                     Cancela en cualquier momento durante el trial
@@ -486,7 +486,7 @@ function CheckoutPaymentContent() {
                         <div className="flex justify-between text-sm">
                           <div>
                             <span className="text-gray-700 block">Trial Premium (2 días)</span>
-                            <span className="text-xs text-gray-500">Después 9,99€/mes</span>
+                            <span className="text-xs text-gray-500">Después 19,99€/mes</span>
                           </div>
                           <span className="font-semibold text-green-600">GRATIS</span>
                         </div>

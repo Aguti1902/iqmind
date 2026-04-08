@@ -142,15 +142,15 @@ export default function SubscriptionCancelFlow({
                   <div className="text-center p-3 bg-white rounded-lg border border-[#07C59A]/30">
                     <p className="text-xs text-gray-600 mb-1">Plan Quincenal</p>
                     <p className="text-lg font-bold text-[#113240]">
-                      <span className="line-through text-gray-400 text-sm">9,99€</span> 
+                      <span className="line-through text-gray-400 text-sm">19,99€</span> 
                       <span className="text-[#07C59A] ml-1">4,99€</span>
                     </p>
                   </div>
                   <div className="text-center p-3 bg-white rounded-lg border border-[#07C59A]/30">
                     <p className="text-xs text-gray-600 mb-1">Plan Mensual</p>
                     <p className="text-lg font-bold text-[#113240]">
-                      <span className="line-through text-gray-400 text-sm">19,99€</span> 
-                      <span className="text-[#07C59A] ml-1">9,99€</span>
+                      <span className="line-through text-gray-400 text-sm">29,99€</span>
+                      <span className="text-[#07C59A] ml-1">19,99€</span>
                     </p>
                   </div>
                 </div>
