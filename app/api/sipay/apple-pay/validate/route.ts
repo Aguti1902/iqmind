@@ -31,11 +31,22 @@ export async function POST(request: NextRequest) {
       displayName: 'MindMetric',
     })
 
-    console.log('✅ Sesión Apple Pay validada, request_id:', response.request_id)
+    // Sipay puede devolver request_id a nivel raíz O dentro de payload
+    const requestId = response.request_id || response.payload?.request_id || ''
+
+    console.log('✅ Sesión Apple Pay validada. request_id raíz:', response.request_id, '| request_id payload:', response.payload?.request_id, '| usado:', requestId)
+    console.log('📥 Sipay session respuesta completa:', JSON.stringify({
+      type: response.type,
+      code: response.code,
+      uuid: response.uuid,
+      request_id: response.request_id,
+      payload_keys: response.payload ? Object.keys(response.payload) : [],
+      payload_request_id: response.payload?.request_id,
+    }))
 
     return NextResponse.json({
       merchantSession: response.payload,
-      request_id: response.request_id,
+      request_id: requestId,
     })
 
   } catch (error: any) {
