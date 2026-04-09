@@ -98,9 +98,20 @@ export class SipayClient {
     })
 
     const result = await response.json()
-    console.log('📥 Sipay response:', result)
+    // Log completo siempre — necesario para trazas de soporte
+    console.log('📥 Sipay response COMPLETO:', JSON.stringify(result))
 
     if (result.type === 'error') {
+      console.error('❌ Sipay error completo para soporte IT:', JSON.stringify({
+        endpoint,
+        type: result.type,
+        code: result.code,
+        detail: result.detail,
+        description: result.description,
+        uuid: result.uuid,
+        request_id: result.request_id,
+        payload: result.payload,
+      }))
       throw new Error(`Sipay error: ${result.detail} - ${result.description}`)
     }
 
