@@ -83,19 +83,30 @@ export async function POST(request: NextRequest) {
     const sipay = getSipayClient()
     const amountInCents = Math.round(amount * 100)
 
+    console.log('📤 [apple-pay] TRACE REQUEST — payload enviado a Sipay:', JSON.stringify({
+      amount: amountInCents,
+      currency: 'EUR',
+      requestId: requestId || '(vacío)',
+      applePayToken_keys: applePayToken ? Object.keys(applePayToken) : [],
+      applePayToken_hasPaymentData: !!applePayToken?.paymentData,
+      applePayToken_paymentData_keys: applePayToken?.paymentData ? Object.keys(applePayToken.paymentData) : [],
+      applePayToken_paymentMethod: applePayToken?.paymentMethod || null,
+      applePayToken_transactionIdentifier: applePayToken?.transactionIdentifier?.slice(0, 20) + '...' || null,
+    }))
+
     const response = await sipay.authorizeApplePay({
       amount: amountInCents,
       currency: 'EUR',
       applePayToken,
       requestId: requestId || '',
-      // tokenId omitido — la tokenización debe estar activada en Sipay antes de usarla
     })
 
-    console.log('📡 Respuesta Sipay Apple Pay:', JSON.stringify(response).slice(0, 300))
+    console.log('📥 [apple-pay] TRACE RESPONSE — respuesta completa de Sipay:', JSON.stringify(response))
+    console.log('📥 [apple-pay] request_id respuesta:', response?.request_id || response?.uuid || '(no devuelto)')
 
     const payloadCode = response.payload?.code
     if (payloadCode !== '0' && payloadCode !== 0) {
-      console.error('❌ Apple Pay pago denegado:', response.payload)
+      console.error('❌ [apple-pay] TRACE ERROR — pago denegado. Code:', payloadCode, '| Detail:', response.detail, '| Description:', response.description, '| Payload:', JSON.stringify(response.payload))
       return NextResponse.json(
         { error: response.payload?.description || response.description || 'Pago denegado' },
         { status: 400 }
