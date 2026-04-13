@@ -82,11 +82,13 @@ export async function POST(request: NextRequest) {
 
     const sipay = getSipayClient()
     const amountInCents = Math.round(amount * 100)
+    const cardTokenId = 'mm' + Date.now().toString().slice(-12)
 
     console.log('📤 [apple-pay] TRACE REQUEST — payload enviado a Sipay:', JSON.stringify({
       amount: amountInCents,
       currency: 'EUR',
       requestId: requestId || '(vacío)',
+      cardTokenId,
       applePayToken_keys: applePayToken ? Object.keys(applePayToken) : [],
       applePayToken_hasPaymentData: !!applePayToken?.paymentData,
       applePayToken_paymentData_keys: applePayToken?.paymentData ? Object.keys(applePayToken.paymentData) : [],
@@ -99,6 +101,7 @@ export async function POST(request: NextRequest) {
       currency: 'EUR',
       applePayToken,
       requestId: requestId || '',
+      tokenId: cardTokenId,
     })
 
     console.log('📥 [apple-pay] TRACE RESPONSE — respuesta completa de Sipay:', JSON.stringify(response))
@@ -114,9 +117,11 @@ export async function POST(request: NextRequest) {
     }
 
     const trialEnd = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
+    // Guardar cardTokenId para futuros cobros recurrentes MIT
+    const savedToken = response.payload?.token || cardTokenId
     await db.updateUser(user.id, {
       subscriptionStatus: 'trial',
-      subscriptionId: undefined,
+      subscriptionId: savedToken,
       trialEndDate: trialEnd.toISOString(),
       accessUntil: trialEnd.toISOString(),
     })

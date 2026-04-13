@@ -79,12 +79,13 @@ export async function POST(request: NextRequest) {
 
     const sipay = getSipayClient()
     const amountInCents = Math.round(amount * 100)
+    const cardTokenId = 'mm' + Date.now().toString().slice(-12)
 
     const response = await sipay.authorizeGooglePay({
       amount: amountInCents,
       currency: 'EUR',
       googlePayToken,
-      // tokenId omitido — la tokenización debe estar activada en Sipay antes de usarla
+      tokenId: cardTokenId,
     })
 
     console.log('📡 Respuesta Sipay Google Pay:', JSON.stringify(response).slice(0, 300))
@@ -99,9 +100,10 @@ export async function POST(request: NextRequest) {
     }
 
     const trialEnd = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
+    const savedToken = response.payload?.token || cardTokenId
     await db.updateUser(user.id, {
       subscriptionStatus: 'trial',
-      subscriptionId: undefined,
+      subscriptionId: savedToken,
       trialEndDate: trialEnd.toISOString(),
       accessUntil: trialEnd.toISOString(),
     })
