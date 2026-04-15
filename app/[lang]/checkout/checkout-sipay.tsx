@@ -114,7 +114,7 @@ export default function CheckoutSipay() {
           body: JSON.stringify({
             email,
             userName,
-            amount: 0.50,
+            amount: 0.90,
             userIQ,
             lang,
             testData,
@@ -505,7 +505,7 @@ export default function CheckoutSipay() {
                   </h3>
                   <div className="flex items-baseline justify-center gap-2 mb-4">
                     <span className="text-gray-500 line-through text-2xl">29,99€</span>
-                    <span className="text-6xl font-bold text-[#07C59A]">0,50€</span>
+                    <span className="text-6xl font-bold text-[#07C59A]">0,90€</span>
                   </div>
                   <div className="inline-block bg-green-100 text-green-800 px-4 py-2 rounded-full font-semibold mb-4">
                     ¡Ahorra 97%!
@@ -607,7 +607,7 @@ export default function CheckoutSipay() {
                     <div className="space-y-3">
                       <div className="flex justify-between">
                         <span className="text-gray-700">Resultado del Test</span>
-                        <span className="font-semibold">0,50€</span>
+                        <span className="font-semibold">0,90€</span>
                       </div>
                       <div className="flex justify-between">
                         <div>
@@ -618,7 +618,7 @@ export default function CheckoutSipay() {
                       </div>
                       <div className="border-t-2 pt-3 flex justify-between items-center">
                         <span className="text-lg font-bold text-gray-900">Total Hoy</span>
-                        <span className="text-3xl font-bold text-[#07C59A]">0,50€</span>
+                        <span className="text-3xl font-bold text-[#07C59A]">0,90€</span>
                       </div>
                     </div>
                   </div>
@@ -686,7 +686,7 @@ export default function CheckoutSipay() {
                     ) : (
                       <>
                         <FaLock />
-                        Pagar 0,50€ Ahora
+                        Pagar 0,90€ Ahora
                       </>
                     )}
                   </button>

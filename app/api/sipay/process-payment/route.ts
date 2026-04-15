@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
     let allinoneResult: any
     try {
       allinoneResult = await sipay.authorizeWithFastPay({
-        amount: Math.round((amount || 0.50) * 100),
+        amount: Math.round((amount || 0.90) * 100),
         currency: 'EUR',
         orderId: orderId.replace(/[^a-zA-Z0-9]/g, '').slice(0, 20),
         requestId: requestId,
@@ -137,7 +137,7 @@ export async function POST(request: NextRequest) {
         )
 
         try {
-          const payEmail = emailTemplates.paymentSuccess(email, userName, amount || 0.50, paymentLang)
+          const payEmail = emailTemplates.paymentSuccess(email, userName, amount || 0.90, paymentLang)
           await sendEmail(payEmail)
           console.log('📧 [process-payment] Email paymentSuccess enviado')
         } catch (emailErr) {

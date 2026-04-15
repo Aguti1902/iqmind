@@ -43,7 +43,7 @@ function SipayResultContent() {
           orderId,
           requestId,
           email,
-          amount: 0.50, // Monto fijo del pago inicial
+          amount: 0.90, // Monto fijo del pago inicial
           lang,
         }),
       })

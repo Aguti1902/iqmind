@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
       // Precios y configuración
       subscription_price: dbConfig.subscription_price || '9.99',
       trial_days: dbConfig.trial_days || '15',
-      initial_payment: dbConfig.initial_payment || '0.50',
+      initial_payment: dbConfig.initial_payment || '0.90',
       admin_emails: dbConfig.admin_emails || ''
     }
 

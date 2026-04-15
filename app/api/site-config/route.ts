@@ -16,7 +16,7 @@ export async function GET() {
       payment_mode: config.payment_mode || 'test',
       trial_days: parseInt(config.trial_days || '15'),
       subscription_price: parseFloat(config.subscription_price || '19.99'),
-      initial_payment: parseFloat(config.initial_payment || '0.50'),
+      initial_payment: parseFloat(config.initial_payment || '0.90'),
       stripe_mode: config.stripe_mode || 'production' // Mantener por compatibilidad
     }
     
@@ -37,7 +37,7 @@ export async function GET() {
         payment_mode: 'test',
         trial_days: 15,
         subscription_price: 19.99,
-        initial_payment: 0.50,
+        initial_payment: 0.90,
         stripe_mode: 'production'
       },
       error: error.message

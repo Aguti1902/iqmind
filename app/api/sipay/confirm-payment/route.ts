@@ -122,7 +122,7 @@ export async function GET(request: NextRequest) {
               testEmail = emailTemplates.eqTestResult(email, userName, lang)
               break
             default:
-              testEmail = emailTemplates.paymentSuccess(email, userName, 0.50, lang)
+              testEmail = emailTemplates.paymentSuccess(email, userName, 0.90, lang)
           }
           await sendEmail(testEmail)
           console.log(`📧 [confirm-payment] Email de test ${testType} enviado`)

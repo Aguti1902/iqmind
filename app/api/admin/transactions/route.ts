@@ -50,7 +50,7 @@ export async function GET(req: NextRequest) {
 
     const formattedTransactions = result.rows.map(row => ({
       id: row.id,
-      amount: row.subscription_status === 'trial' ? 0.50 : 19.99,
+      amount: row.subscription_status === 'trial' ? 0.90 : 19.99,
       currency: 'EUR',
       status: row.subscription_status,
       customer_email: row.email,

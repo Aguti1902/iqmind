@@ -119,7 +119,7 @@ function CheckoutPaymentContent() {
       body: JSON.stringify({
         email: email,
         userName: email.split('@')[0],
-        amount: 0.50,
+        amount: 0.90,
         userIQ: localStorage.getItem('userIQ') || 100,
         lang: lang,
         testData: testData,
@@ -157,7 +157,7 @@ function CheckoutPaymentContent() {
           orderId: paymentData.orderId,
           requestId: response.request_id,
           email: email,
-          amount: 0.50,
+          amount: 0.90,
           lang: lang,
           testType: testType,
         }),
@@ -214,7 +214,7 @@ function CheckoutPaymentContent() {
           googlePayToken: token,
           email,
           userName: email.split('@')[0],
-          amount: 0.50,
+          amount: 0.90,
           userIQ: localStorage.getItem('userIQ') || 100,
           lang,
           testType,
@@ -253,7 +253,7 @@ function CheckoutPaymentContent() {
           requestId: requestId || '',
           email: effectiveEmail,
           userName: effectiveEmail.split('@')[0],
-          amount: 0.50,
+          amount: 0.90,
           userIQ: localStorage.getItem('userIQ') || 100,
           lang,
           testType,
@@ -319,7 +319,7 @@ function CheckoutPaymentContent() {
                   </h3>
                   <div className="flex items-baseline justify-center gap-2 mb-4">
                     <span className="text-gray-500 line-through text-2xl">29,99€</span>
-                    <span className="text-6xl font-bold text-[#07C59A]">0,50€</span>
+                    <span className="text-6xl font-bold text-[#07C59A]">0,90€</span>
                   </div>
                   <div className="inline-block bg-green-100 text-green-800 px-4 py-2 rounded-full font-semibold mb-4">
                     ¡Ahorra 97%!
@@ -481,7 +481,7 @@ function CheckoutPaymentContent() {
                       <div className="space-y-2">
                         <div className="flex justify-between text-sm">
                           <span className="text-gray-700">Resultado del Test</span>
-                          <span className="font-semibold">0,50€</span>
+                          <span className="font-semibold">0,90€</span>
                         </div>
                         <div className="flex justify-between text-sm">
                           <div>
@@ -492,7 +492,7 @@ function CheckoutPaymentContent() {
                         </div>
                         <div className="border-t-2 pt-2 flex justify-between items-center">
                           <span className="font-bold text-gray-900">Total Hoy</span>
-                          <span className="text-2xl font-bold text-[#07C59A]">0,50€</span>
+                          <span className="text-2xl font-bold text-[#07C59A]">0,90€</span>
                         </div>
                       </div>
                     </div>
@@ -506,7 +506,7 @@ function CheckoutPaymentContent() {
                       <div className="space-y-2">
                         {/* Google Pay */}
                         <GooglePayButton
-                          amount={0.50}
+                          amount={0.90}
                           currency="EUR"
                           onProcessPayment={handleGooglePayProcess}
                           onError={handlePaymentError}
@@ -516,7 +516,7 @@ function CheckoutPaymentContent() {
 
                         {/* Apple Pay */}
                         <ApplePayButton
-                          amount={0.50}
+                          amount={0.90}
                           currency="EUR"
                           onProcessPayment={handleApplePayProcess}
                           onError={handlePaymentError}

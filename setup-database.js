@@ -104,7 +104,7 @@ async function setupDatabase() {
         ('stripe_live_price_id_mensual', '', 'Price ID mensual (live)'),
         ('subscription_price', '9.99', 'Precio de la suscripción mensual'),
         ('trial_days', '15', 'Días de prueba gratuita'),
-        ('initial_payment', '0.50', 'Pago único para acceder al resultado del test'),
+        ('initial_payment', '0.90', 'Pago único para acceder al resultado del test'),
         ('admin_emails', '', 'Emails de administradores separados por coma')
       ON CONFLICT (key) DO NOTHING;
     `);

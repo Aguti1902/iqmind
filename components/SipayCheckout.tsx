@@ -9,7 +9,7 @@ const SIPAY_SCRIPT_URL = `https://${SIPAY_ENV}.sipay.es/fpay/v1/static/bundle/fa
 
 interface SipayCheckoutProps {
   email: string
-  amount: number // En céntimos (ej: 50 = 0.50€)
+  amount: number // En céntimos (ej: 50 = 0.90€)
   currency?: string
   merchantKey: string
   lang?: string

@@ -56,7 +56,7 @@ export default function TerminosPage() {
               </p>
               <ul className="list-disc pl-6 space-y-2">
                 <li>Free completion of the 20-question test</li>
-                <li>Access to complete results through a payment of €0.50</li>
+                <li>Access to complete results through a payment of €0.90</li>
                 <li>Detailed analysis and downloadable certificate</li>
                 <li>2-day premium trial with subsequent €19.99/month subscription</li>
               </ul>
@@ -67,12 +67,12 @@ export default function TerminosPage() {
               
               <h3 className="text-xl font-semibold text-gray-900 mb-2">3.1 Initial Payment</h3>
               <p>
-                Access to the complete test results requires a one-time payment of <strong>€0.50</strong> (VAT included).
+                Access to the complete test results requires a one-time payment of <strong>€0.90</strong> (VAT included).
               </p>
 
               <h3 className="text-xl font-semibold text-gray-900 mb-2">3.2 Premium Subscription</h3>
               <p>
-                Upon making the initial €0.50 payment, a <strong>2-day free premium trial</strong> is automatically activated. 
+                Upon making the initial €0.90 payment, a <strong>2-day free premium trial</strong> is automatically activated. 
                 If you do not cancel before the 2 days end, you will be automatically charged <strong>€19.99/month</strong> 
                 for the continuing premium subscription.
               </p>
@@ -177,7 +177,7 @@ export default function TerminosPage() {
             <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-6 mt-8">
               <h3 className="font-bold text-gray-900 mb-2">⚠️ Important Summary:</h3>
               <ul className="space-y-2 text-sm">
-                <li>• Initial payment: €0.50 to access your results</li>
+                <li>• Initial payment: €0.90 to access your results</li>
                 <li>• Automatically activates a 2-day premium trial (free)</li>
                 <li>• After 2 days: €19.99/month automatically charged</li>
                 <li>• You can cancel anytime during the trial to avoid monthly charges</li>
