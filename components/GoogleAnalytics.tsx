@@ -5,6 +5,7 @@ import Script from 'next/script'
 const GTM_ID = 'GTM-N79X6BWZ'
 const GA_MEASUREMENT_ID = 'G-ETQT995RPQ'
 const GOOGLE_ADS_ID = 'AW-17232820139'
+const GOOGLE_ADS_ID_2 = 'AW-17957420237'
 
 export default function GoogleAnalytics() {
   return (
@@ -31,11 +32,9 @@ export default function GoogleAnalytics() {
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
           
-          // Google Analytics
           gtag('config', '${GA_MEASUREMENT_ID}');
-          
-          // Google Ads
           gtag('config', '${GOOGLE_ADS_ID}');
+          gtag('config', '${GOOGLE_ADS_ID_2}');
         `}
       </Script>
     </>
