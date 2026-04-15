@@ -46,7 +46,7 @@ export default function DepressionResultsPage() {
     // Tracking conversión Google Ads + Analytics — solo una vez por sesión
     if (typeof window !== 'undefined') {
       const txId = localStorage.getItem('transactionId') || ''
-      const testName = path.includes('/tests/') ? path.split('/tests/')[1].split('/')[0] : 'test'
+      const testName = window.location.pathname.includes('/tests/') ? window.location.pathname.split('/tests/')[1].split('/')[0] : 'test'
       const convKey = 'conversion_fired_' + (txId || testName)
       if (!sessionStorage.getItem(convKey)) {
         sessionStorage.setItem(convKey, '1')
