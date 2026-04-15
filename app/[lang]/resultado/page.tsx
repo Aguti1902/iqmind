@@ -77,29 +77,27 @@ export default function ResultadoPage() {
     setUserName(name)
     setIsLoading(false)
 
-    // Enviar evento de conversión a analytics
-    if (typeof window !== 'undefined' && (window as any).gtag) {
-      // Evento de compra general para Google Analytics
-      ;(window as any).gtag('event', 'purchase', {
-        transaction_id: localStorage.getItem('transactionId'),
-        value: 0.50,
-        currency: 'EUR'
-      })
-      
-      // Evento de conversión para Google Ads
-      ;(window as any).gtag('event', 'conversion', {
-        'send_to': 'AW-17232820139/qMCRCP_NnK4bEKvvn5lA',
-        'value': 0.50,
-        'currency': 'EUR',
-        'transaction_id': localStorage.getItem('transactionId') || ''
-      })
-    }
-
-    if (typeof window !== 'undefined' && (window as any).fbq) {
-      ;(window as any).fbq('track', 'Purchase', {
-        value: 0.50,
-        currency: 'EUR'
-      })
+    // Enviar evento de conversión SOLO la primera vez (evitar duplicados en revisitas)
+    const txId = localStorage.getItem('transactionId') || ''
+    const conversionKey = `conversion_fired_${txId || 'iq'}`
+    if (typeof window !== 'undefined' && !sessionStorage.getItem(conversionKey)) {
+      sessionStorage.setItem(conversionKey, '1')
+      if ((window as any).gtag) {
+        ;(window as any).gtag('event', 'purchase', {
+          transaction_id: txId,
+          value: 0.50,
+          currency: 'EUR'
+        })
+        ;(window as any).gtag('event', 'conversion', {
+          'send_to': 'AW-17232820139/qMCRCP_NnK4bEKvvn5lA',
+          'value': 0.50,
+          'currency': 'EUR',
+          'transaction_id': txId,
+        })
+      }
+      if ((window as any).fbq) {
+        ;(window as any).fbq('track', 'Purchase', { value: 0.50, currency: 'EUR' })
+      }
     }
   }, [router, lang])
 

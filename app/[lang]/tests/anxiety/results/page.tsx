@@ -43,18 +43,23 @@ export default function AnxietyResultsPage() {
     }
     setLoading(false)
 
-    // Tracking conversión Google Ads + Analytics
+    // Tracking conversión Google Ads + Analytics — solo una vez por sesión
     if (typeof window !== 'undefined') {
       const txId = localStorage.getItem('transactionId') || ''
-      if ((window as any).gtag) {
-        ;(window as any).gtag('event', 'purchase', { transaction_id: txId, value: 0.50, currency: 'EUR' })
-        ;(window as any).gtag('event', 'conversion', {
-          send_to: 'AW-17232820139/qMCRCP_NnK4bEKvvn5lA',
-          value: 0.50, currency: 'EUR', transaction_id: txId,
-        })
-      }
-      if ((window as any).fbq) {
-        ;(window as any).fbq('track', 'Purchase', { value: 0.50, currency: 'EUR' })
+      const testName = path.includes('/tests/') ? path.split('/tests/')[1].split('/')[0] : 'test'
+      const convKey = 'conversion_fired_' + (txId || testName)
+      if (!sessionStorage.getItem(convKey)) {
+        sessionStorage.setItem(convKey, '1')
+        if ((window as any).gtag) {
+          ;(window as any).gtag('event', 'purchase', { transaction_id: txId, value: 0.50, currency: 'EUR' })
+          ;(window as any).gtag('event', 'conversion', {
+            send_to: 'AW-17232820139/qMCRCP_NnK4bEKvvn5lA',
+            value: 0.50, currency: 'EUR', transaction_id: txId,
+          })
+        }
+        if ((window as any).fbq) {
+          ;(window as any).fbq('track', 'Purchase', { value: 0.50, currency: 'EUR' })
+        }
       }
     }
   }, [router, lang])
