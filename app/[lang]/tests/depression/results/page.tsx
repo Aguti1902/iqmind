@@ -42,6 +42,21 @@ export default function DepressionResultsPage() {
       router.push(`/${lang}/tests`)
     }
     setLoading(false)
+
+    // Tracking conversión Google Ads + Analytics
+    if (typeof window !== 'undefined') {
+      const txId = localStorage.getItem('transactionId') || ''
+      if ((window as any).gtag) {
+        ;(window as any).gtag('event', 'purchase', { transaction_id: txId, value: 0.50, currency: 'EUR' })
+        ;(window as any).gtag('event', 'conversion', {
+          send_to: 'AW-17232820139/qMCRCP_NnK4bEKvvn5lA',
+          value: 0.50, currency: 'EUR', transaction_id: txId,
+        })
+      }
+      if ((window as any).fbq) {
+        ;(window as any).fbq('track', 'Purchase', { value: 0.50, currency: 'EUR' })
+      }
+    }
   }, [router, lang])
 
   if (loading || !results) {
