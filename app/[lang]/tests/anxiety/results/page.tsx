@@ -43,13 +43,11 @@ export default function AnxietyResultsPage() {
     }
     setLoading(false)
 
-    // Tracking conversión Google Ads + Analytics — solo una vez por sesión
+    // Disparar conversion SOLO si venimos del pago real (?payment=success)
     if (typeof window !== 'undefined') {
-      const txId = localStorage.getItem('transactionId') || ''
-      const testName = window.location.pathname.includes('/tests/') ? window.location.pathname.split('/tests/')[1].split('/')[0] : 'test'
-      const convKey = 'conversion_fired_' + (txId || testName)
-      if (!sessionStorage.getItem(convKey)) {
-        sessionStorage.setItem(convKey, '1')
+      const urlParams = new URLSearchParams(window.location.search)
+      if (urlParams.get('payment') === 'success') {
+        const txId = localStorage.getItem('transactionId') || ''
         if ((window as any).gtag) {
           ;(window as any).gtag('event', 'purchase', { transaction_id: txId, value: 0.90, currency: 'EUR' })
           ;(window as any).gtag('event', 'conversion', {

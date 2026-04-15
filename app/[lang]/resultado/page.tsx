@@ -77,26 +77,21 @@ export default function ResultadoPage() {
     setUserName(name)
     setIsLoading(false)
 
-    // Enviar evento de conversión SOLO la primera vez (evitar duplicados en revisitas)
-    const txId = localStorage.getItem('transactionId') || ''
-    const conversionKey = `conversion_fired_${txId || 'iq'}`
-    if (typeof window !== 'undefined' && !sessionStorage.getItem(conversionKey)) {
-      sessionStorage.setItem(conversionKey, '1')
-      if ((window as any).gtag) {
-        ;(window as any).gtag('event', 'purchase', {
-          transaction_id: txId,
-          value: 0.90,
-          currency: 'EUR'
-        })
-        ;(window as any).gtag('event', 'conversion', {
-          'send_to': 'AW-17232820139/qMCRCP_NnK4bEKvvn5lA',
-          'value': 0.90,
-          'currency': 'EUR',
-          'transaction_id': txId,
-        })
-      }
-      if ((window as any).fbq) {
-        ;(window as any).fbq('track', 'Purchase', { value: 0.90, currency: 'EUR' })
+    // Disparar conversión SOLO si venimos del pago real (?payment=success)
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search)
+      if (urlParams.get('payment') === 'success') {
+        const txId = localStorage.getItem('transactionId') || ''
+        if ((window as any).gtag) {
+          ;(window as any).gtag('event', 'purchase', { transaction_id: txId, value: 0.90, currency: 'EUR' })
+          ;(window as any).gtag('event', 'conversion', {
+            'send_to': 'AW-17232820139/qMCRCP_NnK4bEKvvn5lA',
+            'value': 0.90, 'currency': 'EUR', 'transaction_id': txId,
+          })
+        }
+        if ((window as any).fbq) {
+          ;(window as any).fbq('track', 'Purchase', { value: 0.90, currency: 'EUR' })
+        }
       }
     }
   }, [router, lang])
