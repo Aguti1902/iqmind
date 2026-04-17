@@ -58,6 +58,13 @@ export default function AnxietyResultsPage() {
         if ((window as any).fbq) {
           ;(window as any).fbq('track', 'Purchase', { value: 0.90, currency: 'EUR' })
         }
+        // COMPRA 17 DEL4 — nuevo tag Google Ads
+        ;(window as any).gtag('event', 'conversion', {
+          send_to: 'AW-17957420237/arK9CNCu6p0cEM354fJC',
+          value: 0.90,
+          currency: 'EUR',
+          transaction_id: txId,
+        })
       }
     }
   }, [router, lang])
