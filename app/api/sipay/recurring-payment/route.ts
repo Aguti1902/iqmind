@@ -69,10 +69,22 @@ export async function POST(request: NextRequest) {
       mitReason: 'R',
     })
 
-    console.log('📡 Respuesta de Sipay (recurrente):', JSON.stringify(response))
+    console.log('📡 [recurring] TRAZA COMPLETA Sipay:', JSON.stringify({
+      email,
+      cardToken_preview: cardToken?.slice(0, 15) + '...',
+      orderId,
+      amount: amountInCents,
+      response_type: response.type,
+      response_code: response.code,
+      response_detail: response.detail,
+      response_description: response.description,
+      response_uuid: response.uuid,
+      response_request_id: response.request_id,
+      payload: response.payload,
+    }))
 
     if (response.type !== 'success') {
-      console.error('❌ Error en pago recurrente:', response.detail, response.description)
+      console.error('❌ [recurring] PARA SIPAY SUPPORT — uuid:', response.uuid, '| request_id:', response.request_id, '| token_preview:', cardToken?.slice(0, 15), '| error:', response.detail)
 
       const now = new Date()
       const originalDueDate = user.trialEndDate
