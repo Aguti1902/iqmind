@@ -61,6 +61,7 @@ export async function GET(request: NextRequest) {
     const sipay = getSipayClient()
     let transactionId: string | null = null
     let cardToken: string | null = null
+    let cofId: string | null = null
     let confirmSuccessful = false
 
     try {
@@ -72,7 +73,7 @@ export async function GET(request: NextRequest) {
       // Prioridad: 1) tokenId de la URL (el que enviamos a Sipay), 2) lo que Sipay devuelva
       cardToken = urlCardTokenId || confirmResult?.payload?.token || confirmResult?.payload?.card_token || null
       // cof_id: obligatorio para futuros cobros MIT bajo PSD2 — guardar junto al token
-      const cofId = confirmResult?.payload?.cof_id || null
+      cofId = confirmResult?.payload?.cof_id || null
       confirmSuccessful = true
 
       console.log('✅ [confirm-payment] Pago CONFIRMADO! transaction_id:', transactionId, 'cardToken:', cardToken, 'cof_id:', cofId, '(fuente:', urlCardTokenId ? 'URL' : 'Sipay response', ')')
