@@ -71,9 +71,11 @@ export async function GET(request: NextRequest) {
       transactionId = confirmResult?.payload?.transaction_id || confirmResult?.payload?.id_transaction || null
       // Prioridad: 1) tokenId de la URL (el que enviamos a Sipay), 2) lo que Sipay devuelva
       cardToken = urlCardTokenId || confirmResult?.payload?.token || confirmResult?.payload?.card_token || null
+      // cof_id: obligatorio para futuros cobros MIT bajo PSD2 — guardar junto al token
+      const cofId = confirmResult?.payload?.cof_id || null
       confirmSuccessful = true
 
-      console.log('✅ [confirm-payment] Pago CONFIRMADO! transaction_id:', transactionId, 'cardToken:', cardToken, '(fuente:', urlCardTokenId ? 'URL' : 'Sipay response', ')')
+      console.log('✅ [confirm-payment] Pago CONFIRMADO! transaction_id:', transactionId, 'cardToken:', cardToken, 'cof_id:', cofId, '(fuente:', urlCardTokenId ? 'URL' : 'Sipay response', ')')
     } catch (confirmError: any) {
       console.error('❌ [confirm-payment] Error en confirm:', confirmError.message)
       // Si el confirm falla, NO activamos trial
@@ -92,7 +94,8 @@ export async function GET(request: NextRequest) {
           subscriptionStatus: 'trial',
           trialEndDate: trialEndDate.toISOString(),
           accessUntil: trialEndDate.toISOString(),
-          subscriptionId: cardToken || requestId,
+          // Guardamos token|cofId para poder hacer cobros MIT correctamente
+          subscriptionId: cofId ? `${cardToken || requestId}|${cofId}` : (cardToken || requestId),
         })
         console.log('✅ [confirm-payment] Trial activado para:', email, 'hasta:', trialEndDate.toISOString())
 

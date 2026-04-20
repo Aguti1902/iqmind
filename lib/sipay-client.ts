@@ -207,10 +207,11 @@ export class SipayClient {
     currency: string
     orderId: string
     cardToken: string
+    cofId?: string      // Credentials on File ID — necesario para MIT bajo PSD2
     mitReason?: string  // 'R' = Recurrente, 'C' = Credential on file
   }): Promise<SipayAuthResponse> {
     const reconciliation = Date.now().toString().slice(-10)
-    const data = {
+    const data: any = {
       amount: params.amount.toString(),
       currency: params.currency,
       order: params.orderId,
@@ -218,6 +219,10 @@ export class SipayClient {
       token: params.cardToken,
       sca_exemptions: 'MIT',
       mit_reason: params.mitReason || 'R',
+    }
+    // Incluir cof_id si está disponible — requerido por PSD2 para cobros recurrentes
+    if (params.cofId) {
+      data.cof_id = params.cofId
     }
 
     console.log('📤 Sipay MIT:', { ...data, token: data.token.slice(0, 10) + '...' })

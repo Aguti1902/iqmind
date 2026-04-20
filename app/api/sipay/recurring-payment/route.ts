@@ -49,13 +49,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Usuario no encontrado' }, { status: 404 })
     }
 
-    const cardToken = user.subscriptionId
-    if (!cardToken) {
+    const subscriptionData = user.subscriptionId
+    if (!subscriptionData) {
       return NextResponse.json(
         { error: 'No hay tarjeta guardada para este usuario' },
         { status: 400 }
       )
     }
+
+    // El subscriptionId puede tener formato "token|cofId" o solo "token"
+    const [cardToken, cofId] = subscriptionData.includes('|')
+      ? subscriptionData.split('|')
+      : [subscriptionData, undefined]
+
+    console.log('🔄 [recurring] token:', cardToken?.slice(0, 15) + '...', '| cofId:', cofId || '(no disponible)')
 
     const sipay = getSipayClient()
     const orderId = Date.now().toString().slice(-10)
@@ -66,6 +73,7 @@ export async function POST(request: NextRequest) {
       currency: 'EUR',
       orderId,
       cardToken,
+      cofId,
       mitReason: 'R',
     })
 
