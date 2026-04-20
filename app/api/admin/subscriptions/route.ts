@@ -104,3 +104,27 @@ export async function DELETE(req: NextRequest) {
     await pool.end().catch(() => {})
   }
 }
+
+// PATCH - Extender acceso de un usuario
+export async function PATCH(request: NextRequest) {
+  const pool = getPool()
+  try {
+    const { email, days = 7 } = await request.json()
+    if (!email) return NextResponse.json({ error: 'Email requerido' }, { status: 400 })
+
+    const newDate = new Date(Date.now() + days * 24 * 60 * 60 * 1000)
+    const result = await pool.query(
+      `UPDATE users SET subscription_status='trial', access_until=$1, trial_end_date=$1, updated_at=NOW()
+       WHERE email=$2 RETURNING id, email, access_until`,
+      [newDate.toISOString(), email]
+    )
+    if (result.rowCount === 0) return NextResponse.json({ error: 'Usuario no encontrado' }, { status: 404 })
+
+    console.log(`✅ [admin] Acceso extendido ${days} días para: ${email} hasta ${newDate.toISOString()}`)
+    return NextResponse.json({ success: true, email, accessUntil: newDate.toISOString(), days })
+  } catch (e: any) {
+    return NextResponse.json({ error: e.message }, { status: 500 })
+  } finally {
+    await pool.end().catch(() => {})
+  }
+}
