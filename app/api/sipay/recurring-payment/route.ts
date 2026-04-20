@@ -3,6 +3,7 @@ import { getSipayClient } from '@/lib/sipay-client'
 import { db } from '@/lib/database-postgres'
 import { sendEmail, emailTemplates } from '@/lib/email-service'
 import { verifyInternalApiKey } from '@/lib/api-security'
+import { verifyToken } from '@/lib/auth'
 
 export const dynamic = 'force-dynamic'
 
@@ -21,7 +22,17 @@ const GRACE_PERIOD_DAYS = 3
 export async function POST(request: NextRequest) {
   try {
     const isAuthorized = verifyInternalApiKey(request)
+    // Permitir también a admins autenticados (para pruebas manuales)
+    let isAdmin = false
     if (!isAuthorized) {
+      const authHeader = request.headers.get('authorization')
+      const token = authHeader?.replace('Bearer ', '') || request.cookies.get('auth_token')?.value
+      if (token) {
+        const userData = verifyToken(token)
+        if (userData) isAdmin = await db.isAdmin(userData.email)
+      }
+    }
+    if (!isAuthorized && !isAdmin) {
       console.error('❌ Intento de acceso no autorizado a recurring-payment')
       return NextResponse.json(
         { error: 'No autorizado. Este endpoint requiere autenticación interna.' },
