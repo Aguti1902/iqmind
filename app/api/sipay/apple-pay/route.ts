@@ -117,11 +117,15 @@ export async function POST(request: NextRequest) {
     }
 
     const trialEnd = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
-    // Guardar cardTokenId para futuros cobros recurrentes MIT
+    // Capturar token y cof_id para futuros cobros MIT bajo PSD2
     const savedToken = response.payload?.token || cardTokenId
+    const cofId = response.payload?.cof_id || null
+    console.log('🍎 [apple-pay] token guardado:', savedToken?.slice(0, 15), '| cof_id:', cofId || '(null — MIT puede fallar)')
+    // Guardar token|cofId para cobros recurrentes
+    const subscriptionId = cofId ? `${savedToken}|${cofId}` : savedToken
     await db.updateUser(user.id, {
       subscriptionStatus: 'trial',
-      subscriptionId: savedToken,
+      subscriptionId,
       trialEndDate: trialEnd.toISOString(),
       accessUntil: trialEnd.toISOString(),
     })

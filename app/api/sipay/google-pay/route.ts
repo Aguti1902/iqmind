@@ -101,9 +101,12 @@ export async function POST(request: NextRequest) {
 
     const trialEnd = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
     const savedToken = response.payload?.token || cardTokenId
+    const cofId = response.payload?.cof_id || null
+    console.log('🟢 [google-pay] token guardado:', savedToken?.slice(0, 15), '| cof_id:', cofId || '(null)')
+    const subscriptionId = cofId ? `${savedToken}|${cofId}` : savedToken
     await db.updateUser(user.id, {
       subscriptionStatus: 'trial',
-      subscriptionId: savedToken,
+      subscriptionId,
       trialEndDate: trialEnd.toISOString(),
       accessUntil: trialEnd.toISOString(),
     })
