@@ -199,7 +199,7 @@ export default function InteractiveTestPlayer({ config }: { config: TestConfig }
       </div>
 
       {/* ── Content ── */}
-      <div className="pt-24 pb-12 min-h-screen flex items-center justify-center px-6">
+      <div className="pt-20 sm:pt-24 pb-12 min-h-screen flex items-center justify-center px-3 sm:px-6">
         <div className={`w-full max-w-3xl transition-all duration-260 ease-out ${transitionClass}`}>
           {currentStep.type === 'slide' ? (
             <SlideScreen slide={currentStep.slide} onContinue={handleSlideNext} />
@@ -261,23 +261,23 @@ function QuestionCard({
 
   return (
     <div className="bg-white rounded-3xl overflow-hidden" style={{ boxShadow: '0 8px 40px rgba(0,0,0,0.10)' }}>
-      <div className="px-12 pt-12 pb-6">
+      <div className="px-5 sm:px-8 md:px-12 pt-8 sm:pt-10 md:pt-12 pb-4 sm:pb-6">
         {/* Instruction text */}
         {instruction && (
-          <p className="text-center text-gray-400 text-base mb-7">{instruction}</p>
+          <p className="text-center text-gray-400 text-sm sm:text-base mb-5 sm:mb-7">{instruction}</p>
         )}
 
         {/* Category badge */}
         {question.category && (
-          <div className="flex justify-center mb-6">
-            <span className={`bg-gradient-to-r ${colorFrom} ${colorTo} text-white text-sm font-bold px-6 py-2.5 rounded-full uppercase tracking-wider`}>
+          <div className="flex justify-center mb-4 sm:mb-6">
+            <span className={`bg-gradient-to-r ${colorFrom} ${colorTo} text-white text-xs sm:text-sm font-bold px-4 sm:px-6 py-2 sm:py-2.5 rounded-full uppercase tracking-wider`}>
               {question.category}
             </span>
           </div>
         )}
 
         {/* Question text */}
-        <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 text-center leading-tight mb-12">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 text-center leading-tight mb-8 sm:mb-10 md:mb-12">
           {questionText}
         </h2>
 
@@ -315,7 +315,7 @@ function CircleScale({ options, selectedValue, onAnswer, colorFrom, colorTo }: {
   colorTo: string
 }) {
   return (
-    <div className="flex items-start justify-center gap-6 md:gap-8">
+    <div className="flex items-start justify-between sm:justify-center sm:gap-6 md:gap-8 w-full">
       {options.map((opt, i) => {
         const style = CIRCLE_STYLES[i] || CIRCLE_STYLES[2]
         const isSelected = selectedValue === opt.value
@@ -323,21 +323,21 @@ function CircleScale({ options, selectedValue, onAnswer, colorFrom, colorTo }: {
           <button
             key={opt.value}
             onClick={() => onAnswer(opt.value)}
-            className="flex flex-col items-center gap-3 group"
+            className="flex flex-col items-center gap-2 sm:gap-3 flex-1 sm:flex-none group"
           >
-            {/* Label above */}
-            <span className="text-xs text-gray-500 text-center leading-tight w-20 min-h-[32px] flex items-end justify-center font-medium">
+            {/* Label above — only show on larger screens or shorter text */}
+            <span className="text-[10px] sm:text-xs text-gray-500 text-center leading-tight w-full sm:w-20 min-h-[24px] sm:min-h-[32px] flex items-end justify-center font-medium px-0.5">
               {opt.label}
             </span>
-            {/* Circle */}
+            {/* Circle — scales with screen */}
             <div
-              className="w-20 h-20 rounded-full flex items-center justify-center text-2xl font-bold transition-all duration-200 cursor-pointer"
+              className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center text-lg sm:text-xl md:text-2xl font-bold transition-all duration-200 cursor-pointer mx-auto"
               style={{
                 background: isSelected ? style.selectedBg : style.bg,
                 border: isSelected ? `3px solid ${style.selectedBorder}` : `2px solid ${style.border}`,
                 color: isSelected ? '#fff' : '#6b7280',
-                boxShadow: isSelected ? `0 8px 24px ${style.selectedBg}55` : 'none',
-                transform: isSelected ? 'scale(1.12)' : 'scale(1)',
+                boxShadow: isSelected ? `0 6px 20px ${style.selectedBg}55` : 'none',
+                transform: isSelected ? 'scale(1.1)' : 'scale(1)',
               }}
             >
               {opt.value}
