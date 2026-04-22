@@ -62,6 +62,16 @@ export const personalityQuestions: PersonalityQuestion[] = [
   { id: 44, text: 'Me gusta la variedad', texts: { en: 'I enjoy variety', fr: 'J\'aime la variété', de: 'Ich mag Abwechslung', it: 'Mi piace la varietà', pt: 'Gosto de variedade' }, dimension: 'O', reverse: false }
 ]
 
+// Versión reducida de 30 preguntas (6 por dimensión) — más ágil
+const QUESTIONS_30_IDS = [
+  1, 2, 3, 4, 5, 7,        // E: 6
+  9, 10, 11, 13, 15, 16,   // A: 6
+  18, 19, 20, 22, 24, 25,  // C: 6
+  27, 28, 29, 31, 32, 33,  // N: 6
+  35, 36, 39, 40, 42, 43,  // O: 6
+]
+export const personalityQuestions30 = personalityQuestions.filter(q => QUESTIONS_30_IDS.includes(q.id))
+
 export interface PersonalityResult {
   openness: number
   conscientiousness: number

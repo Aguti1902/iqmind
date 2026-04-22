@@ -5,12 +5,12 @@ import { useParams, useRouter } from 'next/navigation'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import InteractiveTestPlayer, { TestConfig, ScaleOption, SlideConfig } from '@/components/InteractiveTestPlayer'
-import { personalityQuestions, calculatePersonalityScores } from '@/lib/personality-questions'
+import { personalityQuestions30, calculatePersonalityScores } from '@/lib/personality-questions'
 import { useTranslations } from '@/hooks/useTranslations'
 import { FaArrowRight } from 'react-icons/fa'
 
 const dimMap: Record<string, string> = { E: 'cat1', A: 'cat2', C: 'cat3', N: 'cat4', O: 'cat5' }
-const questions = personalityQuestions.map(q => ({ id: q.id, text: q.text, texts: q.texts, category: dimMap[q.dimension] }))
+const questions = personalityQuestions30.map(q => ({ id: q.id, text: q.text, texts: q.texts, category: dimMap[q.dimension] }))
 
 export default function PersonalityTestPage() {
   const { lang } = useParams()
@@ -30,11 +30,12 @@ export default function PersonalityTestPage() {
     { value: 5, label: tc.scale5 || 'Muy de acuerdo', emoji: '😄' },
   ]
 
+  // 30 preguntas: E(0-5) A(6-11) C(12-17) N(18-23) O(24-29)
   const slides: SlideConfig[] = [
-    { afterQuestionIndex: 7, animationType: 'orbit', title: tc.slide1Title || 'Amabilidad', subtitle: tc.slide1Subtitle || 'Tu lado empático y cooperativo', description: tc.slide1Desc, badge: tc.slide1Badge || '8 DE 44 COMPLETADAS' },
-    { afterQuestionIndex: 16, animationType: 'bars', title: tc.slide2Title || 'Responsabilidad', subtitle: tc.slide2Subtitle || 'Organización y disciplina', description: tc.slide2Desc, badge: tc.slide2Badge || '17 DE 44 COMPLETADAS' },
-    { afterQuestionIndex: 25, animationType: 'wave', title: tc.slide3Title || 'Neuroticismo', subtitle: tc.slide3Subtitle || 'Estabilidad emocional', description: tc.slide3Desc, badge: tc.slide3Badge || '26 DE 44 COMPLETADAS' },
-    { afterQuestionIndex: 33, animationType: 'final', title: tc.slide4Title || '¡Última sección!', subtitle: tc.slide4Subtitle || 'Apertura a la Experiencia', description: tc.slide4Desc, badge: tc.slide4Badge || '34 DE 44 COMPLETADAS' },
+    { afterQuestionIndex: 5, animationType: 'orbit', title: tc.slide1Title || 'Amabilidad', subtitle: tc.slide1Subtitle || 'Tu lado empático y cooperativo', description: tc.slide1Desc, badge: '6 DE 30 COMPLETADAS' },
+    { afterQuestionIndex: 11, animationType: 'bars', title: tc.slide2Title || 'Responsabilidad', subtitle: tc.slide2Subtitle || 'Organización y disciplina', description: tc.slide2Desc, badge: '12 DE 30 COMPLETADAS' },
+    { afterQuestionIndex: 17, animationType: 'wave', title: tc.slide3Title || 'Neuroticismo', subtitle: tc.slide3Subtitle || 'Estabilidad emocional', description: tc.slide3Desc, badge: '18 DE 30 COMPLETADAS' },
+    { afterQuestionIndex: 23, animationType: 'final', title: tc.slide4Title || '¡Última sección!', subtitle: tc.slide4Subtitle || 'Apertura a la Experiencia', description: tc.slide4Desc, badge: '24 DE 30 COMPLETADAS' },
   ]
 
   const translatedQuestions = questions.map(q => ({
@@ -81,7 +82,7 @@ export default function PersonalityTestPage() {
             <FaArrowRight className="rotate-180 text-xs" />
             <span>{cm.back || 'Volver'}</span>
           </button>
-          <span className="text-xs text-gray-400">{tc.questionsCount || '44'} {cm.questions || 'preguntas'} · {tc.duration || "10'"}</span>
+          <span className="text-xs text-gray-400">{tc.questionsCount || '30'} {cm.questions || 'preguntas'} · {tc.duration || "8'"}</span>
         </div>
 
         <div className="flex-1 flex items-center justify-center px-4 py-10">
@@ -128,7 +129,7 @@ export default function PersonalityTestPage() {
                   <li>• {tc.disclaimer || 'No hay respuestas correctas o incorrectas'}</li>
                   <li>• {tc.feature1 || 'Elige con qué precisión cada afirmación te describe'}</li>
                   <li>• {tc.feature2 || 'Responde con tu primera impresión'}</li>
-                  <li>• {tc.questionsCount || '44'} {cm.questions || 'preguntas'} · {lang === 'en' ? 'approx.' : 'aprox.'} {tc.duration || "10'"}</li>
+                  <li>• {tc.questionsCount || '30'} {cm.questions || 'preguntas'} · {lang === 'en' ? 'approx.' : 'aprox.'} {tc.duration || "8'"}</li>
                 </ul>
               </div>
             </div>
