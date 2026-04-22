@@ -74,46 +74,67 @@ export default function PersonalityTestPage() {
 
   if (!started) {
     return (
-      <>
-        <Header />
-        <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-violet-50 flex items-center justify-center py-12 px-4">
-          <div className="w-full max-w-lg">
-            <div className="bg-white rounded-3xl shadow-2xl overflow-hidden mb-6">
-              <div className="bg-gradient-to-r from-purple-500 to-violet-700 px-8 py-10 text-center text-white">
-                <div className="w-20 h-20 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4 text-5xl">🧠</div>
-                <h1 className="text-3xl font-black tracking-tight mb-2">{tc.title || 'Personalidad Big Five'}</h1>
-                <p className="text-purple-100 text-base">{tc.subtitle || 'Modelo OCEAN · Científicamente validado'}</p>
+      <div className="min-h-screen flex flex-col" style={{ background: '#f0f4f8' }}>
+        {/* Minimal header */}
+        <div className="bg-white border-b border-gray-100 px-4 py-3 flex items-center justify-between">
+          <button onClick={() => router.push(`/${lang}/tests`)} className="flex items-center gap-2 text-gray-500 hover:text-gray-800 text-sm font-medium">
+            <FaArrowRight className="rotate-180 text-xs" />
+            <span>{cm.back || 'Volver'}</span>
+          </button>
+          <span className="text-xs text-gray-400">{tc.questionsCount || '44'} {cm.questions || 'preguntas'} · {tc.duration || "10'"}</span>
+        </div>
+
+        <div className="flex-1 flex items-center justify-center px-4 py-10">
+          <div className="w-full max-w-md">
+            <div className="bg-white rounded-2xl shadow-md px-8 py-10 text-center">
+              {/* Icon */}
+              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6"
+                style={{ background: 'linear-gradient(135deg, #e8f5f0, #d1fae5)' }}>
+                <span className="text-3xl">🧠</span>
               </div>
-              <div className="p-8">
-                <div className="grid grid-cols-3 gap-4 mb-8">
-                  <div className="text-center p-3 bg-purple-50 rounded-2xl"><div className="text-2xl font-black text-purple-700">{tc.questionsCount || '44'}</div><div className="text-xs text-gray-500 mt-0.5">{cm.questions || 'Preguntas'}</div></div>
-                  <div className="text-center p-3 bg-purple-50 rounded-2xl"><div className="text-2xl font-black text-purple-700">{tc.duration || "10'"}</div><div className="text-xs text-gray-500 mt-0.5">{cm.approxDuration || 'Aprox.'}</div></div>
-                  <div className="text-center p-3 bg-purple-50 rounded-2xl"><div className="text-2xl font-black text-purple-700">{tc.sectionsCount || '5'}</div><div className="text-xs text-gray-500 mt-0.5">{cm.sections || 'Secciones'}</div></div>
-                </div>
-                <div className="grid grid-cols-5 gap-2 mb-8">
-                  {dims.map((d, i) => (
-                    <div key={i} className="text-center p-2 bg-gray-50 rounded-xl">
-                      <div className="text-xl mb-0.5">{d.emoji}</div>
-                      <div className="text-xs font-black text-purple-600">{d.letter}</div>
-                      <div className="text-[9px] text-gray-400 leading-tight">{tc[d.key as keyof typeof tc] as string || d.key}</div>
-                    </div>
-                  ))}
-                </div>
-                <div className="bg-purple-50 border border-purple-200 rounded-2xl p-4 mb-8">
-                  <p className="text-sm text-purple-800">💡 {tc.disclaimer || cm.disclaimer || 'No pienses demasiado. Responde con tu primera impresión.'}</p>
-                </div>
-                <form onSubmit={handleStart} className="space-y-4">
-                  <input type="text" value={userName} onChange={e => setUserName(e.target.value)} placeholder={cm.namePlaceholder || '¿Cómo te llamas?'} className="w-full px-5 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-purple-500 transition-colors" required autoFocus />
-                  <button type="submit" className="w-full bg-gradient-to-r from-purple-500 to-violet-700 hover:from-purple-600 hover:to-violet-800 text-white py-4 px-8 rounded-2xl font-bold text-lg transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
-                    {cm.startButton || 'Comenzar Test'}<FaArrowRight />
-                  </button>
-                </form>
+
+              {/* Title */}
+              <h1 className="text-2xl font-black text-gray-900 mb-1">
+                <span style={{ color: '#113240' }}>Mind</span><span style={{ color: '#07C59A' }}>Metric</span>
+                {' · '}{tc.title || 'Test de Personalidad'}
+              </h1>
+              <p className="text-gray-500 text-sm mb-7">{tc.subtitle || 'Modelo OCEAN · Científicamente validado'}</p>
+
+              {/* Name input */}
+              <p className="text-gray-600 text-sm font-medium mb-3">{cm.namePlaceholder ? `Antes de comenzar, ¿cómo te llamas?` : 'Antes de comenzar, ¿cómo te llamas?'}</p>
+              <form onSubmit={handleStart} className="space-y-3">
+                <input
+                  type="text"
+                  value={userName}
+                  onChange={e => setUserName(e.target.value)}
+                  placeholder={cm.namePlaceholder || '¿Cómo te llamas?'}
+                  className="w-full px-4 py-3.5 text-base border-2 border-gray-200 rounded-xl focus:outline-none focus:border-[#07C59A] transition-colors"
+                  required
+                  autoFocus
+                />
+                <button
+                  type="submit"
+                  className="w-full py-3.5 px-8 rounded-xl font-bold text-base text-white transition-all"
+                  style={{ background: '#113240' }}
+                >
+                  {cm.startButton || 'Comenzar Test'}
+                </button>
+              </form>
+
+              {/* Instructions */}
+              <div className="mt-6 text-left bg-gray-50 rounded-xl p-4 border border-gray-100">
+                <p className="text-xs font-bold text-gray-700 mb-2">ℹ️ {lang === 'en' ? 'Instructions' : 'Instrucciones'}:</p>
+                <ul className="text-xs text-gray-500 space-y-1">
+                  <li>• {tc.disclaimer || 'No hay respuestas correctas o incorrectas'}</li>
+                  <li>• {tc.feature1 || 'Elige con qué precisión cada afirmación te describe'}</li>
+                  <li>• {tc.feature2 || 'Responde con tu primera impresión'}</li>
+                  <li>• {tc.questionsCount || '44'} {cm.questions || 'preguntas'} · {lang === 'en' ? 'approx.' : 'aprox.'} {tc.duration || "10'"}</li>
+                </ul>
               </div>
             </div>
           </div>
         </div>
-        <Footer />
-      </>
+      </div>
     )
   }
 

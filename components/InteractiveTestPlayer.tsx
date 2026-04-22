@@ -1,12 +1,12 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { FaArrowLeft, FaChevronRight } from 'react-icons/fa'
+import { FaArrowLeft, FaChevronRight, FaInfoCircle } from 'react-icons/fa'
 
 export interface TestQuestion {
   id: number
   text: string
-  texts?: Record<string, string> // translations: { en: '...', fr: '...' }
+  texts?: Record<string, string>
   category?: string
   warningText?: string
 }
@@ -39,7 +39,7 @@ export interface TestConfig {
   colorText: string
   colorRing: string
   scaleDisplay?: ScaleDisplay
-  instruction?: string // Texto de instrucción encima de las opciones
+  instruction?: string
   questions: TestQuestion[]
   scaleOptions: ScaleOption[]
   slides: SlideConfig[]
@@ -62,10 +62,14 @@ function buildSteps(questions: TestQuestion[], slides: SlideConfig[]): Step[] {
   return steps
 }
 
-// Get translated question text
 function getQuestionText(q: TestQuestion, lang: string): string {
   if (q.texts && q.texts[lang]) return q.texts[lang]
   return q.text
+}
+
+function getCategoryLabel(category: string | undefined, lang: string): string {
+  if (!category) return ''
+  return category
 }
 
 export default function InteractiveTestPlayer({ config }: { config: TestConfig }) {
@@ -79,7 +83,7 @@ export default function InteractiveTestPlayer({ config }: { config: TestConfig }
 
   const totalQuestions = questions.length
   const answeredCount = Object.keys(answers).length
-  const progress = (answeredCount / totalQuestions) * 100
+  const progress = Math.round((answeredCount / totalQuestions) * 100)
   const currentStep = steps[currentStepIndex]
   const scaleDisplay = config.scaleDisplay || 'buttons'
 
@@ -98,9 +102,9 @@ export default function InteractiveTestPlayer({ config }: { config: TestConfig }
     setTimeout(() => {
       setCurrentStepIndex(nextIndex)
       setDirection('in')
-      setTimeout(() => setTransitioning(false), 280)
+      setTimeout(() => setTransitioning(false), 260)
       window.scrollTo({ top: 0, behavior: 'smooth' })
-    }, 220)
+    }, 200)
   }, [])
 
   const handleAnswer = (value: number) => {
@@ -114,18 +118,24 @@ export default function InteractiveTestPlayer({ config }: { config: TestConfig }
       setTimeout(() => onComplete(newAnswers), 500)
       return
     }
-    setTimeout(() => goToStep(currentStepIndex + 1), 380)
+    setTimeout(() => goToStep(currentStepIndex + 1), 360)
   }
 
   const handlePrev = () => { if (currentStepIndex > 0) goToStep(currentStepIndex - 1) }
   const handleSlideNext = () => goToStep(currentStepIndex + 1)
 
   const transitionClass = transitioning
-    ? direction === 'out' ? 'opacity-0 translate-y-3' : 'opacity-0 -translate-y-3'
+    ? direction === 'out' ? 'opacity-0 translate-y-2' : 'opacity-0 -translate-y-2'
     : 'opacity-100 translate-y-0'
 
+  const lang = config.lang
+  const backLabel = lang === 'en' ? 'Back' : lang === 'fr' ? 'Retour' : lang === 'de' ? 'Zurück' : lang === 'it' ? 'Indietro' : lang === 'pt' ? 'Voltar' : 'Atrás'
+  const progressLabel = lang === 'en' ? 'completed' : lang === 'fr' ? 'complété' : lang === 'de' ? 'abgeschlossen' : lang === 'it' ? 'completato' : lang === 'pt' ? 'concluído' : 'completado'
+  const questionLabel = lang === 'en' ? 'Question' : lang === 'fr' ? 'Question' : lang === 'de' ? 'Frage' : lang === 'it' ? 'Domanda' : lang === 'pt' ? 'Questão' : 'Pregunta'
+  const inProgressLabel = lang === 'en' ? 'In progress' : lang === 'fr' ? 'En cours' : lang === 'de' ? 'In Bearbeitung' : lang === 'it' ? 'In corso' : lang === 'pt' ? 'Em andamento' : 'En progreso'
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ background: '#f0f4f8' }}>
       <style>{`
         @keyframes mmBarRise { from{transform:scaleY(0);opacity:0} to{transform:scaleY(1);opacity:1} }
         @keyframes mmRingPulse { 0%{transform:scale(0.6);opacity:0.9} 100%{transform:scale(2.4);opacity:0} }
@@ -158,35 +168,43 @@ export default function InteractiveTestPlayer({ config }: { config: TestConfig }
         .mm-fu-3{animation:mmFadeInUp .5s ease-out .45s both}
       `}</style>
 
-      {/* Top progress bar + mini-header */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm">
-        <div className="h-1 bg-gray-100">
-          <div
-            className="h-full transition-all duration-700 ease-out"
-            style={{ width: `${Math.max(progress, 1)}%`, background: 'linear-gradient(90deg,#07C59A,#113240)' }}
-          />
-        </div>
-        <div className="px-4 py-3 flex items-center justify-between max-w-2xl mx-auto">
-          <button
-            onClick={currentStepIndex > 0 ? handlePrev : onBack}
-            className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 transition-colors font-medium"
-          >
-            <FaArrowLeft className="text-xs" />
-            <span>{config.lang === 'en' ? 'Back' : config.lang === 'fr' ? 'Retour' : config.lang === 'de' ? 'Zurück' : 'Atrás'}</span>
-          </button>
+      {/* ── Top header ── */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100">
+        <div className="max-w-3xl mx-auto px-4 py-3">
+          {/* Row 1: back + question number + in-progress badge */}
+          <div className="flex items-center justify-between mb-2">
+            <button
+              onClick={currentStepIndex > 0 ? handlePrev : onBack}
+              className="flex items-center gap-2 text-gray-500 hover:text-gray-800 transition-colors text-sm font-medium"
+            >
+              <FaArrowLeft className="text-xs" />
+              {currentStep.type === 'question' && (
+                <span>
+                  {questionLabel} {(currentStep as any).questionIndex + 1} {lang === 'en' ? 'of' : lang === 'fr' ? 'sur' : lang === 'de' ? 'von' : lang === 'pt' ? 'de' : 'de'} {totalQuestions}
+                </span>
+              )}
+            </button>
+            <span className="text-xs font-semibold px-3 py-1 rounded-full"
+              style={{ background: '#e6f9f5', color: '#07C59A' }}>
+              ● {inProgressLabel}
+            </span>
+          </div>
+          {/* Row 2: progress % + bar */}
           <div className="flex items-center gap-3">
-            <div className="text-xs text-gray-400">{answeredCount}/{totalQuestions}</div>
-            <div className="w-24 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-              <div className="h-full rounded-full transition-all duration-500" style={{ width: `${progress}%`, background: '#07C59A' }} />
+            <span className="text-sm font-bold text-gray-700">{progress}% {progressLabel}</span>
+            <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+              <div
+                className="h-full rounded-full transition-all duration-600 ease-out"
+                style={{ width: `${Math.max(progress, 1)}%`, background: 'linear-gradient(90deg, #07C59A, #113240)' }}
+              />
             </div>
-            <div className="text-xs font-bold" style={{ color: '#07C59A' }}>{Math.round(progress)}%</div>
           </div>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="pt-16 pb-10 min-h-screen flex items-center justify-center px-4">
-        <div className={`w-full max-w-xl transition-all duration-280 ease-out ${transitionClass}`}>
+      {/* ── Content ── */}
+      <div className="pt-24 pb-12 min-h-screen flex items-center justify-center px-4">
+        <div className={`w-full max-w-xl transition-all duration-260 ease-out ${transitionClass}`}>
           {currentStep.type === 'slide' ? (
             <SlideScreen slide={currentStep.slide} onContinue={handleSlideNext} />
           ) : (
@@ -210,13 +228,13 @@ export default function InteractiveTestPlayer({ config }: { config: TestConfig }
   )
 }
 
-// ── Circle colors for Likert 1-5 ──────────────────────────────────────────────
-const CIRCLE_COLORS = [
-  { bg: '#fee2e2', border: '#fca5a5', text: '#b91c1c', selected_bg: '#ef4444' },
-  { bg: '#ffedd5', border: '#fdba74', text: '#c2410c', selected_bg: '#f97316' },
-  { bg: '#f3f4f6', border: '#d1d5db', text: '#4b5563', selected_bg: '#6b7280' },
-  { bg: '#d1fae5', border: '#6ee7b7', text: '#047857', selected_bg: '#10b981' },
-  { bg: '#ccfbf1', border: '#5eead4', text: '#0f766e', selected_bg: '#07C59A' },
+// ── Circle colors (pastel, matching reference) ────────────────────────────────
+const CIRCLE_STYLES = [
+  { bg: '#fce4e4', border: '#f9a8a8', selectedBg: '#ef4444', selectedBorder: '#ef4444', label_color: '#6b7280' },
+  { bg: '#fef3e2', border: '#fcd08a', selectedBg: '#f59e0b', selectedBorder: '#f59e0b', label_color: '#6b7280' },
+  { bg: '#f3f4f6', border: '#d1d5db', selectedBg: '#6b7280', selectedBorder: '#6b7280', label_color: '#6b7280' },
+  { bg: '#d1fae5', border: '#6ee7b7', selectedBg: '#10b981', selectedBorder: '#10b981', label_color: '#6b7280' },
+  { bg: '#ccfbf1', border: '#5eead4', selectedBg: '#07C59A', selectedBorder: '#07C59A', label_color: '#6b7280' },
 ]
 
 // ── Question Card ──────────────────────────────────────────────────────────────
@@ -236,97 +254,106 @@ function QuestionCard({
   colorTo: string
   lang: string
 }) {
-  const { question, questionIndex } = step
+  const { question } = step
   const questionText = getQuestionText(question, lang)
-  const catLabel = question.category
+  const selectHint = lang === 'en' ? 'Select how you feel about this statement' :
+    lang === 'fr' ? 'Sélectionnez comment vous vous sentez par rapport à cette affirmation' :
+    lang === 'de' ? 'Wählen Sie, wie Sie sich zu dieser Aussage fühlen' :
+    lang === 'it' ? 'Seleziona come ti senti riguardo a questa affermazione' :
+    lang === 'pt' ? 'Selecione como se sente sobre esta afirmação' :
+    'Selecciona cómo te sientes sobre esta afirmación'
 
   return (
-    <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
-      {/* Category + number */}
-      <div className={`bg-gradient-to-r ${colorFrom} ${colorTo} px-6 py-4`}>
-        <div className="flex items-center justify-between">
-          <span className="text-white/70 text-xs font-semibold tracking-widest uppercase">
-            {catLabel || `${lang === 'en' ? 'Question' : lang === 'fr' ? 'Question' : 'Pregunta'}`}
-          </span>
-          <span className="bg-white/20 text-white text-xs font-bold px-2.5 py-1 rounded-full">
-            {questionIndex + 1} / {totalQuestions}
-          </span>
-        </div>
-      </div>
+    <div className="bg-white rounded-2xl shadow-md overflow-hidden">
+      <div className="px-8 pt-8 pb-2">
+        {/* Instruction text */}
+        {instruction && (
+          <p className="text-center text-gray-500 text-sm mb-5">{instruction}</p>
+        )}
 
-      {/* Question text */}
-      <div className="px-6 pt-7 pb-5">
-        <p className="text-xl md:text-2xl font-bold text-gray-900 leading-snug text-center">
+        {/* Category badge */}
+        {question.category && (
+          <div className="flex justify-center mb-4">
+            <span className={`bg-gradient-to-r ${colorFrom} ${colorTo} text-white text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider`}>
+              {question.category}
+            </span>
+          </div>
+        )}
+
+        {/* Question text */}
+        <h2 className="text-2xl md:text-3xl font-black text-gray-900 text-center leading-snug mb-8">
           {questionText}
-        </p>
+        </h2>
+
         {question.warningText && (
-          <div className="mt-4 bg-red-50 border-l-4 border-red-500 p-3 rounded-r-lg">
+          <div className="mb-6 bg-red-50 border-l-4 border-red-500 p-3 rounded-r-lg">
             <p className="text-sm text-red-800 font-medium">{question.warningText}</p>
           </div>
         )}
-      </div>
 
-      {/* Instruction */}
-      {instruction && (
-        <p className="text-center text-sm text-gray-400 px-6 mb-1">{instruction}</p>
-      )}
-
-      {/* Scale options */}
-      <div className="px-6 pb-8">
+        {/* Scale */}
         {scaleDisplay === 'circles' ? (
-          <CircleScale options={scaleOptions} selectedValue={selectedValue} onAnswer={onAnswer} />
+          <CircleScale options={scaleOptions} selectedValue={selectedValue} onAnswer={onAnswer} colorFrom={colorFrom} colorTo={colorTo} />
         ) : (
           <ButtonScale options={scaleOptions} selectedValue={selectedValue} onAnswer={onAnswer} colorFrom={colorFrom} colorTo={colorTo} />
+        )}
+
+        {/* Bottom hint */}
+        {scaleDisplay === 'circles' && (
+          <div className="flex items-center justify-center gap-1.5 mt-5 mb-3">
+            <FaInfoCircle className="text-gray-300 text-xs" />
+            <span className="text-xs text-gray-400">{selectHint}</span>
+          </div>
         )}
       </div>
     </div>
   )
 }
 
-// ── Circle Scale (Likert 1-5) ─────────────────────────────────────────────────
-function CircleScale({ options, selectedValue, onAnswer }: {
+// ── Circle Scale ──────────────────────────────────────────────────────────────
+function CircleScale({ options, selectedValue, onAnswer, colorFrom, colorTo }: {
   options: ScaleOption[]
   selectedValue: number | null
   onAnswer: (v: number) => void
+  colorFrom: string
+  colorTo: string
 }) {
   return (
-    <div>
-      <div className="flex items-end justify-center gap-3 mb-3">
-        {options.map((opt, i) => {
-          const isSelected = selectedValue === opt.value
-          const colors = CIRCLE_COLORS[i] || CIRCLE_COLORS[2]
-          return (
-            <button
-              key={opt.value}
-              onClick={() => onAnswer(opt.value)}
-              className="flex flex-col items-center gap-1.5 group"
+    <div className="flex items-start justify-center gap-4">
+      {options.map((opt, i) => {
+        const style = CIRCLE_STYLES[i] || CIRCLE_STYLES[2]
+        const isSelected = selectedValue === opt.value
+        return (
+          <button
+            key={opt.value}
+            onClick={() => onAnswer(opt.value)}
+            className="flex flex-col items-center gap-2.5 group"
+          >
+            {/* Label above */}
+            <span className="text-[11px] text-gray-500 text-center leading-tight w-16 min-h-[28px] flex items-end justify-center">
+              {opt.label}
+            </span>
+            {/* Circle */}
+            <div
+              className="w-14 h-14 rounded-full flex items-center justify-center text-lg font-bold transition-all duration-200"
+              style={{
+                background: isSelected ? style.selectedBg : style.bg,
+                border: isSelected ? `3px solid ${style.selectedBorder}` : `2px solid ${style.border}`,
+                color: isSelected ? '#fff' : '#6b7280',
+                boxShadow: isSelected ? `0 4px 16px ${style.selectedBg}44` : 'none',
+                transform: isSelected ? 'scale(1.08)' : 'scale(1)',
+              }}
             >
-              <div
-                className="rounded-full transition-all duration-200 flex items-center justify-center font-bold text-lg"
-                style={{
-                  width: isSelected ? 60 : 52,
-                  height: isSelected ? 60 : 52,
-                  background: isSelected ? colors.selected_bg : colors.bg,
-                  border: `2.5px solid ${isSelected ? colors.selected_bg : colors.border}`,
-                  color: isSelected ? '#fff' : colors.text,
-                  boxShadow: isSelected ? `0 4px 14px ${colors.selected_bg}55` : 'none',
-                  transform: isSelected ? 'translateY(-4px)' : 'none',
-                }}
-              >
-                {opt.value}
-              </div>
-              <span className="text-[10px] text-gray-400 text-center leading-tight max-w-[52px]">
-                {opt.label}
-              </span>
-            </button>
-          )
-        })}
-      </div>
+              {opt.value}
+            </div>
+          </button>
+        )
+      })}
     </div>
   )
 }
 
-// ── Button Scale (frequency 0-3 or 0-4) ─────────────────────────────────────
+// ── Button Scale ──────────────────────────────────────────────────────────────
 function ButtonScale({ options, selectedValue, onAnswer, colorFrom, colorTo }: {
   options: ScaleOption[]
   selectedValue: number | null
@@ -335,7 +362,7 @@ function ButtonScale({ options, selectedValue, onAnswer, colorFrom, colorTo }: {
   colorTo: string
 }) {
   return (
-    <div className="space-y-2.5">
+    <div className="space-y-2.5 pb-4">
       {options.map(opt => {
         const isSelected = selectedValue === opt.value
         return (
@@ -343,11 +370,11 @@ function ButtonScale({ options, selectedValue, onAnswer, colorFrom, colorTo }: {
             key={opt.value}
             onClick={() => onAnswer(opt.value)}
             className={`
-              w-full flex items-center gap-4 px-5 py-4 rounded-2xl font-medium text-left
+              w-full flex items-center gap-4 px-5 py-4 rounded-xl font-medium text-left
               transition-all duration-200 border-2
               ${isSelected
-                ? `bg-gradient-to-r ${colorFrom} ${colorTo} text-white border-transparent shadow-lg scale-[1.01]`
-                : 'bg-gray-50 text-gray-700 border-gray-100 hover:border-gray-300 hover:bg-white hover:shadow-sm'
+                ? `bg-gradient-to-r ${colorFrom} ${colorTo} text-white border-transparent shadow-md`
+                : 'bg-gray-50 text-gray-700 border-gray-100 hover:border-gray-200 hover:bg-white'
               }
             `}
           >
@@ -363,30 +390,34 @@ function ButtonScale({ options, selectedValue, onAnswer, colorFrom, colorTo }: {
 // ── Slide Screen ───────────────────────────────────────────────────────────────
 function SlideScreen({ slide, onContinue }: { slide: SlideConfig; onContinue: () => void }) {
   return (
-    <div className="rounded-3xl overflow-hidden shadow-2xl relative"
-      style={{ background: 'linear-gradient(135deg, #113240 0%, #07C59A 100%)' }}>
-      <div className="absolute inset-0 opacity-10 pointer-events-none"
-        style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
-      <div className="relative px-8 py-16 text-center text-white">
-        {slide.badge && (
-          <span className="mm-fu-0 inline-block text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-7"
-            style={{ background: 'rgba(7,197,154,0.2)', border: '1px solid rgba(7,197,154,0.5)', color: '#07C59A' }}>
-            {slide.badge}
-          </span>
-        )}
-        <div className="flex justify-center mb-8">
-          <SlideAnimation type={slide.animationType} />
+    <div className="bg-white rounded-2xl shadow-md overflow-hidden">
+      <div className="px-8 py-14 text-center"
+        style={{ background: 'linear-gradient(135deg, #113240 0%, #07C59A 100%)' }}>
+        <div className="relative">
+          <div className="absolute inset-0 opacity-10"
+            style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
+          <div className="relative">
+            {slide.badge && (
+              <span className="mm-fu-0 inline-block text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-7 text-white"
+                style={{ background: 'rgba(7,197,154,0.25)', border: '1px solid rgba(7,197,154,0.6)' }}>
+                {slide.badge}
+              </span>
+            )}
+            <div className="flex justify-center mb-8">
+              <SlideAnimation type={slide.animationType} />
+            </div>
+            <h2 className="mm-fu-1 text-3xl md:text-4xl font-black mb-3 text-white tracking-tight">{slide.title}</h2>
+            <p className="mm-fu-2 text-lg font-medium mb-3" style={{ color: 'rgba(255,255,255,0.8)' }}>{slide.subtitle}</p>
+            {slide.description && (
+              <p className="mm-fu-2 text-sm max-w-sm mx-auto leading-relaxed mb-8" style={{ color: 'rgba(255,255,255,0.6)' }}>{slide.description}</p>
+            )}
+            <button onClick={onContinue}
+              className="mm-fu-3 inline-flex items-center gap-3 font-bold px-8 py-4 rounded-2xl transition-all hover:scale-105 mt-4 text-white"
+              style={{ background: 'rgba(7,197,154,0.25)', border: '1.5px solid rgba(7,197,154,0.6)' }}>
+              Continuar <FaChevronRight />
+            </button>
+          </div>
         </div>
-        <h2 className="mm-fu-1 text-3xl md:text-4xl font-black mb-3 tracking-tight">{slide.title}</h2>
-        <p className="mm-fu-2 text-lg text-white/80 font-medium mb-3">{slide.subtitle}</p>
-        {slide.description && (
-          <p className="mm-fu-2 text-sm text-white/60 max-w-sm mx-auto leading-relaxed mb-8">{slide.description}</p>
-        )}
-        <button onClick={onContinue}
-          className="mm-fu-3 inline-flex items-center gap-3 font-bold px-8 py-4 rounded-2xl transition-all hover:scale-105 mt-4"
-          style={{ background: 'rgba(7,197,154,0.25)', border: '1.5px solid rgba(7,197,154,0.5)', color: '#fff' }}>
-          Continuar <FaChevronRight />
-        </button>
       </div>
     </div>
   )
@@ -434,14 +465,6 @@ function SlideAnimation({ type }: { type: SlideAnimationType }) {
       <div className="mm-final absolute w-14 h-14 rounded-sm" style={{ background: 'rgba(7,197,154,0.2)', transform: 'rotate(45deg)' }} />
       <div className="mm-final absolute w-10 h-10 rounded-sm" style={{ background: teal, transform: 'rotate(45deg)', animationDelay: '0.1s' }} />
       <div className="absolute w-4 h-4 rounded-full" style={{ background: 'rgba(255,255,255,0.9)' }} />
-    </div>
-  )
-  if (type === 'check') return (
-    <div className="flex items-center justify-center w-20 h-20">
-      <svg viewBox="0 0 64 64" className="w-full h-full">
-        <circle cx="32" cy="32" r="28" fill="rgba(7,197,154,0.2)" stroke={teal} strokeWidth="2" />
-        <polyline className="mm-check" points="18,32 27,42 46,22" fill="none" stroke={teal} strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
     </div>
   )
   return null
