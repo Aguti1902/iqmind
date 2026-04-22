@@ -135,7 +135,7 @@ export default function InteractiveTestPlayer({ config }: { config: TestConfig }
   const inProgressLabel = lang === 'en' ? 'In progress' : lang === 'fr' ? 'En cours' : lang === 'de' ? 'In Bearbeitung' : lang === 'it' ? 'In corso' : lang === 'pt' ? 'Em andamento' : 'En progreso'
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+    <div className="min-h-screen" style={{ background: 'linear-gradient(160deg, #e8f8f4 0%, #f4fdfb 40%, #ffffff 100%)' }}>
       <style>{`
         @keyframes mmBarRise { from{transform:scaleY(0);opacity:0} to{transform:scaleY(1);opacity:1} }
         @keyframes mmRingPulse { 0%{transform:scale(0.6);opacity:0.9} 100%{transform:scale(2.4);opacity:0} }
@@ -168,40 +168,44 @@ export default function InteractiveTestPlayer({ config }: { config: TestConfig }
         .mm-fu-3{animation:mmFadeInUp .5s ease-out .45s both}
       `}</style>
 
-      {/* ── Top header — igual que TestHeader del IQ ── */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm border-b border-gray-200">
-        {/* Thin teal progress bar at very top */}
-        <div className="h-1 bg-gray-100">
+      {/* ── Top header — estilo referencia ── */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-white">
+        <div className="px-4 pt-3 pb-0">
+          <div className="max-w-3xl mx-auto flex items-start justify-between">
+            {/* Left: back + question number */}
+            <div>
+              <button
+                onClick={currentStepIndex > 0 ? handlePrev : onBack}
+                className="flex items-center gap-1.5 text-gray-400 hover:text-gray-700 transition-colors mb-1"
+              >
+                <FaArrowLeft className="text-xs" />
+              </button>
+              {currentStep.type === 'question' && (
+                <p className="text-xs text-gray-400 leading-none">
+                  {questionLabel} {(currentStep as any).questionIndex + 1} {lang === 'en' ? 'of' : lang === 'de' ? 'von' : lang === 'fr' ? 'sur' : 'de'} {totalQuestions}
+                </p>
+              )}
+              <p className="text-lg font-black text-gray-800 mt-0.5">{progress}% {progressLabel}</p>
+            </div>
+            {/* Right: in-progress badge */}
+            <span className="text-xs font-bold px-3 py-1.5 rounded-full mt-1"
+              style={{ background: '#e6f9f5', color: '#07C59A' }}>
+              ● {inProgressLabel}
+            </span>
+          </div>
+        </div>
+        {/* Full-width progress bar */}
+        <div className="h-1.5 bg-gray-100 mt-2">
           <div
             className="h-full transition-all duration-700 ease-out"
-            style={{ width: `${Math.max(progress, 1)}%`, background: 'linear-gradient(90deg, #07C59A, #113240)' }}
+            style={{ width: `${Math.max(progress, 1)}%`, background: '#07C59A' }}
           />
-        </div>
-        <div className="container mx-auto max-w-7xl px-4">
-          <div className="flex items-center justify-between py-3">
-            {/* Logo */}
-            <button onClick={currentStepIndex > 0 ? handlePrev : onBack} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <img src="/images/MINDMETRIC/Logo.png" alt="MindMetric" className="h-10 md:h-11 w-auto" />
-            </button>
-            {/* Progress info (right side) */}
-            <div className="flex items-center gap-3">
-              {currentStep.type === 'question' && (
-                <span className="text-sm text-gray-500 hidden sm:block">
-                  {questionLabel} {(currentStep as any).questionIndex + 1} / {totalQuestions}
-                </span>
-              )}
-              <div className="flex items-center gap-2 px-4 py-2 rounded-full font-bold text-sm"
-                style={{ background: '#e6f9f5', color: '#07C59A' }}>
-                <span>{progress}%</span>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 
       {/* ── Content ── */}
-      <div className="pt-20 pb-12 min-h-screen flex items-center justify-center px-4">
-        <div className={`w-full max-w-2xl transition-all duration-260 ease-out ${transitionClass}`}>
+      <div className="pt-24 pb-12 min-h-screen flex items-center justify-center px-4">
+        <div className={`w-full max-w-lg transition-all duration-260 ease-out ${transitionClass}`}>
           {currentStep.type === 'slide' ? (
             <SlideScreen slide={currentStep.slide} onContinue={handleSlideNext} />
           ) : (
@@ -261,16 +265,16 @@ function QuestionCard({
     'Selecciona cómo te sientes sobre esta afirmación'
 
   return (
-    <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
-      <div className="px-10 pt-10 pb-4">
+    <div className="bg-white rounded-2xl overflow-hidden" style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}>
+      <div className="px-8 pt-8 pb-4">
         {/* Instruction text */}
         {instruction && (
-          <p className="text-center text-gray-400 text-sm mb-6">{instruction}</p>
+          <p className="text-center text-gray-500 text-sm mb-5">{instruction}</p>
         )}
 
         {/* Category badge */}
         {question.category && (
-          <div className="flex justify-center mb-5">
+          <div className="flex justify-center mb-4">
             <span className={`bg-gradient-to-r ${colorFrom} ${colorTo} text-white text-xs font-bold px-5 py-2 rounded-full uppercase tracking-wider`}>
               {question.category}
             </span>
@@ -278,7 +282,7 @@ function QuestionCard({
         )}
 
         {/* Question text */}
-        <h2 className="text-3xl md:text-4xl font-black text-gray-900 text-center leading-snug mb-10">
+        <h2 className="text-2xl md:text-3xl font-black text-gray-900 text-center leading-snug mb-8">
           {questionText}
         </h2>
 
