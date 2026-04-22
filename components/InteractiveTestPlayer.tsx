@@ -168,34 +168,29 @@ export default function InteractiveTestPlayer({ config }: { config: TestConfig }
         .mm-fu-3{animation:mmFadeInUp .5s ease-out .45s both}
       `}</style>
 
-      {/* ── Top header — estilo referencia ── */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-white">
-        <div className="px-4 pt-3 pb-0">
-          <div className="max-w-3xl mx-auto flex items-start justify-between">
-            {/* Left: back + question number */}
-            <div>
-              <button
-                onClick={currentStepIndex > 0 ? handlePrev : onBack}
-                className="flex items-center gap-1.5 text-gray-400 hover:text-gray-700 transition-colors mb-1"
-              >
-                <FaArrowLeft className="text-xs" />
-              </button>
+      {/* ── Top header — igual que TestHeader del IQ ── */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm border-b border-gray-200">
+        <div className="container mx-auto max-w-7xl px-4">
+          <div className="flex items-center justify-between py-3">
+            {/* Left: Logo (clickable = volver) */}
+            <button onClick={currentStepIndex > 0 ? handlePrev : onBack} className="hover:opacity-80 transition-opacity">
+              <img src="/images/MINDMETRIC/Logo.png" alt="MindMetric" className="h-10 md:h-12 w-auto" />
+            </button>
+            {/* Right: progress pill like IQ timer */}
+            <div className="flex items-center gap-3">
               {currentStep.type === 'question' && (
-                <p className="text-xs text-gray-400 leading-none">
-                  {questionLabel} {(currentStep as any).questionIndex + 1} {lang === 'en' ? 'of' : lang === 'de' ? 'von' : lang === 'fr' ? 'sur' : 'de'} {totalQuestions}
-                </p>
+                <span className="text-sm text-gray-500 hidden sm:block">
+                  {questionLabel} {(currentStep as any).questionIndex + 1}/{totalQuestions}
+                </span>
               )}
-              <p className="text-lg font-black text-gray-800 mt-0.5">{progress}% {progressLabel}</p>
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full font-bold text-lg bg-blue-50 text-blue-600">
+                <span>{progress}%</span>
+              </div>
             </div>
-            {/* Right: in-progress badge */}
-            <span className="text-xs font-bold px-3 py-1.5 rounded-full mt-1"
-              style={{ background: '#e6f9f5', color: '#07C59A' }}>
-              ● {inProgressLabel}
-            </span>
           </div>
         </div>
-        {/* Full-width progress bar */}
-        <div className="h-1.5 bg-gray-100 mt-2">
+        {/* Full-width teal progress bar below header */}
+        <div className="h-1.5 bg-gray-100">
           <div
             className="h-full transition-all duration-700 ease-out"
             style={{ width: `${Math.max(progress, 1)}%`, background: '#07C59A' }}
