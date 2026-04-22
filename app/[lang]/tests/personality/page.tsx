@@ -10,7 +10,7 @@ import { useTranslations } from '@/hooks/useTranslations'
 import { FaArrowRight } from 'react-icons/fa'
 
 const dimMap: Record<string, string> = { E: 'cat1', A: 'cat2', C: 'cat3', N: 'cat4', O: 'cat5' }
-const questions = personalityQuestions.map(q => ({ id: q.id, text: q.text, category: dimMap[q.dimension] }))
+const questions = personalityQuestions.map(q => ({ id: q.id, text: q.text, texts: q.texts, category: dimMap[q.dimension] }))
 
 export default function PersonalityTestPage() {
   const { lang } = useParams()
@@ -58,6 +58,8 @@ export default function PersonalityTestPage() {
     type: 'personality', title: tc.title || 'Test de Personalidad Big Five', emoji: '🧠',
     colorFrom: 'from-purple-500', colorTo: 'to-violet-700', colorLight: 'from-purple-50',
     colorText: 'text-purple-600', colorRing: 'ring-purple-500',
+    scaleDisplay: 'circles',
+    instruction: tc.feature1 || 'Elige con qué precisión cada afirmación te describe',
     questions: translatedQuestions, scaleOptions, slides, lang: lang as string,
     onBack: () => router.push(`/${lang}/tests`), onComplete: handleComplete,
   }
@@ -115,5 +117,5 @@ export default function PersonalityTestPage() {
     )
   }
 
-  return (<><Header /><InteractiveTestPlayer config={config} /><Footer /></>)
+  return <InteractiveTestPlayer config={config} />
 }

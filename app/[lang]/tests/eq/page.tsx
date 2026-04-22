@@ -61,6 +61,8 @@ export default function EQTestPage() {
     type: 'eq', title: tc.title || 'Inteligencia Emocional', emoji: '💚',
     colorFrom: 'from-green-500', colorTo: 'to-emerald-700', colorLight: 'from-green-50',
     colorText: 'text-green-600', colorRing: 'ring-green-500',
+    scaleDisplay: 'circles',
+    instruction: tc.feature1 || 'Elige con qué precisión cada afirmación te describe',
     questions: translatedQuestions, scaleOptions, slides, lang: lang as string,
     onBack: () => router.push(`/${lang}/tests`), onComplete: handleComplete,
   }
@@ -117,5 +119,5 @@ export default function EQTestPage() {
     )
   }
 
-  return (<><Header /><InteractiveTestPlayer config={config} /><Footer /></>)
+  return <InteractiveTestPlayer config={config} />
 }

@@ -99,5 +99,5 @@ export default function AnxietyTestPage() {
     )
   }
 
-  return (<><Header /><InteractiveTestPlayer config={config} /><Footer /></>)
+  return <InteractiveTestPlayer config={config} />
 }

@@ -131,11 +131,5 @@ export default function ADHDTestPage() {
     )
   }
 
-  return (
-    <>
-      <Header />
-      <InteractiveTestPlayer config={config} />
-      <Footer />
-    </>
-  )
+  return <InteractiveTestPlayer config={config} />
 }
