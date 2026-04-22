@@ -135,7 +135,7 @@ export default function InteractiveTestPlayer({ config }: { config: TestConfig }
   const inProgressLabel = lang === 'en' ? 'In progress' : lang === 'fr' ? 'En cours' : lang === 'de' ? 'In Bearbeitung' : lang === 'it' ? 'In corso' : lang === 'pt' ? 'Em andamento' : 'En progreso'
 
   return (
-    <div className="min-h-screen" style={{ background: '#f0f4f8' }}>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
       <style>{`
         @keyframes mmBarRise { from{transform:scaleY(0);opacity:0} to{transform:scaleY(1);opacity:1} }
         @keyframes mmRingPulse { 0%{transform:scale(0.6);opacity:0.9} 100%{transform:scale(2.4);opacity:0} }
@@ -168,43 +168,40 @@ export default function InteractiveTestPlayer({ config }: { config: TestConfig }
         .mm-fu-3{animation:mmFadeInUp .5s ease-out .45s both}
       `}</style>
 
-      {/* ── Top header ── */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100">
-        <div className="max-w-3xl mx-auto px-4 py-3">
-          {/* Row 1: back + question number + in-progress badge */}
-          <div className="flex items-center justify-between mb-2">
-            <button
-              onClick={currentStepIndex > 0 ? handlePrev : onBack}
-              className="flex items-center gap-2 text-gray-500 hover:text-gray-800 transition-colors text-sm font-medium"
-            >
-              <FaArrowLeft className="text-xs" />
+      {/* ── Top header — igual que TestHeader del IQ ── */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm border-b border-gray-200">
+        {/* Thin teal progress bar at very top */}
+        <div className="h-1 bg-gray-100">
+          <div
+            className="h-full transition-all duration-700 ease-out"
+            style={{ width: `${Math.max(progress, 1)}%`, background: 'linear-gradient(90deg, #07C59A, #113240)' }}
+          />
+        </div>
+        <div className="container mx-auto max-w-7xl px-4">
+          <div className="flex items-center justify-between py-3">
+            {/* Logo */}
+            <button onClick={currentStepIndex > 0 ? handlePrev : onBack} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+              <img src="/images/MINDMETRIC/Logo.png" alt="MindMetric" className="h-10 md:h-11 w-auto" />
+            </button>
+            {/* Progress info (right side) */}
+            <div className="flex items-center gap-3">
               {currentStep.type === 'question' && (
-                <span>
-                  {questionLabel} {(currentStep as any).questionIndex + 1} {lang === 'en' ? 'of' : lang === 'fr' ? 'sur' : lang === 'de' ? 'von' : lang === 'pt' ? 'de' : 'de'} {totalQuestions}
+                <span className="text-sm text-gray-500 hidden sm:block">
+                  {questionLabel} {(currentStep as any).questionIndex + 1} / {totalQuestions}
                 </span>
               )}
-            </button>
-            <span className="text-xs font-semibold px-3 py-1 rounded-full"
-              style={{ background: '#e6f9f5', color: '#07C59A' }}>
-              ● {inProgressLabel}
-            </span>
-          </div>
-          {/* Row 2: progress % + bar */}
-          <div className="flex items-center gap-3">
-            <span className="text-sm font-bold text-gray-700">{progress}% {progressLabel}</span>
-            <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-              <div
-                className="h-full rounded-full transition-all duration-600 ease-out"
-                style={{ width: `${Math.max(progress, 1)}%`, background: 'linear-gradient(90deg, #07C59A, #113240)' }}
-              />
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full font-bold text-sm"
+                style={{ background: '#e6f9f5', color: '#07C59A' }}>
+                <span>{progress}%</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       {/* ── Content ── */}
-      <div className="pt-24 pb-12 min-h-screen flex items-center justify-center px-4">
-        <div className={`w-full max-w-xl transition-all duration-260 ease-out ${transitionClass}`}>
+      <div className="pt-20 pb-12 min-h-screen flex items-center justify-center px-4">
+        <div className={`w-full max-w-2xl transition-all duration-260 ease-out ${transitionClass}`}>
           {currentStep.type === 'slide' ? (
             <SlideScreen slide={currentStep.slide} onContinue={handleSlideNext} />
           ) : (
@@ -264,24 +261,24 @@ function QuestionCard({
     'Selecciona cómo te sientes sobre esta afirmación'
 
   return (
-    <div className="bg-white rounded-2xl shadow-md overflow-hidden">
-      <div className="px-8 pt-8 pb-2">
+    <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+      <div className="px-10 pt-10 pb-4">
         {/* Instruction text */}
         {instruction && (
-          <p className="text-center text-gray-500 text-sm mb-5">{instruction}</p>
+          <p className="text-center text-gray-400 text-sm mb-6">{instruction}</p>
         )}
 
         {/* Category badge */}
         {question.category && (
-          <div className="flex justify-center mb-4">
-            <span className={`bg-gradient-to-r ${colorFrom} ${colorTo} text-white text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider`}>
+          <div className="flex justify-center mb-5">
+            <span className={`bg-gradient-to-r ${colorFrom} ${colorTo} text-white text-xs font-bold px-5 py-2 rounded-full uppercase tracking-wider`}>
               {question.category}
             </span>
           </div>
         )}
 
         {/* Question text */}
-        <h2 className="text-2xl md:text-3xl font-black text-gray-900 text-center leading-snug mb-8">
+        <h2 className="text-3xl md:text-4xl font-black text-gray-900 text-center leading-snug mb-10">
           {questionText}
         </h2>
 
@@ -300,7 +297,7 @@ function QuestionCard({
 
         {/* Bottom hint */}
         {scaleDisplay === 'circles' && (
-          <div className="flex items-center justify-center gap-1.5 mt-5 mb-3">
+          <div className="flex items-center justify-center gap-1.5 mt-6 mb-4">
             <FaInfoCircle className="text-gray-300 text-xs" />
             <span className="text-xs text-gray-400">{selectHint}</span>
           </div>
@@ -335,13 +332,13 @@ function CircleScale({ options, selectedValue, onAnswer, colorFrom, colorTo }: {
             </span>
             {/* Circle */}
             <div
-              className="w-14 h-14 rounded-full flex items-center justify-center text-lg font-bold transition-all duration-200"
+              className="w-16 h-16 rounded-full flex items-center justify-center text-xl font-bold transition-all duration-200"
               style={{
                 background: isSelected ? style.selectedBg : style.bg,
                 border: isSelected ? `3px solid ${style.selectedBorder}` : `2px solid ${style.border}`,
                 color: isSelected ? '#fff' : '#6b7280',
-                boxShadow: isSelected ? `0 4px 16px ${style.selectedBg}44` : 'none',
-                transform: isSelected ? 'scale(1.08)' : 'scale(1)',
+                boxShadow: isSelected ? `0 6px 20px ${style.selectedBg}55` : 'none',
+                transform: isSelected ? 'scale(1.1)' : 'scale(1)',
               }}
             >
               {opt.value}
