@@ -204,8 +204,8 @@ export default function InteractiveTestPlayer({ config }: { config: TestConfig }
       </div>
 
       {/* ── Content ── */}
-      <div className="pt-24 pb-12 min-h-screen flex items-center justify-center px-4">
-        <div className={`w-full max-w-lg transition-all duration-260 ease-out ${transitionClass}`}>
+      <div className="pt-24 pb-12 min-h-screen flex items-center justify-center px-6">
+        <div className={`w-full max-w-3xl transition-all duration-260 ease-out ${transitionClass}`}>
           {currentStep.type === 'slide' ? (
             <SlideScreen slide={currentStep.slide} onContinue={handleSlideNext} />
           ) : (
@@ -265,24 +265,24 @@ function QuestionCard({
     'Selecciona cómo te sientes sobre esta afirmación'
 
   return (
-    <div className="bg-white rounded-2xl overflow-hidden" style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}>
-      <div className="px-8 pt-8 pb-4">
+    <div className="bg-white rounded-3xl overflow-hidden" style={{ boxShadow: '0 8px 40px rgba(0,0,0,0.10)' }}>
+      <div className="px-12 pt-12 pb-6">
         {/* Instruction text */}
         {instruction && (
-          <p className="text-center text-gray-500 text-sm mb-5">{instruction}</p>
+          <p className="text-center text-gray-400 text-base mb-7">{instruction}</p>
         )}
 
         {/* Category badge */}
         {question.category && (
-          <div className="flex justify-center mb-4">
-            <span className={`bg-gradient-to-r ${colorFrom} ${colorTo} text-white text-xs font-bold px-5 py-2 rounded-full uppercase tracking-wider`}>
+          <div className="flex justify-center mb-6">
+            <span className={`bg-gradient-to-r ${colorFrom} ${colorTo} text-white text-sm font-bold px-6 py-2.5 rounded-full uppercase tracking-wider`}>
               {question.category}
             </span>
           </div>
         )}
 
         {/* Question text */}
-        <h2 className="text-2xl md:text-3xl font-black text-gray-900 text-center leading-snug mb-8">
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 text-center leading-tight mb-12">
           {questionText}
         </h2>
 
@@ -301,9 +301,9 @@ function QuestionCard({
 
         {/* Bottom hint */}
         {scaleDisplay === 'circles' && (
-          <div className="flex items-center justify-center gap-1.5 mt-6 mb-4">
-            <FaInfoCircle className="text-gray-300 text-xs" />
-            <span className="text-xs text-gray-400">{selectHint}</span>
+          <div className="flex items-center justify-center gap-1.5 mt-8 mb-6">
+            <FaInfoCircle className="text-gray-300 text-sm" />
+            <span className="text-sm text-gray-400">{selectHint}</span>
           </div>
         )}
       </div>
@@ -320,7 +320,7 @@ function CircleScale({ options, selectedValue, onAnswer, colorFrom, colorTo }: {
   colorTo: string
 }) {
   return (
-    <div className="flex items-start justify-center gap-4">
+    <div className="flex items-start justify-center gap-6 md:gap-8">
       {options.map((opt, i) => {
         const style = CIRCLE_STYLES[i] || CIRCLE_STYLES[2]
         const isSelected = selectedValue === opt.value
@@ -328,21 +328,21 @@ function CircleScale({ options, selectedValue, onAnswer, colorFrom, colorTo }: {
           <button
             key={opt.value}
             onClick={() => onAnswer(opt.value)}
-            className="flex flex-col items-center gap-2.5 group"
+            className="flex flex-col items-center gap-3 group"
           >
             {/* Label above */}
-            <span className="text-[11px] text-gray-500 text-center leading-tight w-16 min-h-[28px] flex items-end justify-center">
+            <span className="text-xs text-gray-500 text-center leading-tight w-20 min-h-[32px] flex items-end justify-center font-medium">
               {opt.label}
             </span>
             {/* Circle */}
             <div
-              className="w-16 h-16 rounded-full flex items-center justify-center text-xl font-bold transition-all duration-200"
+              className="w-20 h-20 rounded-full flex items-center justify-center text-2xl font-bold transition-all duration-200 cursor-pointer"
               style={{
                 background: isSelected ? style.selectedBg : style.bg,
                 border: isSelected ? `3px solid ${style.selectedBorder}` : `2px solid ${style.border}`,
                 color: isSelected ? '#fff' : '#6b7280',
-                boxShadow: isSelected ? `0 6px 20px ${style.selectedBg}55` : 'none',
-                transform: isSelected ? 'scale(1.1)' : 'scale(1)',
+                boxShadow: isSelected ? `0 8px 24px ${style.selectedBg}55` : 'none',
+                transform: isSelected ? 'scale(1.12)' : 'scale(1)',
               }}
             >
               {opt.value}
