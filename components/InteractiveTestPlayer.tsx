@@ -314,8 +314,10 @@ function CircleScale({ options, selectedValue, onAnswer, colorFrom, colorTo }: {
   colorFrom: string
   colorTo: string
 }) {
+  // Short label for mobile to avoid overflow
+  const shortLabels = ['–––', '–', '○', '+', '+++']
   return (
-    <div className="flex items-start justify-between sm:justify-center sm:gap-6 md:gap-8 w-full">
+    <div className="flex items-start justify-center gap-2 sm:gap-4 md:gap-6 w-full">
       {options.map((opt, i) => {
         const style = CIRCLE_STYLES[i] || CIRCLE_STYLES[2]
         const isSelected = selectedValue === opt.value
@@ -323,16 +325,20 @@ function CircleScale({ options, selectedValue, onAnswer, colorFrom, colorTo }: {
           <button
             key={opt.value}
             onClick={() => onAnswer(opt.value)}
-            className="flex flex-col items-center gap-2 sm:gap-3 flex-1 sm:flex-none group"
+            className="flex flex-col items-center gap-2"
+            style={{ width: 'clamp(44px, 17vw, 80px)' }}
           >
-            {/* Label above — only show on larger screens or shorter text */}
-            <span className="text-[10px] sm:text-xs text-gray-500 text-center leading-tight w-full sm:w-20 min-h-[24px] sm:min-h-[32px] flex items-end justify-center font-medium px-0.5">
+            {/* Label above */}
+            <span className="hidden sm:block text-xs text-gray-500 text-center leading-tight w-full min-h-[28px] flex items-end justify-center font-medium">
               {opt.label}
             </span>
-            {/* Circle — scales with screen */}
+            {/* Circle — clamp size to viewport */}
             <div
-              className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center text-lg sm:text-xl md:text-2xl font-bold transition-all duration-200 cursor-pointer mx-auto"
+              className="rounded-full flex items-center justify-center font-bold transition-all duration-200 cursor-pointer"
               style={{
+                width: 'clamp(44px, 17vw, 80px)',
+                height: 'clamp(44px, 17vw, 80px)',
+                fontSize: 'clamp(14px, 4.5vw, 24px)',
                 background: isSelected ? style.selectedBg : style.bg,
                 border: isSelected ? `3px solid ${style.selectedBorder}` : `2px solid ${style.border}`,
                 color: isSelected ? '#fff' : '#6b7280',
@@ -342,6 +348,11 @@ function CircleScale({ options, selectedValue, onAnswer, colorFrom, colorTo }: {
             >
               {opt.value}
             </div>
+            {/* Short label on mobile only */}
+            <span className="sm:hidden text-[9px] text-gray-400 text-center leading-tight w-full"
+              style={{ maxWidth: 'clamp(44px, 17vw, 80px)' }}>
+              {opt.label.split(' ').slice(-1)[0]}
+            </span>
           </button>
         )
       })}
