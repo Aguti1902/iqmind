@@ -229,7 +229,19 @@ export class SipayClient {
     }
 
     console.log('📤 Sipay MIT (all-in-one):', { ...data, token: data.token.slice(0, 10) + '...' })
-    return this.makeRequest('/mdwr/v1/all-in-one', 'POST', data)
+    const allinoneResult = await this.makeRequest('/mdwr/v1/all-in-one', 'POST', data)
+
+    // all-in-one para MIT devuelve 'authentication_started' con un request_id
+    // que hay que confirmar inmediatamente (igual que el pago inicial con tarjeta)
+    const requestId = allinoneResult?.payload?.request_id
+    if (requestId && allinoneResult?.detail === 'authentication_started') {
+      console.log('🔄 [MIT] authentication_started — confirmando con request_id:', requestId)
+      const confirmResult = await this.confirmPayment(requestId)
+      console.log('✅ [MIT] Confirm result:', JSON.stringify(confirmResult))
+      return confirmResult
+    }
+
+    return allinoneResult
   }
 
   /**
