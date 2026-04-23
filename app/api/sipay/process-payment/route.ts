@@ -119,7 +119,7 @@ export async function POST(request: NextRequest) {
         console.log('💳 [process-payment] cardToken guardado (frictionless):', cardToken)
 
         // Solo activar trial si el confirm fue exitoso
-        const trialEndDate = new Date(Date.now() + 10 * 60 * 1000)
+        const trialEndDate = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
         await db.updateUser(user.id, {
           subscriptionStatus: 'trial',
           trialEndDate: trialEndDate.toISOString(),
