@@ -216,17 +216,20 @@ export class SipayClient {
       currency: params.currency,
       order: params.orderId,
       reconciliation: reconciliation,
+      // Según docs Sipay: tokens almacenados (incluyendo Apple Pay) deben usarse
+      // con el endpoint all-in-one, no con /mdwr/v1/authorization
+      // https://developer.sipay.es/docs/documentation/online/selling/wallets/apay
+      operation: 'all-in-one',
       token: params.cardToken,
       sca_exemptions: 'MIT',
       mit_reason: params.mitReason || 'R',
     }
-    // Incluir cof_id si está disponible — requerido por PSD2 para cobros recurrentes
     if (params.cofId) {
       data.cof_id = params.cofId
     }
 
-    console.log('📤 Sipay MIT:', { ...data, token: data.token.slice(0, 10) + '...' })
-    return this.makeRequest('/mdwr/v1/authorization', 'POST', data)
+    console.log('📤 Sipay MIT (all-in-one):', { ...data, token: data.token.slice(0, 10) + '...' })
+    return this.makeRequest('/mdwr/v1/all-in-one', 'POST', data)
   }
 
   /**
