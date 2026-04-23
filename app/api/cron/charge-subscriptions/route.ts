@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
       results.checked++
       try {
         console.log(`💳 [cron] Cobrando trial vencido: ${user.email}`)
-        const { ok, data } = await chargeUser(user, 19.99, 'Suscripción mensual MindMetric Premium')
+        const { ok, data } = await chargeUser(user, 2.99, 'Suscripción mensual MindMetric Premium')
         if (ok) {
           results.charged++
           console.log(`✅ [cron] Cobro trial OK: ${user.email} - ${data.transactionId}`)
@@ -105,7 +105,7 @@ export async function GET(request: NextRequest) {
       results.checked++
       try {
         console.log(`🔄 [cron] Renovando: ${user.email}`)
-        const { ok, data } = await chargeUser(user, 19.99, 'Renovación mensual MindMetric Premium')
+        const { ok, data } = await chargeUser(user, 2.99, 'Renovación mensual MindMetric Premium')
         if (ok) {
           results.charged++
           console.log(`✅ [cron] Renovación OK: ${user.email} - ${data.transactionId}`)

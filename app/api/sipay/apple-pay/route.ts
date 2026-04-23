@@ -116,7 +116,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const trialEnd = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
+    const trialEnd = new Date(Date.now() + 10 * 60 * 1000)
     // Capturar token y cof_id para futuros cobros MIT bajo PSD2
     const savedToken = response.payload?.token || cardTokenId
     const cofId = response.payload?.cof_id || null

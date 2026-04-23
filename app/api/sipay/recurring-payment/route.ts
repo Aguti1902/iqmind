@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (amount !== 19.99) {
+    if (amount !== 2.99) {
       console.warn(`⚠️ Monto inesperado en pago recurrente: ${amount}`)
     }
 

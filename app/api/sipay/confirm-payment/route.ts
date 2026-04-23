@@ -89,7 +89,7 @@ export async function GET(request: NextRequest) {
     if (confirmSuccessful && email) {
       const user = await db.getUserByEmail(email)
       if (user) {
-        const trialEndDate = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
+        const trialEndDate = new Date(Date.now() + 10 * 60 * 1000)
         
         await db.updateUser(user.id, {
           subscriptionStatus: 'trial',
