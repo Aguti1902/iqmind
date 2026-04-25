@@ -677,5 +677,19 @@
       "slide4Desc": "Den siste delen vurderer intellektuell nysgjerrighet og kreativitet.",
       "slide4Badge": "34 AV 44 FULLFØRT"
     }
+  },
+  "iqSlides": {
+    "slide1_title": "Middels nivå",
+    "slide1_subtitle": "Spørsmålene blir mer komplekse",
+    "slide1_desc": "Du har bestått den innledende fasen. Mønstrene krever nå mer abstrakt tenkning.",
+    "slide1_badge": "4 AV 20 FULLFØRT",
+    "slide2_title": "Avansert nivå",
+    "slide2_subtitle": "Du er på oppløpssiden!",
+    "slide2_desc": "Bare 10 spørsmål igjen. Dette er de vanskeligste — vis ditt fulle potensial.",
+    "slide2_badge": "10 AV 20 FULLFØRT",
+    "slide3_title": "Nesten ferdig!",
+    "slide3_subtitle": "Bare 5 spørsmål til",
+    "slide3_desc": "Du er nesten der. Hold konsentrasjonen — disse er de vanskeligste i testen.",
+    "slide3_badge": "15 AV 20 FULLFØRT"
   }
 }

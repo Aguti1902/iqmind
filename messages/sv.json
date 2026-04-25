@@ -677,5 +677,19 @@
       "slide4Desc": "Det sista avsnittet bedömer din intellektuella nyfikenhet och kreativitet.",
       "slide4Badge": "34 AV 44 SLUTFÖRDA"
     }
+  },
+  "iqSlides": {
+    "slide1_title": "Mellannivå",
+    "slide1_subtitle": "Frågorna blir mer komplexa",
+    "slide1_desc": "Du har klarat den inledande fasen. Mönstren kräver nu mer abstrakt tänkande.",
+    "slide1_badge": "4 AV 20 SLUTFÖRDA",
+    "slide2_title": "Avancerad nivå",
+    "slide2_subtitle": "Du är i slutspurten!",
+    "slide2_desc": "Bara 10 frågor kvar. Dessa är de svåraste — visa din fulla potential.",
+    "slide2_badge": "10 AV 20 SLUTFÖRDA",
+    "slide3_title": "Nästan klart!",
+    "slide3_subtitle": "Bara 5 frågor till",
+    "slide3_desc": "Du är nästan framme. Håll koncentrationen — dessa är de svåraste i testet.",
+    "slide3_badge": "15 AV 20 SLUTFÖRDA"
   }
 }

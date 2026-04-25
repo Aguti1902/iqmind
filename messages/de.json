@@ -677,5 +677,19 @@
       "slide4Desc": "Der letzte Abschnitt bewertet Ihre intellektuelle Neugier und Kreativität.",
       "slide4Badge": "34 VON 44 ABGESCHLOSSEN"
     }
+  },
+  "iqSlides": {
+    "slide1_title": "Mittleres Niveau",
+    "slide1_subtitle": "Die Fragen werden komplexer",
+    "slide1_desc": "Sie haben die erste Phase gemeistert. Die Muster erfordern jetzt abstrakteres Denken.",
+    "slide1_badge": "4 VON 20 ABGESCHLOSSEN",
+    "slide2_title": "Fortgeschrittenes Niveau",
+    "slide2_subtitle": "Sie sind auf der Zielgeraden!",
+    "slide2_desc": "Nur noch 10 Fragen. Sie sind die schwierigsten — zeigen Sie Ihr volles Potenzial.",
+    "slide2_badge": "10 VON 20 ABGESCHLOSSEN",
+    "slide3_title": "Fast geschafft!",
+    "slide3_subtitle": "Nur noch 5 Fragen",
+    "slide3_desc": "Sie sind fast am Ziel. Bleiben Sie konzentriert — das sind die schwersten des Tests.",
+    "slide3_badge": "15 VON 20 ABGESCHLOSSEN"
   }
 }

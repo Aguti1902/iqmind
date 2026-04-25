@@ -722,5 +722,19 @@
       "slide4Desc": "The final section assesses your intellectual curiosity, creativity and interest in new experiences.",
       "slide4Badge": "34 OF 44 COMPLETED"
     }
+  },
+  "iqSlides": {
+    "slide1_title": "Intermediate Level",
+    "slide1_subtitle": "Questions are getting more complex",
+    "slide1_desc": "You've passed the initial phase. Patterns now require more abstract reasoning.",
+    "slide1_badge": "4 OF 20 COMPLETED",
+    "slide2_title": "Advanced Level",
+    "slide2_subtitle": "You're in the home stretch!",
+    "slide2_desc": "Only 10 questions left. These are the most challenging — show your full potential.",
+    "slide2_badge": "10 OF 20 COMPLETED",
+    "slide3_title": "Almost done!",
+    "slide3_subtitle": "Just 5 more questions",
+    "slide3_desc": "You're almost there. Stay focused — these are the hardest in the test.",
+    "slide3_badge": "15 OF 20 COMPLETED"
   }
 }

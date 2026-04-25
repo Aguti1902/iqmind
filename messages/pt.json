@@ -677,5 +677,19 @@
       "slide4Desc": "A secção final avalia a sua curiosidade intelectual e criatividade.",
       "slide4Badge": "34 DE 44 CONCLUÍDAS"
     }
+  },
+  "iqSlides": {
+    "slide1_title": "Nível Intermédio",
+    "slide1_subtitle": "As questões ficam mais complexas",
+    "slide1_desc": "Superou a fase inicial. Os padrões agora requerem raciocínio mais abstrato.",
+    "slide1_badge": "4 DE 20 CONCLUÍDAS",
+    "slide2_title": "Nível Avançado",
+    "slide2_subtitle": "Está na reta final!",
+    "slide2_desc": "Restam apenas 10 questões. São as mais desafiadoras — mostre todo o seu potencial.",
+    "slide2_badge": "10 DE 20 CONCLUÍDAS",
+    "slide3_title": "Quase terminado!",
+    "slide3_subtitle": "Só mais 5 questões",
+    "slide3_desc": "Está quase lá. Mantenha a concentração — são as mais difíceis do teste.",
+    "slide3_badge": "15 DE 20 CONCLUÍDAS"
   }
 }

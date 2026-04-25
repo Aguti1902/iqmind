@@ -677,5 +677,19 @@
       "slide4Desc": "La section finale évalue votre curiosité intellectuelle et créativité.",
       "slide4Badge": "34 SUR 44 COMPLÉTÉES"
     }
+  },
+  "iqSlides": {
+    "slide1_title": "Niveau Intermédiaire",
+    "slide1_subtitle": "Les questions deviennent plus complexes",
+    "slide1_desc": "Vous avez dépassé la phase initiale. Les schémas nécessitent maintenant un raisonnement plus abstrait.",
+    "slide1_badge": "4 SUR 20 COMPLÉTÉES",
+    "slide2_title": "Niveau Avancé",
+    "slide2_subtitle": "Vous êtes dans la dernière ligne droite !",
+    "slide2_desc": "Il ne reste que 10 questions. Ce sont les plus difficiles — montrez tout votre potentiel.",
+    "slide2_badge": "10 SUR 20 COMPLÉTÉES",
+    "slide3_title": "Presque terminé !",
+    "slide3_subtitle": "Plus que 5 questions",
+    "slide3_desc": "Vous y êtes presque. Restez concentré(e) — ce sont les plus difficiles du test.",
+    "slide3_badge": "15 SUR 20 COMPLÉTÉES"
   }
 }

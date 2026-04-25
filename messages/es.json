@@ -723,5 +723,19 @@
       "slide4Desc": "La sección final evalúa tu curiosidad intelectual, creatividad e interés por nuevas experiencias.",
       "slide4Badge": "34 DE 44 COMPLETADAS"
     }
+  },
+  "iqSlides": {
+    "slide1_title": "Nivel Medio",
+    "slide1_subtitle": "Las preguntas se vuelven más complejas",
+    "slide1_desc": "Has superado la fase inicial. Ahora los patrones requieren mayor razonamiento abstracto.",
+    "slide1_badge": "4 DE 20 COMPLETADAS",
+    "slide2_title": "Nivel Avanzado",
+    "slide2_subtitle": "¡Estás en la recta final!",
+    "slide2_desc": "Solo quedan 10 preguntas. Son las más desafiantes — demuestra tu capacidad máxima.",
+    "slide2_badge": "10 DE 20 COMPLETADAS",
+    "slide3_title": "¡Casi terminado!",
+    "slide3_subtitle": "Solo 5 preguntas más",
+    "slide3_desc": "Estás a punto de terminar. Mantén la concentración — son las más difíciles del test.",
+    "slide3_badge": "15 DE 20 COMPLETADAS"
   }
 }

@@ -10,22 +10,13 @@ import { FaClock, FaUser } from 'react-icons/fa'
 import { useTranslations } from '@/hooks/useTranslations'
 import { saveTestResult, calculateCategoryScores, updateUserInfo } from '@/lib/test-history'
 
-// Diapositivas de transición entre secciones del test de IQ
-const IQ_SLIDES: Record<number, { anim: 'bars' | 'orbit'; title: string; subtitle: string; description: string; badge: string }> = {
-  4: {
-    anim: 'bars',
-    title: 'Nivel Medio',
-    subtitle: 'Las preguntas se vuelven más complejas',
-    description: 'Has superado la fase inicial. Ahora los patrones requieren mayor razonamiento abstracto.',
-    badge: '4 DE 20 COMPLETADAS',
-  },
-  10: {
-    anim: 'orbit',
-    title: 'Nivel Avanzado',
-    subtitle: '¡Estás en la recta final!',
-    description: 'Solo quedan 10 preguntas. Son las más desafiantes — demuestra tu capacidad máxima.',
-    badge: '10 DE 20 COMPLETADAS',
-  },
+// Diapositivas generadas dinámicamente desde traducciones
+function buildIQSlides(s: any) {
+  return {
+    4: { anim: 'bars' as const, title: s?.slide1_title || 'Nivel Medio', subtitle: s?.slide1_subtitle || 'Las preguntas se vuelven más complejas', description: s?.slide1_desc || '', badge: s?.slide1_badge || '4 DE 20 COMPLETADAS' },
+    10: { anim: 'orbit' as const, title: s?.slide2_title || 'Nivel Avanzado', subtitle: s?.slide2_subtitle || '¡Estás en la recta final!', description: s?.slide2_desc || '', badge: s?.slide2_badge || '10 DE 20 COMPLETADAS' },
+    15: { anim: 'check' as const, title: s?.slide3_title || '¡Casi terminado!', subtitle: s?.slide3_subtitle || 'Solo 5 preguntas más', description: s?.slide3_desc || '', badge: s?.slide3_badge || '15 DE 20 COMPLETADAS' },
+  }
 }
 
 export default function TestPage() {
@@ -39,7 +30,7 @@ export default function TestPage() {
   const [startTime, setStartTime] = useState<number>(0)
   const [showTooFastModal, setShowTooFastModal] = useState(false)
   const [showFinishConfirmModal, setShowFinishConfirmModal] = useState(false)
-  const [activeSlide, setActiveSlide] = useState<typeof IQ_SLIDES[number] | null>(null)
+  const [activeSlide, setActiveSlide] = useState<{ anim: string; title: string; subtitle: string; description: string; badge: string } | null>(null)
   const [slideTransitioning, setSlideTransitioning] = useState(false)
 
   useEffect(() => {
@@ -99,7 +90,8 @@ export default function TestPage() {
 
     // Comprobar si hay diapositiva de transición después de esta pregunta
     const nextQ = currentQuestion + 1
-    const slide = IQ_SLIDES[nextQ]
+    const slides = buildIQSlides(t?.iqSlides)
+    const slide = (slides as any)[nextQ]
     if (slide) {
       setTimeout(() => {
         setSlideTransitioning(true)
@@ -421,6 +413,7 @@ export default function TestPage() {
             .iq-od-1 { animation: iqOrbitDot 3s linear infinite; }
             .iq-od-2 { animation: iqOrbitDot2 3s linear infinite; }
             .iq-od-3 { animation: iqOrbitDot3 3s linear infinite; }
+            @keyframes iqCheckDraw { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 0; } }
           `}</style>
           <div
             className={`iq-slide-card w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl relative transition-all duration-300 ${slideTransitioning ? 'opacity-0 scale-95' : ''}`}
@@ -454,6 +447,15 @@ export default function TestPage() {
                     <div className="iq-od-3 absolute" style={{ width: 6, height: 6, borderRadius: '50%', background: 'rgba(255,255,255,0.4)' }} />
                   </div>
                 )}
+                {activeSlide.anim === 'check' && (
+                  <div className="flex items-center justify-center w-16 h-16">
+                    <svg viewBox="0 0 64 64" className="w-full h-full">
+                      <circle cx="32" cy="32" r="28" fill="rgba(7,197,154,0.2)" stroke="#07C59A" strokeWidth="2" />
+                      <polyline points="18,32 27,42 46,22" fill="none" stroke="#07C59A" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"
+                        style={{ strokeDasharray: 100, strokeDashoffset: 0, animation: 'iqCheckDraw 0.6s ease-out 0.3s both' }} />
+                    </svg>
+                  </div>
+                )}
               </div>
 
               <h2 className="iq-fu-1 text-3xl font-black mb-2 tracking-tight">{activeSlide.title}</h2>
@@ -465,7 +467,7 @@ export default function TestPage() {
                 className="iq-fu-3 inline-flex items-center gap-2 font-bold px-8 py-3.5 rounded-2xl transition-all hover:scale-105"
                 style={{ background: 'rgba(7,197,154,0.2)', border: '1.5px solid rgba(7,197,154,0.5)', color: '#fff' }}
               >
-                Continuar
+                {t?.tests?.common?.continue || 'Continuar'}
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
