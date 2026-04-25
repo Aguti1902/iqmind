@@ -6,14 +6,127 @@ import SipayInline from '@/components/SipayInline'
 import GooglePayButton from '@/components/GooglePayButton'
 import ApplePayButton from '@/components/ApplePayButton'
 
-// Reseñas de usuarios
+// Reseñas Trustpilot
 const reviews = [
-  { name: 'María G.', rating: 5, text: 'Muy profesional y detallado. Me ayudó a entenderme mejor.', country: '🇪🇸' },
-  { name: 'Carlos R.', rating: 5, text: 'Resultados precisos y el certificado es muy útil.', country: '🇲🇽' },
-  { name: 'Ana P.', rating: 5, text: 'Excelente experiencia, lo recomiendo totalmente.', country: '🇦🇷' },
-  { name: 'David M.', rating: 5, text: 'El análisis por categorías es muy completo.', country: '🇨🇴' },
-  { name: 'Laura S.', rating: 5, text: 'Rápido, fácil y muy informativo. ¡Gracias!', country: '🇨🇱' },
+  { name: 'María G.', rating: 5, text: 'Muy profesional y detallado. Me ayudó a entenderme mejor.', country: '🇪🇸', date: 'Hace 2 horas' },
+  { name: 'Carlos R.', rating: 5, text: 'Resultados precisos y el certificado es muy útil. Lo recomiendo.', country: '🇲🇽', date: 'Hace 4 horas' },
+  { name: 'Ana P.', rating: 5, text: 'Excelente experiencia. El análisis es muy detallado.', country: '🇦🇷', date: 'Hace 5 horas' },
+  { name: 'David M.', rating: 5, text: 'El análisis por categorías es muy completo y preciso.', country: '🇨🇴', date: 'Hace 7 horas' },
+  { name: 'Laura S.', rating: 5, text: 'Rápido, fácil y muy informativo. ¡Gracias!', country: '🇨🇱', date: 'Hace 9 horas' },
 ]
+
+// Componente Diploma CSS
+function DiplomaCard({ userName }: { userName: string }) {
+  return (
+    <div className="relative bg-white rounded-xl overflow-hidden" style={{
+      border: '3px solid #c5a028',
+      boxShadow: '0 8px 40px rgba(197,160,40,0.25), inset 0 0 0 6px rgba(197,160,40,0.1)',
+    }}>
+      {/* Corner decorations */}
+      {['top-2 left-2', 'top-2 right-2', 'bottom-2 left-2', 'bottom-2 right-2'].map((pos, i) => (
+        <div key={i} className={`absolute ${pos} w-6 h-6 border-2 border-[#c5a028] opacity-60`}
+          style={{ borderRadius: i < 2 ? (i === 0 ? '4px 0 0 0' : '0 4px 0 0') : (i === 2 ? '0 0 0 4px' : '0 0 4px 0') }} />
+      ))}
+
+      <div className="px-6 pt-5 pb-6">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <img src="/images/MINDMETRIC/Isotipo.png" alt="MindMetric" className="h-8 w-8" onError={(e) => { (e.target as HTMLImageElement).src = '/images/FAVICON2.png' }} />
+            <span className="font-black text-[#113240] text-sm tracking-wide">MindMetric</span>
+          </div>
+          <span className="text-[10px] font-bold text-[#c5a028] uppercase tracking-widest border border-[#c5a028] px-2 py-0.5 rounded">Certificado</span>
+        </div>
+
+        {/* Title */}
+        <div className="text-center mb-4">
+          <h3 className="text-lg font-black text-[#113240] uppercase tracking-wider mb-0.5">Certificado de Inteligencia</h3>
+          <div className="h-px bg-gradient-to-r from-transparent via-[#c5a028] to-transparent" />
+        </div>
+
+        {/* Body */}
+        <div className="text-center mb-4">
+          <p className="text-xs text-gray-500 mb-1">Se certifica que</p>
+          <p className="text-base font-bold text-[#113240] mb-3">{userName || 'Tu Nombre'}</p>
+          <p className="text-xs text-gray-600 mb-3">ha completado satisfactoriamente el Test de Inteligencia MindMetric</p>
+          <p className="text-xs text-gray-500 mb-1">con una puntuación de CI de</p>
+          {/* Blurred score */}
+          <div className="inline-flex items-center gap-2 bg-gray-100 rounded-lg px-4 py-2 mb-2">
+            <span className="text-2xl font-black text-[#113240]" style={{ filter: 'blur(6px)', userSelect: 'none' }}>127</span>
+            <span className="text-xs text-[#07C59A] font-bold">🔒 Bloqueado</span>
+          </div>
+          <p className="text-[10px] text-gray-400">Completa el pago para desbloquear</p>
+        </div>
+
+        {/* Footer */}
+        <div className="flex items-center justify-between pt-3 border-t border-[#c5a028]/30">
+          <div className="text-center">
+            <div className="h-px w-20 bg-gray-300 mb-1" />
+            <p className="text-[9px] text-gray-400">MindMetric Labs</p>
+          </div>
+          {/* Seal */}
+          <div className="w-10 h-10 rounded-full border-2 border-[#07C59A] flex items-center justify-center"
+            style={{ background: 'radial-gradient(circle, #e6f9f5, #ccf7eb)' }}>
+            <span className="text-[8px] font-black text-[#07C59A] text-center leading-none">✓<br/>válido</span>
+          </div>
+          <div className="text-center">
+            <div className="h-px w-20 bg-gray-300 mb-1" />
+            <p className="text-[9px] text-gray-400">{new Date().toLocaleDateString('es-ES')}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Componente Trustpilot
+function TrustpilotSection() {
+  const tpReviews = [
+    { name: 'María G.', stars: 5, text: 'Muy profesional y detallado. El certificado quedó increíble.', date: 'Hace 2h', flag: '🇪🇸' },
+    { name: 'Carlos R.', stars: 5, text: 'Resultados muy precisos. Lo recomiendo totalmente.', date: 'Hace 4h', flag: '🇲🇽' },
+    { name: 'Ana Pérez', stars: 5, text: 'Excelente experiencia. El análisis por categorías es muy útil.', date: 'Hace 5h', flag: '🇦🇷' },
+  ]
+  return (
+    <div className="bg-white rounded-2xl shadow-lg p-5 border border-gray-100">
+      {/* Trustpilot header */}
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            {/* Trustpilot logo */}
+            <svg viewBox="0 0 126 32" className="h-5 w-auto" fill="none">
+              <rect width="32" height="32" rx="2" fill="#00b67a"/>
+              <path d="M16 5.5l3.09 9.51H29.5l-8.27 6.01 3.16 9.73L16 24.73l-8.39 6.02 3.16-9.73L2.5 15.01H12.91L16 5.5z" fill="white"/>
+            </svg>
+            <span className="text-sm font-black text-gray-800">Trustpilot</span>
+          </div>
+          <div className="flex items-center gap-1">
+            {[1,2,3,4,5].map(i => <span key={i} className="text-[#00b67a] text-sm">★</span>)}
+            <span className="text-xs font-bold text-gray-700 ml-1">4.8</span>
+            <span className="text-xs text-gray-500">· Excelente</span>
+          </div>
+        </div>
+        <span className="text-xs text-gray-400">+2.400 opiniones</span>
+      </div>
+      {/* Reviews */}
+      <div className="space-y-3">
+        {tpReviews.map((r, i) => (
+          <div key={i} className="bg-gray-50 rounded-xl p-3">
+            <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center gap-1.5">
+                <span className="text-sm">{r.flag}</span>
+                <span className="text-xs font-bold text-gray-800">{r.name}</span>
+                <svg viewBox="0 0 24 24" className="w-3 h-3 text-[#00b67a] fill-current"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </div>
+              <div className="flex">{[1,2,3,4,5].map(j => <span key={j} className="text-[#00b67a] text-[10px]">★</span>)}</div>
+            </div>
+            <p className="text-xs text-gray-600 italic">"{r.text}"</p>
+            <p className="text-[10px] text-gray-400 mt-1">{r.date}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 // Deshabilitar pre-rendering estático
 export const dynamic = 'force-dynamic'
@@ -30,6 +143,23 @@ function CheckoutPaymentContent() {
   const [currentReview, setCurrentReview] = useState(0)
   const [paymentMethod, setPaymentMethod] = useState<'none' | 'card' | 'google' | 'apple'>('none')
   const [isProcessing, setIsProcessing] = useState(false)
+  const [countdown, setCountdown] = useState(10 * 60) // 10 minutos
+
+  // Countdown timer
+  useEffect(() => {
+    const saved = sessionStorage.getItem('checkout_countdown')
+    if (saved) setCountdown(parseInt(saved))
+    const timer = setInterval(() => {
+      setCountdown(prev => {
+        const next = Math.max(0, prev - 1)
+        sessionStorage.setItem('checkout_countdown', next.toString())
+        return next
+      })
+    }, 1000)
+    return () => clearInterval(timer)
+  }, [])
+
+  const formatCountdown = (s: number) => `${Math.floor(s / 60).toString().padStart(2, '0')}:${(s % 60).toString().padStart(2, '0')}`
 
   // Auto-rotar reseñas
   useEffect(() => {
@@ -292,146 +422,69 @@ function CheckoutPaymentContent() {
         </div>
       </header>
 
+      {/* ── Urgency banner ── */}
+      <div className="bg-[#113240] text-white py-2.5 px-4 text-center">
+        <span className="text-sm font-medium">
+          ⏰ ¡Oferta especial! Tu descuento finaliza en{' '}
+          <span className="font-black text-[#07C59A] text-base tabular-nums">{formatCountdown(countdown)}</span>
+        </span>
+      </div>
+
+      {/* Social proof bar */}
+      <div className="bg-gradient-to-r from-[#07C59A]/10 to-[#113240]/10 border-b border-gray-200 py-2 px-4">
+        <div className="max-w-6xl mx-auto flex items-center justify-center gap-6 text-xs text-gray-600 flex-wrap">
+          <span>🔥 <strong>247</strong> personas lo compraron hoy</span>
+          <span>·</span>
+          <span>🧠 CI promedio: <strong>115</strong></span>
+          <span>·</span>
+          <span>✅ +50.000 tests realizados</span>
+        </div>
+      </div>
+
       {/* Main Content */}
-      <div className="py-12 px-4">
+      <div className="py-8 px-4">
         <div className="max-w-6xl mx-auto">
-          {/* Hero */}
-          <div className="text-center mb-12">
-            <div className="inline-block p-4 bg-yellow-100 rounded-full mb-4 text-5xl">
-              {config.icon}
-            </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              {config.title}
-            </h1>
-            <p className="text-xl text-gray-600">
-              {config.subtitle}
-            </p>
-          </div>
-
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Left Column - Info */}
-            <div className="space-y-6 order-2 lg:order-1">
-              {/* Pricing */}
-              <div className="bg-white rounded-2xl shadow-xl p-8 border-4 border-[#07C59A]">
-                <div className="text-center mb-6">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                    Desbloquea tu Resultado Completo
-                  </h3>
-                  <div className="flex items-baseline justify-center gap-2 mb-4">
-                    <span className="text-gray-500 line-through text-2xl">29,99€</span>
-                    <span className="text-6xl font-bold text-[#07C59A]">0,90€</span>
-                  </div>
-                  <div className="inline-block bg-green-100 text-green-800 px-4 py-2 rounded-full font-semibold mb-4">
-                    ¡Ahorra 97%!
-                  </div>
-                </div>
+            {/* Left Column */}
+            <div className="space-y-5 order-2 lg:order-1">
 
-                <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 mb-6">
-                  <h4 className="font-bold text-blue-900 mb-3 flex items-center gap-2">
-                    <i className="fas fa-check-circle text-blue-600"></i>
-                    Incluye Trial Premium de 2 Días
-                  </h4>
-                  <p className="text-blue-800 text-sm mb-2">
-                    ✅ Acceso completo a todos los tests<br />
-                    ✅ Análisis detallado y comparativas<br />
-                    ✅ Certificado descargable<br />
-                    ✅ Después solo <strong>19,99€/mes</strong>
-                  </p>
-                  <p className="text-xs text-blue-700 mt-3">
-                    Cancela en cualquier momento durante el trial
-                  </p>
+              {/* Diploma */}
+              <div>
+                <p className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2 text-center">Tu certificado te espera</p>
+                <DiplomaCard userName={email.split('@')[0]} />
+              </div>
+
+              {/* What you get */}
+              <div className="bg-white rounded-2xl shadow-lg p-5 border border-gray-100">
+                <h3 className="text-base font-black text-[#113240] mb-3">✅ Lo que obtienes por solo 0,90€</h3>
+                <div className="space-y-2.5">
+                  {[
+                    ['🧠', 'Puntuación exacta de CI', 'Tu IQ real, no una estimación'],
+                    ['📊', 'Análisis por 6 categorías', 'Lógica, memoria, razonamiento...'],
+                    ['🏆', 'Certificado descargable', 'Con tu nombre y puntuación'],
+                    ['📈', 'Comparación mundial', 'Ves cómo eres frente a millones'],
+                    ['🔄', '2 días Premium gratis', 'Luego 19,99€/mes, cancela siempre'],
+                  ].map(([icon, title, desc], i) => (
+                    <div key={i} className="flex items-start gap-3">
+                      <span className="text-xl flex-shrink-0">{icon}</span>
+                      <div>
+                        <p className="text-sm font-bold text-gray-800">{title}</p>
+                        <p className="text-xs text-gray-500">{desc}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
 
-              {/* Features */}
-              <div className="bg-white rounded-2xl shadow-xl p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-4">
-                  ¿Qué Obtienes?
-                </h3>
-                <div className="space-y-4">
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-[#07C59A] rounded-full flex items-center justify-center flex-shrink-0">
-                      <i className="fas fa-brain text-white"></i>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900">Resultado Completo</h4>
-                      <p className="text-sm text-gray-600">Tu puntuación exacta y análisis detallado</p>
-                    </div>
-                  </div>
+              {/* Trustpilot */}
+              <TrustpilotSection />
 
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-[#07C59A] rounded-full flex items-center justify-center flex-shrink-0">
-                      <i className="fas fa-chart-line text-white"></i>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900">Análisis por Categorías</h4>
-                      <p className="text-sm text-gray-600">Gráficos y comparativas detalladas</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-[#07C59A] rounded-full flex items-center justify-center flex-shrink-0">
-                      <i className="fas fa-certificate text-white"></i>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900">Certificado Oficial</h4>
-                      <p className="text-sm text-gray-600">Descargable y compartible</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-[#07C59A] rounded-full flex items-center justify-center flex-shrink-0">
-                      <i className="fas fa-users text-white"></i>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900">Comparación Mundial</h4>
-                      <p className="text-sm text-gray-600">Ve cómo te comparas con otros usuarios</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Reviews Slider */}
-              <div className="bg-white rounded-2xl shadow-xl p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <span>⭐</span> Lo que dicen nuestros usuarios
-                </h3>
-                <div className="relative overflow-hidden">
-                  <div 
-                    className="transition-transform duration-500 ease-in-out"
-                    style={{ transform: `translateX(-${currentReview * 100}%)` }}
-                  >
-                    <div className="flex">
-                      {reviews.map((review, index) => (
-                        <div key={index} className="w-full flex-shrink-0 px-1">
-                          <div className="bg-gray-50 rounded-xl p-4">
-                            <div className="flex items-center gap-2 mb-2">
-                              <div className="flex text-yellow-400">
-                                {[...Array(review.rating)].map((_, i) => (
-                                  <span key={i}>★</span>
-                                ))}
-                              </div>
-                              <span className="text-lg">{review.country}</span>
-                            </div>
-                            <p className="text-gray-700 text-sm mb-2 italic">"{review.text}"</p>
-                            <p className="text-gray-500 text-xs font-semibold">— {review.name}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  {/* Dots */}
-                  <div className="flex justify-center gap-2 mt-4">
-                    {reviews.map((_, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setCurrentReview(index)}
-                        className={`w-2 h-2 rounded-full transition-colors ${
-                          index === currentReview ? 'bg-[#07C59A]' : 'bg-gray-300'
-                        }`}
-                      />
-                    ))}
-                  </div>
+              {/* Guarantee */}
+              <div className="bg-green-50 border border-green-200 rounded-xl p-4 flex items-start gap-3">
+                <span className="text-2xl flex-shrink-0">🛡️</span>
+                <div>
+                  <p className="text-sm font-bold text-green-800">Garantía de Satisfacción Total</p>
+                  <p className="text-xs text-green-700">Si no estás satisfecho, te devolvemos tu dinero. Sin preguntas.</p>
                 </div>
               </div>
             </div>
