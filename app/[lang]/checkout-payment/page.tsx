@@ -608,31 +608,25 @@ function CheckoutPaymentContent() {
             Tus resultados revelan información fascinante sobre tus fortalezas cognitivas y tu potencial oculto. Con puntuaciones que te colocan entre los mejores en áreas clave, tus habilidades en Lógica y Reconocimiento de Patrones son realmente excepcionales:
           </p>
 
-          {/* Blurred preview + gradient fade + lock card */}
-          <div className="relative overflow-hidden rounded-lg" style={{ height: '140px' }}>
-            {/* Blurred text */}
-            <div className="blur-md select-none pointer-events-none px-1 space-y-2">
-              <p className="text-sm text-gray-500 leading-relaxed">
-                Tu puntuación de CI te coloca en el percentil 94 de la población mundial. Tus habilidades de razonamiento lógico y memoria de trabajo son excepcionales, superando a la mayoría de personas de tu grupo de edad.
-              </p>
-              <p className="text-sm text-gray-500 leading-relaxed">
-                En el área de reconocimiento de patrones obtienes una puntuación de 138, lo que indica una capacidad analítica muy por encima del promedio. Esto se traduce en ventajas significativas en entornos académicos y profesionales.
-              </p>
-            </div>
-            {/* Gradient fade from transparent to white */}
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/60 to-white" />
-            {/* Lock card at bottom */}
-            <div className="absolute bottom-0 left-0 right-0 flex justify-center pb-2">
-              <div className="bg-white border border-gray-200 rounded-xl px-6 py-3 text-center shadow-md flex flex-col items-center gap-1">
-                <FaLock className="text-gray-400 text-base" />
-                <p className="text-sm text-gray-700">
-                  Para leer el informe completo, necesitas{' '}
-                  <button onClick={scrollToPayment} className="text-[#07C59A] font-semibold underline">
-                    acceso total
-                  </button>
-                </p>
-              </div>
-            </div>
+          {/* Blurred text strip */}
+          <div className="select-none pointer-events-none space-y-1.5 mb-3" style={{ filter: 'blur(4px)', WebkitFilter: 'blur(4px)' }}>
+            <p className="text-sm text-gray-600 leading-relaxed">
+              Tu puntuación de CI te coloca en el percentil 94 de la población mundial. Tus habilidades de razonamiento lógico y memoria de trabajo son excepcionales, superando a la mayoría de personas de tu grupo de edad.
+            </p>
+            <p className="text-sm text-gray-600 leading-relaxed">
+              En el área de reconocimiento de patrones obtienes una puntuación de 138, lo que indica una capacidad analítica muy por encima del promedio.
+            </p>
+          </div>
+
+          {/* Lock card */}
+          <div className="bg-gray-50 border border-gray-200 rounded-xl px-6 py-4 text-center flex flex-col items-center gap-1.5">
+            <FaLock className="text-gray-400 text-lg" />
+            <p className="text-sm text-gray-700">
+              Para leer el informe completo, necesitas{' '}
+              <button onClick={scrollToPayment} className="text-[#07C59A] font-semibold underline">
+                acceso total
+              </button>
+            </p>
           </div>
         </div>
       </section>
