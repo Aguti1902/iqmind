@@ -6,7 +6,7 @@ import SipayInline from '@/components/SipayInline'
 import GooglePayButton from '@/components/GooglePayButton'
 import ApplePayButton from '@/components/ApplePayButton'
 import TrustpilotReviews from '@/components/TrustpilotReviews'
-import { FaGraduationCap, FaChartBar, FaDna, FaLock, FaShieldAlt, FaCreditCard, FaCheckCircle, FaGift, FaTag } from 'react-icons/fa'
+import { FaGraduationCap, FaChartBar, FaDna, FaLock, FaShieldAlt, FaCreditCard, FaCheckCircle } from 'react-icons/fa'
 import { MdVerified } from 'react-icons/md'
 
 const checkoutReviews = [
@@ -55,7 +55,6 @@ function CheckoutPaymentContent() {
   const [error, setError] = useState('')
   const [paymentMethod, setPaymentMethod] = useState<'none' | 'card' | 'google' | 'apple'>('none')
   const [isProcessing, setIsProcessing] = useState(false)
-  const [countdown, setCountdown] = useState(540)
   const [notifIndex, setNotifIndex] = useState(0)
   const [notifVisible, setNotifVisible] = useState(true)
   const [showBottomCta, setShowBottomCta] = useState(false)
@@ -71,14 +70,6 @@ function CheckoutPaymentContent() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Countdown timer
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCountdown((prev) => (prev <= 1 ? 540 : prev - 1))
-    }, 1000)
-    return () => clearInterval(timer)
-  }, [])
-
   // Social proof notification rotator
   useEffect(() => {
     const timer = setInterval(() => {
@@ -91,11 +82,6 @@ function CheckoutPaymentContent() {
     return () => clearInterval(timer)
   }, [])
 
-  const formatCountdown = (s: number) => {
-    const m = Math.floor(s / 60)
-    const sec = s % 60
-    return `${m}:${sec.toString().padStart(2, '0')}`
-  }
 
   const notif = socialProofNotifications[notifIndex]
 
@@ -283,14 +269,6 @@ function CheckoutPaymentContent() {
         </div>
       </header>
 
-      {/* Countdown offer bar */}
-      <div className="bg-white border-b border-gray-100 py-2 px-4 text-center">
-        <p className="text-sm">
-          <span className="text-[#07C59A] font-semibold">¡Consigue tu CI por solo €0,50!</span>
-          {' '}Oferta finaliza en
-        </p>
-        <p className="text-2xl font-bold text-gray-900 tracking-wider">{formatCountdown(countdown)}</p>
-      </div>
 
       {/* Hero section */}
       <section className="bg-[#EEF4FF] py-10 px-4">
@@ -487,24 +465,11 @@ function CheckoutPaymentContent() {
                 ))}
               </div>
 
-              {/* Discount code badge */}
-              <div className="flex items-center justify-between bg-gray-100 rounded-lg px-3 py-2.5 mb-4">
-                <div className="flex items-center gap-2">
-                  <FaTag className="text-gray-500 flex-shrink-0 text-sm" />
-                  <span className="text-sm font-medium text-gray-800">Código Promocional MM-94 Aplicado</span>
-                </div>
-                <span className="text-sm font-bold text-green-600 whitespace-nowrap ml-2">Ahorras 94%</span>
-              </div>
-
               {/* Price */}
-              <div className="flex items-baseline gap-2 mb-1">
-                <span className="text-sm text-gray-500">A pagar hoy:</span>
-                <span className="text-lg text-gray-400 line-through">€7,95</span>
+              <div className="flex items-baseline gap-2 mb-5">
+                <span className="text-sm text-gray-500">Total:</span>
                 <span className="text-2xl font-bold text-gray-900">€0,50</span>
               </div>
-              <p className="text-xs text-gray-500 mb-5 leading-relaxed">
-                Obtén una prueba de 2 días por solo €0,50. Después de la prueba, te cobraremos €19,99/mes hasta que canceles.
-              </p>
 
               {/* Error */}
               {error && (
@@ -580,19 +545,31 @@ function CheckoutPaymentContent() {
                     </div>
                   </div>
 
-                  {/* Security badges */}
-                  <div className="flex items-center justify-center gap-4 pt-3 border-t border-gray-100">
-                    <div className="flex items-center gap-1 text-xs text-gray-500">
-                      <FaLock className="text-green-500 text-xs" />
-                      <span>Pago Seguro</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-xs text-gray-500">
-                      <FaShieldAlt className="text-green-500 text-xs" />
-                      <span>SSL 256-bit</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-xs text-gray-500">
-                      <MdVerified className="text-green-500 text-sm" />
-                      <span>PCI DSS</span>
+                  {/* Terms + Security */}
+                  <div className="pt-3 border-t border-gray-100 space-y-2">
+                    <p className="text-xs text-gray-400 text-center leading-relaxed">
+                      Al realizar el pago aceptas nuestros{' '}
+                      <a href={`/${lang}/terminos`} target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-600">
+                        Términos y Condiciones
+                      </a>
+                      {' '}y la{' '}
+                      <a href={`/${lang}/privacidad`} target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-600">
+                        Política de Privacidad
+                      </a>.
+                    </p>
+                    <div className="flex items-center justify-center gap-4">
+                      <div className="flex items-center gap-1 text-xs text-gray-400">
+                        <FaLock className="text-xs" />
+                        <span>Pago Seguro</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-xs text-gray-400">
+                        <FaShieldAlt className="text-xs" />
+                        <span>SSL 256-bit</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-xs text-gray-400">
+                        <MdVerified className="text-sm" />
+                        <span>PCI DSS</span>
+                      </div>
                     </div>
                   </div>
                 </div>
