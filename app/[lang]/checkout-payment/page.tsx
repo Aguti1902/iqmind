@@ -6,6 +6,8 @@ import SipayInline from '@/components/SipayInline'
 import GooglePayButton from '@/components/GooglePayButton'
 import ApplePayButton from '@/components/ApplePayButton'
 import TrustpilotReviews from '@/components/TrustpilotReviews'
+import { FaGraduationCap, FaChartBar, FaDna, FaLock, FaShieldAlt, FaCreditCard, FaCheckCircle, FaGift, FaTag } from 'react-icons/fa'
+import { MdVerified } from 'react-icons/md'
 
 const checkoutReviews = [
   { name: 'María G.', title: 'Muy profesional', text: 'Muy profesional y detallado. Me ayudó a entenderme mejor.' },
@@ -263,9 +265,7 @@ function CheckoutPaymentContent() {
             <span className="text-lg font-bold text-gray-900">MindMetric</span>
           </div>
           <div className="flex items-center gap-1.5 text-sm text-green-600 font-medium">
-            <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current">
-              <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" />
-            </svg>
+            <FaLock className="text-green-600" />
             Pago 100% seguro
           </div>
         </div>
@@ -282,59 +282,65 @@ function CheckoutPaymentContent() {
 
       {/* Hero section */}
       <section className="bg-[#EEF4FF] py-10 px-4">
-        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-          <div>
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-1 leading-tight">
-              ¡Felicidades!
-            </h1>
-            <h2 className="text-3xl md:text-4xl font-bold text-[#07C59A] mb-6 leading-tight">
-              ¡Tu puntuación está lista!
-            </h2>
-            <button
-              onClick={scrollToPayment}
-              className="bg-[#07C59A] hover:bg-[#069e7b] text-white font-bold px-8 py-3.5 rounded-lg text-base transition-colors"
-            >
-              Descubre tu CI
-            </button>
-          </div>
+        <div className="max-w-5xl mx-auto">
 
-          {/* Blurred certificate preview */}
-          <div className="relative mx-auto w-full max-w-sm">
-            <div className="absolute inset-0 translate-x-3 translate-y-3 bg-white rounded-lg border border-gray-200 shadow-md" />
-            <div className="relative bg-white rounded-lg border-2 border-blue-400 shadow-xl p-5 overflow-hidden">
-              {/* Certificate header */}
-              <div className="flex items-center gap-2 mb-3">
-                <img src="/images/FAVICON2.png" alt="" className="h-5 w-5" />
-                <span className="text-xs font-semibold text-gray-600">MindMetric</span>
-                <div className="ml-auto w-10 h-10 rounded-full border-2 border-blue-400 flex items-center justify-center">
-                  <img src="/images/FAVICON2.png" alt="" className="h-6 w-6" />
+          {/* Mobile: certificate on top, text below. Desktop: side by side */}
+          <div className="flex flex-col md:grid md:grid-cols-2 md:gap-8 md:items-center">
+
+            {/* Certificate — shown first on all screens */}
+            <div className="relative mx-auto w-full max-w-sm order-1 mb-6 md:mb-0 md:order-2">
+              <div className="absolute inset-0 translate-x-3 translate-y-3 bg-white rounded-lg border border-gray-200 shadow-md" />
+              <div className="relative bg-white rounded-lg border-2 border-blue-400 shadow-xl p-5 overflow-hidden">
+                <div className="flex items-center gap-2 mb-3">
+                  <img src="/images/FAVICON2.png" alt="" className="h-5 w-5" />
+                  <span className="text-xs font-semibold text-gray-600">MindMetric</span>
+                  <div className="ml-auto w-10 h-10 rounded-full border-2 border-blue-400 flex items-center justify-center">
+                    <img src="/images/FAVICON2.png" alt="" className="h-6 w-6" />
+                  </div>
                 </div>
-              </div>
-              <h3 className="font-bold text-sm text-gray-900 mb-3">Certificado de test de CI</h3>
-              <p className="text-xs text-gray-500 mb-1">Otorgado con orgullo a</p>
-              <div className="h-4 bg-gray-200 rounded w-2/3 mb-3 blur-sm" />
-              <p className="text-xs text-gray-500 mb-1">Puntuación de CI</p>
-              <div className="h-6 bg-gray-200 rounded w-1/3 mb-3 blur-sm" />
-              <div className="blur-sm select-none">
-                <p className="text-xs text-gray-500 leading-relaxed mb-3">
-                  Este certificado confirma la finalización de la prueba MindMetric. La puntuación de CI presentada representa una medición del rendimiento cognitivo basada en sus respuestas a la prueba.
-                </p>
-              </div>
-              <div className="flex justify-between items-end mt-2 blur-sm">
-                <div>
-                  <div className="h-3 bg-gray-200 rounded w-16 mb-1" />
-                  <p className="text-[10px] text-gray-400">Fecha de emisión</p>
+                <h3 className="font-bold text-sm text-gray-900 mb-3">Certificado de test de CI</h3>
+                <p className="text-xs text-gray-500 mb-1">Otorgado con orgullo a</p>
+                <div className="h-4 bg-gray-200 rounded w-2/3 mb-3 blur-sm" />
+                <p className="text-xs text-gray-500 mb-1">Puntuación de CI</p>
+                <div className="h-6 bg-gray-200 rounded w-1/3 mb-3 blur-sm" />
+                <div className="blur-sm select-none">
+                  <p className="text-xs text-gray-500 leading-relaxed mb-3">
+                    Este certificado confirma la finalización de la prueba MindMetric. La puntuación de CI presentada representa una medición del rendimiento cognitivo basada en sus respuestas a la prueba.
+                  </p>
                 </div>
-                <div>
-                  <div className="h-3 bg-gray-200 rounded w-16 mb-1" />
-                  <p className="text-[10px] text-gray-400">ID certificado</p>
-                </div>
-                <div>
-                  <div className="h-5 bg-gray-200 rounded w-14 mb-1" />
-                  <p className="text-[10px] text-gray-400">Director</p>
+                <div className="flex justify-between items-end mt-2 blur-sm">
+                  <div>
+                    <div className="h-3 bg-gray-200 rounded w-16 mb-1" />
+                    <p className="text-[10px] text-gray-400">Fecha de emisión</p>
+                  </div>
+                  <div>
+                    <div className="h-3 bg-gray-200 rounded w-16 mb-1" />
+                    <p className="text-[10px] text-gray-400">ID certificado</p>
+                  </div>
+                  <div>
+                    <div className="h-5 bg-gray-200 rounded w-14 mb-1" />
+                    <p className="text-[10px] text-gray-400">Director</p>
+                  </div>
                 </div>
               </div>
             </div>
+
+            {/* Text + CTA — below certificate on mobile, left on desktop */}
+            <div className="order-2 md:order-1 text-center md:text-left">
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-1 leading-tight">
+                ¡Felicidades!
+              </h1>
+              <h2 className="text-3xl md:text-4xl font-bold text-[#07C59A] mb-6 leading-tight">
+                ¡Tu puntuación está lista!
+              </h2>
+              <button
+                onClick={scrollToPayment}
+                className="bg-[#07C59A] hover:bg-[#069e7b] text-white font-bold px-8 py-3.5 rounded-lg text-base transition-colors w-full md:w-auto"
+              >
+                Descubre tu CI
+              </button>
+            </div>
+
           </div>
         </div>
       </section>
@@ -386,11 +392,22 @@ function CheckoutPaymentContent() {
                 <p className="text-sm font-medium text-gray-700">Más de <strong>2.636</strong> tests realizados hoy</p>
                 <p className="text-sm text-gray-600 mt-0.5">CI promedio: <strong>116</strong></p>
               </div>
-              <div className="flex gap-0.5 flex-wrap max-w-[80px] justify-end">
-                {['🇩🇪', '🇫🇷', '🇪🇸', '🇮🇹', '🇵🇹', '🇧🇷', '🇲🇽', '🇦🇷'].map((f, i) => (
-                  <span key={i} className="text-lg">{f}</span>
+              <div className="flex items-center">
+                {['🇮🇹', '🇩🇪', '🇫🇷', '🇱🇻', '🇪🇸'].map((f, i) => (
+                  <div
+                    key={i}
+                    className="w-8 h-8 rounded-full bg-white border-2 border-white shadow-sm flex items-center justify-center text-lg overflow-hidden flex-shrink-0"
+                    style={{ marginLeft: i === 0 ? 0 : '-8px', zIndex: i }}
+                  >
+                    {f}
+                  </div>
                 ))}
-                <span className="text-xs text-gray-500 font-medium mt-0.5">+47</span>
+                <div
+                  className="w-8 h-8 rounded-full bg-gray-100 border-2 border-white shadow-sm flex items-center justify-center flex-shrink-0 text-xs font-semibold text-gray-600"
+                  style={{ marginLeft: '-8px', zIndex: 5 }}
+                >
+                  +47
+                </div>
               </div>
             </div>
 
@@ -399,7 +416,7 @@ function CheckoutPaymentContent() {
             <div className="space-y-4">
               <div className="flex items-start gap-3">
                 <div className="w-8 h-8 rounded-full bg-[#07C59A]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-base">🎓</span>
+                  <FaGraduationCap className="text-[#07C59A] text-base" />
                 </div>
                 <div>
                   <p className="font-semibold text-sm text-gray-900">Test de CI</p>
@@ -408,7 +425,7 @@ function CheckoutPaymentContent() {
               </div>
               <div className="flex items-start gap-3">
                 <div className="w-8 h-8 rounded-full bg-[#07C59A]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-base">📊</span>
+                  <FaChartBar className="text-[#07C59A] text-base" />
                 </div>
                 <div>
                   <p className="font-semibold text-sm text-gray-900">Informe Completo</p>
@@ -417,7 +434,7 @@ function CheckoutPaymentContent() {
               </div>
               <div className="flex items-start gap-3">
                 <div className="w-8 h-8 rounded-full bg-[#07C59A]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-base">🧬</span>
+                  <FaDna className="text-[#07C59A] text-base" />
                 </div>
                 <div>
                   <p className="font-semibold text-sm text-gray-900">Entrenamiento respaldado por la neurociencia</p>
@@ -461,22 +478,20 @@ function CheckoutPaymentContent() {
               {/* Discount code badge */}
               <div className="flex items-center justify-between bg-gray-100 rounded-lg px-3 py-2.5 mb-4">
                 <div className="flex items-center gap-2">
-                  <svg viewBox="0 0 24 24" className="w-4 h-4 fill-gray-500 flex-shrink-0">
-                    <path d="M20 6h-2.18c.07-.44.18-.88.18-1.36C18 2.07 15.93 0 13.36 0c-1.33 0-2.54.54-3.41 1.41L8 3.37 6.05 1.41C5.18.54 3.97 0 2.64 0 1.08 0 0 1.08 0 2.64c0 .48.11.92.18 1.36H0v2h20v-2zM13.36 2c.9 0 1.64.74 1.64 1.64 0 .51-.23.97-.59 1.29L13.28 6H9.18l-1.36-1.36c-.13-.13-.19-.3-.19-.48C7.63 3.24 8.38 2.5 9.28 2.5c.47 0 .9.19 1.21.5l1.51 1.51 1.51-1.51c.31-.31.74-.5 1.21-.5H13.36zM2 8v13c0 .55.45 1 1 1h7v-7h4v7h7c.55 0 1-.45 1-1V8H2z" />
-                  </svg>
-                  <span className="text-sm font-medium text-gray-800">Código Promocional MM-85 Aplicado</span>
+                  <FaTag className="text-gray-500 flex-shrink-0 text-sm" />
+                  <span className="text-sm font-medium text-gray-800">Código Promocional MM-94 Aplicado</span>
                 </div>
-                <span className="text-sm font-bold text-green-600 whitespace-nowrap ml-2">Ahorras 85%</span>
+                <span className="text-sm font-bold text-green-600 whitespace-nowrap ml-2">Ahorras 94%</span>
               </div>
 
               {/* Price */}
               <div className="flex items-baseline gap-2 mb-1">
                 <span className="text-sm text-gray-500">A pagar hoy:</span>
-                <span className="text-lg text-gray-400 line-through">€3,33</span>
+                <span className="text-lg text-gray-400 line-through">€7,95</span>
                 <span className="text-2xl font-bold text-gray-900">€0,50</span>
               </div>
               <p className="text-xs text-gray-500 mb-5 leading-relaxed">
-                Obtén una prueba de 7 días por solo €0,50. Después de la prueba, te cobraremos €19,99/mes hasta que canceles.
+                Obtén una prueba de 2 días por solo €0,50. Después de la prueba, te cobraremos €19,99/mes hasta que canceles.
               </p>
 
               {/* Error */}
@@ -531,9 +546,7 @@ function CheckoutPaymentContent() {
                     onClick={() => setPaymentMethod(paymentMethod === 'card' ? 'none' : 'card')}
                     className="w-full bg-[#07C59A] hover:bg-[#069e7b] text-white font-semibold py-3.5 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm"
                   >
-                    <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current">
-                      <path d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
-                    </svg>
+                    <FaCreditCard className="text-white" />
                     Tarjeta de crédito o débito
                   </button>
 
@@ -557,16 +570,18 @@ function CheckoutPaymentContent() {
 
                   {/* Security badges */}
                   <div className="flex items-center justify-center gap-4 pt-3 border-t border-gray-100">
-                    {[
-                      { icon: '🔒', label: 'Pago Seguro' },
-                      { icon: '🛡️', label: 'SSL 256-bit' },
-                      { icon: '✓', label: 'PCI DSS' },
-                    ].map(({ icon, label }) => (
-                      <div key={label} className="flex items-center gap-1 text-xs text-gray-500">
-                        <span>{icon}</span>
-                        <span>{label}</span>
-                      </div>
-                    ))}
+                    <div className="flex items-center gap-1 text-xs text-gray-500">
+                      <FaLock className="text-green-500 text-xs" />
+                      <span>Pago Seguro</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-xs text-gray-500">
+                      <FaShieldAlt className="text-green-500 text-xs" />
+                      <span>SSL 256-bit</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-xs text-gray-500">
+                      <MdVerified className="text-green-500 text-sm" />
+                      <span>PCI DSS</span>
+                    </div>
                   </div>
                 </div>
               ) : null}
@@ -574,7 +589,7 @@ function CheckoutPaymentContent() {
 
             {/* Guarantee */}
             <div className="mt-3 bg-amber-50 border border-amber-200 rounded-lg px-4 py-2.5 flex items-center gap-2">
-              <span className="text-lg">🛡️</span>
+              <FaShieldAlt className="text-amber-500 text-lg flex-shrink-0" />
               <span className="text-sm font-medium text-amber-900">Garantía de Devolución</span>
               <a href={`/${lang}/reembolso`} className="text-xs text-amber-700 underline ml-auto">Ver política</a>
             </div>
@@ -583,7 +598,7 @@ function CheckoutPaymentContent() {
       </section>
 
       {/* Blurred report teaser */}
-      <section className="py-10 px-4 bg-white">
+      <section className="py-8 px-4 bg-white">
         <div className="max-w-3xl mx-auto bg-white rounded-xl border border-gray-200 shadow-sm p-6">
           <div className="flex items-center gap-2 mb-3">
             <img src="/images/FAVICON2.png" alt="" className="h-5 w-5" />
@@ -592,18 +607,25 @@ function CheckoutPaymentContent() {
           <p className="text-sm text-gray-600 leading-relaxed mb-4">
             Tus resultados revelan información fascinante sobre tus fortalezas cognitivas y tu potencial oculto. Con puntuaciones que te colocan entre los mejores en áreas clave, tus habilidades en Lógica y Reconocimiento de Patrones son realmente excepcionales:
           </p>
-          <div className="relative">
-            <div className="blur-md select-none pointer-events-none space-y-2">
-              {[1, 2].map((i) => (
-                <p key={i} className="text-sm text-gray-500 leading-relaxed">
-                  Tu compatibilidad with Acroaz is a mastery. We have found many positive aspects but there are also pitfalls that can destroy your relationship. Your compatibility with Acroaz is a mastery. We have found many positive aspects but there are also pitfalls that can destroy your relationships starting a new one.
-                </p>
-              ))}
+
+          {/* Blurred preview + gradient fade + lock card */}
+          <div className="relative overflow-hidden rounded-lg" style={{ height: '140px' }}>
+            {/* Blurred text */}
+            <div className="blur-md select-none pointer-events-none px-1 space-y-2">
+              <p className="text-sm text-gray-500 leading-relaxed">
+                Tu puntuación de CI te coloca en el percentil 94 de la población mundial. Tus habilidades de razonamiento lógico y memoria de trabajo son excepcionales, superando a la mayoría de personas de tu grupo de edad.
+              </p>
+              <p className="text-sm text-gray-500 leading-relaxed">
+                En el área de reconocimiento de patrones obtienes una puntuación de 138, lo que indica una capacidad analítica muy por encima del promedio. Esto se traduce en ventajas significativas en entornos académicos y profesionales.
+              </p>
             </div>
-            <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <div className="bg-white/90 backdrop-blur-sm border border-gray-200 rounded-xl px-5 py-3 text-center shadow-sm">
-                <span className="text-2xl block mb-1">🔒</span>
-                <p className="text-sm font-medium text-gray-700">
+            {/* Gradient fade from transparent to white */}
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/60 to-white" />
+            {/* Lock card at bottom */}
+            <div className="absolute bottom-0 left-0 right-0 flex justify-center pb-2">
+              <div className="bg-white border border-gray-200 rounded-xl px-6 py-3 text-center shadow-md flex flex-col items-center gap-1">
+                <FaLock className="text-gray-400 text-base" />
+                <p className="text-sm text-gray-700">
                   Para leer el informe completo, necesitas{' '}
                   <button onClick={scrollToPayment} className="text-[#07C59A] font-semibold underline">
                     acceso total

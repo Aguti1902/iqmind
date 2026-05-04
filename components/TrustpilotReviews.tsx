@@ -93,8 +93,23 @@ export default function TrustpilotReviews({
   compact = false,
 }: TrustpilotReviewsProps) {
   const [current, setCurrent] = useState(0)
-  const step = visibleCount
-  const maxIndex = Math.max(0, reviews.length - visibleCount)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
+
+  const actualVisibleCount = isMobile ? 1 : visibleCount
+
+  useEffect(() => {
+    setCurrent(0)
+  }, [actualVisibleCount])
+
+  const step = actualVisibleCount
+  const maxIndex = Math.max(0, reviews.length - actualVisibleCount)
 
   const goNext = useCallback(() => {
     setCurrent((prev) => (prev >= maxIndex ? 0 : Math.min(maxIndex, prev + step)))
@@ -109,7 +124,7 @@ export default function TrustpilotReviews({
     return () => clearInterval(timer)
   }, [goNext])
 
-  const cardWidthPct = 100 / visibleCount
+  const cardWidthPct = 100 / actualVisibleCount
   const translatePct = current * cardWidthPct
 
   return (
