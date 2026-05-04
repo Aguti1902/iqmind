@@ -4,26 +4,13 @@ import { useState, useEffect } from 'react'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import Link from 'next/link'
-import { FaBrain, FaChartLine, FaCertificate, FaUserFriends, FaLock, FaCheckCircle, FaChevronLeft, FaChevronRight, FaArrowRight } from 'react-icons/fa'
+import { FaBrain, FaChartLine, FaCertificate, FaUserFriends, FaLock, FaCheckCircle, FaArrowRight } from 'react-icons/fa'
 import { useTranslations } from '@/hooks/useTranslations'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import TrustpilotReviews from '@/components/TrustpilotReviews'
 
 export default function Home() {
   const { t, loading, lang } = useTranslations()
-  const [currentTestimonial, setCurrentTestimonial] = useState(0)
-
-  // Auto-play carrousel (avanza de 3 en 3)
-  useEffect(() => {
-    if (!t?.testimonials?.reviews || t?.testimonials?.reviews?.length === 0) return
-    const timer = setInterval(() => {
-      setCurrentTestimonial((prev) => {
-        const totalReviews = t?.testimonials?.reviews?.length || 1
-        const maxIndex = Math.max(0, totalReviews - 3)
-        return prev >= maxIndex ? 0 : Math.min(maxIndex, prev + 3)
-      })
-    }, 5000) // Cambia cada 5 segundos
-    return () => clearInterval(timer)
-  }, [t?.testimonials?.reviews])
 
   if (loading || !t) {
     return (
@@ -432,10 +419,10 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Testimonios - Carrousel */}
+        {/* Testimonios - Trustpilot Style */}
         <section id="testimonios" className="py-20 bg-white">
           <div className="container-custom max-w-6xl">
-            <div className="text-center mb-16">
+            <div className="text-center mb-12">
               <h2 className="text-4xl font-bold text-gray-900 mb-4">
                 {t.testimonials.title}
               </h2>
@@ -443,75 +430,12 @@ export default function Home() {
                 {t.testimonials.subtitle}
               </p>
             </div>
-
-            {/* Carrousel Container */}
-            <div className="relative px-16">
-              <div className="overflow-hidden py-4">
-                <div 
-                  className="flex transition-transform duration-500 ease-in-out"
-                  style={{ transform: `translateX(-${currentTestimonial * (100 / 3)}%)` }}
-                >
-                  {t?.testimonials?.reviews?.map((review: any, index: number) => (
-                    <div key={index} className="w-1/3 flex-shrink-0 px-3">
-                      <div className="bg-white rounded-2xl p-8 h-full border border-gray-200">
-                        <div className="flex items-center mb-6">
-                          <div className="w-14 h-14 bg-gradient-to-br from-[#07C59A] to-[#069e7b] rounded-full flex items-center justify-center text-white font-bold text-lg">
-                            {review.initials}
-                          </div>
-                          <div className="ml-4">
-                            <h4 className="font-bold text-lg text-gray-900">{review.name}</h4>
-                            <div className="text-yellow-400 text-lg">★★★★★</div>
-                          </div>
-                        </div>
-                        <p className="text-gray-700 text-base italic leading-relaxed">
-                          "{review.text}"
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Navigation Arrows */}
-              <button
-                onClick={() => {
-                  const totalReviews = t?.testimonials?.reviews?.length || 1
-                  const maxIndex = Math.max(0, totalReviews - 3)
-                  setCurrentTestimonial((prev) => (prev === 0 ? maxIndex : Math.max(0, prev - 3)))
-                }}
-                className="absolute left-0 top-1/2 -translate-y-1/2 bg-white hover:bg-[#07C59A] text-gray-800 hover:text-white p-4 rounded-full shadow-lg transition-all duration-300 z-10"
-                aria-label="Anterior"
-              >
-                <FaChevronLeft className="text-xl" />
-              </button>
-              <button
-                onClick={() => {
-                  const totalReviews = t?.testimonials?.reviews?.length || 1
-                  const maxIndex = Math.max(0, totalReviews - 3)
-                  setCurrentTestimonial((prev) => (prev >= maxIndex ? 0 : Math.min(maxIndex, prev + 3)))
-                }}
-                className="absolute right-0 top-1/2 -translate-y-1/2 bg-white hover:bg-[#07C59A] text-gray-800 hover:text-white p-4 rounded-full shadow-lg transition-all duration-300 z-10"
-                aria-label="Siguiente"
-              >
-                <FaChevronRight className="text-xl" />
-              </button>
-
-              {/* Dots Indicator */}
-              <div className="flex justify-center gap-2 mt-8">
-                {Array.from({ length: Math.ceil((t?.testimonials?.reviews?.length || 0) / 3) }).map((_, groupIndex) => (
-                  <button
-                    key={groupIndex}
-                    onClick={() => setCurrentTestimonial(groupIndex * 3)}
-                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                      Math.floor(currentTestimonial / 3) === groupIndex
-                        ? 'bg-[#07C59A] w-8' 
-                        : 'bg-gray-300 hover:bg-gray-400'
-                    }`}
-                    aria-label={`Ir a grupo ${groupIndex + 1}`}
-                  />
-                ))}
-              </div>
-            </div>
+            <TrustpilotReviews
+              reviews={t?.testimonials?.reviews || []}
+              visibleCount={3}
+              rating={4.1}
+              totalReviews="125.390"
+            />
           </div>
         </section>
 
