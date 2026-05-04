@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import MinimalHeader from '@/components/MinimalHeader'
 import { visualQuestions as questions, calculateIQ } from '@/lib/visual-questions'
-import { FaLock, FaChartLine, FaCertificate, FaShare, FaCheckCircle } from 'react-icons/fa'
+import { FaLock, FaChartLine, FaCertificate, FaShare, FaCheckCircle, FaBrain, FaBullseye, FaHeart, FaStar, FaSmile, FaBolt, FaShieldAlt, FaExclamationTriangle } from 'react-icons/fa'
 import { useTranslations } from '@/hooks/useTranslations'
 
 export default function ResultadoEstimadoPage() {
@@ -18,38 +18,22 @@ export default function ResultadoEstimadoPage() {
   const [agreedToTerms, setAgreedToTerms] = useState(false)
   const [testType, setTestType] = useState<string>('iq')
 
-  // Configuración de mensajes según el tipo de test
   const testConfig: any = {
-    'iq': {
-      title: 'Test de CI Completado',
-      subtitle: 'Tu Coeficiente Intelectual',
-      icon: '🧠'
-    },
-    'personality': {
-      title: 'Test de Personalidad Completado',
-      subtitle: 'Análisis Big Five (OCEAN)',
-      icon: '🎯'
-    },
-    'adhd': {
-      title: 'Test de TDAH Completado',
-      subtitle: 'Evaluación de Atención',
-      icon: '🎯'
-    },
-    'anxiety': {
-      title: 'Test de Ansiedad Completado',
-      subtitle: 'Análisis GAD-7',
-      icon: '💙'
-    },
-    'depression': {
-      title: 'Test de Depresión Completado',
-      subtitle: 'Análisis PHQ-9',
-      icon: '🌟'
-    },
-    'eq': {
-      title: 'Test de Inteligencia Emocional Completado',
-      subtitle: 'Análisis EQ',
-      icon: '❤️'
-    }
+    'iq':         { title: 'Test de CI Completado',                       subtitle: 'Tu Coeficiente Intelectual' },
+    'personality':{ title: 'Test de Personalidad Completado',             subtitle: 'Análisis Big Five (OCEAN)' },
+    'adhd':       { title: 'Test de TDAH Completado',                     subtitle: 'Evaluación de Atención' },
+    'anxiety':    { title: 'Test de Ansiedad Completado',                 subtitle: 'Análisis GAD-7' },
+    'depression': { title: 'Test de Depresión Completado',                subtitle: 'Análisis PHQ-9' },
+    'eq':         { title: 'Test de Inteligencia Emocional Completado',   subtitle: 'Análisis EQ' },
+  }
+
+  const testIcons: Record<string, JSX.Element> = {
+    'iq':          <FaBrain      className="text-5xl text-[#07C59A]" />,
+    'personality': <FaBullseye   className="text-5xl text-[#07C59A]" />,
+    'adhd':        <FaBullseye   className="text-5xl text-[#07C59A]" />,
+    'anxiety':     <FaHeart      className="text-5xl text-blue-400" />,
+    'depression':  <FaStar       className="text-5xl text-yellow-500" />,
+    'eq':          <FaSmile      className="text-5xl text-red-400" />,
   }
 
   useEffect(() => {
@@ -152,8 +136,8 @@ export default function ResultadoEstimadoPage() {
           {/* Animated Result Card */}
           <div className="bg-white rounded-2xl shadow-2xl p-8 mb-8 animate-fadeIn">
             <div className="text-center mb-8">
-              <div className="inline-block p-4 bg-yellow-100 rounded-full mb-4">
-                <FaLock className="text-4xl text-yellow-600" />
+              <div className="inline-block p-4 bg-[#07C59A]/10 rounded-full mb-4">
+                {testIcons[testType] || testIcons['iq']}
               </div>
               <h1 className="text-4xl font-bold text-gray-900 mb-4">
                 {userName}, {testConfig[testType]?.title || t.estimatedResult.title}
@@ -174,7 +158,7 @@ export default function ResultadoEstimadoPage() {
                     </>
                   ) : (
                     <>
-                      <div className="text-6xl mb-4">{testConfig[testType]?.icon || '🧠'}</div>
+                      <div className="flex justify-center mb-4">{testIcons[testType] || testIcons['iq']}</div>
                       <div className="text-3xl font-bold mb-2">{testConfig[testType]?.title || 'Test Completado'}</div>
                       <div className="text-xl">{testConfig[testType]?.subtitle || 'Resultados Disponibles'}</div>
                     </>
@@ -187,9 +171,6 @@ export default function ResultadoEstimadoPage() {
                   <h3 className="text-xl font-bold text-gray-900 mb-2">
                     {t.estimatedResult.unlockTitle}
                   </h3>
-                  <p className="text-gray-600 mb-4">
-                    {t.estimatedResult.priceLabel} <span className="text-2xl font-bold text-primary-600">{t.estimatedResult.price}</span>
-                  </p>
                 </div>
               </div>
             </div>
@@ -393,7 +374,9 @@ export default function ResultadoEstimadoPage() {
                     }`}
                   />
                   {emailError && (
-                    <p className="text-red-500 text-sm mt-2 text-left">⚠️ {emailError}</p>
+                    <p className="text-red-500 text-sm mt-2 text-left flex items-center gap-1">
+                      <FaExclamationTriangle className="flex-shrink-0" /> {emailError}
+                    </p>
                   )}
                 </div>
 
@@ -443,9 +426,6 @@ export default function ResultadoEstimadoPage() {
                   {t.estimatedResult.unlockButton}
                 </button>
                 
-                <p className="text-sm text-gray-500 text-center mt-4">
-                  🔒 Pago 100% seguro con Whop
-                </p>
               </div>
             </div>
           </div>
@@ -453,17 +433,23 @@ export default function ResultadoEstimadoPage() {
           {/* Trust Indicators */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             <div className="bg-white rounded-lg p-4 text-center shadow">
-              <div className="text-3xl mb-2">🔒</div>
-              <h4 className="font-semibold text-gray-900">{t.estimatedResult.trust1Title}</h4>
+              <div className="flex justify-center mb-2">
+                <FaShieldAlt className="text-3xl text-[#07C59A]" />
+              </div>
+              <h4 className="font-semibold text-gray-900">Privacidad Garantizada</h4>
               <p className="text-sm text-gray-600">{t.estimatedResult.trust1Desc}</p>
             </div>
             <div className="bg-white rounded-lg p-4 text-center shadow">
-              <div className="text-3xl mb-2">⚡</div>
+              <div className="flex justify-center mb-2">
+                <FaBolt className="text-3xl text-[#07C59A]" />
+              </div>
               <h4 className="font-semibold text-gray-900">{t.estimatedResult.trust2Title}</h4>
               <p className="text-sm text-gray-600">{t.estimatedResult.trust2Desc}</p>
             </div>
             <div className="bg-white rounded-lg p-4 text-center shadow">
-              <div className="text-3xl mb-2">✓</div>
+              <div className="flex justify-center mb-2">
+                <FaCheckCircle className="text-3xl text-[#07C59A]" />
+              </div>
               <h4 className="font-semibold text-gray-900">{t.estimatedResult.trust3Title}</h4>
               <p className="text-sm text-gray-600">{t.estimatedResult.trust3Desc}</p>
             </div>

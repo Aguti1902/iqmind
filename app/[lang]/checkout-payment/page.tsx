@@ -58,6 +58,18 @@ function CheckoutPaymentContent() {
   const [countdown, setCountdown] = useState(540)
   const [notifIndex, setNotifIndex] = useState(0)
   const [notifVisible, setNotifVisible] = useState(true)
+  const [showBottomCta, setShowBottomCta] = useState(false)
+
+  // Mostrar CTA fijo al 50% de scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrolled = window.scrollY
+      const total = document.documentElement.scrollHeight - window.innerHeight
+      setShowBottomCta(total > 0 && scrolled / total >= 0.5)
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   // Countdown timer
   useEffect(() => {
@@ -246,8 +258,8 @@ function CheckoutPaymentContent() {
   return (
     <div className="min-h-screen bg-white pb-20">
 
-      {/* Social proof notification bar */}
-      <div className="bg-gray-100 py-1.5 px-4 text-center text-xs text-gray-700 overflow-hidden">
+      {/* Social proof notification bar — fijo en la parte superior */}
+      <div className="sticky top-0 z-40 bg-gray-100 py-1.5 px-4 text-center text-xs text-gray-700 overflow-hidden shadow-sm">
         <span
           className={`inline-block transition-all duration-400 ${notifVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-1'}`}
           style={{ transition: 'opacity 0.4s, transform 0.4s' }}
@@ -689,8 +701,8 @@ function CheckoutPaymentContent() {
         </div>
       </footer>
 
-      {/* Fixed bottom CTA bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-3 px-4 z-50 shadow-lg">
+      {/* Fixed bottom CTA bar — visible solo tras 50% de scroll */}
+      <div className={`fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-3 px-4 z-50 shadow-lg transition-all duration-300 ${showBottomCta ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0 pointer-events-none'}`}>
         <div className="max-w-sm mx-auto">
           <button
             onClick={scrollToPayment}
