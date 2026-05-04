@@ -8,6 +8,7 @@ import ApplePayButton from '@/components/ApplePayButton'
 import TrustpilotReviews from '@/components/TrustpilotReviews'
 import { FaGraduationCap, FaChartBar, FaDna, FaLock, FaShieldAlt, FaCreditCard, FaCheckCircle } from 'react-icons/fa'
 import { MdVerified } from 'react-icons/md'
+import { useTranslations } from '@/hooks/useTranslations'
 
 const checkoutReviews = [
   { name: 'María G.', title: 'Muy profesional', text: 'Muy profesional y detallado. Me ayudó a entenderme mejor.' },
@@ -46,6 +47,8 @@ function CheckoutPaymentContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const paymentRef = useRef<HTMLDivElement>(null)
+  const { t: translations, lang: detectedLang } = useTranslations()
+  const tc = translations?.checkoutPayment
 
   const [email, setEmail] = useState('')
   const [testType, setTestType] = useState('iq')
@@ -249,8 +252,8 @@ function CheckoutPaymentContent() {
           className={`inline-block transition-all duration-400 ${notifVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-1'}`}
           style={{ transition: 'opacity 0.4s, transform 0.4s' }}
         >
-          <strong>{notif.name}</strong> acaba de comprar el resultado {notif.flag}{' '}
-          <span className="font-semibold">CI {notif.score}</span>
+          <strong>{notif.name}</strong> {tc?.justBought || 'acaba de comprar el resultado'} {notif.flag}{' '}
+          <span className="font-semibold">{tc?.ciScore || 'CI'} {notif.score}</span>
         </span>
       </div>
 
@@ -263,7 +266,7 @@ function CheckoutPaymentContent() {
           </div>
           <div className="flex items-center gap-1.5 text-sm text-green-600 font-medium">
             <FaLock className="text-green-600" />
-            Pago 100% seguro
+            {tc?.securePayment || 'Pago 100% seguro'}
           </div>
         </div>
       </header>
@@ -287,28 +290,28 @@ function CheckoutPaymentContent() {
                     <img src="/images/FAVICON2.png" alt="" className="h-6 w-6" />
                   </div>
                 </div>
-                <h3 className="font-bold text-sm text-gray-900 mb-3">Certificado de test de CI</h3>
-                <p className="text-xs text-gray-500 mb-1">Otorgado con orgullo a</p>
+                <h3 className="font-bold text-sm text-gray-900 mb-3">{tc?.certTitle || 'Certificado de test de CI'}</h3>
+                <p className="text-xs text-gray-500 mb-1">{tc?.certGranted || 'Otorgado con orgullo a'}</p>
                 <div className="h-4 bg-gray-200 rounded w-2/3 mb-3 blur-sm" />
-                <p className="text-xs text-gray-500 mb-1">Puntuación de CI</p>
+                <p className="text-xs text-gray-500 mb-1">{tc?.certScore || 'Puntuación de CI'}</p>
                 <div className="h-6 bg-gray-200 rounded w-1/3 mb-3 blur-sm" />
                 <div className="blur-sm select-none">
                   <p className="text-xs text-gray-500 leading-relaxed mb-3">
-                    Este certificado confirma la finalización de la prueba MindMetric. La puntuación de CI presentada representa una medición del rendimiento cognitivo basada en sus respuestas a la prueba.
+                    {tc?.certDesc || 'Este certificado confirma la finalización de la prueba MindMetric. La puntuación de CI presentada representa una medición del rendimiento cognitivo basada en sus respuestas a la prueba.'}
                   </p>
                 </div>
                 <div className="flex justify-between items-end mt-2 blur-sm">
                   <div>
                     <div className="h-3 bg-gray-200 rounded w-16 mb-1" />
-                    <p className="text-[10px] text-gray-400">Fecha de emisión</p>
+                    <p className="text-[10px] text-gray-400">{tc?.certIssueDate || 'Fecha de emisión'}</p>
                   </div>
                   <div>
                     <div className="h-3 bg-gray-200 rounded w-16 mb-1" />
-                    <p className="text-[10px] text-gray-400">ID certificado</p>
+                    <p className="text-[10px] text-gray-400">{tc?.certId || 'ID certificado'}</p>
                   </div>
                   <div>
                     <div className="h-5 bg-gray-200 rounded w-14 mb-1" />
-                    <p className="text-[10px] text-gray-400">Director</p>
+                    <p className="text-[10px] text-gray-400">{tc?.certDirector || 'Director'}</p>
                   </div>
                 </div>
               </div>
@@ -317,16 +320,16 @@ function CheckoutPaymentContent() {
             {/* Text + CTA — below certificate on mobile, left on desktop */}
             <div className="order-2 md:order-1 text-center md:text-left">
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-1 leading-tight">
-                ¡Felicidades!
+                {tc?.heroTitle || '¡Felicidades!'}
               </h1>
               <h2 className="text-3xl md:text-4xl font-bold text-[#07C59A] mb-6 leading-tight">
-                ¡Tu puntuación está lista!
+                {tc?.heroSubtitle || '¡Tu puntuación está lista!'}
               </h2>
               <button
                 onClick={scrollToPayment}
                 className="bg-[#07C59A] hover:bg-[#069e7b] text-white font-bold px-8 py-3.5 rounded-lg text-base transition-colors w-full md:w-auto"
               >
-                Descubre tu CI
+                {tc?.heroButton || 'Descubre tu CI'}
               </button>
             </div>
 
@@ -368,7 +371,7 @@ function CheckoutPaymentContent() {
       {/* Main section */}
       <section className="py-10 px-4 bg-gray-50">
         <h2 className="text-2xl md:text-3xl font-bold text-gray-900 text-center mb-8">
-          ¡Obtén tu certificado de coeficiente intelectual ahora!
+          {tc?.mainTitle || '¡Obtén tu certificado de coeficiente intelectual ahora!'}
         </h2>
 
         <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -378,8 +381,8 @@ function CheckoutPaymentContent() {
             {/* Stats */}
             <div className="flex items-start justify-between mb-5 pb-5 border-b border-gray-100">
               <div>
-                <p className="text-sm font-medium text-gray-700">Más de <strong>2.636</strong> tests realizados hoy</p>
-                <p className="text-sm text-gray-600 mt-0.5">CI promedio: <strong>116</strong></p>
+                <p className="text-sm font-medium text-gray-700">{tc?.statsTests || 'Más de 2.636 tests realizados hoy'}</p>
+                <p className="text-sm text-gray-600 mt-0.5">{tc?.statsAvg || 'CI promedio: 116'}</p>
               </div>
               <div className="flex items-center">
                 {['🇮🇹', '🇩🇪', '🇫🇷', '🇱🇻', '🇪🇸'].map((f, i) => (
@@ -400,7 +403,7 @@ function CheckoutPaymentContent() {
               </div>
             </div>
 
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Por qué puedes confiar en MindMetric</p>
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">{tc?.whyTrust || 'Por qué puedes confiar en MindMetric'}</p>
 
             <div className="space-y-4">
               <div className="flex items-start gap-3">
@@ -408,8 +411,8 @@ function CheckoutPaymentContent() {
                   <FaGraduationCap className="text-[#07C59A] text-base" />
                 </div>
                 <div>
-                  <p className="font-semibold text-sm text-gray-900">Test de CI</p>
-                  <p className="text-xs text-gray-500 mt-0.5">Nuestra evaluación se basa en la Escala de Inteligencia Stanford-Binet, el estándar de referencia en tests de CI desde 1916.</p>
+                  <p className="font-semibold text-sm text-gray-900">{tc?.trust1Title || 'Test de CI'}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">{tc?.trust1Desc || 'Nuestra evaluación se basa en la Escala de Inteligencia Stanford-Binet, el estándar de referencia en tests de CI desde 1916.'}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -417,8 +420,8 @@ function CheckoutPaymentContent() {
                   <FaChartBar className="text-[#07C59A] text-base" />
                 </div>
                 <div>
-                  <p className="font-semibold text-sm text-gray-900">Informe Completo</p>
-                  <p className="text-xs text-gray-500 mt-0.5">Tu informe personalizado se genera usando la teoría de habilidades cognitivas de Cattell-Horn-Carroll (CHC).</p>
+                  <p className="font-semibold text-sm text-gray-900">{tc?.trust2Title || 'Informe Completo'}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">{tc?.trust2Desc || 'Tu informe personalizado se genera usando la teoría de habilidades cognitivas de Cattell-Horn-Carroll (CHC).'}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -426,15 +429,15 @@ function CheckoutPaymentContent() {
                   <FaDna className="text-[#07C59A] text-base" />
                 </div>
                 <div>
-                  <p className="font-semibold text-sm text-gray-900">Entrenamiento respaldado por la neurociencia</p>
-                  <p className="text-xs text-gray-500 mt-0.5">Nuestros programas de entrenamiento cognitivo se basan en las últimas investigaciones en neurociencia.</p>
+                  <p className="font-semibold text-sm text-gray-900">{tc?.trust3Title || 'Entrenamiento respaldado por la neurociencia'}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">{tc?.trust3Desc || 'Nuestros programas de entrenamiento cognitivo se basan en las últimas investigaciones en neurociencia.'}</p>
                 </div>
               </div>
             </div>
 
             {/* Media logos in trust panel */}
             <div className="mt-5 pt-4 border-t border-gray-100">
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">MindMetric ha sido presentado en</p>
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">{tc?.featuredIn || 'MindMetric ha sido presentado en'}</p>
               <div className="flex flex-wrap items-center gap-3">
                 <span className="font-black text-gray-800 text-xs">BUSINESS INSIDER</span>
                 <span className="text-blue-500 font-bold text-xs">+digitaltrends</span>
@@ -453,9 +456,9 @@ function CheckoutPaymentContent() {
               {/* Feature checkmarks */}
               <div className="space-y-2 mb-5">
                 {[
-                  'Obtén tu puntuación de CI exacta',
-                  'Compárate con la población general',
-                  'Identifica tus fortalezas y áreas de mejora cognitivas',
+                  tc?.feature1 || 'Obtén tu puntuación de CI exacta',
+                  tc?.feature2 || 'Compárate con la población general',
+                  tc?.feature3 || 'Identifica tus fortalezas y áreas de mejora cognitivas',
                 ].map((feat) => (
                   <div key={feat} className="flex items-start gap-2 text-sm text-gray-700">
                     <CheckIcon className="w-4 h-4 text-[#07C59A] flex-shrink-0 mt-0.5" />
@@ -466,7 +469,7 @@ function CheckoutPaymentContent() {
 
               {/* Price */}
               <div className="flex items-baseline gap-2 mb-5">
-                <span className="text-sm text-gray-500">Total:</span>
+                <span className="text-sm text-gray-500">{tc?.total || 'Total:'}</span>
                 <span className="text-2xl font-bold text-gray-900">€0,50</span>
               </div>
 
@@ -481,13 +484,13 @@ function CheckoutPaymentContent() {
               {isProcessing ? (
                 <div className="text-center py-10">
                   <div className="w-12 h-12 border-4 border-[#07C59A] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-                  <p className="text-sm text-gray-600 font-medium">Procesando pago...</p>
-                  <p className="text-xs text-gray-400 mt-1">Serás redirigido para verificar con tu banco</p>
+                  <p className="text-sm text-gray-600 font-medium">{tc?.processing || 'Procesando pago...'}</p>
+                  <p className="text-xs text-gray-400 mt-1">{tc?.processingDesc || 'Serás redirigido para verificar con tu banco'}</p>
                 </div>
               ) : isLoading ? (
                 <div className="text-center py-10">
                   <div className="w-12 h-12 border-4 border-[#07C59A] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-                  <p className="text-sm text-gray-600">Preparando pago seguro...</p>
+                  <p className="text-sm text-gray-600">{tc?.preparing || 'Preparando pago seguro...'}</p>
                 </div>
               ) : paymentData ? (
                 <div className="space-y-2.5">
@@ -512,7 +515,7 @@ function CheckoutPaymentContent() {
                   {/* Divider */}
                   <div className="flex items-center gap-3 py-1">
                     <div className="flex-1 h-px bg-gray-200" />
-                    <span className="text-xs text-gray-400">o</span>
+                    <span className="text-xs text-gray-400">{tc?.orText || 'o'}</span>
                     <div className="flex-1 h-px bg-gray-200" />
                   </div>
 
@@ -520,7 +523,7 @@ function CheckoutPaymentContent() {
                   <div>
                     <div className="flex items-center gap-2 mb-2">
                       <FaCreditCard className="text-gray-500 text-sm" />
-                      <span className="text-sm font-semibold text-gray-700">Tarjeta de crédito o débito</span>
+                      <span className="text-sm font-semibold text-gray-700">{tc?.cardTitle || 'Tarjeta de crédito o débito'}</span>
                     </div>
                     <SipayInline
                       merchantKey={paymentData.sipayConfig?.key || 'clicklabsdigital'}
@@ -539,19 +542,19 @@ function CheckoutPaymentContent() {
                   {/* Terms + Security */}
                   <div className="pt-3 border-t border-gray-100 space-y-2">
                     <p className="text-xs text-gray-400 text-center leading-relaxed">
-                      Al realizar el pago aceptas nuestros{' '}
+                      {tc?.termsText || 'Al realizar el pago aceptas nuestros'}{' '}
                       <a href={`/${lang}/terminos`} target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-600">
-                        Términos y Condiciones
+                        {tc?.termsLink || 'Términos y Condiciones'}
                       </a>
-                      {' '}y la{' '}
+                      {' '}{tc?.andText || 'y la'}{' '}
                       <a href={`/${lang}/privacidad`} target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-600">
-                        Política de Privacidad
+                        {tc?.privacyLink || 'Política de Privacidad'}
                       </a>.
                     </p>
                     <div className="flex items-center justify-center gap-4">
                       <div className="flex items-center gap-1 text-xs text-gray-400">
                         <FaLock className="text-xs" />
-                        <span>Pago Seguro</span>
+                        <span>{tc?.secureLabel || 'Pago Seguro'}</span>
                       </div>
                       <div className="flex items-center gap-1 text-xs text-gray-400">
                         <FaShieldAlt className="text-xs" />
@@ -570,8 +573,8 @@ function CheckoutPaymentContent() {
             {/* Guarantee */}
             <div className="mt-3 bg-amber-50 border border-amber-200 rounded-lg px-4 py-2.5 flex items-center gap-2">
               <FaShieldAlt className="text-amber-500 text-lg flex-shrink-0" />
-              <span className="text-sm font-medium text-amber-900">Garantía de Devolución</span>
-              <a href={`/${lang}/reembolso`} className="text-xs text-amber-700 underline ml-auto">Ver política</a>
+              <span className="text-sm font-medium text-amber-900">{tc?.guarantee || 'Garantía de Devolución'}</span>
+              <a href={`/${lang}/reembolso`} className="text-xs text-amber-700 underline ml-auto">{tc?.guaranteeLink || 'Ver política'}</a>
             </div>
           </div>
         </div>
@@ -582,19 +585,19 @@ function CheckoutPaymentContent() {
         <div className="max-w-3xl mx-auto bg-white rounded-xl border border-gray-200 shadow-sm p-6">
           <div className="flex items-center gap-2 mb-3">
             <img src="/images/FAVICON2.png" alt="" className="h-5 w-5" />
-            <h3 className="font-bold text-lg text-gray-900">Informe Personal de CI</h3>
+            <h3 className="font-bold text-lg text-gray-900">{tc?.reportTitle || 'Informe Personal de CI'}</h3>
           </div>
           <p className="text-sm text-gray-600 leading-relaxed mb-4">
-            Tus resultados revelan información fascinante sobre tus fortalezas cognitivas y tu potencial oculto. Con puntuaciones que te colocan entre los mejores en áreas clave, tus habilidades en Lógica y Reconocimiento de Patrones son realmente excepcionales:
+            {tc?.reportIntro || 'Tus resultados revelan información fascinante sobre tus fortalezas cognitivas y tu potencial oculto. Con puntuaciones que te colocan entre los mejores en áreas clave, tus habilidades en Lógica y Reconocimiento de Patrones son realmente excepcionales:'}
           </p>
 
           {/* Blurred text strip */}
           <div className="select-none pointer-events-none space-y-1.5 mb-3" style={{ filter: 'blur(4px)', WebkitFilter: 'blur(4px)' }}>
             <p className="text-sm text-gray-600 leading-relaxed">
-              Tu puntuación de CI te coloca en el percentil 94 de la población mundial. Tus habilidades de razonamiento lógico y memoria de trabajo son excepcionales, superando a la mayoría de personas de tu grupo de edad.
+              {tc?.reportBlur1 || 'Tu puntuación de CI te coloca en el percentil 94 de la población mundial. Tus habilidades de razonamiento lógico y memoria de trabajo son excepcionales, superando a la mayoría de personas de tu grupo de edad.'}
             </p>
             <p className="text-sm text-gray-600 leading-relaxed">
-              En el área de reconocimiento de patrones obtienes una puntuación de 138, lo que indica una capacidad analítica muy por encima del promedio.
+              {tc?.reportBlur2 || 'En el área de reconocimiento de patrones obtienes una puntuación de 138, lo que indica una capacidad analítica muy por encima del promedio.'}
             </p>
           </div>
 
@@ -602,9 +605,9 @@ function CheckoutPaymentContent() {
           <div className="bg-gray-50 border border-gray-200 rounded-xl px-6 py-4 text-center flex flex-col items-center gap-1.5">
             <FaLock className="text-gray-400 text-lg" />
             <p className="text-sm text-gray-700">
-              Para leer el informe completo, necesitas{' '}
+              {tc?.lockText || 'Para leer el informe completo, necesitas'}{' '}
               <button onClick={scrollToPayment} className="text-[#07C59A] font-semibold underline">
-                acceso total
+                {tc?.lockLink || 'acceso total'}
               </button>
             </p>
           </div>
@@ -615,13 +618,13 @@ function CheckoutPaymentContent() {
       <section className="py-8 px-4 bg-gray-50">
         <div className="max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-5">
           <div className="bg-white rounded-xl border border-gray-200 p-5">
-            <h4 className="font-bold text-gray-900 mb-3">Cómo te beneficiarás</h4>
+            <h4 className="font-bold text-gray-900 mb-3">{tc?.benefitsTitle || 'Cómo te beneficiarás'}</h4>
             <ul className="space-y-2">
               {[
-                'Superarás a tus compañeros y destacarás en ambientes competitivos',
-                'Abrirás nuevas oportunidades de carrera y lograrás tus objetivos profesionales',
-                'Tomarás mejores decisiones en todos los aspectos de tu vida',
-                'Aumentarás tu confianza y seguridad en ti mismo para afrontar nuevos retos',
+                tc?.benefit1 || 'Superarás a tus compañeros y destacarás en ambientes competitivos',
+                tc?.benefit2 || 'Abrirás nuevas oportunidades de carrera y lograrás tus objetivos profesionales',
+                tc?.benefit3 || 'Tomarás mejores decisiones en todos los aspectos de tu vida',
+                tc?.benefit4 || 'Aumentarás tu confianza y seguridad en ti mismo para afrontar nuevos retos',
               ].map((item) => (
                 <li key={item} className="flex items-start gap-2 text-sm text-gray-700">
                   <CheckIcon className="w-4 h-4 text-[#07C59A] flex-shrink-0 mt-0.5" />
@@ -631,13 +634,13 @@ function CheckoutPaymentContent() {
             </ul>
           </div>
           <div className="bg-white rounded-xl border border-gray-200 p-5">
-            <h4 className="font-bold text-gray-900 mb-3">Aprende cómo</h4>
+            <h4 className="font-bold text-gray-900 mb-3">{tc?.learnTitle || 'Aprende cómo'}</h4>
             <ul className="space-y-2">
               {[
-                'Resolver problemas complejos con mayor claridad y confianza',
-                'Adquirir nuevas habilidades más rápido y recordar información de forma más efectiva',
-                'Desarrollar mejores estrategias de pensamiento analítico',
-                'Mejorar tu memoria para un mejor rendimiento',
+                tc?.learn1 || 'Resolver problemas complejos con mayor claridad y confianza',
+                tc?.learn2 || 'Adquirir nuevas habilidades más rápido y recordar información de forma más efectiva',
+                tc?.learn3 || 'Desarrollar mejores estrategias de pensamiento analítico',
+                tc?.learn4 || 'Mejorar tu memoria para un mejor rendimiento',
               ].map((item) => (
                 <li key={item} className="flex items-start gap-2 text-sm text-gray-700">
                   <CheckIcon className="w-4 h-4 text-[#07C59A] flex-shrink-0 mt-0.5" />
@@ -652,7 +655,7 @@ function CheckoutPaymentContent() {
       {/* Reviews */}
       <section className="py-10 px-4 bg-white">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-2xl font-bold text-gray-900 text-center mb-6">Reseñas</h2>
+          <h2 className="text-2xl font-bold text-gray-900 text-center mb-6">{tc?.reviewsTitle || 'Reseñas'}</h2>
           <TrustpilotReviews
             reviews={checkoutReviews}
             visibleCount={3}
@@ -665,7 +668,7 @@ function CheckoutPaymentContent() {
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-6 px-4">
         <div className="max-w-5xl mx-auto text-center">
-          <p className="text-gray-400 text-sm">© 2026 MindMetric. Todos los derechos reservados.</p>
+          <p className="text-gray-400 text-sm">{tc?.footerCopy || '© 2026 MindMetric. Todos los derechos reservados.'}</p>
         </div>
       </footer>
 
@@ -676,7 +679,7 @@ function CheckoutPaymentContent() {
             onClick={scrollToPayment}
             className="w-full bg-[#07C59A] hover:bg-[#069e7b] text-white font-bold py-3.5 rounded-lg text-base transition-colors"
           >
-            Descubre tu CI →
+            {tc?.ctaButton || 'Descubre tu CI →'}
           </button>
         </div>
       </div>
