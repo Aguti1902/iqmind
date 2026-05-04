@@ -53,7 +53,6 @@ function CheckoutPaymentContent() {
   const [paymentData, setPaymentData] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
-  const [paymentMethod, setPaymentMethod] = useState<'none' | 'card' | 'google' | 'apple'>('none')
   const [isProcessing, setIsProcessing] = useState(false)
   const [notifIndex, setNotifIndex] = useState(0)
   const [notifVisible, setNotifVisible] = useState(true)
@@ -517,32 +516,24 @@ function CheckoutPaymentContent() {
                     <div className="flex-1 h-px bg-gray-200" />
                   </div>
 
-                  {/* Card button */}
-                  <button
-                    type="button"
-                    onClick={() => setPaymentMethod(paymentMethod === 'card' ? 'none' : 'card')}
-                    className="w-full bg-[#07C59A] hover:bg-[#069e7b] text-white font-semibold py-3.5 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm"
-                  >
-                    <FaCreditCard className="text-white" />
-                    Tarjeta de crédito o débito
-                  </button>
-
-                  {/* Expandable card form */}
-                  <div className={`overflow-hidden transition-all duration-300 ease-in-out ${paymentMethod === 'card' ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0'}`}>
-                    <div className="pt-2">
-                      <SipayInline
-                        merchantKey={paymentData.sipayConfig?.key || 'clicklabsdigital'}
-                        amount={50}
-                        currency="EUR"
-                        template="v4"
-                        lang={lang}
-                        env={paymentData.sipayConfig?.endpoint?.includes('live') ? 'live' : 'sandbox'}
-                        onRequestId={(requestId, payload) => {
-                          handlePaymentSuccess({ request_id: requestId, ...(typeof payload === 'object' && payload !== null ? payload : {}) })
-                        }}
-                        height={450}
-                      />
+                  {/* Card form — siempre visible */}
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <FaCreditCard className="text-gray-500 text-sm" />
+                      <span className="text-sm font-semibold text-gray-700">Tarjeta de crédito o débito</span>
                     </div>
+                    <SipayInline
+                      merchantKey={paymentData.sipayConfig?.key || 'clicklabsdigital'}
+                      amount={50}
+                      currency="EUR"
+                      template="v4"
+                      lang={lang}
+                      env={paymentData.sipayConfig?.endpoint?.includes('live') ? 'live' : 'sandbox'}
+                      onRequestId={(requestId, payload) => {
+                        handlePaymentSuccess({ request_id: requestId, ...(typeof payload === 'object' && payload !== null ? payload : {}) })
+                      }}
+                      height={450}
+                    />
                   </div>
 
                   {/* Terms + Security */}
