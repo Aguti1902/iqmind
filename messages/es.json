@@ -799,5 +799,41 @@
     "footerCopy": "© 2026 MindMetric. Todos los derechos reservados.",
     "ctaButton": "Descubre tu CI →",
     "loadingCheckout": "Cargando checkout..."
+  },
+  "testsSection": {
+    "title": "Tests de Evaluación Disponibles",
+    "subtitle": "Evalúa diferentes aspectos de tu mente con nuestros tests científicamente validados",
+    "viewAll": "Ver todos los tests disponibles",
+    "startTest": "Comenzar Test",
+    "questions": "preguntas",
+    "iq_title": "Test de CI",
+    "iq_subtitle": "Coeficiente Intelectual",
+    "iq_desc": "Mide tu capacidad de razonamiento lógico, resolución de problemas y pensamiento abstracto.",
+    "personality_title": "Test de Personalidad",
+    "personality_subtitle": "Big Five (OCEAN)",
+    "personality_desc": "Descubre los 5 rasgos fundamentales de tu personalidad: Apertura, Responsabilidad, Extroversión, Amabilidad y Neuroticismo.",
+    "adhd_title": "Test de TDAH",
+    "adhd_subtitle": "Evaluación de Atención",
+    "adhd_desc": "Evalúa síntomas de Trastorno por Déficit de Atención e Hiperactividad basado en criterios DSM-5.",
+    "anxiety_title": "Test de Ansiedad",
+    "anxiety_subtitle": "GAD-7 Extendido",
+    "anxiety_desc": "Evaluación completa de ansiedad generalizada con escala clínica validada internacionalmente.",
+    "depression_title": "Test de Depresión",
+    "depression_subtitle": "PHQ-9",
+    "depression_desc": "Evaluación del estado de ánimo y síntomas depresivos usando el cuestionario PHQ-9.",
+    "eq_title": "Inteligencia Emocional",
+    "eq_subtitle": "Test EQ",
+    "eq_desc": "Mide tu capacidad para reconocer, comprender y gestionar emociones propias y ajenas."
+  },
+  "testsPageInfo": {
+    "whyTitle": "¿Por qué hacer estos tests?",
+    "whyDesc": "Nuestros tests están basados en investigaciones científicas y te ayudan a conocerte mejor, identificar áreas de mejora y tomar decisiones más informadas sobre tu bienestar.",
+    "sci": "Científicamente Validados",
+    "sciDesc": "Basados en investigaciones y estándares internacionales",
+    "detailed": "Resultados Detallados",
+    "detailedDesc": "Análisis completo con gráficos y recomendaciones personalizadas",
+    "private": "100% Privado",
+    "privateDesc": "Tus resultados son confidenciales y solo tú puedes verlos",
+    "history": "Ver Mi Historial"
   }
 }

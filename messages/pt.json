@@ -753,5 +753,41 @@
     "footerCopy": "© 2026 MindMetric. Todos os direitos reservados.",
     "ctaButton": "Descubra o seu QI →",
     "loadingCheckout": "A carregar..."
+  },
+  "testsSection": {
+    "title": "Testes de Avaliação Disponíveis",
+    "subtitle": "Avalie diferentes aspetos da sua mente com os nossos testes cientificamente validados",
+    "viewAll": "Ver todos os testes disponíveis",
+    "startTest": "Iniciar Teste",
+    "questions": "questões",
+    "iq_title": "Teste de QI",
+    "iq_subtitle": "Quociente de Inteligência",
+    "iq_desc": "Meça a sua capacidade de raciocínio lógico, resolução de problemas e pensamento abstrato.",
+    "personality_title": "Teste de Personalidade",
+    "personality_subtitle": "Big Five (OCEAN)",
+    "personality_desc": "Descubra os 5 traços fundamentais da sua personalidade: Abertura, Conscienciosidade, Extroversão, Amabilidade e Neuroticismo.",
+    "adhd_title": "Teste de TDAH",
+    "adhd_subtitle": "Avaliação da Atenção",
+    "adhd_desc": "Avalie sintomas de Perturbação de Hiperatividade e Défice de Atenção com base nos critérios DSM-5.",
+    "anxiety_title": "Teste de Ansiedade",
+    "anxiety_subtitle": "GAD-7 Alargado",
+    "anxiety_desc": "Avaliação completa da ansiedade generalizada com uma escala clínica validada internacionalmente.",
+    "depression_title": "Teste de Depressão",
+    "depression_subtitle": "PHQ-9",
+    "depression_desc": "Avaliação do humor e sintomas depressivos usando o questionário PHQ-9.",
+    "eq_title": "Inteligência Emocional",
+    "eq_subtitle": "Teste EQ",
+    "eq_desc": "Meça a sua capacidade de reconhecer, compreender e gerir as suas próprias emoções e as dos outros."
+  },
+  "testsPageInfo": {
+    "whyTitle": "Por que fazer estes testes?",
+    "whyDesc": "Os nossos testes são baseados em investigações científicas e ajudam-no a conhecer-se melhor, identificar áreas de melhoria e tomar decisões mais informadas sobre o seu bem-estar.",
+    "sci": "Cientificamente Validados",
+    "sciDesc": "Baseados em investigações e padrões internacionais",
+    "detailed": "Resultados Detalhados",
+    "detailedDesc": "Análise completa com gráficos e recomendações personalizadas",
+    "private": "100% Privado",
+    "privateDesc": "Os seus resultados são confidenciais e só você pode vê-los",
+    "history": "Ver O Meu Histórico"
   }
 }

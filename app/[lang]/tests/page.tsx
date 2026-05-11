@@ -4,17 +4,21 @@ import { useParams, useRouter } from 'next/navigation'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import { FaBrain, FaUser, FaHeart, FaSmile, FaChartLine } from 'react-icons/fa'
+import { useTranslations } from '@/hooks/useTranslations'
 
 export default function TestsPage() {
   const { lang } = useParams()
   const router = useRouter()
+  const { t } = useTranslations()
+  const ts = t?.testsSection
+  const tp = t?.tests
 
   const tests = [
     {
       id: 'personality',
-      title: 'Test de Personalidad',
-      subtitle: 'Big Five (OCEAN)',
-      description: 'Descubre los 5 rasgos fundamentales de tu personalidad: Apertura, Responsabilidad, Extroversión, Amabilidad y Neuroticismo.',
+      title: ts?.personality_title || 'Test de Personalidad',
+      subtitle: ts?.personality_subtitle || 'Big Five (OCEAN)',
+      description: ts?.personality_desc || 'Descubre los 5 rasgos fundamentales de tu personalidad.',
       icon: <FaUser className="text-5xl" />,
       color: 'from-purple-500 to-purple-700',
       questions: 44,
@@ -24,9 +28,9 @@ export default function TestsPage() {
     },
     {
       id: 'adhd',
-      title: 'Test de TDAH',
-      subtitle: 'Evaluación de Atención',
-      description: 'Evalúa síntomas de Trastorno por Déficit de Atención e Hiperactividad basado en criterios DSM-5.',
+      title: ts?.adhd_title || 'Test de TDAH',
+      subtitle: ts?.adhd_subtitle || 'Evaluación de Atención',
+      description: ts?.adhd_desc || 'Evalúa síntomas de Trastorno por Déficit de Atención e Hiperactividad basado en criterios DSM-5.',
       icon: <FaBrain className="text-5xl" />,
       color: 'from-blue-500 to-blue-700',
       questions: 18,
@@ -36,33 +40,33 @@ export default function TestsPage() {
     },
     {
       id: 'anxiety',
-      title: 'Test de Ansiedad',
-      subtitle: 'GAD-7',
-      description: 'Mide el nivel de ansiedad generalizada con la escala clínica GAD-7 validada internacionalmente.',
+      title: ts?.anxiety_title || 'Test de Ansiedad',
+      subtitle: ts?.anxiety_subtitle || 'GAD-7',
+      description: ts?.anxiety_desc || 'Evaluación completa de ansiedad generalizada con escala clínica validada internacionalmente.',
       icon: <FaHeart className="text-5xl" />,
       color: 'from-red-500 to-red-700',
-      questions: 7,
-      time: '2-3 min',
+      questions: 20,
+      time: '5-7 min',
       route: '/tests/anxiety',
       available: true
     },
     {
       id: 'depression',
-      title: 'Test de Depresión',
-      subtitle: 'PHQ-9',
-      description: 'Evaluación del estado de ánimo y síntomas depresivos usando el cuestionario PHQ-9.',
+      title: ts?.depression_title || 'Test de Depresión',
+      subtitle: ts?.depression_subtitle || 'PHQ-9',
+      description: ts?.depression_desc || 'Evaluación del estado de ánimo y síntomas depresivos usando el cuestionario PHQ-9.',
       icon: <FaSmile className="text-5xl" />,
       color: 'from-gray-500 to-gray-700',
-      questions: 9,
-      time: '3-5 min',
+      questions: 20,
+      time: '6-8 min',
       route: '/tests/depression',
       available: true
     },
     {
       id: 'eq',
-      title: 'Inteligencia Emocional',
-      subtitle: 'Test EQ',
-      description: 'Mide tu capacidad para reconocer, comprender y gestionar emociones propias y ajenas.',
+      title: ts?.eq_title || 'Inteligencia Emocional',
+      subtitle: ts?.eq_subtitle || 'Test EQ',
+      description: ts?.eq_desc || 'Mide tu capacidad para reconocer, comprender y gestionar emociones propias y ajenas.',
       icon: <FaChartLine className="text-5xl" />,
       color: 'from-green-500 to-green-700',
       questions: 33,
@@ -84,11 +88,10 @@ export default function TestsPage() {
               <FaBrain className="text-5xl text-white" />
             </div>
             <h1 className="text-5xl font-bold text-gray-900 mb-4">
-              Tests de Evaluación
+              {ts?.title || 'Tests de Evaluación Disponibles'}
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Descubre más sobre ti con nuestros tests científicamente validados. 
-              Evalúa tu personalidad, atención, emociones y más.
+              {ts?.subtitle || 'Evalúa diferentes aspectos de tu mente con nuestros tests científicamente validados'}
             </p>
           </div>
 
@@ -104,57 +107,42 @@ export default function TestsPage() {
                 }`}
                 onClick={() => test.available && router.push(`/${lang}${test.route}`)}
               >
-                {/* Header con gradiente */}
                 <div className={`bg-gradient-to-r ${test.color} p-8 text-white relative overflow-hidden`}>
                   <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -mr-16 -mt-16"></div>
                   <div className="relative z-10 flex items-center justify-center mb-4">
                     {test.icon}
                   </div>
-                  <h3 className="text-2xl font-bold text-center mb-2">
-                    {test.title}
-                  </h3>
-                  <p className="text-center text-white/90 text-sm font-medium">
-                    {test.subtitle}
-                  </p>
+                  <h3 className="text-2xl font-bold text-center mb-2">{test.title}</h3>
+                  <p className="text-center text-white/90 text-sm font-medium">{test.subtitle}</p>
                 </div>
 
-                {/* Content */}
                 <div className="p-6">
-                  <p className="text-gray-600 mb-6 min-h-[80px]">
-                    {test.description}
-                  </p>
+                  <p className="text-gray-600 mb-6 min-h-[80px]">{test.description}</p>
 
-                  {/* Info badges */}
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-gray-500">📝</span>
                       <span className="text-sm font-medium text-gray-700">
-                        {test.questions} preguntas
+                        {test.questions} {ts?.questions || 'preguntas'}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-gray-500">⏱️</span>
-                      <span className="text-sm font-medium text-gray-700">
-                        {test.time}
-                      </span>
+                      <span className="text-sm font-medium text-gray-700">{test.time}</span>
                     </div>
                   </div>
 
-                  {/* Button */}
                   {test.available ? (
-                    <button
-                      className={`w-full bg-gradient-to-r ${test.color} text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl group-hover:scale-105`}
-                    >
-                      Comenzar Test
+                    <button className={`w-full bg-gradient-to-r ${test.color} text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl group-hover:scale-105`}>
+                      {ts?.startTest || 'Comenzar Test'}
                     </button>
                   ) : (
                     <div className="w-full bg-gray-200 text-gray-500 font-bold py-3 px-6 rounded-xl text-center">
-                      Próximamente
+                      {tp?.common?.comingSoon || 'Próximamente'}
                     </div>
                   )}
                 </div>
 
-                {/* Badge "Premium" si aplica */}
                 {test.available && (
                   <div className="absolute top-4 right-4 bg-yellow-400 text-yellow-900 text-xs font-bold px-3 py-1 rounded-full shadow-lg">
                     PREMIUM
@@ -167,34 +155,27 @@ export default function TestsPage() {
           {/* Info Section */}
           <div className="bg-gradient-to-r from-[#113240] to-[#052547] rounded-2xl shadow-2xl p-12 text-center text-white">
             <h2 className="text-4xl font-bold mb-4">
-              ¿Por qué hacer estos tests?
+              {t?.testsPageInfo?.whyTitle || '¿Por qué hacer estos tests?'}
             </h2>
             <p className="text-xl mb-8 opacity-90 max-w-3xl mx-auto">
-              Nuestros tests están basados en investigaciones científicas y te ayudan a conocerte mejor, 
-              identificar áreas de mejora y tomar decisiones más informadas sobre tu bienestar.
+              {t?.testsPageInfo?.whyDesc || 'Nuestros tests están basados en investigaciones científicas y te ayudan a conocerte mejor, identificar áreas de mejora y tomar decisiones más informadas sobre tu bienestar.'}
             </p>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
                 <div className="text-4xl mb-3">🔬</div>
-                <h3 className="font-bold mb-2">Científicamente Validados</h3>
-                <p className="text-sm opacity-90">
-                  Basados en investigaciones y estándares internacionales
-                </p>
+                <h3 className="font-bold mb-2">{t?.testsPageInfo?.sci || 'Científicamente Validados'}</h3>
+                <p className="text-sm opacity-90">{t?.testsPageInfo?.sciDesc || 'Basados en investigaciones y estándares internacionales'}</p>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
                 <div className="text-4xl mb-3">📊</div>
-                <h3 className="font-bold mb-2">Resultados Detallados</h3>
-                <p className="text-sm opacity-90">
-                  Análisis completo con gráficos y recomendaciones personalizadas
-                </p>
+                <h3 className="font-bold mb-2">{t?.testsPageInfo?.detailed || 'Resultados Detallados'}</h3>
+                <p className="text-sm opacity-90">{t?.testsPageInfo?.detailedDesc || 'Análisis completo con gráficos y recomendaciones personalizadas'}</p>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
                 <div className="text-4xl mb-3">🔒</div>
-                <h3 className="font-bold mb-2">100% Privado</h3>
-                <p className="text-sm opacity-90">
-                  Tus resultados son confidenciales y solo tú puedes verlos
-                </p>
+                <h3 className="font-bold mb-2">{t?.testsPageInfo?.private || '100% Privado'}</h3>
+                <p className="text-sm opacity-90">{t?.testsPageInfo?.privateDesc || 'Tus resultados son confidenciales y solo tú puedes verlos'}</p>
               </div>
             </div>
 
@@ -203,7 +184,7 @@ export default function TestsPage() {
                 onClick={() => router.push(`/${lang}/cuenta`)}
                 className="bg-[#07C59A] hover:bg-[#069e7b] text-white px-8 py-4 rounded-lg font-bold text-lg transition-all shadow-lg hover:shadow-xl"
               >
-                Ver Mi Historial
+                {t?.testsPageInfo?.history || 'Ver Mi Historial'}
               </button>
             </div>
           </div>

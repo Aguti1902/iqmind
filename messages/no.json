@@ -753,5 +753,41 @@
     "footerCopy": "© 2026 MindMetric. Alle rettigheter forbeholdt.",
     "ctaButton": "Oppdag din IQ →",
     "loadingCheckout": "Laster..."
+  },
+  "testsSection": {
+    "title": "Tilgjengelige Vurderingstester",
+    "subtitle": "Evaluer ulike aspekter av sinnet ditt med våre vitenskapelig validerte tester",
+    "viewAll": "Se alle tilgjengelige tester",
+    "startTest": "Start Test",
+    "questions": "spørsmål",
+    "iq_title": "IQ-test",
+    "iq_subtitle": "Intelligenskvotient",
+    "iq_desc": "Mål din evne til logisk tenkning, problemløsning og abstrakt tenkning.",
+    "personality_title": "Personlighetstest",
+    "personality_subtitle": "Big Five (OCEAN)",
+    "personality_desc": "Oppdag de 5 grunnleggende trekkene i din personlighet: Åpenhet, Samvittighetsfullhet, Ekstroversjon, Medgjengelighet og Nevrotisisme.",
+    "adhd_title": "ADHD-test",
+    "adhd_subtitle": "Oppmerksomhetsvurdering",
+    "adhd_desc": "Vurder symptomer på Oppmerksomhetssvikt og Hyperaktivitetsforstyrrelse basert på DSM-5-kriterier.",
+    "anxiety_title": "Angsttest",
+    "anxiety_subtitle": "Utvidet GAD-7",
+    "anxiety_desc": "Fullstendig vurdering av generalisert angst med en internasjonalt validert klinisk skala.",
+    "depression_title": "Depressjonstest",
+    "depression_subtitle": "PHQ-9",
+    "depression_desc": "Vurdering av humør og depressive symptomer ved hjelp av PHQ-9-spørreskjemaet.",
+    "eq_title": "Emosjonell Intelligens",
+    "eq_subtitle": "EQ-test",
+    "eq_desc": "Mål din evne til å gjenkjenne, forstå og håndtere dine egne og andres følelser."
+  },
+  "testsPageInfo": {
+    "whyTitle": "Hvorfor ta disse testene?",
+    "whyDesc": "Testene våre er basert på vitenskapelig forskning og hjelper deg å forstå deg selv bedre, identifisere forbedringsområder og ta mer informerte beslutninger om din velvære.",
+    "sci": "Vitenskapelig Validerte",
+    "sciDesc": "Basert på forskning og internasjonale standarder",
+    "detailed": "Detaljerte Resultater",
+    "detailedDesc": "Fullstendig analyse med grafer og personlige anbefalinger",
+    "private": "100% Privat",
+    "privateDesc": "Resultatene dine er konfidensielle og bare du kan se dem",
+    "history": "Se Min Historikk"
   }
 }

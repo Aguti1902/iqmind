@@ -753,5 +753,41 @@
     "footerCopy": "© 2026 MindMetric. Alle Rechte vorbehalten.",
     "ctaButton": "Entdecke deinen IQ →",
     "loadingCheckout": "Laden..."
+  },
+  "testsSection": {
+    "title": "Verfügbare Bewertungstests",
+    "subtitle": "Bewerte verschiedene Aspekte deines Geistes mit unseren wissenschaftlich validierten Tests",
+    "viewAll": "Alle verfügbaren Tests anzeigen",
+    "startTest": "Test starten",
+    "questions": "Fragen",
+    "iq_title": "IQ-Test",
+    "iq_subtitle": "Intelligenzquotient",
+    "iq_desc": "Messe deine logische Denkfähigkeit, Problemlösung und abstraktes Denken.",
+    "personality_title": "Persönlichkeitstest",
+    "personality_subtitle": "Big Five (OCEAN)",
+    "personality_desc": "Entdecke die 5 Kernmerkmale deiner Persönlichkeit: Offenheit, Gewissenhaftigkeit, Extraversion, Verträglichkeit und Neurotizismus.",
+    "adhd_title": "ADHS-Test",
+    "adhd_subtitle": "Aufmerksamkeitsbewertung",
+    "adhd_desc": "Bewerte Symptome der Aufmerksamkeitsdefizit-Hyperaktivitätsstörung anhand der DSM-5-Kriterien.",
+    "anxiety_title": "Angsttest",
+    "anxiety_subtitle": "Erweiterter GAD-7",
+    "anxiety_desc": "Vollständige Bewertung der generalisierten Angststörung mit einer international validierten klinischen Skala.",
+    "depression_title": "Depressionstest",
+    "depression_subtitle": "PHQ-9",
+    "depression_desc": "Bewertung der Stimmung und depressiver Symptome mithilfe des PHQ-9-Fragebogens.",
+    "eq_title": "Emotionale Intelligenz",
+    "eq_subtitle": "EQ-Test",
+    "eq_desc": "Messe deine Fähigkeit, eigene und fremde Emotionen zu erkennen, zu verstehen und zu steuern."
+  },
+  "testsPageInfo": {
+    "whyTitle": "Warum diese Tests machen?",
+    "whyDesc": "Unsere Tests basieren auf wissenschaftlichen Erkenntnissen und helfen dir, dich besser zu verstehen, Verbesserungsbereiche zu identifizieren und fundierte Entscheidungen über dein Wohlbefinden zu treffen.",
+    "sci": "Wissenschaftlich Validiert",
+    "sciDesc": "Basierend auf Forschung und internationalen Standards",
+    "detailed": "Detaillierte Ergebnisse",
+    "detailedDesc": "Vollständige Analyse mit Grafiken und personalisierten Empfehlungen",
+    "private": "100% Privat",
+    "privateDesc": "Deine Ergebnisse sind vertraulich und nur du kannst sie sehen",
+    "history": "Mein Verlauf"
   }
 }

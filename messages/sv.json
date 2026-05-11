@@ -753,5 +753,41 @@
     "footerCopy": "© 2026 MindMetric. Alla rättigheter förbehållna.",
     "ctaButton": "Upptäck din IQ →",
     "loadingCheckout": "Laddar..."
+  },
+  "testsSection": {
+    "title": "Tillgängliga Bedömningstester",
+    "subtitle": "Utvärdera olika aspekter av ditt sinne med våra vetenskapligt validerade tester",
+    "viewAll": "Se alla tillgängliga tester",
+    "startTest": "Starta Test",
+    "questions": "frågor",
+    "iq_title": "IQ-test",
+    "iq_subtitle": "Intelligenskvot",
+    "iq_desc": "Mät din förmåga till logiskt tänkande, problemlösning och abstrakt tänkande.",
+    "personality_title": "Personlighetstest",
+    "personality_subtitle": "Big Five (OCEAN)",
+    "personality_desc": "Upptäck de 5 grundläggande dragen i din personlighet: Öppenhet, Samvetsgrannhet, Extraversion, Vänlighet och Neuroticism.",
+    "adhd_title": "ADHD-test",
+    "adhd_subtitle": "Uppmärksamhetsbedömning",
+    "adhd_desc": "Bedöm symtom på Uppmärksamhetsstörning med Hyperaktivitet utifrån DSM-5-kriterier.",
+    "anxiety_title": "Ångesttest",
+    "anxiety_subtitle": "Utökad GAD-7",
+    "anxiety_desc": "Fullständig bedömning av generaliserad ångest med en internationellt validerad klinisk skala.",
+    "depression_title": "Depressiontest",
+    "depression_subtitle": "PHQ-9",
+    "depression_desc": "Bedömning av humör och depressiva symtom med PHQ-9-frågeformuläret.",
+    "eq_title": "Emotionell Intelligens",
+    "eq_subtitle": "EQ-test",
+    "eq_desc": "Mät din förmåga att känna igen, förstå och hantera dina egna och andras känslor."
+  },
+  "testsPageInfo": {
+    "whyTitle": "Varför ta dessa tester?",
+    "whyDesc": "Våra tester är baserade på vetenskaplig forskning och hjälper dig att förstå dig själv bättre, identifiera förbättringsområden och fatta mer välgrundade beslut om ditt välbefinnande.",
+    "sci": "Vetenskapligt Validerade",
+    "sciDesc": "Baserade på forskning och internationella standarder",
+    "detailed": "Detaljerade Resultat",
+    "detailedDesc": "Fullständig analys med diagram och personliga rekommendationer",
+    "private": "100% Privat",
+    "privateDesc": "Dina resultat är konfidentiella och bara du kan se dem",
+    "history": "Se Min Historik"
   }
 }

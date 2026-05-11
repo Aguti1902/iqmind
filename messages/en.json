@@ -798,5 +798,41 @@
     "footerCopy": "© 2026 MindMetric. All rights reserved.",
     "ctaButton": "Discover your IQ →",
     "loadingCheckout": "Loading checkout..."
+  },
+  "testsSection": {
+    "title": "Available Assessment Tests",
+    "subtitle": "Evaluate different aspects of your mind with our scientifically validated tests",
+    "viewAll": "View all available tests",
+    "startTest": "Start Test",
+    "questions": "questions",
+    "iq_title": "IQ Test",
+    "iq_subtitle": "Intelligence Quotient",
+    "iq_desc": "Measure your logical reasoning, problem-solving and abstract thinking skills.",
+    "personality_title": "Personality Test",
+    "personality_subtitle": "Big Five (OCEAN)",
+    "personality_desc": "Discover the 5 core traits of your personality: Openness, Conscientiousness, Extraversion, Agreeableness and Neuroticism.",
+    "adhd_title": "ADHD Test",
+    "adhd_subtitle": "Attention Assessment",
+    "adhd_desc": "Assess symptoms of Attention Deficit Hyperactivity Disorder based on DSM-5 criteria.",
+    "anxiety_title": "Anxiety Test",
+    "anxiety_subtitle": "Extended GAD-7",
+    "anxiety_desc": "Full assessment of generalised anxiety with an internationally validated clinical scale.",
+    "depression_title": "Depression Test",
+    "depression_subtitle": "PHQ-9",
+    "depression_desc": "Assessment of mood and depressive symptoms using the PHQ-9 questionnaire.",
+    "eq_title": "Emotional Intelligence",
+    "eq_subtitle": "EQ Test",
+    "eq_desc": "Measure your ability to recognise, understand and manage your own and others' emotions."
+  },
+  "testsPageInfo": {
+    "whyTitle": "Why take these tests?",
+    "whyDesc": "Our tests are based on scientific research and help you understand yourself better, identify areas for improvement and make more informed decisions about your wellbeing.",
+    "sci": "Scientifically Validated",
+    "sciDesc": "Based on research and international standards",
+    "detailed": "Detailed Results",
+    "detailedDesc": "Full analysis with charts and personalised recommendations",
+    "private": "100% Private",
+    "privateDesc": "Your results are confidential and only you can see them",
+    "history": "View My History"
   }
 }

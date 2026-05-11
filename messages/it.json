@@ -753,5 +753,41 @@
     "footerCopy": "© 2026 MindMetric. Tutti i diritti riservati.",
     "ctaButton": "Scopri il tuo QI →",
     "loadingCheckout": "Caricamento..."
+  },
+  "testsSection": {
+    "title": "Test di Valutazione Disponibili",
+    "subtitle": "Valuta diversi aspetti della tua mente con i nostri test scientificamente validati",
+    "viewAll": "Vedi tutti i test disponibili",
+    "startTest": "Inizia il Test",
+    "questions": "domande",
+    "iq_title": "Test QI",
+    "iq_subtitle": "Quoziente Intellettivo",
+    "iq_desc": "Misura la tua capacità di ragionamento logico, problem solving e pensiero astratto.",
+    "personality_title": "Test della Personalità",
+    "personality_subtitle": "Big Five (OCEAN)",
+    "personality_desc": "Scopri i 5 tratti fondamentali della tua personalità: Apertura, Coscienziosità, Estroversione, Gradevolezza e Nevroticismo.",
+    "adhd_title": "Test ADHD",
+    "adhd_subtitle": "Valutazione dell'Attenzione",
+    "adhd_desc": "Valuta i sintomi del Disturbo da Deficit di Attenzione e Iperattività in base ai criteri DSM-5.",
+    "anxiety_title": "Test dell'Ansia",
+    "anxiety_subtitle": "GAD-7 Esteso",
+    "anxiety_desc": "Valutazione completa dell'ansia generalizzata con una scala clinica validata internazionalmente.",
+    "depression_title": "Test della Depressione",
+    "depression_subtitle": "PHQ-9",
+    "depression_desc": "Valutazione dell'umore e dei sintomi depressivi mediante il questionario PHQ-9.",
+    "eq_title": "Intelligenza Emotiva",
+    "eq_subtitle": "Test EQ",
+    "eq_desc": "Misura la tua capacità di riconoscere, comprendere e gestire le emozioni proprie e altrui."
+  },
+  "testsPageInfo": {
+    "whyTitle": "Perché fare questi test?",
+    "whyDesc": "I nostri test sono basati su ricerche scientifiche e ti aiutano a conoscerti meglio, identificare aree di miglioramento e prendere decisioni più consapevoli sul tuo benessere.",
+    "sci": "Scientificamente Validati",
+    "sciDesc": "Basati su ricerche e standard internazionali",
+    "detailed": "Risultati Dettagliati",
+    "detailedDesc": "Analisi completa con grafici e raccomandazioni personalizzate",
+    "private": "100% Privato",
+    "privateDesc": "I tuoi risultati sono riservati e solo tu puoi vederli",
+    "history": "Vedi La Mia Cronologia"
   }
 }
