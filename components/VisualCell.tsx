@@ -18,7 +18,7 @@ export default function VisualCell({ cell, size = 120, isOption = false, isHighl
       case 'number':
         return (
           <div className="w-full h-full flex items-center justify-center">
-            <span className="text-[clamp(10px,4cqw,36px)] lg:text-4xl font-bold text-[#07C59A] leading-none">{cell.content}</span>
+            <span className="text-lg sm:text-2xl lg:text-4xl font-bold text-[#07C59A] leading-none">{cell.content}</span>
           </div>
         )
       
@@ -40,7 +40,7 @@ export default function VisualCell({ cell, size = 120, isOption = false, isHighl
       case 'empty':
         return (
           <div className="w-full h-full flex items-center justify-center">
-            <span className="text-[clamp(12px,5cqw,48px)] lg:text-5xl font-bold text-[#07C59A] leading-none">?</span>
+            <span className="text-xl sm:text-3xl lg:text-5xl font-bold text-[#07C59A] leading-none">?</span>
           </div>
         )
       
@@ -362,7 +362,6 @@ export default function VisualCell({ cell, size = 120, isOption = false, isHighl
         width: isOption ? '100%' : `${size}px`,
         height: isOption ? 'auto' : `${size}px`,
         aspectRatio: '1',
-        containerType: 'inline-size',
       }}
     >
       {renderContent()}
