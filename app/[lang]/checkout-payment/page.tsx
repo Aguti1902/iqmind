@@ -60,6 +60,7 @@ function CheckoutPaymentContent() {
   const [notifIndex, setNotifIndex] = useState(0)
   const [notifVisible, setNotifVisible] = useState(true)
   const [showBottomCta, setShowBottomCta] = useState(false)
+  const [showCardForm, setShowCardForm] = useState(false)
 
   // Mostrar CTA fijo al 50% de scroll
   useEffect(() => {
@@ -519,24 +520,39 @@ function CheckoutPaymentContent() {
                     <div className="flex-1 h-px bg-gray-200" />
                   </div>
 
-                  {/* Card form — siempre visible */}
+                  {/* Card form — con botón desplegable */}
                   <div>
-                    <div className="flex items-center gap-2 mb-2">
-                      <FaCreditCard className="text-gray-500 text-sm" />
-                      <span className="text-sm font-semibold text-gray-700">{tc?.cardTitle || 'Tarjeta de crédito o débito'}</span>
-                    </div>
-                    <SipayInline
-                      merchantKey={paymentData.sipayConfig?.key || 'clicklabsdigital'}
-                      amount={50}
-                      currency="EUR"
-                      template="v4"
-                      lang={lang}
-                      env={paymentData.sipayConfig?.endpoint?.includes('live') ? 'live' : 'sandbox'}
-                      onRequestId={(requestId, payload) => {
-                        handlePaymentSuccess({ request_id: requestId, ...(typeof payload === 'object' && payload !== null ? payload : {}) })
-                      }}
-                      height={450}
-                    />
+                    <button
+                      onClick={() => setShowCardForm((prev) => !prev)}
+                      className="w-full flex items-center justify-between gap-2 border border-gray-200 rounded-lg px-4 py-3 hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="flex items-center gap-2">
+                        <FaCreditCard className="text-gray-500 text-sm" />
+                        <span className="text-sm font-semibold text-gray-700">{tc?.cardTitle || 'Tarjeta de crédito o débito'}</span>
+                      </div>
+                      <svg
+                        viewBox="0 0 24 24"
+                        className={`w-4 h-4 fill-current text-gray-400 transition-transform duration-200 ${showCardForm ? 'rotate-180' : ''}`}
+                      >
+                        <path d="M7 10l5 5 5-5z" />
+                      </svg>
+                    </button>
+                    {showCardForm && (
+                      <div className="mt-2">
+                        <SipayInline
+                          merchantKey={paymentData.sipayConfig?.key || 'clicklabsdigital'}
+                          amount={50}
+                          currency="EUR"
+                          template="v4"
+                          lang={lang}
+                          env={paymentData.sipayConfig?.endpoint?.includes('live') ? 'live' : 'sandbox'}
+                          onRequestId={(requestId, payload) => {
+                            handlePaymentSuccess({ request_id: requestId, ...(typeof payload === 'object' && payload !== null ? payload : {}) })
+                          }}
+                          height={450}
+                        />
+                      </div>
+                    )}
                   </div>
 
                   {/* Terms + Security */}
