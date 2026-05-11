@@ -303,7 +303,7 @@ export default function TestPage() {
               <h3 className="text-xs lg:text-base font-semibold text-gray-900 mb-1.5 lg:mb-3 text-center">
                 {t.test.completeSequence}
               </h3>
-              <div className="grid grid-cols-3 gap-1 lg:gap-2 w-full max-w-[200px] lg:max-w-[340px] mx-auto">
+              <div className="grid grid-cols-3 gap-1 lg:gap-2 w-full max-w-[250px] lg:max-w-[340px] mx-auto">
                 {question.matrix.flat().map((cell, index) => (
                   <VisualCell 
                     key={index} 
@@ -320,7 +320,7 @@ export default function TestPage() {
               <h3 className="text-xs lg:text-base font-semibold text-gray-900 mb-1.5 lg:mb-3 text-center">
                 {t.test.chooseAnswer}
               </h3>
-              <div className="grid grid-cols-3 gap-1 lg:gap-2 w-full max-w-[200px] lg:max-w-[340px] mx-auto">
+              <div className="grid grid-cols-3 gap-1 lg:gap-2 w-full max-w-[250px] lg:max-w-[340px] mx-auto">
                 {question.options.map((option, index) => (
                   <div key={index} className="flex flex-col items-center gap-0.5 lg:gap-1.5">
                     <div className="w-5 h-5 lg:w-8 lg:h-8 bg-[#113240] text-white rounded-full flex items-center justify-center text-[10px] lg:text-sm font-bold">
