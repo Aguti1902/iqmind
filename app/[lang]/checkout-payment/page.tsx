@@ -265,7 +265,12 @@ function CheckoutPaymentContent() {
         return
       }
       if (data.success) {
-        router.push('/' + lang + '/resultado?order_id=' + paymentData.orderId + '&payment=success')
+        const currentTestType = searchParams.get('testType') || testType || 'iq'
+        if (currentTestType !== 'iq') {
+          router.push(`/${lang}/tests/${currentTestType}/results?payment=success&order_id=${paymentData.orderId}`)
+        } else {
+          router.push('/' + lang + '/resultado?order_id=' + paymentData.orderId + '&payment=success')
+        }
         return
       }
       setError('Respuesta inesperada del servidor.')
@@ -300,7 +305,12 @@ function CheckoutPaymentContent() {
         setError(data.error || 'Error en Google Pay')
         return false
       }
-      router.push('/' + lang + '/resultado?order_id=' + data.orderId + '&payment=success')
+      const currentTestType = searchParams.get('testType') || testType || 'iq'
+      if (currentTestType !== 'iq') {
+        router.push(`/${lang}/tests/${currentTestType}/results?payment=success&order_id=${data.orderId}`)
+      } else {
+        router.push('/' + lang + '/resultado?order_id=' + data.orderId + '&payment=success')
+      }
       return true
     } catch (error: any) {
       setError(error.message || 'Error con Google Pay')
@@ -330,7 +340,12 @@ function CheckoutPaymentContent() {
         setError(data.error || 'Error en Apple Pay')
         return false
       }
-      router.push('/' + lang + '/resultado?order_id=' + data.orderId + '&payment=success')
+      const currentTestType = searchParams.get('testType') || testType || 'iq'
+      if (currentTestType !== 'iq') {
+        router.push(`/${lang}/tests/${currentTestType}/results?payment=success&order_id=${data.orderId}`)
+      } else {
+        router.push('/' + lang + '/resultado?order_id=' + data.orderId + '&payment=success')
+      }
       return true
     } catch (error: any) {
       setError(error.message || 'Error con Apple Pay')
