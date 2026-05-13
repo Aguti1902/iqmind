@@ -43,6 +43,104 @@ function CheckIcon({ className = '' }: { className?: string }) {
   )
 }
 
+// Configuración de contenido por tipo de test
+const TEST_CONFIG: Record<string, {
+  heroTitle: string
+  heroSubtitle: string
+  heroButton: string
+  certTitle: string
+  certScore: string
+  certDesc: string
+  mainTitle: string
+  trust1Title: string
+  trust1Desc: string
+  trust2Title: string
+  trust2Desc: string
+  trust3Title: string
+  trust3Desc: string
+  features: string[]
+  certBorderColor: string
+  heroBg: string
+  notifText: string
+}> = {
+  iq: {
+    heroTitle: '¡Felicidades!',
+    heroSubtitle: '¡Tu puntuación está lista!',
+    heroButton: 'Descubre tu CI',
+    certTitle: 'Certificado de test de CI',
+    certScore: 'Puntuación de CI',
+    certDesc: 'Este certificado confirma la finalización de la prueba MindMetric. La puntuación de CI presentada representa una medición del rendimiento cognitivo basada en sus respuestas.',
+    mainTitle: '¡Obtén tu certificado de coeficiente intelectual ahora!',
+    trust1Title: 'Test de CI',
+    trust1Desc: 'Nuestra evaluación se basa en la Escala de Inteligencia Stanford-Binet, el estándar de referencia en tests de CI desde 1916.',
+    trust2Title: 'Informe Completo',
+    trust2Desc: 'Tu informe personalizado se genera usando la teoría de habilidades cognitivas de Cattell-Horn-Carroll (CHC).',
+    trust3Title: 'Respaldado por la neurociencia',
+    trust3Desc: 'Nuestros programas de entrenamiento cognitivo se basan en las últimas investigaciones en neurociencia.',
+    features: ['Obtén tu puntuación de CI exacta', 'Compárate con la población general', 'Identifica tus fortalezas y áreas de mejora cognitivas'],
+    certBorderColor: 'border-blue-400',
+    heroBg: 'bg-[#EEF4FF]',
+    notifText: 'acaba de obtener su perfil de CI',
+  },
+  personality: {
+    heroTitle: '¡Tu análisis está listo!',
+    heroSubtitle: '¡Descubre tu personalidad!',
+    heroButton: 'Ver mi perfil OCEAN',
+    certTitle: 'Informe de Personalidad Big Five',
+    certScore: 'Perfil OCEAN',
+    certDesc: 'Este informe detalla tu perfil de personalidad según el modelo Big Five (OCEAN), el marco más validado científicamente para comprender los rasgos de personalidad humana.',
+    mainTitle: '¡Obtén tu informe de personalidad completo ahora!',
+    trust1Title: 'Modelo Big Five (OCEAN)',
+    trust1Desc: 'El test más utilizado en psicología de la personalidad, validado en miles de estudios científicos a nivel mundial.',
+    trust2Title: 'Análisis de 5 dimensiones',
+    trust2Desc: 'Apertura, Responsabilidad, Extroversión, Amabilidad y Neuroticismo — evaluadas con 44 preguntas calibradas.',
+    trust3Title: 'Aplicación práctica real',
+    trust3Desc: 'Comprende tus fortalezas, áreas de desarrollo y cómo interactúas con los demás en trabajo y relaciones.',
+    features: ['Conoce tus 5 dimensiones de personalidad', 'Descubre tus fortalezas y áreas de mejora', 'Compárate con la población general'],
+    certBorderColor: 'border-purple-400',
+    heroBg: 'bg-[#F5F0FF]',
+    notifText: 'acaba de obtener su perfil de personalidad',
+  },
+  adhd: {
+    heroTitle: '¡Evaluación completada!',
+    heroSubtitle: 'Tu informe TDAH está listo',
+    heroButton: 'Ver mi informe',
+    certTitle: 'Informe de Evaluación TDAH',
+    certScore: 'Índice TDAH',
+    certDesc: 'Este informe evalúa posibles indicadores de TDAH basándose en criterios clínicos estandarizados.',
+    mainTitle: '¡Obtén tu informe de evaluación TDAH ahora!',
+    trust1Title: 'Basado en criterios DSM-5',
+    trust1Desc: 'Evaluación alineada con los criterios diagnósticos más actuales del Manual Diagnóstico y Estadístico.',
+    trust2Title: 'Análisis de atención',
+    trust2Desc: 'Evalúa inatención, hiperactividad e impulsividad con métricas validadas.',
+    trust3Title: 'Orientación práctica',
+    trust3Desc: 'Resultados con recomendaciones específicas para mejorar el foco y la gestión del tiempo.',
+    features: ['Evaluación basada en criterios clínicos', 'Análisis de inatención e hiperactividad', 'Recomendaciones personalizadas'],
+    certBorderColor: 'border-orange-400',
+    heroBg: 'bg-[#FFF5EE]',
+    notifText: 'acaba de obtener su evaluación TDAH',
+  },
+  anxiety: {
+    heroTitle: '¡Test completado!',
+    heroSubtitle: 'Tu informe de ansiedad está listo',
+    heroButton: 'Ver mi informe',
+    certTitle: 'Informe de Evaluación de Ansiedad',
+    certScore: 'Nivel de Ansiedad',
+    certDesc: 'Evaluación basada en la escala GAD-7, el estándar clínico para medir el trastorno de ansiedad generalizada.',
+    mainTitle: '¡Obtén tu informe de ansiedad completo!',
+    trust1Title: 'Escala GAD-7 validada',
+    trust1Desc: 'La escala GAD-7 es el estándar clínico más utilizado para evaluar la ansiedad generalizada.',
+    trust2Title: 'Análisis detallado',
+    trust2Desc: 'Comprende tus patrones de preocupación y cómo afectan tu día a día.',
+    trust3Title: 'Estrategias de gestión',
+    trust3Desc: 'Recibe orientación práctica para manejar la ansiedad basada en terapia cognitivo-conductual.',
+    features: ['Nivel de ansiedad basado en GAD-7', 'Análisis de tus patrones de preocupación', 'Estrategias personalizadas de gestión'],
+    certBorderColor: 'border-yellow-400',
+    heroBg: 'bg-[#FFFBEE]',
+    notifText: 'acaba de obtener su evaluación de ansiedad',
+  },
+}
+
 function CheckoutPaymentContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -244,6 +342,8 @@ function CheckoutPaymentContent() {
     paymentRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
   }
 
+  const cfg = TEST_CONFIG[testType] || TEST_CONFIG.iq
+
   return (
     <div className="min-h-screen bg-white pb-20">
 
@@ -253,8 +353,7 @@ function CheckoutPaymentContent() {
           className={`inline-block transition-all duration-400 ${notifVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-1'}`}
           style={{ transition: 'opacity 0.4s, transform 0.4s' }}
         >
-          <strong>{notif.name}</strong> {tc?.justBought || 'acaba de comprar el resultado'} {notif.flag}{' '}
-          <span className="font-semibold">{tc?.ciScore || 'CI'} {notif.score}</span>
+          <strong>{notif.name}</strong> {cfg.notifText} {notif.flag}
         </span>
       </div>
 
@@ -274,63 +373,59 @@ function CheckoutPaymentContent() {
 
 
       {/* Hero section */}
-      <section className="bg-[#EEF4FF] py-10 px-4">
+      <section className={`${cfg.heroBg} py-10 px-4`}>
         <div className="max-w-5xl mx-auto">
-
-          {/* Mobile: certificate on top, text below. Desktop: side by side */}
           <div className="flex flex-col md:grid md:grid-cols-2 md:gap-8 md:items-center">
 
-            {/* Certificate — shown first on all screens */}
+            {/* Certificate / informe preview */}
             <div className="relative mx-auto w-full max-w-sm order-1 mb-6 md:mb-0 md:order-2">
               <div className="absolute inset-0 translate-x-3 translate-y-3 bg-white rounded-lg border border-gray-200 shadow-md" />
-              <div className="relative bg-white rounded-lg border-2 border-blue-400 shadow-xl p-5 overflow-hidden">
+              <div className={`relative bg-white rounded-lg border-2 ${cfg.certBorderColor} shadow-xl p-5 overflow-hidden`}>
                 <div className="flex items-center gap-2 mb-3">
                   <img src="/images/FAVICON2.png" alt="" className="h-5 w-5" />
                   <span className="text-xs font-semibold text-gray-600">MindMetric</span>
-                  <div className="ml-auto w-10 h-10 rounded-full border-2 border-blue-400 flex items-center justify-center">
+                  <div className={`ml-auto w-10 h-10 rounded-full border-2 ${cfg.certBorderColor} flex items-center justify-center`}>
                     <img src="/images/FAVICON2.png" alt="" className="h-6 w-6" />
                   </div>
                 </div>
-                <h3 className="font-bold text-sm text-gray-900 mb-3">{tc?.certTitle || 'Certificado de test de CI'}</h3>
-                <p className="text-xs text-gray-500 mb-1">{tc?.certGranted || 'Otorgado con orgullo a'}</p>
+                <h3 className="font-bold text-sm text-gray-900 mb-3">{cfg.certTitle}</h3>
+                <p className="text-xs text-gray-500 mb-1">Otorgado con orgullo a</p>
                 <div className="h-4 bg-gray-200 rounded w-2/3 mb-3 blur-sm" />
-                <p className="text-xs text-gray-500 mb-1">{tc?.certScore || 'Puntuación de CI'}</p>
+                <p className="text-xs text-gray-500 mb-1">{cfg.certScore}</p>
                 <div className="h-6 bg-gray-200 rounded w-1/3 mb-3 blur-sm" />
                 <div className="blur-sm select-none">
-                  <p className="text-xs text-gray-500 leading-relaxed mb-3">
-                    {tc?.certDesc || 'Este certificado confirma la finalización de la prueba MindMetric. La puntuación de CI presentada representa una medición del rendimiento cognitivo basada en sus respuestas a la prueba.'}
-                  </p>
+                  <p className="text-xs text-gray-500 leading-relaxed mb-3">{cfg.certDesc}</p>
                 </div>
                 <div className="flex justify-between items-end mt-2 blur-sm">
                   <div>
                     <div className="h-3 bg-gray-200 rounded w-16 mb-1" />
-                    <p className="text-[10px] text-gray-400">{tc?.certIssueDate || 'Fecha de emisión'}</p>
+                    <p className="text-[10px] text-gray-400">Fecha de emisión</p>
                   </div>
                   <div>
                     <div className="h-3 bg-gray-200 rounded w-16 mb-1" />
-                    <p className="text-[10px] text-gray-400">{tc?.certId || 'ID certificado'}</p>
+                    <p className="text-[10px] text-gray-400">ID certificado</p>
                   </div>
                   <div>
                     <div className="h-5 bg-gray-200 rounded w-14 mb-1" />
-                    <p className="text-[10px] text-gray-400">{tc?.certDirector || 'Director'}</p>
+                    <p className="text-[10px] text-gray-400">Director</p>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Text + CTA — below certificate on mobile, left on desktop */}
+            {/* Text + CTA */}
             <div className="order-2 md:order-1 text-center md:text-left">
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-1 leading-tight">
-                {tc?.heroTitle || '¡Felicidades!'}
+                {cfg.heroTitle}
               </h1>
               <h2 className="text-3xl md:text-4xl font-bold text-[#07C59A] mb-6 leading-tight">
-                {tc?.heroSubtitle || '¡Tu puntuación está lista!'}
+                {cfg.heroSubtitle}
               </h2>
               <button
                 onClick={scrollToPayment}
                 className="bg-[#07C59A] hover:bg-[#069e7b] text-white font-bold px-8 py-3.5 rounded-lg text-base transition-colors w-full md:w-auto"
               >
-                {tc?.heroButton || 'Descubre tu CI'}
+                {cfg.heroButton}
               </button>
             </div>
 
@@ -372,7 +467,7 @@ function CheckoutPaymentContent() {
       {/* Main section */}
       <section className="py-10 px-4 bg-gray-50">
         <h2 className="text-2xl md:text-3xl font-bold text-gray-900 text-center mb-8">
-          {tc?.mainTitle || '¡Obtén tu certificado de coeficiente intelectual ahora!'}
+          {cfg.mainTitle}
         </h2>
 
         <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -412,8 +507,8 @@ function CheckoutPaymentContent() {
                   <FaGraduationCap className="text-[#07C59A] text-base" />
                 </div>
                 <div>
-                  <p className="font-semibold text-sm text-gray-900">{tc?.trust1Title || 'Test de CI'}</p>
-                  <p className="text-xs text-gray-500 mt-0.5">{tc?.trust1Desc || 'Nuestra evaluación se basa en la Escala de Inteligencia Stanford-Binet, el estándar de referencia en tests de CI desde 1916.'}</p>
+                  <p className="font-semibold text-sm text-gray-900">{cfg.trust1Title}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">{cfg.trust1Desc}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -421,8 +516,8 @@ function CheckoutPaymentContent() {
                   <FaChartBar className="text-[#07C59A] text-base" />
                 </div>
                 <div>
-                  <p className="font-semibold text-sm text-gray-900">{tc?.trust2Title || 'Informe Completo'}</p>
-                  <p className="text-xs text-gray-500 mt-0.5">{tc?.trust2Desc || 'Tu informe personalizado se genera usando la teoría de habilidades cognitivas de Cattell-Horn-Carroll (CHC).'}</p>
+                  <p className="font-semibold text-sm text-gray-900">{cfg.trust2Title}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">{cfg.trust2Desc}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -430,8 +525,8 @@ function CheckoutPaymentContent() {
                   <FaDna className="text-[#07C59A] text-base" />
                 </div>
                 <div>
-                  <p className="font-semibold text-sm text-gray-900">{tc?.trust3Title || 'Entrenamiento respaldado por la neurociencia'}</p>
-                  <p className="text-xs text-gray-500 mt-0.5">{tc?.trust3Desc || 'Nuestros programas de entrenamiento cognitivo se basan en las últimas investigaciones en neurociencia.'}</p>
+                  <p className="font-semibold text-sm text-gray-900">{cfg.trust3Title}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">{cfg.trust3Desc}</p>
                 </div>
               </div>
             </div>
@@ -456,11 +551,7 @@ function CheckoutPaymentContent() {
 
               {/* Feature checkmarks */}
               <div className="space-y-2 mb-5">
-                {[
-                  tc?.feature1 || 'Obtén tu puntuación de CI exacta',
-                  tc?.feature2 || 'Compárate con la población general',
-                  tc?.feature3 || 'Identifica tus fortalezas y áreas de mejora cognitivas',
-                ].map((feat) => (
+                {cfg.features.map((feat) => (
                   <div key={feat} className="flex items-start gap-2 text-sm text-gray-700">
                     <CheckIcon className="w-4 h-4 text-[#07C59A] flex-shrink-0 mt-0.5" />
                     {feat}
