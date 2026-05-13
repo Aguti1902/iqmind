@@ -15,19 +15,43 @@ export default function PersonalityResultsPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Si venimos del redirect 3DS, Sipay añade ?payment=success en la URL
     const urlParams = new URLSearchParams(window.location.search)
-    if (urlParams.get('payment') === 'success') {
+    const isPaymentSuccess = urlParams.get('payment') === 'success'
+
+    // Guardar transaction_id desde la URL (igual que hace la página de IQ)
+    if (isPaymentSuccess) {
       localStorage.setItem('paymentCompleted', 'true')
       localStorage.setItem('isPremiumTest', 'true')
+      const txId = urlParams.get('transaction_id') || ''
+      if (txId) localStorage.setItem('transactionId', txId)
+
+      // ── Disparar conversiones INMEDIATAMENTE al llegar del pago ──
+      // Se hace aquí, antes de cualquier redirect, para garantizar que Google Ads lo recibe
+      const finalTxId = txId || localStorage.getItem('transactionId') || ''
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        ;(window as any).gtag('event', 'purchase', {
+          transaction_id: finalTxId, value: 0.50, currency: 'EUR',
+        })
+        ;(window as any).gtag('event', 'conversion', {
+          send_to: 'AW-17232820139/qMCRCP_NnK4bEKvvn5lA',
+          value: 0.50, currency: 'EUR', transaction_id: finalTxId,
+        })
+        // COMPRA 17 DEL4
+        ;(window as any).gtag('event', 'conversion', {
+          send_to: 'AW-17957420237/arK9CNCu6p0cEM354fJC',
+          value: 0.50, currency: 'EUR', transaction_id: finalTxId,
+        })
+      }
+      if (typeof window !== 'undefined' && (window as any).fbq) {
+        ;(window as any).fbq('track', 'Purchase', { value: 0.50, currency: 'EUR' })
+      }
     }
 
     // Verificar que el pago esté completado o sea test premium
     const paymentCompleted = localStorage.getItem('paymentCompleted')
     const isPremiumTest = localStorage.getItem('isPremiumTest')
-    
+
     if (!paymentCompleted && isPremiumTest !== 'true') {
-      // Si no ha pagado, redirigir al test
       router.push(`/${lang}/tests/personality`)
       return
     }
@@ -40,39 +64,13 @@ export default function PersonalityResultsPage() {
         setResults(parsed.results)
       } else {
         router.push(`/${lang}/tests`)
+        return
       }
     } else {
-      // Si no hay resultados, redirigir
       router.push(`/${lang}/tests`)
+      return
     }
     setLoading(false)
-
-    // Disparar conversion SOLO si venimos del pago real (?payment=success)
-    if (typeof window !== 'undefined') {
-      const urlParams = new URLSearchParams(window.location.search)
-      if (urlParams.get('payment') === 'success') {
-        const txId = localStorage.getItem('transactionId') || ''
-        if ((window as any).gtag) {
-          ;(window as any).gtag('event', 'purchase', { transaction_id: txId, value: 0.50, currency: 'EUR' })
-          ;(window as any).gtag('event', 'conversion', {
-            send_to: 'AW-17232820139/qMCRCP_NnK4bEKvvn5lA',
-            value: 0.50, currency: 'EUR', transaction_id: txId,
-          })
-        }
-        if ((window as any).fbq) {
-          ;(window as any).fbq('track', 'Purchase', { value: 0.50, currency: 'EUR' })
-        }
-        // COMPRA 17 DEL4
-        if ((window as any).gtag) {
-          ;(window as any).gtag('event', 'conversion', {
-            send_to: 'AW-17957420237/arK9CNCu6p0cEM354fJC',
-            value: 0.50,
-            currency: 'EUR',
-            transaction_id: txId,
-          })
-        }
-      }
-    }
   }, [router, lang])
 
   if (loading || !results) {
