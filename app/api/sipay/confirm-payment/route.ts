@@ -38,11 +38,28 @@ async function recordPurchase(pool: Pool, data: {
   amount: number
 }) {
   await ensurePurchasesTable(pool)
-  await pool.query(
-    `INSERT INTO purchases (transaction_id, order_id, user_email, user_name, test_type, amount, currency, status)
-     VALUES ($1, $2, $3, $4, $5, $6, 'EUR', 'completed')`,
-    [data.transactionId, data.orderId, data.email, data.userName, data.testType, data.amount]
-  )
+
+  if (data.transactionId) {
+    // Si tenemos transaction_id real de Sipay, usar ON CONFLICT para evitar duplicados
+    await pool.query(
+      `INSERT INTO purchases (transaction_id, order_id, user_email, user_name, test_type, amount, currency, status)
+       VALUES ($1, $2, $3, $4, $5, $6, 'EUR', 'completed')
+       ON CONFLICT (transaction_id) WHERE transaction_id IS NOT NULL DO NOTHING`,
+      [data.transactionId, data.orderId, data.email, data.userName, data.testType, data.amount]
+    )
+  } else {
+    // Sin transaction_id (raro), insertar solo si no hay ya una compra de hoy para este email
+    await pool.query(
+      `INSERT INTO purchases (transaction_id, order_id, user_email, user_name, test_type, amount, currency, status)
+       SELECT $1, $2, $3, $4, $5, $6, 'EUR', 'completed'
+       WHERE NOT EXISTS (
+         SELECT 1 FROM purchases
+         WHERE user_email = $3
+           AND DATE_TRUNC('day', created_at) = DATE_TRUNC('day', NOW())
+       )`,
+      [data.transactionId, data.orderId, data.email, data.userName, data.testType, data.amount]
+    )
+  }
 }
 
 /**
