@@ -18,7 +18,7 @@ async function ensurePurchasesTable(pool: Pool) {
       user_email VARCHAR(255) NOT NULL,
       user_name VARCHAR(255),
       test_type VARCHAR(50) NOT NULL DEFAULT 'iq',
-      amount DECIMAL(10,2) NOT NULL DEFAULT 0.90,
+      amount DECIMAL(10,2) NOT NULL DEFAULT 0.50,
       currency VARCHAR(10) NOT NULL DEFAULT 'EUR',
       status VARCHAR(50) NOT NULL DEFAULT 'completed',
       created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
@@ -29,91 +29,113 @@ async function ensurePurchasesTable(pool: Pool) {
 export async function GET() {
   const pool = getPool()
   try {
-    const now = new Date()
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
-
     await ensurePurchasesTable(pool)
 
-    // Datos de usuarios/suscripciones
-    const statsResult = await pool.query(`
+    const twoWeeksAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString()
+    const now = new Date().toISOString()
+
+    // ── Métricas Sipay: últimas 2 semanas ──────────────────────────────
+    const sipayResult = await pool.query(`
       SELECT
-        COUNT(*) FILTER (WHERE subscription_status = 'active') as active_count,
-        COUNT(*) FILTER (WHERE subscription_status = 'trial') as trial_count,
-        COUNT(*) FILTER (WHERE subscription_status = 'cancelled' AND updated_at >= $1) as cancelled_this_month,
-        COUNT(*) as total_users
-      FROM users
-    `, [startOfMonth.toISOString()])
-
-    const stats = statsResult.rows[0]
-    const activeCount = parseInt(stats.active_count)
-    const trialCount = parseInt(stats.trial_count)
-    const cancelledThisMonth = parseInt(stats.cancelled_this_month)
-    const totalUsers = parseInt(stats.total_users)
-
-    const mrr = activeCount * 19.99
-    const totalTrials = trialCount + activeCount
-    const conversionRate = totalTrials > 0 ? (activeCount / totalTrials) * 100 : 0
-    const churnRate = (activeCount + cancelledThisMonth) > 0
-      ? (cancelledThisMonth / (activeCount + cancelledThisMonth)) * 100
-      : 0
-
-    // Ingresos reales desde tabla purchases
-    const revenueResult = await pool.query(`
-      SELECT
-        COALESCE(SUM(amount) FILTER (WHERE status = 'completed'), 0) as total_revenue,
-        COUNT(*) FILTER (WHERE status = 'completed' AND created_at >= $1) as purchases_this_month,
-        COALESCE(SUM(amount) FILTER (WHERE status = 'refunded'), 0) as total_refunded,
-        COUNT(*) FILTER (WHERE status = 'refunded' AND created_at >= $1) as refunds_this_month
+        COUNT(*) FILTER (WHERE status = 'completed') AS purchases_2w,
+        COALESCE(SUM(amount) FILTER (WHERE status = 'completed'), 0) AS revenue_2w,
+        COUNT(*) FILTER (WHERE status = 'refunded') AS refunds_2w,
+        COALESCE(SUM(amount) FILTER (WHERE status = 'refunded'), 0) AS refunded_amount_2w
       FROM purchases
-    `, [startOfMonth.toISOString()])
+      WHERE created_at >= $1
+    `, [twoWeeksAgo])
 
-    const rev = revenueResult.rows[0]
-    const totalRevenue = parseFloat(rev.total_revenue)
-    const totalRefunded = parseFloat(rev.total_refunded)
-    const refundsThisMonth = parseInt(rev.refunds_this_month)
+    const s2w = sipayResult.rows[0]
+    const purchases2w = parseInt(s2w.purchases_2w)
+    const revenue2w = parseFloat(s2w.revenue_2w)
+    const refunds2w = parseInt(s2w.refunds_2w)
+    const refundedAmount2w = parseFloat(s2w.refunded_amount_2w)
 
-    // Ingresos mensuales (últimos 6 meses) desde purchases
-    const monthlyResult = await pool.query(`
+    // ── Métricas Sipay: totales históricos ─────────────────────────────
+    const totalResult = await pool.query(`
       SELECT
-        TO_CHAR(DATE_TRUNC('month', created_at), 'Mon YY') as month,
-        TO_CHAR(DATE_TRUNC('month', created_at), 'YYYY-MM') as month_key,
-        COALESCE(SUM(amount) FILTER (WHERE status = 'completed'), 0) as revenue,
-        COUNT(*) FILTER (WHERE status = 'completed') as transactions
+        COUNT(*) FILTER (WHERE status = 'completed') AS total_purchases,
+        COALESCE(SUM(amount) FILTER (WHERE status = 'completed'), 0) AS total_revenue,
+        COUNT(DISTINCT user_email) FILTER (WHERE status = 'completed') AS unique_buyers
       FROM purchases
-      WHERE created_at >= NOW() - INTERVAL '6 months'
-      GROUP BY DATE_TRUNC('month', created_at)
-      ORDER BY DATE_TRUNC('month', created_at) ASC
     `)
+    const tot = totalResult.rows[0]
+    const totalPurchases = parseInt(tot.total_purchases)
+    const totalRevenue = parseFloat(tot.total_revenue)
+    const uniqueBuyers = parseInt(tot.unique_buyers)
 
-    const monthlyRevenue = monthlyResult.rows.map(row => ({
-      month: row.month,
-      revenue: parseFloat(row.revenue),
-      transactions: parseInt(row.transactions),
-    }))
+    // ── Desglose por tipo de test (últimas 2 semanas) ──────────────────
+    const typeBreakdown2w = await pool.query(`
+      SELECT
+        test_type,
+        COUNT(*) FILTER (WHERE status = 'completed') AS count,
+        COALESCE(SUM(amount) FILTER (WHERE status = 'completed'), 0) AS revenue
+      FROM purchases
+      WHERE created_at >= $1 AND status = 'completed'
+      GROUP BY test_type
+      ORDER BY count DESC
+    `, [twoWeeksAgo])
 
-    // Si no hay datos en purchases, rellenar con meses vacíos
-    if (monthlyRevenue.length === 0) {
-      const months = []
-      for (let i = 5; i >= 0; i--) {
-        const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
-        months.push({
-          month: d.toLocaleDateString('es-ES', { month: 'short', year: '2-digit' }),
-          revenue: 0,
-          transactions: 0,
-        })
-      }
-      monthlyRevenue.push(...months)
+    // ── Gráfico diario: últimas 2 semanas ──────────────────────────────
+    const dailyResult = await pool.query(`
+      SELECT
+        TO_CHAR(DATE_TRUNC('day', created_at), 'DD Mon') AS day,
+        DATE_TRUNC('day', created_at) AS day_ts,
+        COUNT(*) FILTER (WHERE status = 'completed') AS purchases,
+        COALESCE(SUM(amount) FILTER (WHERE status = 'completed'), 0) AS revenue
+      FROM purchases
+      WHERE created_at >= $1
+      GROUP BY DATE_TRUNC('day', created_at)
+      ORDER BY DATE_TRUNC('day', created_at) ASC
+    `, [twoWeeksAgo])
+
+    // Rellenar días sin datos
+    const dailyMap: Record<string, { purchases: number; revenue: number }> = {}
+    dailyResult.rows.forEach(r => {
+      dailyMap[r.day] = { purchases: parseInt(r.purchases), revenue: parseFloat(r.revenue) }
+    })
+
+    const dailyChart = []
+    for (let i = 13; i >= 0; i--) {
+      const d = new Date(Date.now() - i * 24 * 60 * 60 * 1000)
+      const key = d.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })
+        .replace('.', '').replace(' ', ' ')
+      // Try matching with the DB format
+      const matchKey = Object.keys(dailyMap).find(k => {
+        const dbDate = new Date(dailyResult.rows.find(r => r.day === k)?.day_ts || 0)
+        return dbDate.toDateString() === d.toDateString()
+      })
+      dailyChart.push({
+        day: d.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }),
+        purchases: matchKey ? dailyMap[matchKey].purchases : 0,
+        revenue: matchKey ? dailyMap[matchKey].revenue : 0,
+      })
     }
 
-    // Transacciones recientes reales desde purchases
-    const recentPurchasesResult = await pool.query(`
+    // ── Suscripciones activas REALES (con acceso vigente) ─────────────
+    const activeSubsResult = await pool.query(`
+      SELECT
+        COUNT(*) FILTER (WHERE subscription_status = 'active' AND access_until > $1) AS truly_active,
+        COUNT(*) FILTER (WHERE subscription_status = 'trial' AND trial_end_date > $1) AS truly_trialing,
+        COUNT(*) FILTER (WHERE subscription_status = 'cancelled' AND updated_at >= $2) AS cancelled_2w
+      FROM users
+    `, [now, twoWeeksAgo])
+
+    const subs = activeSubsResult.rows[0]
+    const trulyActive = parseInt(subs.truly_active)
+    const trulyTrialing = parseInt(subs.truly_trialing)
+    const cancelled2w = parseInt(subs.cancelled_2w)
+
+    // ── Transacciones recientes (últimas 2 semanas) ────────────────────
+    const recentResult = await pool.query(`
       SELECT id, transaction_id, user_email, user_name, test_type, amount, currency, status, created_at
       FROM purchases
+      WHERE created_at >= $1
       ORDER BY created_at DESC
       LIMIT 20
-    `)
+    `, [twoWeeksAgo])
 
-    const recentTransactions = recentPurchasesResult.rows.map(row => ({
+    const recentTransactions = recentResult.rows.map(row => ({
       id: row.transaction_id || String(row.id),
       amount: parseFloat(row.amount),
       currency: row.currency,
@@ -122,56 +144,39 @@ export async function GET() {
       customer_name: row.user_name || 'N/A',
       test_type: row.test_type,
       created: row.created_at,
-      description: row.test_type === 'iq' ? 'Test de IQ' : row.test_type === 'personality' ? 'Test de Personalidad' : `Test ${row.test_type}`,
-    }))
-
-    // Suscripciones activas
-    const activeSubsList = await pool.query(`
-      SELECT id, email, subscription_status, access_until, trial_end_date, created_at
-      FROM users
-      WHERE subscription_status IN ('active', 'trial')
-      ORDER BY created_at DESC
-      LIMIT 10
-    `)
-
-    const activeSubscriptionsList = activeSubsList.rows.map(row => ({
-      id: row.id,
-      customer_id: row.id,
-      status: row.subscription_status,
-      plan: 'MindMetric Premium',
-      amount: 19.99,
-      current_period_end: row.access_until || row.trial_end_date,
-      trial_end: row.trial_end_date,
+      description: row.test_type === 'iq' ? 'Test de IQ'
+        : row.test_type === 'personality' ? 'Test de Personalidad'
+        : `Test ${row.test_type}`,
     }))
 
     return NextResponse.json({
       success: true,
       data: {
         kpis: {
-          activeSubscriptions: activeCount,
-          trialingSubscriptions: trialCount,
-          cancelationsThisMonth: cancelledThisMonth,
-          refundsThisMonth,
-          mrr: Math.round(mrr * 100) / 100,
+          // Sipay — últimas 2 semanas
+          purchases2w,
+          revenue2w: Math.round(revenue2w * 100) / 100,
+          refunds2w,
+          refundedAmount2w: Math.round(refundedAmount2w * 100) / 100,
+          // Sipay — totales
+          totalPurchases,
           totalRevenue: Math.round(totalRevenue * 100) / 100,
-          totalRefunded: Math.round(totalRefunded * 100) / 100,
-          conversionRate: Math.round(conversionRate * 10) / 10,
-          churnRate: Math.round(churnRate * 10) / 10,
-          totalUsers,
+          uniqueBuyers,
+          // Suscripciones reales
+          activeSubscriptions: trulyActive,
+          trialingSubscriptions: trulyTrialing,
+          cancelations2w: cancelled2w,
         },
         charts: {
-          monthlyRevenue,
+          dailyRevenue: dailyChart,
+          typeBreakdown: typeBreakdown2w.rows.map(r => ({
+            testType: r.test_type,
+            count: parseInt(r.count),
+            revenue: parseFloat(r.revenue),
+          })),
         },
         tables: {
           recentTransactions,
-          activeSubscriptions: activeSubscriptionsList,
-        },
-        aiMetrics: {
-          totalRequests: 0,
-          refundApproved: 0,
-          refundDenied: 0,
-          cancelationsProcessed: cancelledThisMonth,
-          avgResponseTime: 0,
         },
       },
     })

@@ -1,88 +1,82 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { FaSync, FaChartLine, FaUsers, FaCheckCircle, FaTimesCircle, FaMoneyBillWave, FaDollarSign, FaRobot, FaCreditCard, FaDownload } from 'react-icons/fa'
-import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts'
+import { FaSync, FaShoppingCart, FaEuroSign, FaUndo, FaUsers, FaClock, FaCheckCircle, FaBrain, FaUser } from 'react-icons/fa'
+import {
+  BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid,
+  Tooltip, Legend, ResponsiveContainer, ComposedChart
+} from 'recharts'
 
-interface DashboardData {
-  kpis: any
-  charts: any
-  tables: any
-  aiMetrics: any
+const TEST_LABELS: Record<string, string> = {
+  iq: 'Test IQ',
+  personality: 'Personalidad',
+  adhd: 'TDAH',
+  anxiety: 'Ansiedad',
+  depression: 'Depresión',
+  eq: 'IE',
+}
+
+const TEST_COLORS: Record<string, string> = {
+  iq: '#3B82F6',
+  personality: '#8B5CF6',
+  adhd: '#F97316',
+  anxiety: '#EAB308',
+  depression: '#EF4444',
+  eq: '#10B981',
 }
 
 export default function DashboardTab() {
-  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null)
+  const [data, setData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [secondsSince, setSecondsSince] = useState(0)
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date())
-  const [secondsSinceUpdate, setSecondsSinceUpdate] = useState(0)
 
-  // Auto-refresh cada 60 segundos
   useEffect(() => {
-    loadDashboardData()
-    
-    const refreshInterval = setInterval(() => {
-      console.log('🔄 Auto-actualizando dashboard...')
-      loadDashboardData()
-    }, 60000) // 60 segundos
-
-    return () => clearInterval(refreshInterval)
+    load()
+    const interval = setInterval(load, 60000)
+    return () => clearInterval(interval)
   }, [])
 
-  // Contador de tiempo desde última actualización
   useEffect(() => {
     const timer = setInterval(() => {
-      const now = new Date()
-      const diff = Math.floor((now.getTime() - lastUpdate.getTime()) / 1000)
-      setSecondsSinceUpdate(diff)
+      setSecondsSince(Math.floor((Date.now() - lastUpdate.getTime()) / 1000))
     }, 1000)
-
     return () => clearInterval(timer)
   }, [lastUpdate])
 
-  const loadDashboardData = async () => {
+  const load = async () => {
     setLoading(true)
     try {
-      const response = await fetch('/api/admin/dashboard?_=' + Date.now()) // Cache buster
-      const data = await response.json()
-      
-      if (data.success && data.data) {
-        setDashboardData(data.data)
+      const res = await fetch('/api/admin/dashboard?_=' + Date.now())
+      const json = await res.json()
+      if (json.success) {
+        setData(json.data)
         setLastUpdate(new Date())
-        setSecondsSinceUpdate(0)
-        console.log('✅ Dashboard actualizado:', new Date().toLocaleTimeString())
+        setSecondsSince(0)
       }
-    } catch (error) {
-      console.error('Error cargando dashboard:', error)
+    } catch (e) {
+      console.error('Error cargando dashboard:', e)
     } finally {
       setLoading(false)
     }
   }
 
-  const formatTimeSince = (seconds: number) => {
-    if (seconds < 60) return `hace ${seconds}s`
-    const minutes = Math.floor(seconds / 60)
-    return `hace ${minutes}m`
-  }
+  const fmt = (s: number) => s < 60 ? `hace ${s}s` : `hace ${Math.floor(s / 60)}m`
 
-  if (loading) {
+  if (loading && !data) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#07C59A] mx-auto mb-4"></div>
-          <p className="text-gray-600">Cargando métricas...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#07C59A] mx-auto mb-4" />
+          <p className="text-gray-600">Cargando métricas reales de Sipay...</p>
         </div>
       </div>
     )
   }
 
-  if (!dashboardData) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p className="text-gray-600">No hay datos disponibles</p>
-      </div>
-    )
-  }
+  if (!data) return null
+
+  const { kpis, charts, tables } = data
 
   return (
     <div className="p-8">
@@ -90,14 +84,14 @@ export default function DashboardTab() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-600 mt-1">Resumen general de tu negocio</p>
+          <p className="text-gray-600 mt-1">Datos reales de Sipay · Últimas 2 semanas</p>
           <p className="text-sm text-gray-500 mt-1 flex items-center gap-2">
-            <span className="inline-block w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-            Última actualización: {formatTimeSince(secondsSinceUpdate)} • Auto-refresh cada 60s
+            <span className="inline-block w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+            Última actualización: {fmt(secondsSince)} · Auto-refresh cada 60s
           </p>
         </div>
         <button
-          onClick={loadDashboardData}
+          onClick={load}
           disabled={loading}
           className="px-4 py-2 bg-[#07C59A] text-white rounded-lg hover:bg-[#069e7b] transition-colors flex items-center gap-2 disabled:opacity-50"
         >
@@ -106,270 +100,203 @@ export default function DashboardTab() {
         </button>
       </div>
 
-      {/* KPI Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white rounded-xl p-6 shadow-lg border-l-4 border-green-500">
+      {/* ── Sipay: últimas 2 semanas ── */}
+      <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">Sipay — Últimas 2 semanas</p>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="bg-white rounded-xl p-5 shadow border-l-4 border-[#07C59A]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 text-sm font-medium">Suscripciones Activas</p>
-              <p className="text-3xl font-bold text-gray-900 mt-2">{dashboardData.kpis.activeSubscriptions}</p>
+              <p className="text-sm text-gray-500">Compras</p>
+              <p className="text-3xl font-black text-gray-900">{kpis.purchases2w}</p>
             </div>
-            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-              <FaCheckCircle className="text-2xl text-green-600" />
-            </div>
+            <FaShoppingCart className="text-3xl text-[#07C59A] opacity-30" />
           </div>
         </div>
-
-        <div className="bg-white rounded-xl p-6 shadow-lg border-l-4 border-blue-500">
+        <div className="bg-white rounded-xl p-5 shadow border-l-4 border-green-500">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 text-sm font-medium">En Trial</p>
-              <p className="text-3xl font-bold text-gray-900 mt-2">{dashboardData.kpis.trialingSubscriptions}</p>
+              <p className="text-sm text-gray-500">Ingresos</p>
+              <p className="text-3xl font-black text-gray-900">€{kpis.revenue2w.toFixed(2)}</p>
             </div>
-            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-              <FaUsers className="text-2xl text-blue-600" />
-            </div>
+            <FaEuroSign className="text-3xl text-green-500 opacity-30" />
           </div>
         </div>
-
-        <div className="bg-white rounded-xl p-6 shadow-lg border-l-4 border-orange-500">
+        <div className="bg-white rounded-xl p-5 shadow border-l-4 border-orange-400">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 text-sm font-medium">Cancelaciones</p>
-              <p className="text-3xl font-bold text-gray-900 mt-2">{dashboardData.kpis.cancelationsThisMonth}</p>
-              <p className="text-xs text-orange-600 mt-1">Churn: {dashboardData.kpis.churnRate.toFixed(1)}%</p>
+              <p className="text-sm text-gray-500">Reembolsos</p>
+              <p className="text-3xl font-black text-gray-900">{kpis.refunds2w}</p>
+              {kpis.refundedAmount2w > 0 && (
+                <p className="text-xs text-orange-500">€{kpis.refundedAmount2w.toFixed(2)}</p>
+              )}
             </div>
-            <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-              <FaTimesCircle className="text-2xl text-orange-600" />
-            </div>
+            <FaUndo className="text-3xl text-orange-400 opacity-30" />
           </div>
         </div>
-
-        <div className="bg-white rounded-xl p-6 shadow-lg border-l-4 border-purple-500">
+        <div className="bg-white rounded-xl p-5 shadow border-l-4 border-red-400">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 text-sm font-medium">MRR</p>
-              <p className="text-3xl font-bold text-gray-900 mt-2">€{dashboardData.kpis.mrr.toFixed(2)}</p>
+              <p className="text-sm text-gray-500">Cancelaciones</p>
+              <p className="text-3xl font-black text-gray-900">{kpis.cancelations2w}</p>
             </div>
-            <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-              <FaMoneyBillWave className="text-2xl text-purple-600" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl p-6 shadow-lg border-l-4 border-green-600">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-500 text-sm font-medium">Ingresos Totales</p>
-              <p className="text-3xl font-bold text-gray-900 mt-2">€{dashboardData.kpis.totalRevenue.toFixed(2)}</p>
-            </div>
-            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-              <FaDollarSign className="text-2xl text-green-700" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl p-6 shadow-lg border-l-4 border-red-500">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-500 text-sm font-medium">Reembolsos</p>
-              <p className="text-3xl font-bold text-gray-900 mt-2">{dashboardData.kpis.refundsThisMonth}</p>
-              <p className="text-xs text-red-600 mt-1">Total: €{dashboardData.kpis.totalRefunded.toFixed(2)}</p>
-            </div>
-            <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-              <FaTimesCircle className="text-2xl text-red-600" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl p-6 shadow-lg border-l-4 border-indigo-500">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-500 text-sm font-medium">Conversión</p>
-              <p className="text-3xl font-bold text-gray-900 mt-2">{dashboardData.kpis.conversionRate.toFixed(1)}%</p>
-              <p className="text-xs text-indigo-600 mt-1">Trial → Pago</p>
-            </div>
-            <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
-              <FaChartLine className="text-2xl text-indigo-600" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl p-6 shadow-lg border-l-4 border-cyan-500">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-500 text-sm font-medium">Cancelaciones IA</p>
-              <p className="text-3xl font-bold text-gray-900 mt-2">{dashboardData.aiMetrics.cancelationsProcessed}</p>
-            </div>
-            <div className="w-12 h-12 bg-cyan-100 rounded-lg flex items-center justify-center">
-              <FaRobot className="text-2xl text-cyan-600" />
-            </div>
+            <FaClock className="text-3xl text-red-400 opacity-30" />
           </div>
         </div>
       </div>
 
-      {/* Charts Grid */}
+      {/* ── Totales históricos ── */}
+      <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">Sipay — Totales históricos</p>
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+        <div className="bg-white rounded-xl p-5 shadow border-l-4 border-blue-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-500">Total Compras</p>
+              <p className="text-3xl font-black text-gray-900">{kpis.totalPurchases}</p>
+            </div>
+            <FaShoppingCart className="text-3xl text-blue-500 opacity-30" />
+          </div>
+        </div>
+        <div className="bg-white rounded-xl p-5 shadow border-l-4 border-purple-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-500">Ingresos Totales</p>
+              <p className="text-3xl font-black text-gray-900">€{kpis.totalRevenue.toFixed(2)}</p>
+            </div>
+            <FaEuroSign className="text-3xl text-purple-500 opacity-30" />
+          </div>
+        </div>
+        <div className="bg-white rounded-xl p-5 shadow border-l-4 border-cyan-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-500">Compradores Únicos</p>
+              <p className="text-3xl font-black text-gray-900">{kpis.uniqueBuyers}</p>
+            </div>
+            <FaUsers className="text-3xl text-cyan-500 opacity-30" />
+          </div>
+        </div>
+      </div>
+
+      {/* ── Suscripciones reales ── */}
+      <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">Suscripciones activas</p>
+      <div className="grid grid-cols-2 gap-4 mb-8">
+        <div className="bg-white rounded-xl p-5 shadow border-l-4 border-green-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-500">Activas (acceso vigente)</p>
+              <p className="text-3xl font-black text-gray-900">{kpis.activeSubscriptions}</p>
+            </div>
+            <FaCheckCircle className="text-3xl text-green-500 opacity-30" />
+          </div>
+        </div>
+        <div className="bg-white rounded-xl p-5 shadow border-l-4 border-blue-400">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-500">En Trial (período activo)</p>
+              <p className="text-3xl font-black text-gray-900">{kpis.trialingSubscriptions}</p>
+            </div>
+            <FaClock className="text-3xl text-blue-400 opacity-30" />
+          </div>
+        </div>
+      </div>
+
+      {/* ── Gráficos ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        {/* Bar Chart - Ingresos Mensuales */}
-        <div className="bg-white rounded-xl p-6 shadow-lg">
-          <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <FaChartLine className="text-[#07C59A]" />
-            Ingresos Mensuales
-          </h3>
-          <div className="h-80">
+        {/* Gráfico diario compras + ingresos */}
+        <div className="bg-white rounded-xl p-6 shadow lg:col-span-2">
+          <h3 className="text-lg font-bold text-gray-900 mb-4">Compras e Ingresos diarios (últimas 2 semanas)</h3>
+          <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={dashboardData.charts.monthlyRevenue}>
+              <ComposedChart data={charts.dailyRevenue}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip formatter={(value: number) => [`€${value.toFixed(2)}`, 'Ingresos']} />
+                <XAxis dataKey="day" tick={{ fontSize: 11 }} />
+                <YAxis yAxisId="left" tickFormatter={(v) => `€${v}`} />
+                <YAxis yAxisId="right" orientation="right" allowDecimals={false} />
+                <Tooltip formatter={(v: number, name: string) => name === 'Ingresos (€)' ? `€${v.toFixed(2)}` : v} />
                 <Legend />
-                <Bar dataKey="revenue" fill="#07C59A" name="Ingresos (€)" />
-              </BarChart>
+                <Bar yAxisId="right" dataKey="purchases" name="Compras" fill="#07C59A" opacity={0.8} />
+                <Line yAxisId="left" type="monotone" dataKey="revenue" name="Ingresos (€)" stroke="#8B5CF6" strokeWidth={2} dot={{ r: 3 }} />
+              </ComposedChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Line Chart - Transacciones */}
-        <div className="bg-white rounded-xl p-6 shadow-lg">
-          <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <FaCreditCard className="text-blue-500" />
-            Transacciones Mensuales
-          </h3>
-          <div className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={dashboardData.charts.monthlyRevenue}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line 
-                  type="monotone" 
-                  dataKey="transactions" 
-                  stroke="#3B82F6" 
-                  strokeWidth={3}
-                  name="Transacciones"
-                  dot={{ fill: '#3B82F6', r: 5 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
+        {/* Desglose por tipo */}
+        {charts.typeBreakdown.length > 0 && (
+          <div className="bg-white rounded-xl p-6 shadow">
+            <h3 className="text-lg font-bold text-gray-900 mb-4">Por tipo de test (últimas 2 semanas)</h3>
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={charts.typeBreakdown.map((t: any) => ({
+                  name: TEST_LABELS[t.testType] || t.testType,
+                  Compras: t.count,
+                  Ingresos: t.revenue,
+                }))}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="Compras" fill="#07C59A" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </div>
-        </div>
-
-        {/* Area Chart - Ingresos Acumulados */}
-        <div className="bg-white rounded-xl p-6 shadow-lg">
-          <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <FaDollarSign className="text-purple-500" />
-            Tendencia de Ingresos
-          </h3>
-          <div className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={dashboardData.charts.monthlyRevenue}>
-                <defs>
-                  <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip formatter={(value: number) => [`€${value.toFixed(2)}`, 'Ingresos']} />
-                <Legend />
-                <Area 
-                  type="monotone" 
-                  dataKey="revenue" 
-                  stroke="#8B5CF6" 
-                  fillOpacity={1} 
-                  fill="url(#colorRevenue)"
-                  name="Ingresos (€)"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* Line Chart - MRR Growth */}
-        <div className="bg-white rounded-xl p-6 shadow-lg">
-          <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <FaMoneyBillWave className="text-green-500" />
-            Crecimiento MRR
-          </h3>
-          <div className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={dashboardData.charts.monthlyRevenue}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip formatter={(value: number) => [`€${value.toFixed(2)}`, 'MRR']} />
-                <Legend />
-                <Line 
-                  type="monotone" 
-                  dataKey="revenue" 
-                  stroke="#10B981" 
-                  strokeWidth={3}
-                  name="MRR Estimado (€)"
-                  dot={{ fill: '#10B981', r: 5 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
+        )}
       </div>
 
-      {/* Recent Transactions Table */}
-      <div className="bg-white rounded-xl p-6 shadow-lg">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-            <FaCreditCard className="text-[#07C59A]" />
-            Transacciones Recientes
-          </h3>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
+      {/* ── Transacciones recientes ── */}
+      <div className="bg-white rounded-xl p-6 shadow">
+        <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <FaShoppingCart className="text-[#07C59A]" />
+          Compras recientes (últimas 2 semanas)
+        </h3>
+        {tables.recentTransactions.length === 0 ? (
+          <p className="text-gray-500 text-center py-8">No hay compras en las últimas 2 semanas</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tipo Test</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Monto</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fecha</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {dashboardData.tables.recentTransactions.slice(0, 10).map((transaction: any, i: number) => (
-                <tr key={`${transaction.id}-${i}`} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {transaction.customer_email}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                      transaction.test_type === 'iq' ? 'bg-blue-100 text-blue-800' :
-                      transaction.test_type === 'personality' ? 'bg-purple-100 text-purple-800' :
-                      'bg-gray-100 text-gray-700'
-                    }`}>
-                      {transaction.description || transaction.test_type || '—'}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-green-600">
-                    €{transaction.amount.toFixed(2)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(transaction.created).toLocaleDateString('es-ES')}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                      {transaction.status}
-                    </span>
-                  </td>
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tipo Test</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Importe</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fecha</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {tables.recentTransactions.map((t: any, i: number) => (
+                  <tr key={`${t.id}-${i}`} className="hover:bg-gray-50">
+                    <td className="px-4 py-3 text-sm text-gray-900">{t.customer_email}</td>
+                    <td className="px-4 py-3">
+                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                        t.test_type === 'iq' ? 'bg-blue-100 text-blue-800' :
+                        t.test_type === 'personality' ? 'bg-purple-100 text-purple-800' :
+                        'bg-gray-100 text-gray-700'
+                      }`}>
+                        {t.description}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-sm font-bold text-green-600">€{t.amount.toFixed(2)}</td>
+                    <td className="px-4 py-3 text-sm text-gray-500">
+                      {new Date(t.created).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                        t.status === 'succeeded' ? 'bg-green-100 text-green-800' :
+                        t.status === 'refunded' ? 'bg-orange-100 text-orange-800' :
+                        'bg-gray-100 text-gray-700'
+                      }`}>
+                        {t.status === 'succeeded' ? 'Completado' : t.status === 'refunded' ? 'Reembolsado' : t.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   )
 }
-
