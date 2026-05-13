@@ -155,9 +155,21 @@ export async function GET(request: NextRequest) {
           subscriptionStatus: 'trial',
           trialEndDate: trialEndDate.toISOString(),
           accessUntil: trialEndDate.toISOString(),
-          // Guardamos token|cofId para poder hacer cobros MIT correctamente
           subscriptionId: cofId ? `${cardToken || requestId}|${cofId}` : (cardToken || requestId),
         })
+
+        // Guardar test_type en users para tener histórico en BD
+        try {
+          const purchasePool2 = getPool()
+          await purchasePool2.query(
+            `ALTER TABLE users ADD COLUMN IF NOT EXISTS last_test_type VARCHAR(50)`,
+          )
+          await purchasePool2.query(
+            `UPDATE users SET last_test_type = $1 WHERE id = $2`,
+            [testType, user.id]
+          )
+          await purchasePool2.end().catch(() => {})
+        } catch (_) { /* columna ya existe o no crítico */ }
         console.log('✅ [confirm-payment] Trial activado para:', email, 'hasta:', trialEndDate.toISOString())
 
         const userName = user.userName || email.split('@')[0]
