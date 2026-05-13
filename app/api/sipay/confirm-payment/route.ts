@@ -1,9 +1,48 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { Pool } from 'pg'
 import { getSipayClient } from '@/lib/sipay-client'
 import { db } from '@/lib/database-postgres'
 import { sendEmail, emailTemplates } from '@/lib/email-service'
 
 export const dynamic = 'force-dynamic'
+
+function getPool() {
+  const connectionString = process.env.POSTGRES_URL || process.env.DATABASE_URL
+  if (!connectionString) throw new Error('No database URL configured')
+  return new Pool({ connectionString, ssl: { rejectUnauthorized: false }, max: 5 })
+}
+
+async function ensurePurchasesTable(pool: Pool) {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS purchases (
+      id SERIAL PRIMARY KEY,
+      transaction_id VARCHAR(255),
+      order_id VARCHAR(255),
+      user_email VARCHAR(255) NOT NULL,
+      user_name VARCHAR(255),
+      test_type VARCHAR(50) NOT NULL DEFAULT 'iq',
+      amount DECIMAL(10,2) NOT NULL DEFAULT 0.90,
+      currency VARCHAR(10) NOT NULL DEFAULT 'EUR',
+      status VARCHAR(50) NOT NULL DEFAULT 'completed',
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    )
+  `)
+}
+
+async function recordPurchase(pool: Pool, data: {
+  transactionId: string | null
+  orderId: string | null
+  email: string
+  userName: string
+  testType: string
+}) {
+  await ensurePurchasesTable(pool)
+  await pool.query(
+    `INSERT INTO purchases (transaction_id, order_id, user_email, user_name, test_type, amount, currency, status)
+     VALUES ($1, $2, $3, $4, $5, 0.90, 'EUR', 'completed')`,
+    [data.transactionId, data.orderId, data.email, data.userName, data.testType]
+  )
+}
 
 /**
  * PASO 2: Confirmar pago después de 3DS
@@ -87,6 +126,24 @@ export async function GET(request: NextRequest) {
 
     // Solo activar trial si el confirm fue EXITOSO
     if (confirmSuccessful && email) {
+      // Registrar compra en la tabla purchases
+      const purchasePool = getPool()
+      try {
+        const user0 = await db.getUserByEmail(email)
+        await recordPurchase(purchasePool, {
+          transactionId,
+          orderId: orderId || null,
+          email,
+          userName: user0?.userName || email.split('@')[0],
+          testType,
+        })
+        console.log('✅ [confirm-payment] Compra registrada en purchases:', { email, testType, transactionId })
+      } catch (purchaseErr) {
+        console.error('⚠️ [confirm-payment] Error registrando compra:', purchaseErr)
+      } finally {
+        await purchasePool.end().catch(() => {})
+      }
+
       const user = await db.getUserByEmail(email)
       if (user) {
         const trialEndDate = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)

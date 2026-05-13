@@ -6,6 +6,7 @@ import Sidebar from '@/components/admin/Sidebar'
 import DashboardTab from '@/components/admin/DashboardTab'
 import SubscriptionsTab from '@/components/admin/SubscriptionsTab'
 import TransactionsTab from '@/components/admin/TransactionsTab'
+import PurchasesTab from '@/components/admin/PurchasesTab'
 
 export default function AdminPage() {
   const [isAdmin, setIsAdmin] = useState(false)
@@ -61,6 +62,7 @@ export default function AdminPage() {
         {activeTab === 'dashboard' && <DashboardTab />}
         {activeTab === 'subscriptions' && <SubscriptionsTab />}
         {activeTab === 'transactions' && <TransactionsTab />}
+        {activeTab === 'purchases' && <PurchasesTab />}
       </div>
     </div>
   )

@@ -1,6 +1,6 @@
 'use client'
 
-import { FaChartLine, FaUsers, FaCreditCard, FaCog, FaSignOutAlt, FaHome } from 'react-icons/fa'
+import { FaChartLine, FaUsers, FaCreditCard, FaShoppingCart, FaSignOutAlt, FaHome } from 'react-icons/fa'
 import { useRouter } from 'next/navigation'
 
 interface SidebarProps {
@@ -21,6 +21,7 @@ export default function Sidebar({ activeTab, onTabChange, userEmail }: SidebarPr
     { id: 'dashboard', icon: FaChartLine, label: 'Dashboard', color: 'text-[#07C59A]' },
     { id: 'subscriptions', icon: FaUsers, label: 'Suscripciones', color: 'text-blue-500' },
     { id: 'transactions', icon: FaCreditCard, label: 'Transacciones', color: 'text-purple-500' },
+    { id: 'purchases', icon: FaShoppingCart, label: 'Compras', color: 'text-orange-400' },
   ]
   
   return (
