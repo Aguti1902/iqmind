@@ -35,12 +35,13 @@ async function recordPurchase(pool: Pool, data: {
   email: string
   userName: string
   testType: string
+  amount: number
 }) {
   await ensurePurchasesTable(pool)
   await pool.query(
     `INSERT INTO purchases (transaction_id, order_id, user_email, user_name, test_type, amount, currency, status)
-     VALUES ($1, $2, $3, $4, $5, 0.90, 'EUR', 'completed')`,
-    [data.transactionId, data.orderId, data.email, data.userName, data.testType]
+     VALUES ($1, $2, $3, $4, $5, $6, 'EUR', 'completed')`,
+    [data.transactionId, data.orderId, data.email, data.userName, data.testType, data.amount]
   )
 }
 
@@ -74,6 +75,7 @@ export async function GET(request: NextRequest) {
     const email = searchParams.get('email')
     const lang = searchParams.get('lang') || 'es'
     const testType = searchParams.get('test_type') || 'iq'
+    const urlAmount = parseFloat(searchParams.get('amount') || '0.50')
     // El tokenId fue generado en process-payment y pasado en la URL para garantizar
     // que guardamos el token correcto aunque Sipay no lo devuelva en el confirm response
     const urlCardTokenId = searchParams.get('card_token_id')
@@ -136,6 +138,7 @@ export async function GET(request: NextRequest) {
           email,
           userName: user0?.userName || email.split('@')[0],
           testType,
+          amount: urlAmount,
         })
         console.log('✅ [confirm-payment] Compra registrada en purchases:', { email, testType, transactionId })
       } catch (purchaseErr) {

@@ -56,8 +56,8 @@ export async function POST(request: NextRequest) {
     // Generar el tokenId ANTES de llamar a Sipay para poder incluirlo en la URL de confirmación
     const cardTokenId = 'mm' + Date.now().toString().slice(-12)
 
-    // URL de confirmación: incluimos el tokenId para que confirm-payment pueda guardarlo
-    const confirmUrl = `${origin}/api/sipay/confirm-payment?order_id=${orderId}&email=${encodeURIComponent(email)}&lang=${paymentLang}&test_type=${testType}&card_token_id=${cardTokenId}`
+    // URL de confirmación: incluimos el tokenId y amount para que confirm-payment pueda guardarlos
+    const confirmUrl = `${origin}/api/sipay/confirm-payment?order_id=${orderId}&email=${encodeURIComponent(email)}&lang=${paymentLang}&test_type=${testType}&card_token_id=${cardTokenId}&amount=${amount || 0.50}`
     const errorUrl = `${origin}/${paymentLang}/checkout-payment?error=true&email=${encodeURIComponent(email)}`
 
     console.log('💳 [process-payment] url_ok:', confirmUrl)
