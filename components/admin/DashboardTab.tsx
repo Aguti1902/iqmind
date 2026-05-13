@@ -328,23 +328,29 @@ export default function DashboardTab() {
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+              <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tipo Test</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Monto</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fecha</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {dashboardData.tables.recentTransactions.slice(0, 10).map((transaction: any) => (
-                <tr key={transaction.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-500">
-                    {transaction.id.substring(0, 20)}...
-                  </td>
+              {dashboardData.tables.recentTransactions.slice(0, 10).map((transaction: any, i: number) => (
+                <tr key={`${transaction.id}-${i}`} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {transaction.customer_email}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                      transaction.test_type === 'iq' ? 'bg-blue-100 text-blue-800' :
+                      transaction.test_type === 'personality' ? 'bg-purple-100 text-purple-800' :
+                      'bg-gray-100 text-gray-700'
+                    }`}>
+                      {transaction.description || transaction.test_type || '—'}
+                    </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-green-600">
                     €{transaction.amount.toFixed(2)}

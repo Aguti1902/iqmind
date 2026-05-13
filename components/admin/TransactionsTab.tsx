@@ -231,6 +231,7 @@ export default function TransactionsTab() {
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cliente</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tipo Test</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Monto</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fecha</th>
@@ -241,13 +242,22 @@ export default function TransactionsTab() {
                 {transactions.map((transaction) => (
                   <tr key={transaction.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-500">
-                      {transaction.id.substring(0, 15)}...
+                      {String(transaction.id).substring(0, 15)}...
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div>
                         <p className="text-sm font-medium text-gray-900">{transaction.customer_name}</p>
                         <p className="text-sm text-gray-500">{transaction.customer_email}</p>
                       </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                        transaction.test_type === 'iq' ? 'bg-blue-100 text-blue-800' :
+                        transaction.test_type === 'personality' ? 'bg-purple-100 text-purple-800' :
+                        'bg-gray-100 text-gray-800'
+                      }`}>
+                        {transaction.test_type_label || transaction.description || transaction.test_type}
+                      </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div>
