@@ -21,11 +21,17 @@ async function ensurePurchasesTable(pool: Pool) {
       user_email VARCHAR(255) NOT NULL,
       user_name VARCHAR(255),
       test_type VARCHAR(50) NOT NULL DEFAULT 'iq',
-      amount DECIMAL(10,2) NOT NULL DEFAULT 0.90,
+      amount DECIMAL(10,2) NOT NULL DEFAULT 0.50,
       currency VARCHAR(10) NOT NULL DEFAULT 'EUR',
       status VARCHAR(50) NOT NULL DEFAULT 'completed',
       created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
     )
+  `)
+  // Índice único para transaction_id real de Sipay (evita duplicados en callbacks repetidos)
+  await pool.query(`
+    CREATE UNIQUE INDEX IF NOT EXISTS purchases_transaction_id_unique
+    ON purchases (transaction_id)
+    WHERE transaction_id IS NOT NULL
   `)
 }
 
@@ -40,11 +46,13 @@ async function recordPurchase(pool: Pool, data: {
   await ensurePurchasesTable(pool)
 
   if (data.transactionId) {
-    // Si tenemos transaction_id real de Sipay, usar ON CONFLICT para evitar duplicados
+    // Si tenemos transaction_id real de Sipay, insertar solo si no existe ya ese transaction_id
     await pool.query(
       `INSERT INTO purchases (transaction_id, order_id, user_email, user_name, test_type, amount, currency, status)
-       VALUES ($1, $2, $3, $4, $5, $6, 'EUR', 'completed')
-       ON CONFLICT (transaction_id) WHERE transaction_id IS NOT NULL DO NOTHING`,
+       SELECT $1, $2, $3, $4, $5, $6, 'EUR', 'completed'
+       WHERE NOT EXISTS (
+         SELECT 1 FROM purchases WHERE transaction_id = $1
+       )`,
       [data.transactionId, data.orderId, data.email, data.userName, data.testType, data.amount]
     )
   } else {
