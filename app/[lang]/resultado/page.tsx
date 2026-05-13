@@ -85,20 +85,18 @@ export default function ResultadoPage() {
         if ((window as any).gtag) {
           ;(window as any).gtag('event', 'purchase', { transaction_id: txId, value: 0.50, currency: 'EUR' })
           ;(window as any).gtag('event', 'conversion', {
-            'send_to': 'AW-17232820139/qMCRCP_NnK4bEKvvn5lA',
-            'value': 0.90, 'currency': 'EUR', 'transaction_id': txId,
+            send_to: 'AW-17232820139/qMCRCP_NnK4bEKvvn5lA',
+            value: 0.50, currency: 'EUR', transaction_id: txId,
+          })
+          // COMPRA 17 DEL4
+          ;(window as any).gtag('event', 'conversion', {
+            send_to: 'AW-17957420237/arK9CNCu6p0cEM354fJC',
+            value: 0.50, currency: 'EUR', transaction_id: txId,
           })
         }
         if ((window as any).fbq) {
           ;(window as any).fbq('track', 'Purchase', { value: 0.50, currency: 'EUR' })
         }
-        // COMPRA 17 DEL4 — nuevo tag Google Ads
-        ;(window as any).gtag('event', 'conversion', {
-          send_to: 'AW-17957420237/arK9CNCu6p0cEM354fJC',
-          value: 0.50,
-          currency: 'EUR',
-          transaction_id: txId,
-        })
       }
     }
   }, [router, lang])

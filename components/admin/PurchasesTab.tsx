@@ -17,13 +17,15 @@ export default function PurchasesTab() {
   const [stats, setStats] = useState<any[]>([])
   const [totalRevenue, setTotalRevenue] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [recovering, setRecovering] = useState(false)
+  const [recoverResult, setRecoverResult] = useState<string | null>(null)
   const [search, setSearch] = useState('')
   const [testTypeFilter, setTestTypeFilter] = useState('all')
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date())
   const [secondsSinceUpdate, setSecondsSinceUpdate] = useState(0)
 
   useEffect(() => {
-    loadPurchases()
+    loadPurchases(true)
   }, [search, testTypeFilter])
 
   useEffect(() => {
@@ -38,7 +40,7 @@ export default function PurchasesTab() {
     return () => clearInterval(timer)
   }, [lastUpdate])
 
-  const loadPurchases = async () => {
+  const loadPurchases = async (autoRecover = false) => {
     setLoading(true)
     try {
       const params = new URLSearchParams({ _: Date.now().toString() })
@@ -54,11 +56,38 @@ export default function PurchasesTab() {
         setTotalRevenue(data.totalRevenue)
         setLastUpdate(new Date())
         setSecondsSinceUpdate(0)
+
+        // Auto-recuperar si no hay compras (puede haber un fallo de registro)
+        if (autoRecover && data.data.length === 0) {
+          recoverPurchases(false)
+        }
       }
     } catch (err) {
       console.error('Error loading purchases:', err)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const recoverPurchases = async (showFeedback = true) => {
+    setRecovering(true)
+    setRecoverResult(null)
+    try {
+      const res = await fetch('/api/admin/recover-purchases')
+      const data = await res.json()
+      if (data.success) {
+        const msg = data.recovered > 0
+          ? `✅ ${data.recovered} compra(s) recuperada(s) correctamente`
+          : '✅ Tabla sincronizada — no había compras pendientes de recuperar'
+        if (showFeedback) setRecoverResult(msg)
+        await loadPurchases(false)
+      } else {
+        if (showFeedback) setRecoverResult(`❌ Error: ${data.error}`)
+      }
+    } catch (err) {
+      if (showFeedback) setRecoverResult('❌ Error de conexión al recuperar compras')
+    } finally {
+      setRecovering(false)
     }
   }
 
@@ -93,15 +122,30 @@ export default function PurchasesTab() {
             Última actualización: {formatTimeSince(secondsSinceUpdate)} · Auto-refresh cada 60s
           </p>
         </div>
-        <button
-          onClick={loadPurchases}
-          disabled={loading}
-          className="px-4 py-2 bg-[#07C59A] text-white rounded-lg hover:bg-[#069e7b] transition-colors flex items-center gap-2 disabled:opacity-50"
-        >
-          <FaSync className={loading ? 'animate-spin' : ''} />
-          Actualizar
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => recoverPurchases(true)}
+            disabled={recovering || loading}
+            className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2 disabled:opacity-50 text-sm"
+          >
+            <FaSync className={recovering ? 'animate-spin' : ''} />
+            Recuperar compras
+          </button>
+          <button
+            onClick={() => loadPurchases(false)}
+            disabled={loading}
+            className="px-4 py-2 bg-[#07C59A] text-white rounded-lg hover:bg-[#069e7b] transition-colors flex items-center gap-2 disabled:opacity-50"
+          >
+            <FaSync className={loading ? 'animate-spin' : ''} />
+            Actualizar
+          </button>
+        </div>
       </div>
+      {recoverResult && (
+        <div className={`mb-4 px-4 py-3 rounded-lg text-sm font-medium ${recoverResult.startsWith('✅') ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200'}`}>
+          {recoverResult}
+        </div>
+      )}
 
       {/* Stats cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
